@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CYBERUSSELL - Industrial Intelligence Secured</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Syne:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#2c1b1a",
+                        "tertiary-fixed-dim": "#c7c5d5",
+                        "surface-tint": "#ffb3ad",
+                        "outline": "#ab8885",
+                        "on-secondary-container": "#4c3c00",
+                        "secondary-container": "#cca400",
+                        "on-surface": "#fadcd9",
+                        "on-secondary": "#3c2f00",
+                        "on-background": "#fadcd9",
+                        "outline-variant": "#524342",
+                        "on-secondary-fixed": "#241a00",
+                        "tertiary": "#e2e0f0",
+                        "on-tertiary-fixed": "#1a1b26",
+                        "on-tertiary": "#2f2f3c",
+                        "on-primary-container": "#7a423f",
+                        "on-secondary-fixed-variant": "#574500",
+                        "error-container": "#93000a",
+                        "on-primary": "#51221f",
+                        "secondary-fixed": "#ffe088",
+                        "surface-container-lowest": "#190a09",
+                        "on-tertiary-fixed-variant": "#464653",
+                        "surface-container-high": "#372524",
+                        "on-primary-fixed-variant": "#6d3734",
+                        "surface-dim": "#1e0f0e",
+                        "surface-container-highest": "#43302f",
+                        "on-error": "#690005",
+                        "surface-variant": "#43302f",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#3e2c2a",
+                        "inverse-primary": "#894e4a",
+                        "surface-bright": "#483433",
+                        "on-primary-fixed": "#370d0c",
+                        "secondary": "#edc22e",
+                        "tertiary-fixed": "#e3e1f1",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-container": "#51515e",
+                        "background": "#1e0f0e",
+                        "inverse-surface": "#fadcd9",
+                        "primary-fixed-dim": "#ffb3ad",
+                        "primary-container": "#ffb3ad",
+                        "tertiary-container": "#c6c4d4",
+                        "on-surface-variant": "#d7c2c0",
+                        "primary": "#ffdad6",
+                        "surface-container-low": "#281716",
+                        "secondary-fixed-dim": "#edc22e",
+                        "primary-fixed": "#ffdad7",
+                        "surface": "#1e0f0e",
+                        
+                        // Custom Brand Colors requested in prompt but mapped to theme variables where possible, or keeping specific hexes if strictly required for the specific visual identity requested.
+                        "brand-navy": "#0F0F1A",
+                        "brand-red": "#E8373A",
+                        "brand-yellow": "#FFD23F",
+                        "brand-green": "#10B981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "80px",
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "lg": "48px",
+                        "md": "24px",
+                        "xs": "4px",
+                        "margin-desktop": "40px",
+                        "sm": "12px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-bold": ["Inter"],
+                        "headline-xl": ["Syne"],
+                        "headline-lg": ["Syne"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Syne"],
+                        "headline-md": ["Syne"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glow-red {
+            background: radial-gradient(circle at top right, rgba(232, 55, 58, 0.14), transparent 50%);
+        }
+        .bg-navy { background-color: #0F0F1A; }
+        .text-yellow { color: #FFD23F; }
+        .bg-red-btn { background-color: #E8373A; }
+        .text-red { color: #E8373A; }
+    </style>
+</head>
+<body class="bg-navy text-white min-h-screen flex flex-col font-body-md antialiased overflow-x-hidden">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-navy sticky top-0 z-50 h-[58px] border-b border-white/10">
+<div class="flex justify-between items-center w-full px-6 md:px-margin-desktop py-base max-w-7xl mx-auto h-full">
+<!-- Brand Logo -->
+<a class="font-headline-md text-headline-md tracking-tighter flex items-center" href="#">
+<span class="text-white">Cyber</span><span class="text-yellow">ussell</span>
+</a>
+<!-- Navigation Links (Hidden on mobile) -->
+<nav class="hidden md:flex gap-6 items-center h-full">
+<a class="text-white/70 font-label-bold hover:text-white transition-colors text-sm uppercase" href="#">Solutions</a>
+<a class="text-white/70 font-label-bold hover:text-white transition-colors text-sm uppercase" href="#">Arsenal</a>
+<a class="text-white/70 font-label-bold hover:text-white transition-colors text-sm uppercase" href="#">Intelligence</a>
+<a class="text-white/70 font-label-bold hover:text-white transition-colors text-sm uppercase" href="#">Network</a>
+</nav>
+<!-- Trailing Action -->
+<button class="bg-red-btn text-white font-label-bold px-[18px] py-[9px] rounded-[6px] text-[13px] hover:bg-opacity-90 transition-all flex items-center gap-2">
+                I-Download ng Libre
+            </button>
+</div>
+</header>
+<!-- Main Hero Section -->
+<main class="flex-grow relative glow-red flex flex-col">
+<div class="max-w-7xl mx-auto w-full px-6 md:px-margin-desktop pt-[64px] md:pt-[80px] pb-lg flex-grow flex flex-col lg:flex-row gap-12 lg:gap-gutter items-start">
+<!-- Left Column: Hero Content -->
+<div class="w-full lg:w-1/2 flex flex-col gap-6 relative z-10">
+<!-- Pill Badge -->
+<div class="inline-flex items-center gap-2 bg-brand-yellow/10 border border-brand-yellow/20 rounded-[20px] px-4 py-1.5 w-fit">
+<span class="text-brand-yellow font-label-bold tracking-wide">🇵🇭 Data mula sa PSA · DOLE · 2026</span>
+</div>
+<!-- Headline -->
+<h1 class="font-headline-lg-mobile md:font-headline-xl text-[34px] md:text-[52px] leading-[1.1] tracking-tight">
+<span class="text-white">2.41 milyon</span>
+<span class="text-brand-red">ang walang trabaho.</span><br/>
+<span class="text-white">Ikaw ba ang susunod</span>
+<span class="text-brand-yellow">na makakatakas?</span>
+</h1>
+<!-- Subtext -->
+<p class="font-body-lg text-[17px] text-white/65 max-w-[480px]">
+                    Hindi ito motivational speech. Ito ay data mula sa PSA — at may solusyon ito. 2.5 milyong Pilipino ang kumikita na online ngayon. Alamin kung paano.
+                </p>
+<!-- Source line -->
+<p class="font-body-sm text-[11px] text-white/25 italic">
+                    PSA Labor Force Survey, April 2026 · Philippine Freelance Economy Report, 2025
+                </p>
+<!-- Stats Pills -->
+<div class="flex flex-wrap gap-4 mt-2">
+<div class="flex flex-col bg-brand-red/10 border border-brand-red/20 rounded-lg p-4 min-w-[140px] flex-1">
+<span class="font-headline-md text-[20px] text-brand-red">2.41M</span>
+<span class="font-body-sm text-[12px] text-white/50">walang trabaho ngayon</span>
+</div>
+<div class="flex flex-col bg-brand-red/10 border border-brand-red/20 rounded-lg p-4 min-w-[140px] flex-1">
+<span class="font-headline-md text-[20px] text-brand-red">6.03M</span>
+<span class="font-body-sm text-[12px] text-white/50">gusto ng dagdag na kita</span>
+</div>
+<div class="flex flex-col bg-brand-green/10 border border-brand-green/20 rounded-lg p-4 min-w-[140px] flex-1">
+<span class="font-headline-md text-[20px] text-brand-green">2.5M</span>
+<span class="font-body-sm text-[12px] text-white/50">kumikita na online</span>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="mt-4 flex flex-col gap-3">
+<button class="bg-brand-red text-white font-bold font-body-md text-[17px] py-4 px-[36px] rounded-[10px] w-full md:max-w-[380px] hover:bg-opacity-90 transition-all flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(232,55,58,0.3)]">
+                        ↓ Kunin ang Libreng Guide
+                    </button>
+<p class="font-body-sm text-[12px] text-white/45 text-center md:text-left md:max-w-[380px]">
+                        Walang sign-up · Walang bayad · PDF agad · Libre forever
+                    </p>
+</div>
+</div>
+<!-- Right Column: Skill Finder Widget -->
+<div class="w-full lg:w-1/2 mt-8 lg:mt-0 relative z-10 flex justify-center lg:justify-end">
+<div class="bg-[#18181F] border border-white/12 rounded-[16px] w-full max-w-[480px] overflow-hidden flex flex-col shadow-2xl relative">
+<!-- Top gradient bar -->
+<div class="h-[2px] w-full bg-gradient-to-r from-brand-red to-brand-yellow"></div>
+<div class="p-6 md:p-8 flex flex-col gap-6">
+<!-- Widget Header -->
+<div class="flex justify-between items-center">
+<h3 class="font-label-bold text-white uppercase">Skill Finder</h3>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></div>
+<span class="font-label-bold text-[10px] text-white/50 uppercase">Active Data</span>
+</div>
+</div>
+<!-- Widget Body -->
+<div class="flex flex-col gap-3">
+<label class="font-body-sm font-medium text-white/80">Ano ang skill mo?</label>
+<div class="relative flex">
+<input class="w-full bg-[#222230] border border-white/10 rounded-l-[8px] py-3 px-4 text-white placeholder-white/30 focus:outline-none focus:border-brand-red transition-colors font-body-sm" placeholder="hal. magluto, mag-design, mag-ayos..." type="text"/>
+<button class="bg-brand-red px-4 rounded-r-[8px] flex items-center justify-center hover:bg-opacity-90 transition-colors">
+<span class="material-symbols-outlined text-white text-xl">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Skill Chips -->
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 font-body-sm text-[12px] text-white/70 hover:bg-brand-red/20 hover:border-brand-red/50 hover:text-brand-red transition-colors">magluto</button>
+<button class="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 font-body-sm text-[12px] text-white/70 hover:bg-brand-red/20 hover:border-brand-red/50 hover:text-brand-red transition-colors">Canva</button>
+<button class="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 font-body-sm text-[12px] text-white/70 hover:bg-brand-red/20 hover:border-brand-red/50 hover:text-brand-red transition-colors">cellphone repair</button>
+<button class="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 font-body-sm text-[12px] text-white/70 hover:bg-brand-red/20 hover:border-brand-red/50 hover:text-brand-red transition-colors">video editing</button>
+<button class="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 font-body-sm text-[12px] text-white/70 hover:bg-brand-red/20 hover:border-brand-red/50 hover:text-brand-red transition-colors">magsulat</button>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 gap-3 mt-2">
+<div class="bg-[#222230] p-4 rounded-lg flex flex-col justify-center items-center border border-white/5">
+<span class="text-[20px] font-headline-md text-white">4hrs</span>
+<span class="font-label-bold text-[10px] text-white/40 uppercase text-center">Avg Time to First Gig</span>
+</div>
+<div class="bg-[#222230] p-4 rounded-lg flex flex-col justify-center items-center border border-white/5">
+<span class="text-[20px] font-headline-md text-brand-yellow">57%</span>
+<span class="font-label-bold text-[10px] text-white/40 uppercase text-center">Success Rate</span>
+</div>
+<div class="bg-[#222230] p-4 rounded-lg flex flex-col justify-center items-center border border-white/5">
+<span class="text-[20px] font-headline-md text-white">99.5%</span>
+<span class="font-label-bold text-[10px] text-white/40 uppercase text-center">Market Demand</span>
+</div>
+<div class="bg-[#222230] p-4 rounded-lg flex flex-col justify-center items-center border border-white/5">
+<span class="text-[20px] font-headline-md text-brand-green">2.5M</span>
+<span class="font-label-bold text-[10px] text-white/40 uppercase text-center">Active Freelancers</span>
+</div>
+</div>
+<!-- Widget Footer -->
+<div class="flex items-center gap-3 pt-4 border-t border-white/10 mt-2">
+<div class="bg-brand-green/10 text-brand-green px-2 py-1 rounded-full font-label-bold text-[10px] uppercase border border-brand-green/20">
+                                💚 GCash
+                            </div>
+<span class="font-body-sm text-[11px] text-white/40">Walang credit card · PDF agad</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Trust Bar -->
+<div class="bg-[#F7F7FB] text-brand-navy border-t border-b border-black/5 py-4 w-full mt-auto">
+<div class="max-w-7xl mx-auto px-6 md:px-margin-desktop flex flex-wrap justify-center md:justify-between items-center gap-4 font-body-sm font-medium">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-brand-green"></div>
+<span class="opacity-80">Libre subukan</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-brand-green"></div>
+<span class="opacity-80">Walang bayad</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-brand-green"></div>
+<span class="opacity-80">Data-backed</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-brand-green"></div>
+<span class="opacity-80">Gawa ng Pilipino</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component simplified for spacing, normally would be full component) -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-6 md:px-margin-desktop py-lg max-w-7xl mx-auto">
+<div class="font-headline-md text-headline-md text-white/50 mb-4 md:mb-0 text-sm">
+                CYBERUSSELL
+            </div>
+<div class="font-body-sm text-[12px] text-white/30">
+                © 2024 CYBERUSSELL. INDUSTRIAL INTELLIGENCE SECURED.
+            </div>
+<nav class="flex gap-4 mt-4 md:mt-0 font-label-bold text-[10px] text-white/50 uppercase">
+<a class="hover:text-white transition-colors" href="#">Terminal</a>
+<a class="hover:text-white transition-colors" href="#">Encryption</a>
+<a class="hover:text-white transition-colors" href="#">Vault</a>
+<a class="hover:text-white transition-colors" href="#">Protocol</a>
+</nav>
+</div>
+</footer>
+</body></html>

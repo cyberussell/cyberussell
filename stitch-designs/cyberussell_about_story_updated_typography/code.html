@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CYBERUSSELL - Story</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400..800&amp;family=Inter:wght@400..700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Syne:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#2c1b1a",
+                        "on-secondary-fixed": "#241a00",
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#1a1b26",
+                        "on-secondary": "#3c2f00",
+                        "surface-variant": "#43302f",
+                        "inverse-primary": "#894e4a",
+                        "surface-container-lowest": "#190a09",
+                        "secondary-fixed-dim": "#edc22e",
+                        "primary-fixed": "#ffdad7",
+                        "on-primary": "#51221f",
+                        "error": "#ffb4ab",
+                        "primary-container": "#ffb3ad",
+                        "outline-variant": "#524342",
+                        "on-tertiary": "#2f2f3c",
+                        "surface-dim": "#1e0f0e",
+                        "tertiary": "#e2e0f0",
+                        "on-tertiary-container": "#51515e",
+                        "on-secondary-fixed-variant": "#574500",
+                        "on-surface": "#fadcd9",
+                        "secondary-container": "#cca400",
+                        "secondary": "#edc22e",
+                        "on-background": "#fadcd9",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#43302f",
+                        "inverse-surface": "#fadcd9",
+                        "surface": "#1e0f0e",
+                        "surface-bright": "#483433",
+                        "on-primary-container": "#7a423f",
+                        "tertiary-fixed": "#e3e1f1",
+                        "surface-container-low": "#281716",
+                        "inverse-on-surface": "#3e2c2a",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#6d3734",
+                        "tertiary-fixed-dim": "#c7c5d5",
+                        "primary-fixed-dim": "#ffb3ad",
+                        "tertiary-container": "#c6c4d4",
+                        "on-surface-variant": "#d7c2c0",
+                        "outline": "#ab8885",
+                        "background": "#0F0F1A", // Overridden from #1e0f0e to match prompt #0F0F1A
+                        "primary": "#E8373A", // Overridden to match prompt red #E8373A
+                        "secondary-fixed": "#ffe088",
+                        "on-secondary-container": "#4c3c00",
+                        "surface-container-high": "#372524",
+                        "on-primary-fixed": "#370d0c",
+                        "on-tertiary-fixed-variant": "#464653",
+                        "surface-tint": "#ffb3ad",
+                        "story-surface": "#18181F" // Added custom surface for timeline dots
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "sm": "12px",
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "md": "24px",
+                        "margin-desktop": "40px",
+                        "lg": "48px",
+                        "xl": "80px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Syne"],
+                        "headline-lg": ["Syne"],
+                        "body-md": ["Inter"],
+                        "label-bold": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Syne"],
+                        "headline-lg-mobile": ["Syne"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface antialiased overflow-x-hidden">
+<!-- TopNavBar (Semantic Shell - Global Navigation Context) -->
+<header class="bg-background dark:bg-background border-b border-outline-variant bg-background docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-base max-w-7xl mx-auto">
+<div class="font-headline-md text-headline-md font-extrabold text-primary dark:text-primary tracking-tighter">
+                CYBERUSSELL
+            </div>
+<nav class="hidden md:flex items-center gap-md">
+<a class="text-on-surface-variant font-label-bold hover:text-primary transition-colors uppercase" href="#">Solutions</a>
+<a class="text-on-surface-variant font-label-bold hover:text-primary transition-colors uppercase" href="#">Arsenal</a>
+<a class="text-on-surface-variant font-label-bold hover:text-primary transition-colors uppercase" href="#">Intelligence</a>
+<!-- Active State Logic Applied Here: 'Network' / 'Story' conceptually align as community/about -->
+<a class="text-primary font-label-bold border-b-2 border-primary pb-1 uppercase" href="#">Network</a>
+</nav>
+<button class="hidden md:block bg-primary text-on-primary font-label-bold px-sm py-base rounded hover:bg-surface-container-high hover:text-primary transition-all duration-200 uppercase outline outline-1 outline-primary border-none" style="background: transparent;">
+                DECODE ACCESS
+            </button>
+</div>
+</header>
+<!-- Canvas -->
+<main>
+<section class="py-[48px] md:py-[72px] px-margin-mobile md:px-margin-desktop bg-background w-full max-w-7xl mx-auto" id="story">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-[52px]">
+<!-- Left Column: Narrative -->
+<div class="flex flex-col gap-md">
+<span class="text-primary font-label-bold uppercase tracking-[2.5px]">ANG KWENTO</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white">
+                        "7 taon akong nagkamali.<br/>
+<span class="text-primary">Huwag mong ulitin."</span>
+</h2>
+<div class="flex flex-col gap-sm font-body-md text-body-md text-white/55">
+<p>
+                            Ang Cyberussell ay hindi isang business na ginawa para kumita. Ito ay ginawa dahil wala akong nahanap na resource para sa mga Pilipino tulad ko — taga-probinsya, walang degree sa technology, walang koneksyon sa industriya.
+                        </p>
+<p>
+                            Lahat ng natutunan ko ay galing sa pagsubok, pagkabigo, at maraming oras ng research. Ang website na ito ay ang resource na gusto kong mayroon noon — libre, Taglish, at based sa tunay na datos.
+                        </p>
+<p>
+                            Ang layunin ay simple: kung may isang Pilipino ang makahanap ng tamang paraan para kumita online dahil sa nabasang information dito — matagumpay na ito.
+                        </p>
+</div>
+</div>
+<!-- Right Column: Timeline -->
+<div class="flex flex-col pt-md md:pt-0">
+<!-- Item 1 -->
+<div class="relative grid grid-cols-[44px_1fr] gap-[16px] pb-[24px]">
+<!-- Vertical Line (Connector) -->
+<div class="absolute left-[21px] top-[44px] bottom-0 w-[2px] bg-white/10"></div>
+<!-- Dot -->
+<div class="w-[44px] h-[44px] rounded-full bg-story-surface border-2 border-white/10 flex items-center justify-center z-10 relative">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">search</span>
+</div>
+<!-- Content -->
+<div class="pt-[10px]">
+<span class="block text-primary font-label-bold uppercase tracking-widest mb-1">NOON</span>
+<p class="font-body-md text-body-md text-white/70">
+<b class="text-white font-bold">Naghahanap ng tamang negosyo.</b> Nasubukan ko na ang lahat — job platforms, apps, tools. Paulit-ulit na kabigo.
+                            </p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="relative grid grid-cols-[44px_1fr] gap-[16px] pb-[24px]">
+<!-- Vertical Line -->
+<div class="absolute left-[21px] top-[44px] bottom-0 w-[2px] bg-white/10"></div>
+<!-- Dot -->
+<div class="w-[44px] h-[44px] rounded-full bg-story-surface border-2 border-white/10 flex items-center justify-center z-10 relative">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">smart_toy</span>
+</div>
+<!-- Content -->
+<div class="pt-[10px]">
+<span class="block text-primary font-label-bold uppercase tracking-widest mb-1">NATUKLASAN</span>
+<p class="font-body-md text-body-md text-white/70">
+<b class="text-white font-bold">Natuklasan ko ang AI tools.</b> Hindi coding — kung paano gamitin ang Claude at iba pang tools para matulungan ang sarili at ang ibang tao.
+                            </p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="relative grid grid-cols-[44px_1fr] gap-[16px] pb-[24px]">
+<!-- Vertical Line -->
+<div class="absolute left-[21px] top-[44px] bottom-0 w-[2px] bg-white/10"></div>
+<!-- Dot -->
+<div class="w-[44px] h-[44px] rounded-full bg-story-surface border-2 border-white/10 flex items-center justify-center z-10 relative">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">bar_chart</span>
+</div>
+<!-- Content -->
+<div class="pt-[10px]">
+<span class="block text-primary font-label-bold uppercase tracking-widest mb-1">NAGSIMULA</span>
+<p class="font-body-md text-body-md text-white/70">
+<b class="text-white font-bold">Nag-research ng tunay na datos.</b> Ang PSA, DOLE, at real Filipino freelancers — hindi YouTube gurus — ang pinagkunan ko ng impormasyon.
+                            </p>
+</div>
+</div>
+<!-- Item 4 (No connector line below) -->
+<div class="relative grid grid-cols-[44px_1fr] gap-[16px] pb-[24px]">
+<!-- Dot -->
+<div class="w-[44px] h-[44px] rounded-full bg-story-surface border-2 border-white/10 flex items-center justify-center z-10 relative">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">public</span>
+</div>
+<!-- Content -->
+<div class="pt-[10px]">
+<span class="block text-primary font-label-bold uppercase tracking-widest mb-1">NGAYON</span>
+<p class="font-body-md text-body-md text-white/70">
+<b class="text-white font-bold">Nagbabahagi.</b> Ang Cyberussell ay ang research, ang mga natutunan, at ang tamang direksyon — para sa mga Pilipino sa probinsya na tulad natin.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer (Semantic Shell) -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant w-full mt-xl">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-lg max-w-7xl mx-auto gap-md md:gap-0">
+<div class="font-headline-md text-headline-md text-primary text-center md:text-left font-extrabold">
+                CYBERUSSELL
+            </div>
+<nav class="flex flex-wrap justify-center gap-md">
+<a class="text-on-surface-variant font-label-bold hover:text-primary transition-colors" href="#">TERMINAL</a>
+<a class="text-on-surface-variant font-label-bold hover:text-primary transition-colors" href="#">ENCRYPTION</a>
+<a class="text-on-surface-variant font-label-bold hover:text-primary transition-colors" href="#">VAULT</a>
+<a class="text-on-surface-variant font-label-bold hover:text-primary transition-colors" href="#">PROTOCOL</a>
+</nav>
+<div class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-right uppercase">
+                © 2024 CYBERUSSELL. INDUSTRIAL INTELLIGENCE SECURED.
+            </div>
+</div>
+</footer>
+<!-- BottomNavBar for Mobile (Visible md:hidden) -->
+<div class="md:hidden fixed bottom-0 w-full bg-surface-container-lowest border-t border-outline-variant z-50 px-margin-mobile py-base flex justify-around items-center">
+<a class="flex flex-col items-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">terminal</span>
+<span class="font-label-bold text-[10px] mt-1">Terminal</span>
+</a>
+<a class="flex flex-col items-center text-primary" href="#">
+<span class="material-symbols-outlined text-[24px]">hub</span>
+<span class="font-label-bold text-[10px] mt-1">Network</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">security</span>
+<span class="font-label-bold text-[10px] mt-1">Vault</span>
+</a>
+</div>
+</body></html>

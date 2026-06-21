@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cyberussell - Final CTA &amp; Footer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,700;1,400&amp;family=Syne:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .radial-glow-center {
+                background: radial-gradient(circle at center, rgba(232, 55, 58, 0.12) 0%, transparent 60%);
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-high": "#372524",
+                        "secondary-fixed-dim": "#edc22e",
+                        "tertiary": "#e2e0f0",
+                        "primary": "#ffdad6",
+                        "inverse-on-surface": "#3e2c2a",
+                        "surface-bright": "#483433",
+                        "surface-container-lowest": "#190a09",
+                        "surface-tint": "#ffb3ad",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#1a1b26",
+                        "on-secondary": "#3c2f00",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#1e0f0e",
+                        "on-error": "#690005",
+                        "on-surface": "#fadcd9",
+                        "tertiary-fixed-dim": "#c7c5d5",
+                        "surface": "#1e0f0e",
+                        "on-tertiary": "#2f2f3c",
+                        "error": "#ffb4ab",
+                        "tertiary-container": "#c6c4d4",
+                        "surface-container-highest": "#43302f",
+                        "on-tertiary-container": "#51515e",
+                        "surface-variant": "#43302f",
+                        "secondary-fixed": "#ffe088",
+                        "background": "#1e0f0e",
+                        "on-primary-fixed": "#370d0c",
+                        "surface-container": "#2c1b1a",
+                        "primary-container": "#ffb3ad",
+                        "secondary-container": "#cca400",
+                        "on-primary": "#51221f",
+                        "primary-fixed": "#ffdad7",
+                        "on-surface-variant": "#d7c2c0",
+                        "on-background": "#fadcd9",
+                        "on-secondary-container": "#4c3c00",
+                        "tertiary-fixed": "#e3e1f1",
+                        "outline": "#ab8885",
+                        "surface-container-low": "#281716",
+                        "outline-variant": "#524342",
+                        "secondary": "#edc22e",
+                        "on-primary-container": "#7a423f",
+                        "inverse-surface": "#fadcd9",
+                        "on-secondary-fixed": "#241a00",
+                        "on-primary-fixed-variant": "#6d3734",
+                        "on-secondary-fixed-variant": "#574500",
+                        "inverse-primary": "#894e4a",
+                        "on-tertiary-fixed-variant": "#464653",
+                        "primary-fixed-dim": "#ffb3ad",
+                        "brand-red": "#E8373A",
+                        "brand-red-hover": "#FF4A4D",
+                        "brand-yellow": "#FFD23F",
+                        "brand-dark": "#111118",
+                        "brand-darker": "#0F0F1A"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Syne"],
+                        "headline-lg": ["Syne"],
+                        "headline-lg-mobile": ["Syne"],
+                        "body-sm": ["Inter"],
+                        "headline-xl": ["Syne"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-bold": ["Inter"]
+                    },
+                    fontSize: {
+                        "headline-md": ["24px", { lineHeight: "1.3", fontWeight: "700" }],
+                        "headline-lg": ["32px", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "700" }],
+                        "headline-lg-mobile": ["28px", { lineHeight: "1.2", fontWeight: "700" }],
+                        "body-sm": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
+                        "headline-xl": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "800" }],
+                        "body-md": ["16px", { lineHeight: "1.5", fontWeight: "400" }],
+                        "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "label-bold": ["12px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "700" }]
+                    },
+                    spacing: {
+                        "xs": "4px",
+                        "xl": "80px",
+                        "base": "8px",
+                        "margin-desktop": "40px",
+                        "lg": "48px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden">
+<!-- Final CTA Section -->
+<section class="relative bg-brand-dark overflow-hidden py-[72px] md:py-[100px] px-margin-mobile md:px-margin-desktop">
+<!-- Radial Glow -->
+<div class="absolute inset-0 radial-glow-center pointer-events-none"></div>
+<div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center text-center">
+<!-- Eyebrow -->
+<span class="text-brand-red font-label-bold uppercase mb-6 block">
+                ANG SUSUNOD NA HAKBANG
+            </span>
+<!-- Main Heading -->
+<h2 class="font-headline-lg-mobile md:font-headline-xl mb-6 flex flex-col gap-2">
+<span class="text-white">Huwag Nang Mag-alinlangan.</span>
+<span class="text-brand-yellow">Libre Naman.</span>
+<span class="text-brand-red">I-Download Na.</span>
+</h2>
+<!-- Subtext -->
+<p class="font-body-lg text-white/60 max-w-[480px] mb-10">
+                5 libreng PDF guides. Walang email na kailangan. Walang bayad ngayon o sa hinaharap. Ibahagi mo rin sa mga kakilala mo na kailangan nito.
+            </p>
+<!-- CTA Button -->
+<a class="w-full md:w-auto md:max-w-[380px] bg-brand-red hover:bg-brand-red-hover text-white font-body-lg font-bold py-[18px] px-[48px] rounded-[10px] min-h-[52px] flex items-center justify-center transition-all duration-300 transform hover:-translate-y-[2px] mb-8 shadow-lg shadow-brand-red/20" href="#">
+                ↓ Kunin ang 5 Libreng PDF Guides
+            </a>
+<!-- Reassurance Row -->
+<div class="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 font-body-sm text-white/45">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check</span> Libre</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check</span> Walang sign-up</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check</span> Walang bayad</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check</span> Ibahagi sa lahat</span>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant py-[44px] pb-[28px] px-margin-mobile md:px-margin-desktop">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start w-full">
+<div class="flex flex-col flex-1 items-center md:items-start text-center md:text-left mb-10 md:mb-0">
+<div class="font-headline-md text-primary mb-1 tracking-widest">
+                    CYBERUSSELL
+                </div>
+</div>
+<div class="flex flex-col md:flex-row items-center md:items-start gap-4">
+<span class="text-on-surface-variant font-label-bold hover:text-primary transition-colors cursor-pointer">TERMINAL</span>
+<span class="text-on-surface-variant font-label-bold hover:text-primary transition-colors cursor-pointer">ENCRYPTION</span>
+<span class="text-on-surface-variant font-label-bold hover:text-primary transition-colors cursor-pointer">VAULT</span>
+<span class="text-on-surface-variant font-label-bold hover:text-primary transition-colors cursor-pointer">PROTOCOL</span>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-8 border-t border-outline-variant pt-6 text-center md:text-left">
+<span class="text-on-surface-variant font-body-sm block opacity-70">© 2024 CYBERUSSELL. INDUSTRIAL INTELLIGENCE SECURED.</span>
+</div>
+</footer>
+</body></html>
