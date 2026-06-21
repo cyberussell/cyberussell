@@ -10,6 +10,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-navy: #0F0F1A;
+  --color-navy2: #111118;
+  --color-navy3: #18181F;
+  --color-navy4: #222230;
+  --color-red: #E8373A;
+  --color-yellow: #FFD23F;
+  --color-green: #00C97A;
 }
 
 @media (prefers-color-scheme: dark) {
