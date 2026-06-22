@@ -40,7 +40,7 @@ export default function PainSection() {
                 key={stat}
                 className="bg-[#18181F] border border-white/[0.12] border-l-[3px] border-l-[#E8373A] rounded-[12px] p-7 hover:border-white/20 transition-colors"
               >
-                <div className="font-[family-name:var(--font-syne)] text-[44px] md:text-[64px] font-extrabold text-[#E8373A] leading-none mb-4">
+                <div className={`font-[family-name:var(--font-syne)] font-extrabold text-[#E8373A] leading-none mb-4 ${stat.length > 6 ? "text-[28px] md:text-[38px]" : "text-[44px] md:text-[64px]"}`}>
                   {stat}
                 </div>
                 <h3 className="font-[family-name:var(--font-inter)] text-[16px] font-bold text-white mb-2">

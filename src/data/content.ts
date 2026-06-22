@@ -43,10 +43,10 @@ export const PAIN_STAT_CARDS = [
     source: "Philippine Statistics Authority, LFS March 2026",
   },
   {
-    stat: "13.1%",
-    title: "Unemployment — City of Isabela · 2025",
-    desc: "The problem is worse outside Metro Manila. In the province, there are fewer jobs — but a bigger opportunity for online income that almost no one is taking advantage of.",
-    source: "PSA Annual Provincial Labor Market Statistics, 2025",
+    stat: "Above Average",
+    title: "Unemployment — Isabela Province, Region II · Cagayan Valley · 2025",
+    desc: "The problem is worse outside Metro Manila. In Isabela province and across Cagayan Valley, job opportunities are limited — but the opportunity for online income remains largely untapped by most residents.",
+    source: "PSA Regional Labor Statistics, Region II · 2025",
   },
 ] as const;
 
