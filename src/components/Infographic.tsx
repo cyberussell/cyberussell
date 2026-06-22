@@ -12,7 +12,7 @@ export default function Infographic() {
           <div className="text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold tracking-[2.5px] uppercase mb-3">
             THE FULL PICTURE
           </div>
-          <h2 className="font-[family-name:var(--font-syne)] text-[26px] md:text-[38px] font-bold text-white mb-4 leading-tight">
+          <h2 className="font-serif text-[26px] md:text-[38px] font-bold text-white mb-4 leading-tight">
             Who Is Earning Online and How Much They Make
           </h2>
           <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8]">
