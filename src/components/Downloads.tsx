@@ -43,7 +43,7 @@ export default function Downloads() {
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {GUIDES.map(({ icon, iconColor, previewBg, title, desc, meta, active }) => {
+          {GUIDES.map(({ icon, iconColor, previewBg, title, desc, meta, active, file }) => {
             const Icon = ICON_MAP[icon];
             return (
               <div
