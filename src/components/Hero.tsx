@@ -119,9 +119,9 @@ export default function Hero() {
 
               <div className="grid grid-cols-2 gap-3 mt-2">
                 {HERO_WIDGET_STATS.map(({ value, label, color }) => (
-                  <div key={label} className="bg-[#222230] p-4 rounded-lg flex flex-col justify-center items-center border border-white/5">
+                  <div key={value} className="bg-[#222230] p-4 rounded-lg flex flex-col justify-start border border-white/5">
                     <span className={`font-[family-name:var(--font-syne)] text-[20px] font-bold ${color}`}>{value}</span>
-                    <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/40 uppercase tracking-[0.05em] text-center mt-1">{label}</span>
+                    <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/50 leading-[1.5] mt-1">{label}</span>
                   </div>
                 ))}
               </div>

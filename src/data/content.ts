@@ -20,10 +20,10 @@ export const HERO_STATS = [
 export const HERO_WIDGET_CHIPS = ["cooking", "Canva", "phone repair", "video editing", "writing"] as const;
 
 export const HERO_WIDGET_STATS = [
-  { value: "4hrs",  label: "on social media daily",              color: "text-white" },
-  { value: "57%",   label: "payments are digital",               color: "text-[#FFD23F]" },
-  { value: "99.5%", label: "businesses have no online presence", color: "text-white" },
-  { value: "2.5M",  label: "already earning online",             color: "text-[#00C97A]" },
+  { value: "4hrs",  label: "Filipinos spend on social media daily — the opportunity is already there", color: "text-white" },
+  { value: "57%",   label: "of PH payments are digital — GCash works, online selling works",          color: "text-[#FFD23F]" },
+  { value: "99.5%", label: "of businesses have no online presence — that's the gap you can fill",     color: "text-white" },
+  { value: "2.5M",  label: "Filipinos already earning online — proof it's possible",                  color: "text-[#00C97A]" },
 ] as const;
 
 export const TRUST_BAR_ITEMS = [
