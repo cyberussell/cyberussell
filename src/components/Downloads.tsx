@@ -32,7 +32,7 @@ export default function Downloads() {
           <div className="text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold tracking-[2.5px] uppercase mb-4">
             FREE RESOURCES
           </div>
-          <h2 className="font-[family-name:var(--font-syne)] text-[26px] md:text-[38px] font-bold text-white leading-tight mb-4">
+          <h2 className="font-sans text-[26px] md:text-[38px] font-bold text-white leading-tight mb-4">
             Download. All Free. No Email Required.
           </h2>
           <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 max-w-[560px] leading-[1.8]">
@@ -64,7 +64,7 @@ export default function Downloads() {
 
                 {/* Card body */}
                 <div className="p-5 flex flex-col flex-grow">
-                  <h3 className="font-[family-name:var(--font-syne)] text-[18px] font-bold text-white mb-2 leading-tight">
+                  <h3 className="font-sans text-[18px] font-bold text-white mb-2 leading-tight">
                     {title}
                   </h3>
                   <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.8] mb-4 flex-grow">

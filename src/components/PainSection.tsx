@@ -23,7 +23,7 @@ export default function PainSection() {
           <span className="block text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[2.5px] mb-4">
             THE TRUTH
           </span>
-          <h2 className="font-[family-name:var(--font-syne)] text-[28px] md:text-[38px] font-bold text-white tracking-tight leading-tight mb-4">
+          <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-white tracking-tight leading-tight mb-4">
             Why It&apos;s Hard to Earn in the Philippines Right Now
           </h2>
           <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 max-w-[560px] leading-[1.8]">
@@ -40,7 +40,7 @@ export default function PainSection() {
                 key={stat}
                 className="bg-[#18181F] border border-white/[0.12] border-l-[3px] border-l-[#E8373A] rounded-[12px] p-7 hover:border-white/20 transition-colors"
               >
-                <div className={`font-[family-name:var(--font-syne)] font-extrabold text-[#E8373A] leading-none mb-4 ${stat.length > 6 ? "text-[28px] md:text-[38px]" : "text-[44px] md:text-[64px]"}`}>
+                <div className={`font-sans font-extrabold text-[#E8373A] leading-none mb-4 ${stat.length > 6 ? "text-[28px] md:text-[38px]" : "text-[44px] md:text-[64px]"}`}>
                   {stat}
                 </div>
                 <h3 className="font-[family-name:var(--font-inter)] text-[16px] font-bold text-white mb-2">

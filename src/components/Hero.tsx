@@ -29,7 +29,7 @@ export default function Hero() {
           </div>
 
           {/* Headline */}
-          <h1 className="font-[family-name:var(--font-syne)] text-[34px] md:text-[52px] font-extrabold leading-[1.1] tracking-tight">
+          <h1 className="font-sans text-[34px] md:text-[52px] font-extrabold leading-[1.1] tracking-tight">
             <span className="text-white">2.41 million</span>{" "}
             <span className="text-[#E8373A]">Filipinos have no job.</span>
             <br />
@@ -51,7 +51,7 @@ export default function Hero() {
           <div className="flex flex-wrap gap-4 mt-2">
             {HERO_STATS.map(({ value, label, color, bg, border }) => (
               <div key={value} className={`flex flex-col ${bg} border ${border} rounded-lg p-4 min-w-[140px] flex-1`}>
-                <span className={`font-[family-name:var(--font-syne)] text-[20px] font-bold ${color}`}>{value}</span>
+                <span className={`font-sans text-[20px] font-bold ${color}`}>{value}</span>
                 <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">{label}</span>
               </div>
             ))}
@@ -120,7 +120,7 @@ export default function Hero() {
               <div className="grid grid-cols-2 gap-3 mt-2">
                 {HERO_WIDGET_STATS.map(({ value, label, color }) => (
                   <div key={value} className="bg-[#222230] p-4 rounded-lg flex flex-col justify-start border border-white/5">
-                    <span className={`font-[family-name:var(--font-syne)] text-[20px] font-bold ${color}`}>{value}</span>
+                    <span className={`font-sans text-[20px] font-bold ${color}`}>{value}</span>
                     <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/50 leading-[1.5] mt-1">{label}</span>
                   </div>
                 ))}

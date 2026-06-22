@@ -28,7 +28,7 @@ export default function Footer() {
         <div className="flex flex-col gap-3 max-w-[280px]">
           <a
             href="#hero"
-            className="font-[family-name:var(--font-syne)] text-[20px] font-bold tracking-tight"
+            className="font-sans text-[20px] font-bold tracking-tight"
           >
             <span className="text-white">Cyber</span>
             <span className="text-[#FFD23F]">ussell</span>

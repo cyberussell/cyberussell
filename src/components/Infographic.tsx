@@ -12,7 +12,7 @@ export default function Infographic() {
           <div className="text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold tracking-[2.5px] uppercase mb-3">
             THE FULL PICTURE
           </div>
-          <h2 className="font-serif text-[26px] md:text-[38px] font-bold text-white mb-4 leading-tight">
+          <h2 className="font-sans text-[26px] md:text-[38px] font-bold text-white mb-4 leading-tight">
             Who Is Earning Online and How Much They Make
           </h2>
           <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8]">
@@ -23,7 +23,7 @@ export default function Infographic() {
         {/* Main card */}
         <div className="bg-[#18181F] border border-white/[0.12] rounded-2xl overflow-hidden shadow-2xl mb-5">
           <div className="bg-[#222230] border-b border-white/[0.12] px-5 md:px-7 py-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-            <h3 className="font-[family-name:var(--font-syne)] text-[16px] font-bold text-white">
+            <h3 className="font-sans text-[16px] font-bold text-white">
               Philippine Online Income Landscape · 2025–2026
             </h3>
             <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/30 italic">
@@ -41,7 +41,7 @@ export default function Infographic() {
                   <h4 className={`font-[family-name:var(--font-inter)] text-[14px] font-bold ${textColor}`}>{title}</h4>
                   <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/60 mt-1">{subtitle}</p>
                 </div>
-                <div className={`font-[family-name:var(--font-syne)] text-[18px] font-bold ${textColor} md:text-right shrink-0`}>
+                <div className={`font-sans text-[18px] font-bold ${textColor} md:text-right shrink-0`}>
                   {range}
                 </div>
               </div>
@@ -53,7 +53,7 @@ export default function Infographic() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-5">
           {INCOME_STAT_CARDS.map(({ value, label, source, color }) => (
             <div key={label} className="bg-[#222230] border border-white/5 rounded-[10px] p-4 md:px-[18px] hover:border-white/20 transition-colors">
-              <div className={`font-[family-name:var(--font-syne)] text-[24px] font-bold mb-2 ${color}`}>{value}</div>
+              <div className={`font-sans text-[24px] font-bold mb-2 ${color}`}>{value}</div>
               <div className="font-[family-name:var(--font-inter)] text-[13px] text-white/80 mb-3 leading-[1.5]">{label}</div>
               <div className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/30 uppercase tracking-[0.05em]">{source}</div>
             </div>

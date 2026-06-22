@@ -39,7 +39,7 @@ export default function SkillFinder() {
           <span className="block text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[2.5px] mb-4">
             INTERACTIVE TOOL
           </span>
-          <h2 className="font-[family-name:var(--font-syne)] text-[26px] md:text-[38px] font-bold text-white mb-4 leading-tight">
+          <h2 className="font-sans text-[26px] md:text-[38px] font-bold text-white mb-4 leading-tight">
             &ldquo;Yes, I Can Do That&rdquo; — Find Your Skill
           </h2>
           <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 max-w-[560px] leading-[1.8]">
@@ -51,7 +51,7 @@ export default function SkillFinder() {
         {/* Tool header */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="font-[family-name:var(--font-syne)] text-[18px] font-bold text-white">
+            <p className="font-sans text-[18px] font-bold text-white">
               Skill-to-Income Matcher
             </p>
             <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-0.5">
@@ -101,7 +101,7 @@ export default function SkillFinder() {
 
             <div className="flex flex-col md:flex-row md:items-start gap-6">
               <div className="flex-1">
-                <h3 className="font-[family-name:var(--font-syne)] text-[22px] font-bold text-white mb-3">
+                <h3 className="font-sans text-[22px] font-bold text-white mb-3">
                   {activeCategory.label}
                 </h3>
                 <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.8] mb-5">
@@ -112,7 +112,7 @@ export default function SkillFinder() {
                   <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[0.05em]">
                     Estimated earning
                   </span>
-                  <p className="font-[family-name:var(--font-syne)] text-[22px] font-bold text-[#00C97A] mt-1">
+                  <p className="font-sans text-[22px] font-bold text-[#00C97A] mt-1">
                     {activeCategory.result.earning}
                   </p>
                 </div>
@@ -145,7 +145,7 @@ export default function SkillFinder() {
         {/* Download CTA strip */}
         <div className="bg-gradient-to-r from-[#E8373A]/10 to-[#FFD23F]/10 border border-white/10 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <h4 className="font-[family-name:var(--font-syne)] text-[20px] font-bold text-white mb-1">
+            <h4 className="font-sans text-[20px] font-bold text-white mb-1">
               Want more detail?
             </h4>
             <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55">

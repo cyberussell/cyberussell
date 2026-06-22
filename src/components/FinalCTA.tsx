@@ -13,7 +13,7 @@ export default function FinalCTA() {
           YOUR NEXT STEP
         </span>
 
-        <h2 className="font-[family-name:var(--font-syne)] text-[28px] md:text-[48px] font-bold mb-6 flex flex-col gap-2 leading-[1.1]">
+        <h2 className="font-sans text-[28px] md:text-[48px] font-bold mb-6 flex flex-col gap-2 leading-[1.1]">
           <span className="text-white">Stop Hesitating.</span>
           <span className="text-[#FFD23F]">It&apos;s Free.</span>
           <span className="text-[#E8373A]">Download Now.</span>

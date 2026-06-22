@@ -59,7 +59,7 @@ export default function AboutStory() {
             <span className="text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[2.5px]">
               THE STORY
             </span>
-            <h2 className="font-[family-name:var(--font-syne)] text-[28px] md:text-[32px] font-bold text-white leading-[1.2]">
+            <h2 className="font-sans text-[28px] md:text-[32px] font-bold text-white leading-[1.2]">
               &ldquo;I made mistakes for 7 years.
               <br />
               <span className="text-[#E8373A]">Don&apos;t repeat them.&rdquo;</span>

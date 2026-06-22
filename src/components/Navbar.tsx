@@ -38,7 +38,7 @@ export default function Navbar() {
       <div className="flex justify-between items-center w-full h-[58px] px-6 md:px-10 max-w-7xl mx-auto">
         <a
           href="#hero"
-          className="font-[family-name:var(--font-syne)] text-[20px] font-bold tracking-tight flex items-center"
+          className="font-sans text-[20px] font-bold tracking-tight flex items-center"
           onClick={handleNavClick}
         >
           <span className="text-white">Cyber</span>
