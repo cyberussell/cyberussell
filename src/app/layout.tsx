@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   description:
     "Data-backed guides for Filipinos who want to earn online. Free. No email. No payment.",
   metadataBase: new URL("https://www.cyberussell.com"),
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
   openGraph: {
     title: "Cyberussell — Your Skills. Your Income.",
     description:
