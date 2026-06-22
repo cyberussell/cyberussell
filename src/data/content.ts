@@ -297,6 +297,7 @@ export type Guide = {
   desc: string;
   meta: string;
   active: boolean;
+  file?: string;
 };
 
 export const GUIDES: Guide[] = [
@@ -308,6 +309,7 @@ export const GUIDES: Guide[] = [
     desc: "All the data on unemployment, skills gaps, and the industries with real demand for freelancers.",
     meta: "PDF · 8 pages · Data-backed",
     active: true,
+    file: "/downloads/ph-labor-market-2026.pdf",
   },
   {
     icon: "BookOpen",

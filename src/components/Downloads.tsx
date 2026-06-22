@@ -1,3 +1,5 @@
+"use client";
+
 import {
   BarChart2,
   BookOpen,
@@ -9,6 +11,7 @@ import {
   Bell,
   type LucideIcon,
 } from "lucide-react";
+import { track } from "@vercel/analytics";
 import { GUIDES } from "@/data/content";
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -72,10 +75,17 @@ export default function Downloads() {
                       {meta}
                     </span>
                     {active ? (
-                      <button className="bg-[#FFD23F]/10 border border-[#FFD23F]/25 text-[#FFD23F] font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] hover:bg-[#FFD23F]/20 transition-colors flex items-center gap-1.5 min-h-[36px]">
+                      <a
+                        href={file ?? "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download={!!file}
+                        onClick={() => file && track("download", { file: title })}
+                        className="bg-[#FFD23F]/10 border border-[#FFD23F]/25 text-[#FFD23F] font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] hover:bg-[#FFD23F]/20 transition-colors flex items-center gap-1.5 min-h-[36px]"
+                      >
                         <Download size={14} strokeWidth={2.5} />
-                        Download
-                      </button>
+                        {file ? "Download" : "Coming Soon"}
+                      </a>
                     ) : (
                       <button
                         disabled
