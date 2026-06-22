@@ -1,3 +1,4 @@
+import WelcomeBanner from "@/components/WelcomeBanner";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import PainSection from "@/components/PainSection";
@@ -11,6 +12,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <>
+      <WelcomeBanner />
       <Navbar />
       <Hero />
       <PainSection />

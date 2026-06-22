@@ -20,7 +20,8 @@
       "Bash(python3 -m json.tool)",
       "Bash(pkill -f \"next dev\")",
       "Bash(npm run *)",
-      "Bash(curl -s -X POST http://localhost:3000/api/skill-finder -H 'Content-Type: application/json' -d '{\"skill\": \"cooking\"}')"
+      "Bash(curl -s -X POST http://localhost:3000/api/skill-finder -H 'Content-Type: application/json' -d '{\"skill\": \"cooking\"}')",
+      "Bash(npx tsc *)"
     ]
   }
 }
