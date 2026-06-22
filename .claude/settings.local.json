@@ -14,7 +14,13 @@
       "Bash(git remote *)",
       "Bash(git push *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(npm list *)",
+      "Bash(curl -s -X POST http://localhost:3000/api/skill-finder -H 'Content-Type: application/json' -d '{\"skill\": \"I am a vibe code programmer\"}')",
+      "Bash(python3 -m json.tool)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(npm run *)",
+      "Bash(curl -s -X POST http://localhost:3000/api/skill-finder -H 'Content-Type: application/json' -d '{\"skill\": \"cooking\"}')"
     ]
   }
 }
