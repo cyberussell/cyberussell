@@ -1,4 +1,5 @@
 import WelcomeBanner from "@/components/WelcomeBanner";
+import StickyBottomBar from "@/components/StickyBottomBar";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import PainSection from "@/components/PainSection";
@@ -22,6 +23,7 @@ export default function Home() {
       <AboutStory />
       <FinalCTA />
       <Footer />
+      <StickyBottomBar />
     </>
   );
 }
