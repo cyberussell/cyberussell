@@ -1,6 +1,7 @@
 import { getAllPosts, getPostBySlug } from "@/lib/blog";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import ShareButtons from "@/components/ShareButtons";
 
 export async function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -78,6 +79,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </span>
           ))}
         </div>
+
+        <ShareButtons slug={slug} title={post.title} />
 
         {/* CTA */}
         <div className="mt-10 bg-[#18181F] border border-white/[0.12] rounded-2xl p-6 text-center">
