@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: post.description,
       url: `https://www.cyberussell.com/blog/${slug}`,
       type: "article",
-      images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+      images: [{ url: slug === "how-to-earn-money-online-philippines-beginners" ? "/blog-og-skill-price.jpg" : "/og-image.jpg", width: 1200, height: 630 }],
     },
   };
 }
