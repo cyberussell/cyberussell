@@ -9,6 +9,7 @@ const navLinks = [
   { label: "Skill Finder", href: "#skill-finder" },
   { label: "Free Downloads", href: "#downloads" },
   { label: "Find Work", href: "/platforms" },
+  { label: "Blog", href: "/blog" },
 ];
 
 const sectionIds = ["hero", "problema", "paraan", "skill-finder", "downloads"];

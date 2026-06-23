@@ -7,6 +7,7 @@ const linkColumns = [
       { label: "Skill Finder", href: "#skill-finder" },
       { label: "Free Downloads", href: "#downloads" },
       { label: "Find Work", href: "/platforms" },
+      { label: "Blog", href: "/blog" },
     ],
   },
   {

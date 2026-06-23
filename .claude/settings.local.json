@@ -21,7 +21,11 @@
       "Bash(pkill -f \"next dev\")",
       "Bash(npm run *)",
       "Bash(curl -s -X POST http://localhost:3000/api/skill-finder -H 'Content-Type: application/json' -d '{\"skill\": \"cooking\"}')",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "WebSearch",
+      "Bash(npm install *)",
+      "Bash(sed -i '' 's|{ label: \"Find Work\", href: \"/platforms\" },|{ label: \"Find Work\", href: \"/platforms\" },\\\\n  { label: \"Blog\", href: \"/blog\" },|' /Users/russellparayno/Documents/Business/cyberussell.com/src/components/Navbar.tsx)",
+      "Bash(sed -i '' 's|{ label: \"Find Work\", href: \"/platforms\" },|{ label: \"Find Work\", href: \"/platforms\" },\\\\n      { label: \"Blog\", href: \"/blog\" },|' /Users/russellparayno/Documents/Business/cyberussell.com/src/components/Footer.tsx)"
     ]
   }
 }
