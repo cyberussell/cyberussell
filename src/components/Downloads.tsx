@@ -80,11 +80,17 @@ export default function Downloads() {
                         target="_blank"
                         rel="noopener noreferrer"
                         download={!!file}
-                        onClick={() => {
+                        onClick={(e) => {
                           if (file) {
+                            e.preventDefault();
                             track("download", { file: title });
                             if (typeof window !== "undefined" && window.gtag) {
-                              window.gtag("event", "pdf_download", { pdf_name: title });
+                              window.gtag("event", "pdf_download", {
+                                pdf_name: title,
+                                event_callback: () => { window.open(file, "_blank"); },
+                              });
+                            } else {
+                              window.open(file, "_blank");
                             }
                           }
                         }}
