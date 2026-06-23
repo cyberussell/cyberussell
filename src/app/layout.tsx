@@ -21,7 +21,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   verification: {
-    google: "a8e1d2fc69d84ad5",
+    google: "EeWYrcWq_5hFEPsOIR1Ga9yFadyNIocLdAPJsmc6JJA",
   },
   title: "Cyberussell — Your Skills. Your Income.",
   description:
