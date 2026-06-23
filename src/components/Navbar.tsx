@@ -8,6 +8,7 @@ const navLinks = [
   { label: "Ways to Earn", href: "#paraan" },
   { label: "Skill Finder", href: "#skill-finder" },
   { label: "Free Downloads", href: "#downloads" },
+  { label: "Find Work", href: "/platforms" },
 ];
 
 const sectionIds = ["hero", "problema", "paraan", "skill-finder", "downloads"];

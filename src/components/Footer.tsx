@@ -6,6 +6,7 @@ const linkColumns = [
       { label: "Ways to Earn", href: "#paraan" },
       { label: "Skill Finder", href: "#skill-finder" },
       { label: "Free Downloads", href: "#downloads" },
+      { label: "Find Work", href: "/platforms" },
     ],
   },
   {
