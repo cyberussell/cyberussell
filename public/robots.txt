@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.cyberussell.com
+
+# Sitemaps
+Sitemap: https://www.cyberussell.com/sitemap.xml
