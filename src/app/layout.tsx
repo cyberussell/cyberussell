@@ -20,6 +20,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  verification: {
+    google: "a8e1d2fc69d84ad5",
+  },
   title: "Cyberussell — Your Skills. Your Income.",
   description:
     "Data-backed guides for Filipinos who want to earn online. Free. No email. No payment.",
