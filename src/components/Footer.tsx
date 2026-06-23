@@ -17,6 +17,7 @@ const linkColumns = [
       { label: "Share This Site", href: "#" },
       { label: "Privacy Policy", href: "#" },
       { label: "Contact", href: "/contact" },
+      { label: "UTM Builder", href: "/utm" },
     ],
   },
 ];
