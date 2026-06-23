@@ -1,6 +1,6 @@
 ---
-title: "How to Earn Money Online in the Philippines (2026 Beginner's Guide)"
-description: "A practical, honest guide for Filipinos who want to start earning online — no experience needed, no capital required."
+title: "Your Skill Has a Price. Most Filipinos Just Don't Know What It Is."
+description: "A practical, honest guide for Filipinos who want to start earning online — discover how to turn what you already know into real income."
 date: "2026-06-24"
 lang: en
 tags: ["earn online", "Philippines", "beginners", "freelancing"]
