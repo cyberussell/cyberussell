@@ -31,6 +31,9 @@ export const metadata: Metadata = {
     icon: "/favicon.png",
     apple: "/favicon.png",
   },
+  facebook: {
+    appId: "1580424853524034",
+  },
   openGraph: {
     title: "Cyberussell — Your Skills. Your Income.",
     description:
