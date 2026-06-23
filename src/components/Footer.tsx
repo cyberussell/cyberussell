@@ -15,7 +15,7 @@ const linkColumns = [
       { label: "About", href: "#tungkol" },
       { label: "Share This Site", href: "#" },
       { label: "Privacy Policy", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ];
