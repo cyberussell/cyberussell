@@ -80,7 +80,14 @@ export default function Downloads() {
                         target="_blank"
                         rel="noopener noreferrer"
                         download={!!file}
-                        onClick={() => file && track("download", { file: title })}
+                        onClick={() => {
+                          if (file) {
+                            track("download", { file: title });
+                            if (typeof window !== "undefined" && window.gtag) {
+                              window.gtag("event", "pdf_download", { pdf_name: title });
+                            }
+                          }
+                        }}
                         className="bg-[#FFD23F]/10 border border-[#FFD23F]/25 text-[#FFD23F] font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] hover:bg-[#FFD23F]/20 transition-colors flex items-center gap-1.5 min-h-[36px]"
                       >
                         <Download size={14} strokeWidth={2.5} />

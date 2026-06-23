@@ -42,7 +42,12 @@ export default function Hero() {
       });
       const data = await res.json();
       if (data.error) setError(data.error);
-      else setResult(data);
+      else {
+        setResult(data);
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag("event", "skill_search", { skill_query: skill, source: "hero" });
+        }
+      }
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -99,6 +104,11 @@ export default function Hero() {
               <div className="absolute inset-0 rounded-[10px] border-2 border-[#E8373A] animate-pulse pointer-events-none" />
               <a
                 href="#downloads"
+                onClick={() => {
+                  if (typeof window !== "undefined" && window.gtag) {
+                    window.gtag("event", "cta_click", { location: "hero" });
+                  }
+                }}
                 className="relative bg-[#E8373A] text-white font-[family-name:var(--font-inter)] font-bold text-[17px] py-[18px] px-9 rounded-[10px] w-full min-h-[56px] flex justify-center items-center gap-2 hover:opacity-90 transition-all"
                 style={{ boxShadow: "0 0 20px rgba(232,55,58,0.3)" }}
               >

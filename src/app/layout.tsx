@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Syne, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 import "./globals.css";
 
 const syne = Syne({
@@ -64,6 +66,18 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[#0F0F1A] text-white antialiased overflow-x-hidden">
         {children}
         <Analytics />
+        <GoogleAnalytics gaId="G-MY6KY7VPJ9" />
+        <Script id="ga-conversion" strategy="afterInteractive">
+          {`
+            window.addEventListener('load', function() {
+              if (window.gtag) {
+                gtag('config', 'G-MY6KY7VPJ9', {
+                  'conversion_event': 'pdf_download'
+                });
+              }
+            });
+          `}
+        </Script>
       </body>
     </html>
   );

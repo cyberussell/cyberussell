@@ -63,6 +63,9 @@ export default function SkillFinder() {
         setError(data.error);
       } else {
         setResult(data);
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag("event", "skill_search", { skill_query: skill });
+        }
       }
     } catch {
       setError("Something went wrong. Please try again.");
