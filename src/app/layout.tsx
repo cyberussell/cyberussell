@@ -63,10 +63,12 @@ export default function RootLayout({
       lang="tl"
       className={`${syne.variable} ${inter.variable} h-full`}
     >
+      <head>
+        <GoogleAnalytics gaId="G-MY6KY7VPJ9" />
+      </head>
       <body className="min-h-full flex flex-col bg-[#0F0F1A] text-white antialiased overflow-x-hidden">
         {children}
         <Analytics />
-        <GoogleAnalytics gaId="G-MY6KY7VPJ9" />
         <Script id="ga-conversion" strategy="afterInteractive">
           {`
             window.addEventListener('load', function() {
