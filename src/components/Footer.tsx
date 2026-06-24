@@ -1,3 +1,5 @@
+import ShareSiteButton from "@/components/ShareSiteButton";
+
 const linkColumns = [
   {
     heading: "On This Site",
@@ -14,7 +16,6 @@ const linkColumns = [
     heading: "Cyberussell",
     links: [
       { label: "About", href: "/about" },
-      { label: "Share This Site", href: "#" },
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Contact", href: "/contact" },
       { label: "UTM Builder", href: "/utm" },
@@ -62,6 +63,7 @@ export default function Footer() {
                   {label}
                 </a>
               ))}
+              {heading === "Cyberussell" && <ShareSiteButton />}
             </div>
           ))}
         </div>
