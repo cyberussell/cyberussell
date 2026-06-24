@@ -23,7 +23,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-sans text-[20px] font-bold text-white mb-3">1. Overview</h2>
             <p>
-              Cyberussell (<strong className="text-white">cyberussell.com</strong>) is a free resource built by Russell Parayno to help Filipinos find legitimate ways to earn income online. This Privacy Policy explains what information we collect, how we use it, and your rights as a visitor.
+              Cyberussell (<strong className="text-white">cyberussell.com</strong>) is a free resource built to help Filipinos find legitimate ways to earn income online. This Privacy Policy explains what information we collect, how we use it, and your rights as a visitor.
             </p>
           </section>
 
