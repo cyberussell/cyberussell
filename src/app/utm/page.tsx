@@ -10,6 +10,7 @@ const PAGES = [
   { label: "Homepage", value: "https://www.cyberussell.com" },
   { label: "Blog", value: "https://www.cyberussell.com/blog" },
   { label: "Blog Post — Your Skill Has a Price", value: "https://www.cyberussell.com/blog/how-to-earn-money-online-philippines-beginners" },
+  { label: "Blog Post — Online Jobs No Experience 2026", value: "https://www.cyberussell.com/blog/online-jobs-philippines-no-experience-2026" },
   { label: "Platforms / Find Work", value: "https://www.cyberussell.com/platforms" },
   { label: "Contact", value: "https://www.cyberussell.com/contact" },
 ];
