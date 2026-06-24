@@ -20,7 +20,7 @@ export default function FinalCTA() {
         </h2>
 
         <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/60 max-w-[480px] mb-10 leading-[1.8]">
-          5 free PDF guides. No email needed. No payment now or ever. Share them
+          Free guides and tools for Filipinos who want to earn online. No payment now or ever. Share them
           with people you know who need this.
         </p>
 
@@ -29,7 +29,7 @@ export default function FinalCTA() {
           className="w-full md:w-auto md:max-w-[380px] bg-[#E8373A] hover:bg-[#FF4A4D] text-white font-[family-name:var(--font-inter)] font-bold text-[17px] py-[18px] px-12 rounded-[10px] min-h-[52px] flex items-center justify-center transition-all duration-300 hover:-translate-y-[2px] mb-8"
           style={{ boxShadow: "0 8px 30px rgba(232,55,58,0.2)" }}
         >
-          ↓ Get the 5 Free PDF Guides
+          ↓ Get the Free Guides
         </a>
 
         <div className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 font-[family-name:var(--font-inter)] text-[14px] text-white/45">

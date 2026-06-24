@@ -295,20 +295,27 @@ export default function SkillFinder() {
           </div>
         )}
 
-        {/* Download CTA strip */}
+        {/* Subscribe + follow strip */}
         <div className="bg-gradient-to-r from-[#E8373A]/10 to-[#FFD23F]/10 border border-white/10 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <h4 className="font-sans text-[20px] font-bold text-white mb-1">Want more detail?</h4>
+            <h4 className="font-sans text-[20px] font-bold text-white mb-1">Want detailed guides for your skill?</h4>
             <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55">
-              Download the complete Skill-to-Income Guide — free, PDF, 15 pages.
+              Subscribe and follow — we send new income guides every week.
             </p>
           </div>
-          <a
-            href="#downloads"
-            className="bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] font-bold text-[15px] py-3 px-8 rounded-lg min-h-[48px] hover:opacity-90 transition-all shrink-0 w-full md:w-auto text-center"
-          >
-            ↓ Download Free
-          </a>
+          <div className="flex flex-col gap-2 shrink-0 w-full md:w-auto">
+            <a
+              href="/#subscribe-form"
+              className="bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] font-bold text-[15px] py-3 px-8 rounded-lg min-h-[48px] hover:opacity-90 transition-all text-center"
+            >
+              Subscribe — Free
+            </a>
+            <div className="flex justify-center gap-4">
+              <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">TikTok</a>
+              <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">Facebook</a>
+              <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">YouTube</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
