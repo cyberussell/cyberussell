@@ -13,12 +13,15 @@ export default function SubscribeForm() {
     if (honeypot) return;
     setStatus("loading");
     try {
-      const res = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, honeypot }),
-      });
-      if (!res.ok) throw new Error();
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbyf1UclH7xhnliCpniNr39qJafCOYekZVHJbirXWPm-QnRtRxHReygMwa_ZNT5W6Emc/exec",
+        {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({ name, email }),
+        }
+      );
       setStatus("success");
       setName("");
       setEmail("");
