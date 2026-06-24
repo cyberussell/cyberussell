@@ -241,12 +241,17 @@ export default function Hero() {
                     </div>
 
                     <a
-                      href="#downloads"
-                      className="block w-full text-center py-3 rounded-lg font-bold text-[13px] text-white"
+                      href="/#subscribe-form"
+                      className="block w-full text-center py-3 rounded-lg font-bold text-[13px] text-white mb-2"
                       style={{ background: "#E8373A" }}
                     >
-                      Get the Full Free Guide →
+                      Get the Full Guide — Subscribe Free →
                     </a>
+                    <div className="flex justify-center gap-3">
+                      <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>TikTok</a>
+                      <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>Facebook</a>
+                      <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>YouTube</a>
+                    </div>
                   </div>
                 </div>
               )}

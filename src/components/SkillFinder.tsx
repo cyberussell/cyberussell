@@ -218,11 +218,16 @@ export default function SkillFinder() {
 
             {/* CTA */}
             <a
-              href="#downloads"
-              className="block w-full bg-[#E8373A] text-white font-[family-name:var(--font-inter)] font-bold text-[15px] py-3 px-8 rounded-lg min-h-[48px] hover:opacity-90 transition-all text-center"
+              href="/#subscribe-form"
+              className="block w-full bg-[#E8373A] text-white font-[family-name:var(--font-inter)] font-bold text-[15px] py-3 px-8 rounded-lg min-h-[48px] hover:opacity-90 transition-all text-center mb-3"
             >
-              Get the Full Free Guide →
+              Get the Full Guide — Subscribe Free →
             </a>
+            <div className="flex justify-center gap-4">
+              <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">TikTok</a>
+              <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">Facebook</a>
+              <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">YouTube</a>
+            </div>
           </div>
         )}
 
