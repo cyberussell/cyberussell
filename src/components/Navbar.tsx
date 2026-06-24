@@ -8,6 +8,7 @@ const navLinks = [
   { label: "Ways to Earn", href: "/#paraan" },
   { label: "Skill Finder", href: "/#skill-finder" },
   { label: "Free Downloads", href: "/#downloads" },
+  { label: "8 Ways to Earn", href: "/guides/8-ways" },
   { label: "Find Work", href: "/platforms" },
   { label: "Blog", href: "/blog" },
 ];

@@ -77,30 +77,39 @@ export default function Downloads() {
                       {meta}
                     </span>
                     {active ? (
-                      <a
-                        href={file ?? "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download={!!file}
-                        onClick={(e) => {
-                          if (file) {
-                            e.preventDefault();
-                            track("download", { file: title });
-                            if (typeof window !== "undefined" && window.gtag) {
-                              window.gtag("event", "pdf_download", {
-                                pdf_name: title,
-                                event_callback: () => { window.open(file, "_blank"); },
-                              });
-                            } else {
-                              window.open(file, "_blank");
+                      file?.startsWith("/guides") ? (
+                        <a
+                          href={file}
+                          className="bg-[#FFD23F]/10 border border-[#FFD23F]/25 text-[#FFD23F] font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] hover:bg-[#FFD23F]/20 transition-colors flex items-center gap-1.5 min-h-[36px]"
+                        >
+                          Explore Guide →
+                        </a>
+                      ) : (
+                        <a
+                          href={file ?? "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download={!!file}
+                          onClick={(e) => {
+                            if (file) {
+                              e.preventDefault();
+                              track("download", { file: title });
+                              if (typeof window !== "undefined" && window.gtag) {
+                                window.gtag("event", "pdf_download", {
+                                  pdf_name: title,
+                                  event_callback: () => { window.open(file, "_blank"); },
+                                });
+                              } else {
+                                window.open(file, "_blank");
+                              }
                             }
-                          }
-                        }}
-                        className="bg-[#FFD23F]/10 border border-[#FFD23F]/25 text-[#FFD23F] font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] hover:bg-[#FFD23F]/20 transition-colors flex items-center gap-1.5 min-h-[36px]"
-                      >
-                        <Download size={14} strokeWidth={2.5} />
-                        {file ? "Download" : "Coming Soon"}
-                      </a>
+                          }}
+                          className="bg-[#FFD23F]/10 border border-[#FFD23F]/25 text-[#FFD23F] font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] hover:bg-[#FFD23F]/20 transition-colors flex items-center gap-1.5 min-h-[36px]"
+                        >
+                          <Download size={14} strokeWidth={2.5} />
+                          {file ? "Download" : "Coming Soon"}
+                        </a>
+                      )
                     ) : (
                       <button
                         onClick={() => {
