@@ -101,8 +101,11 @@ export default function Downloads() {
                       </a>
                     ) : (
                       <button
-                        disabled
-                        className="bg-white/5 border border-white/10 text-white/50 font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] flex items-center gap-1.5 min-h-[36px] cursor-not-allowed"
+                        onClick={() => {
+                          const el = document.getElementById("subscribe-form");
+                          el?.scrollIntoView({ behavior: "smooth", block: "center" });
+                        }}
+                        className="bg-white/5 border border-white/10 text-white/50 font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] flex items-center gap-1.5 min-h-[36px] hover:bg-white/10 hover:text-white/70 transition-colors"
                       >
                         <Bell size={14} strokeWidth={2.5} />
                         Notify Me

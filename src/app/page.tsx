@@ -22,7 +22,7 @@ export default function Home() {
       <SkillFinder />
       <Downloads />
       <AboutStory />
-      <section className="bg-[#0F0F1A] px-6 py-16">
+      <section id="subscribe-form" className="bg-[#0F0F1A] px-6 py-16">
         <div className="max-w-xl mx-auto">
           <SubscribeForm />
         </div>
