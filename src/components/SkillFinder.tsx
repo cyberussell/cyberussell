@@ -287,9 +287,6 @@ export default function SkillFinder() {
                 </div>
               ))}
             </div>
-            <button className="bg-[#E8373A] text-white font-[family-name:var(--font-inter)] font-bold text-[15px] py-3 px-8 rounded-lg min-h-[48px] hover:opacity-90 transition-all w-full md:w-auto">
-              ↓ {activeCategory.result.button}
-            </button>
           </div>
         )}
 
