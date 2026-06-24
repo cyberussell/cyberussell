@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "About — Cyberussell",
@@ -122,6 +123,7 @@ export default function AboutPage() {
 
       </div>
     </main>
+    <Footer />
     </>
   );
 }

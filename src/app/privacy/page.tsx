@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Cyberussell",
@@ -168,6 +169,7 @@ export default function PrivacyPage() {
         </div>
       </div>
     </main>
+    <Footer />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getAllPosts } from "@/lib/blog";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Blog — Cyberussell | Earn Online Philippines",
@@ -78,6 +79,7 @@ export default function BlogPage() {
         </div>
       </div>
     </main>
+    <Footer />
     </>
   );
 }

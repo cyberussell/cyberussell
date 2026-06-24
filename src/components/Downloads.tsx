@@ -55,8 +55,10 @@ export default function Downloads() {
                 <div
                   className={`relative flex items-center justify-center border-b border-white/[0.07] ${!active ? "grayscale" : ""}`}
                   style={{ height: 120, backgroundColor: previewBg }}
+                  role="img"
+                  aria-label={`${title} — PDF guide preview`}
                 >
-                  <Icon size={48} color={iconColor} strokeWidth={1.4} />
+                  <Icon size={48} color={iconColor} strokeWidth={1.4} aria-hidden="true" />
                   <span className="absolute top-2 right-3 text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold tracking-[1px]">
                     PDF
                   </span>

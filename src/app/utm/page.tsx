@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const SOURCES = ["tiktok", "facebook", "youtube", "instagram", "twitter", "whatsapp", "messenger", "other"];
 const PAGES = [
@@ -146,6 +147,7 @@ export default function UTMPage() {
         </div>
       </div>
     </main>
+    <Footer />
     </>
   );
 }

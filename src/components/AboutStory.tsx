@@ -101,7 +101,7 @@ export default function AboutStory() {
                   className="flex items-center justify-center shrink-0 relative z-10"
                   style={{ width: 44, height: 44, borderRadius: "50%", backgroundColor: dotBg, border: `2px solid ${dotBorder}` }}
                 >
-                  <Icon size={20} color={iconColor} strokeWidth={2} />
+                  <Icon size={20} color={iconColor} strokeWidth={2} aria-hidden="true" />
                 </div>
 
                 {/* Content */}

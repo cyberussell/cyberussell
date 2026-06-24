@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Where to Find Online Work as a Filipino — Cyberussell",
@@ -237,6 +238,7 @@ export default function PlatformsPage() {
         </div>
       </div>
     </main>
+    <Footer />
     </>
   );
 }

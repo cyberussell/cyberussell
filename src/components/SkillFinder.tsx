@@ -250,6 +250,7 @@ export default function SkillFinder() {
                   style={{ width: 28, height: 28, marginBottom: 10 }}
                   color={isActive ? "#E8373A" : "rgba(255,255,255,0.6)"}
                   strokeWidth={1.6}
+                  aria-hidden="true"
                 />
                 <span className="text-center leading-tight">{label}</span>
               </button>

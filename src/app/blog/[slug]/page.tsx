@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import ShareButtons from "@/components/ShareButtons";
 import SubscribeForm from "@/components/SubscribeForm";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export async function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -118,6 +119,32 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </a>
         </div>
 
+        {/* Related articles */}
+        {(() => {
+          const related = getAllPosts().filter((p) => p.slug !== slug).slice(0, 3);
+          if (related.length === 0) return null;
+          return (
+            <div className="mt-10 pt-8 border-t border-white/10">
+              <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/30 uppercase tracking-[2px] mb-5">
+                More articles
+              </p>
+              <div className="flex flex-col gap-4">
+                {related.map((r) => (
+                  <a key={r.slug} href={`/blog/${r.slug}`} className="bg-[#18181F] border border-white/[0.08] rounded-xl p-5 hover:border-white/20 transition-all block">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border font-[family-name:var(--font-inter)] ${r.lang === "fil" ? "text-[#FFD23F] bg-[#FFD23F]/10 border-[#FFD23F]/20" : "text-[#00C97A] bg-[#00C97A]/10 border-[#00C97A]/20"}`}>
+                        {r.lang === "fil" ? "Filipino" : "English"}
+                      </span>
+                      <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/30">{r.readTime}</span>
+                    </div>
+                    <p className="font-sans text-[16px] font-bold text-white leading-snug">{r.title}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Nav */}
         <div className="flex justify-between mt-8">
           <a href="/blog" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
@@ -129,6 +156,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
       </div>
     </main>
+    <Footer />
     </>
   );
 }

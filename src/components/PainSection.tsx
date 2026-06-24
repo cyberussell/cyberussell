@@ -66,7 +66,7 @@ export default function PainSection() {
                   className={`flex items-start gap-[14px] py-6 ${i < PAIN_ITEMS.length - 1 ? "border-b border-white/[0.07]" : ""} ${i === 0 ? "pt-0" : ""}`}
                 >
                   <div className="w-11 h-11 shrink-0 bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-lg flex items-center justify-center mt-[2px]">
-                    <Icon size={20} color="#E8373A" strokeWidth={1.8} />
+                    <Icon size={20} color="#E8373A" strokeWidth={1.8} aria-hidden="true" />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-[family-name:var(--font-inter)] text-[16px] font-bold text-white mb-1">
