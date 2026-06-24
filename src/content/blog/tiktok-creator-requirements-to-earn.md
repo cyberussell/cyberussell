@@ -74,12 +74,22 @@ You do not need a media kit to start. A simple message explaining your niche and
 
 TikTok Shop is one of the most accessible earning paths for Filipino creators right now. You promote products from sellers on TikTok Shop and earn a commission when people buy through your video or LIVE.
 
-Requirements to join TikTok Shop Affiliate (Philippines):
+Requirements to join TikTok Shop Affiliate (Philippines), per TikTok Shop Academy:
 
 - **At least 600 followers**
-- **Active account** with recent posts
 - **18 years old and above**
-- **Account must not have recent violations**
+- **Not a Government, Politician, or Political Party account (GPPPA)**
+- **Content must comply with TikTok Community Guidelines**
+- **No prior record of e-commerce permissions being revoked by TikTok Shop**
+- **No platform violation risk on your associated TikTok Shop account**
+
+You will also need to verify your identity. Accepted documents for Filipino creators:
+
+- PhilSys ID (National ID)
+- Passport
+- Driver's License
+- TIN ID (issued by the BIR)
+- UMID (Unified Multi-Purpose ID)
 
 Commission rates vary by product category, but 5–20% is common. A creator with just over 600 followers promoting the right product in the right niche can already start earning from TikTok Shop — making it one of the most accessible entry points for new Filipino creators.
 
