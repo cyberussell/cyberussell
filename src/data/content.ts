@@ -27,9 +27,7 @@ export const HERO_WIDGET_STATS = [
 ] as const;
 
 export const TRUST_BAR_ITEMS = [
-  "Free tools",
-  "Real data",
-  "Built for Filipinos who are ready to start",
+  "Built for Filipinos who are ready to start.",
 ] as const;
 
 // ─── Pain Section ─────────────────────────────────────────────────────────────
