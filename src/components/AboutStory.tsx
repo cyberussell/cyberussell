@@ -66,9 +66,10 @@ export default function AboutStory() {
             </h2>
             <div className="flex flex-col gap-[12px] font-[family-name:var(--font-inter)] text-[17px] text-white/55 leading-[1.8]">
               <p>
-                Cyberussell was not built to make money. It was built because I
-                could not find a resource for Filipinos like me — no technology
-                degree, no connections in the industry, just a desire to stop
+                Cyberussell exists to help Filipinos earn online — with real
+                data, not hype. Most of what you need is here for free. I
+                built this because I could not find a resource like it — no
+                technology degree, no connections, just a desire to stop
                 scrolling and start earning.
               </p>
               <p>
