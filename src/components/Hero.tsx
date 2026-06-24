@@ -282,10 +282,10 @@ export default function Hero() {
       {/* Trust bar */}
       <div className="bg-[#F7F7FB] text-[#0F0F1A] border-t border-b border-black/5 py-4 w-full mt-auto">
         <div className="max-w-7xl mx-auto px-6 md:px-10 flex flex-wrap justify-center md:justify-between items-center gap-4 font-[family-name:var(--font-inter)] text-[14px] font-medium">
-          {TRUST_BAR_ITEMS.map((item) => (
+          {TRUST_BAR_ITEMS.map((item, i) => (
             <div key={item} className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-[#00C97A]" />
-              <span className="opacity-80">{item}</span>
+              <span className={i === TRUST_BAR_ITEMS.length - 1 ? "font-bold" : "opacity-80"}>{item}</span>
             </div>
           ))}
         </div>
