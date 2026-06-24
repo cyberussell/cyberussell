@@ -15,11 +15,12 @@ export async function POST(req: NextRequest) {
 
     const res = await fetch(SHEETS_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ name: name || "", email }),
+      redirect: "follow",
     });
 
-    if (!res.ok) throw new Error("Sheets error");
+    if (!res.ok && res.status !== 302) throw new Error("Sheets error");
 
     return NextResponse.json({ success: true });
   } catch {
