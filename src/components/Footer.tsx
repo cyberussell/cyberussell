@@ -4,10 +4,10 @@ const linkColumns = [
   {
     heading: "On This Site",
     links: [
-      { label: "The Problem", href: "#problema" },
-      { label: "Ways to Earn", href: "#paraan" },
-      { label: "Skill Finder", href: "#skill-finder" },
-      { label: "Free Downloads", href: "#downloads" },
+      { label: "The Problem", href: "/#problema" },
+      { label: "Ways to Earn", href: "/#paraan" },
+      { label: "Skill Finder", href: "/#skill-finder" },
+      { label: "Free Downloads", href: "/#downloads" },
       { label: "Find Work", href: "/platforms" },
       { label: "Blog", href: "/blog" },
     ],
@@ -31,7 +31,7 @@ export default function Footer() {
         {/* Logo + tagline + description */}
         <div className="flex flex-col gap-3 max-w-[280px]">
           <a
-            href="#hero"
+            href="/"
             className="font-sans text-[20px] font-bold tracking-tight"
           >
             <span className="text-white">Cyber</span>
