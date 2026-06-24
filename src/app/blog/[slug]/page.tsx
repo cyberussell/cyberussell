@@ -151,7 +151,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             ← All Articles
           </a>
           <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
-            cyberussell.com →
+            Home →
           </a>
         </div>
       </div>

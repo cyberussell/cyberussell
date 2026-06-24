@@ -74,7 +74,7 @@ export default function BlogPage() {
         {/* Back link */}
         <div className="text-center mt-12">
           <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
-            ← Back to cyberussell.com
+            ← Back to Home
           </a>
         </div>
       </div>

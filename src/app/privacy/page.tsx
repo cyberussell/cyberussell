@@ -164,7 +164,7 @@ export default function PrivacyPage() {
 
         <div className="mt-12 text-center">
           <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
-            ← Back to cyberussell.com
+            ← Back to Home
           </a>
         </div>
       </div>
