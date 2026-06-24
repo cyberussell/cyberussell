@@ -9,6 +9,7 @@ import Downloads from "@/components/Downloads";
 import AboutStory from "@/components/AboutStory";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
+import SubscribeForm from "@/components/SubscribeForm";
 
 export default function Home() {
   return (
@@ -21,6 +22,11 @@ export default function Home() {
       <SkillFinder />
       <Downloads />
       <AboutStory />
+      <section className="bg-[#0F0F1A] px-6 py-16">
+        <div className="max-w-xl mx-auto">
+          <SubscribeForm />
+        </div>
+      </section>
       <FinalCTA />
       <Footer />
       <StickyBottomBar />

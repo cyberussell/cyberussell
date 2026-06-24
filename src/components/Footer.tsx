@@ -13,9 +13,9 @@ const linkColumns = [
   {
     heading: "Cyberussell",
     links: [
-      { label: "About", href: "#tungkol" },
+      { label: "About", href: "/about" },
       { label: "Share This Site", href: "#" },
-      { label: "Privacy Policy", href: "#" },
+      { label: "Privacy Policy", href: "/privacy" },
       { label: "Contact", href: "/contact" },
       { label: "UTM Builder", href: "/utm" },
     ],
