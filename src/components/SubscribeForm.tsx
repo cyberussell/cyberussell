@@ -35,14 +35,10 @@ export default function SubscribeForm() {
     lastSubmit.current = now;
     setStatus("loading");
     try {
+      const params = new URLSearchParams({ name, email });
       await fetch(
-        "https://script.google.com/macros/s/AKfycbyf1UclH7xhnliCpniNr39qJafCOYekZVHJbirXWPm-QnRtRxHReygMwa_ZNT5W6Emc/exec",
-        {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify({ name, email }),
-        }
+        `https://script.google.com/macros/s/AKfycbyf1UclH7xhnliCpniNr39qJafCOYekZVHJbirXWPm-QnRtRxHReygMwa_ZNT5W6Emc/exec?${params.toString()}`,
+        { method: "GET", mode: "no-cors" }
       );
       setStatus("success");
       setName("");
