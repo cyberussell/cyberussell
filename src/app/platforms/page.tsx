@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Where to Find Online Work as a Filipino — Cyberussell",
@@ -137,6 +138,8 @@ const FF_COLOR: Record<FilipinoFriendly, string> = {
 
 export default function PlatformsPage() {
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
@@ -234,5 +237,6 @@ export default function PlatformsPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

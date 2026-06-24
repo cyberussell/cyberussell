@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Navbar from "@/components/Navbar";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -34,6 +35,8 @@ export default function ContactPage() {
   }
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-xl mx-auto">
         {/* Header */}
@@ -166,5 +169,6 @@ export default function ContactPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

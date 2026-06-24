@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Cyberussell",
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-2xl mx-auto">
         <div className="mb-10">
@@ -165,5 +168,6 @@ export default function PrivacyPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

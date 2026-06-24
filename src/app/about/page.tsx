@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "About — Cyberussell",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-2xl mx-auto">
 
@@ -119,5 +122,6 @@ export default function AboutPage() {
 
       </div>
     </main>
+    </>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
+import Navbar from "@/components/Navbar";
 
 const SOURCES = ["tiktok", "facebook", "youtube", "instagram", "twitter", "whatsapp", "messenger", "other"];
 const PAGES = [
@@ -27,6 +28,8 @@ export default function UTMPage() {
   }
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-xl mx-auto">
         {/* Header */}
@@ -143,5 +146,6 @@ export default function UTMPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

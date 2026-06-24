@@ -45,7 +45,7 @@ const timeline: TimelineItem[] = [
     dotBorder: "rgba(0,201,122,0.20)",
     label: "Today",
     bold: "Sharing it all.",
-    text: "Cyberussell is the research, the lessons learned, and the right direction — for Filipinos in the province like us.",
+    text: "Cyberussell is the research, the lessons learned, and the right direction — for every Filipino who wants to stop wasting time and start earning online.",
   },
 ];
 
@@ -67,8 +67,9 @@ export default function AboutStory() {
             <div className="flex flex-col gap-[12px] font-[family-name:var(--font-inter)] text-[17px] text-white/55 leading-[1.8]">
               <p>
                 Cyberussell was not built to make money. It was built because I
-                could not find a resource for Filipinos like me — from the
-                province, no technology degree, no connections in the industry.
+                could not find a resource for Filipinos like me — no technology
+                degree, no connections in the industry, just a desire to stop
+                scrolling and start earning.
               </p>
               <p>
                 Everything I learned came from trial, failure, and hundreds of

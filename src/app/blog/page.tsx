@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getAllPosts } from "@/lib/blog";
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Blog — Cyberussell | Earn Online Philippines",
@@ -10,6 +11,8 @@ export default function BlogPage() {
   const posts = getAllPosts();
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
@@ -75,5 +78,6 @@ export default function BlogPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }
