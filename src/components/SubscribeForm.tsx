@@ -1,16 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
 export default function SubscribeForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [validationError, setValidationError] = useState("");
+  const lastSubmit = useRef(0);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // Honeypot — silent reject
     if (honeypot) return;
+
+    // Rate limit: 30 seconds between submissions
+    const now = Date.now();
+    if (now - lastSubmit.current < 30_000) {
+      setValidationError("Please wait a moment before trying again.");
+      return;
+    }
+
+    // Email format validation
+    if (!EMAIL_REGEX.test(email.trim())) {
+      setValidationError("Please enter a valid email address.");
+      return;
+    }
+
+    setValidationError("");
+    lastSubmit.current = now;
     setStatus("loading");
     try {
       await fetch(
@@ -88,7 +110,12 @@ export default function SubscribeForm() {
         >
           {status === "loading" ? "Subscribing..." : "Subscribe — It's Free"}
         </button>
-        {status === "error" && (
+        {validationError && (
+          <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#E8373A] text-center">
+            {validationError}
+          </p>
+        )}
+        {status === "error" && !validationError && (
           <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#E8373A] text-center">
             Something went wrong. Please try again.
           </p>
