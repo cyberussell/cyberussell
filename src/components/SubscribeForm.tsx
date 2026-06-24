@@ -37,7 +37,7 @@ export default function SubscribeForm() {
     try {
       const params = new URLSearchParams({ name, email });
       await fetch(
-        `https://script.google.com/macros/s/AKfycbyf1UclH7xhnliCpniNr39qJafCOYekZVHJbirXWPm-QnRtRxHReygMwa_ZNT5W6Emc/exec?${params.toString()}`,
+        `https://script.google.com/macros/s/AKfycbwsbD7W3ZYIte7UHvzvkWfNQ4pZ1QwVB5alvt3ok3u7lYVz1pyUtDiTTIcKI9Ebfp05/exec?${params.toString()}`,
         { method: "GET", mode: "no-cors" }
       );
       setStatus("success");
