@@ -20,13 +20,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: post.description,
       url: `https://www.cyberussell.com/blog/${slug}`,
       type: "article",
-      images: [{ url: slug === "how-to-earn-money-online-philippines-beginners" ? "/blog-og-skill-price-v2.jpg" : slug === "tiktok-creator-requirements-to-earn" ? "/blog_2_tiktok_will_pay_you.jpg" : "/og-image.jpg", width: 1200, height: 630 }],
+      images: [{ url: slug === "how-to-earn-money-online-philippines-beginners" ? "/blog-og-skill-price-v2.jpg" : slug === "tiktok-creator-requirements-to-earn" ? "/blog_2_tiktok_will_pay_you.png" : "/og-image.jpg", width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
-      images: [slug === "how-to-earn-money-online-philippines-beginners" ? "/blog-og-skill-price-v2.jpg" : slug === "tiktok-creator-requirements-to-earn" ? "/blog_2_tiktok_will_pay_you.jpg" : "/og-image.jpg"],
+      images: [slug === "how-to-earn-money-online-philippines-beginners" ? "/blog-og-skill-price-v2.jpg" : slug === "tiktok-creator-requirements-to-earn" ? "/blog_2_tiktok_will_pay_you.png" : "/og-image.jpg"],
     },
   };
 }
