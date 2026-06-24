@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About — Cyberussell",
-  description: "Russell's story — from Isabela, Cagayan Valley, to building Cyberussell for Filipinos who want to earn online.",
+  description: "The story behind Cyberussell — why it was built, and who it's for.",
   openGraph: {
     title: "About Cyberussell — Built by a Filipino, for Filipinos",
-    description: "Russell's story — from Isabela, Cagayan Valley, to building Cyberussell for Filipinos who want to earn online.",
+    description: "The story behind Cyberussell — why it was built, and who it's for.",
     url: "https://www.cyberussell.com/about",
     images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
   },
@@ -29,21 +29,25 @@ export default function AboutPage() {
 
         <div className="flex flex-col gap-6 font-[family-name:var(--font-inter)] text-[16px] text-white/65 leading-[1.9]">
           <p>
-            My name is <strong className="text-white">Russell Parayno</strong>. I&apos;m from <strong className="text-white">Isabela, Cagayan Valley</strong> — the province. Not Manila. Not a tech hub. A place where most people don&apos;t know that earning online is even possible, let alone realistic.
+            When the pandemic hit, I moved out of the city. And with that came a choice: keep scrolling, keep checking what everyone else was doing with their lives — or do something that actually mattered.
           </p>
 
           <p>
-            I started trying to earn online years ago. I made every mistake you can imagine. I fell for schemes that promised fast money. I worked on the wrong platforms. I undercharged because I didn&apos;t know what my skills were worth. I gave up and came back more times than I can count.
+            I chose to figure out how to earn online. Not because I had it all figured out. But because I was tired of wasting time on things that gave me nothing back.
           </p>
 
           <div className="bg-[#18181F] border-l-2 border-[#FFD23F] pl-6 py-4 rounded-r-xl">
             <p className="text-white/80 italic">
-              &ldquo;7 years of mistakes. Slow progress. A lot of wasted time on the wrong things. But eventually — it worked.&rdquo;
+              &ldquo;I was done scrolling through other people&apos;s lives. I wanted to build my own.&rdquo;
             </p>
           </div>
 
           <p>
-            When I finally started earning consistently online, I realized the biggest problem wasn&apos;t skill. It wasn&apos;t even platform access. The problem was <strong className="text-white">information</strong>. Most guides are written for Americans, or for people in Metro Manila with fast internet and a degree. Nobody was writing practical, honest, research-backed guides specifically for Filipinos from the province.
+            I made every mistake. Fell for the wrong schemes. Worked on the wrong platforms. Undercharged because I didn&apos;t know what I was worth. But I kept going — and eventually, it worked.
+          </p>
+
+          <p>
+            When it did, I realized the hardest part was never the skill. It was the <strong className="text-white">information</strong>. Most guides are built for other markets. Nobody was writing something honest, practical, and research-backed specifically for Filipinos who want to stop wasting time and start earning.
           </p>
 
           <p>
@@ -75,7 +79,7 @@ export default function AboutPage() {
           </p>
 
           <p className="text-white font-bold">
-            — Russell
+            — Cyberussell
           </p>
         </div>
 
