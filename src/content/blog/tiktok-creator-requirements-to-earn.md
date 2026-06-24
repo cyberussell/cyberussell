@@ -1,7 +1,7 @@
 ---
 title: "What You Actually Need Before You Can Earn on TikTok"
 description: "Before TikTok pays you a single peso, there are real requirements you have to meet. Here is exactly what they are and how to hit them faster."
-date: "2026-06-24"
+date: "2026-06-25"
 lang: en
 tags: ["TikTok", "content creator", "earn online", "Philippines"]
 readTime: "6 min read"
