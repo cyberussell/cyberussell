@@ -114,14 +114,38 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-sans text-[20px] font-bold text-white mb-3">9. Changes to This Policy</h2>
+            <h2 className="font-sans text-[20px] font-bold text-white mb-3">9. Data Deletion Request</h2>
+            <p>
+              Cyberussell does not require account creation. However, if you have submitted your email address through our subscribe form or contact form and would like your data permanently removed, you can request deletion at any time.
+            </p>
+            <p className="mt-3">To request deletion of your data:</p>
+            <ul className="flex flex-col gap-2 mt-3 list-none">
+              {[
+                "Email us at cyberussellofficial@gmail.com with the subject line \"Data Deletion Request\"",
+                "Include the email address you used when subscribing or contacting us",
+                "We will permanently delete your data from our records within 7 business days",
+                "You will receive a confirmation email once the deletion is complete",
+              ].map((item) => (
+                <li key={item} className="flex gap-3 items-start">
+                  <span className="text-[#E8373A] mt-1 shrink-0">→</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3">
+              Note: Deleting your data removes it from our subscriber list and contact records. It does not affect anonymized analytics data collected by Google Analytics, as that data is not linked to your identity.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="font-sans text-[20px] font-bold text-white mb-3">10. Changes to This Policy</h2>
             <p>
               We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated date. Continued use of the site after changes constitutes acceptance of the updated policy.
             </p>
           </section>
 
           <section>
-            <h2 className="font-sans text-[20px] font-bold text-white mb-3">10. Contact</h2>
+            <h2 className="font-sans text-[20px] font-bold text-white mb-3">11. Contact</h2>
             <p>
               Questions about this Privacy Policy? Reach us at{" "}
               <a href="mailto:cyberussellofficial@gmail.com" className="text-[#FFD23F] hover:underline">
