@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
-  { label: "The Problem", href: "#problema" },
-  { label: "Ways to Earn", href: "#paraan" },
-  { label: "Skill Finder", href: "#skill-finder" },
-  { label: "Free Downloads", href: "#downloads" },
+  { label: "The Problem", href: "/#problema" },
+  { label: "Ways to Earn", href: "/#paraan" },
+  { label: "Skill Finder", href: "/#skill-finder" },
+  { label: "Free Downloads", href: "/#downloads" },
   { label: "Find Work", href: "/platforms" },
   { label: "Blog", href: "/blog" },
 ];
@@ -39,7 +39,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-[#0F0F1A] border-b border-white/10">
       <div className="flex justify-between items-center w-full h-[58px] px-6 md:px-10 max-w-7xl mx-auto">
         <a
-          href="#hero"
+          href="/"
           className="font-sans text-[20px] font-bold tracking-tight flex items-center"
           onClick={handleNavClick}
         >
@@ -66,7 +66,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3">
           <a
-            href="#downloads"
+            href="/#downloads"
             className="bg-[#E8373A] text-white text-[13px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] px-[18px] py-[9px] rounded-[6px] min-h-[36px] hover:opacity-90 transition-all"
           >
             Download Free

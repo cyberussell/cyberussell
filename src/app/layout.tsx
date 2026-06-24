@@ -146,6 +146,24 @@ export default function RootLayout({
             })
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Cyberussell",
+              "url": "https://www.cyberussell.com",
+              "logo": "https://www.cyberussell.com/favicon.png",
+              "description": "Data-backed guides for Filipinos who want to earn online. Free. No email. No payment.",
+              "sameAs": [
+                "https://www.tiktok.com/@cyberussell",
+                "https://www.facebook.com/cyberussellofficial",
+                "https://www.youtube.com/@CyberRussell"
+              ]
+            })
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-[#0F0F1A] text-white antialiased overflow-x-hidden">
         {children}

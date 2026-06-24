@@ -37,8 +37,26 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: { "@type": "Organization", name: "Cyberussell" },
+    publisher: {
+      "@type": "Organization",
+      name: "Cyberussell",
+      logo: { "@type": "ImageObject", url: "https://www.cyberussell.com/favicon.png" },
+    },
+    mainEntityOfPage: `https://www.cyberussell.com/blog/${slug}`,
+    image: `https://www.cyberussell.com${slug === "how-to-earn-money-online-philippines-beginners" ? "/blog-og-skill-price-v2.jpg" : slug === "tiktok-creator-requirements-to-earn" ? "/blog_2_tiktok_will_pay_you.png" : "/og-image.jpg"}`,
+  };
+
   return (
     <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
     <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-2xl mx-auto">

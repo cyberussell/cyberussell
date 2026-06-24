@@ -7,7 +7,8 @@ module.exports = {
   additionalPaths: async (config) => [
     { loc: '/', priority: 1.0, changefreq: 'weekly' },
     { loc: '/platforms', priority: 0.8, changefreq: 'monthly' },
-    { loc: '/share', priority: 0.5, changefreq: 'monthly' },
+    { loc: '/about', priority: 0.7, changefreq: 'monthly' },
+    { loc: '/privacy', priority: 0.3, changefreq: 'yearly' },
     { loc: '/contact', priority: 0.6, changefreq: 'monthly' },
   ],
 };
