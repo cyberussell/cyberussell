@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Skill-to-Income Worksheet — Cyberussell",
     description: "Answer 4 sections and get your personalized online income path. Free interactive worksheet. Takes 5 minutes.",
-    url: "https://cyberussell.com/guides/worksheet",
+    url: "https://www.cyberussell.com/guides/worksheet",
     siteName: "Cyberussell",
-    images: [{ url: "https://cyberussell.com/og/og-worksheet.png", width: 1200, height: 630, alt: "Skill-to-Income Worksheet — Cyberussell" }],
+    images: [{ url: "https://www.cyberussell.com/og/og-worksheet.jpg", width: 1200, height: 630, alt: "Skill-to-Income Worksheet — Cyberussell" }],
     locale: "fil_PH",
     type: "website",
   },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Skill-to-Income Worksheet — Cyberussell",
     description: "Answer 4 sections and get your personalized online income path. Free interactive worksheet. Takes 5 minutes.",
-    images: ["https://cyberussell.com/og/og-worksheet.png"],
+    images: ["https://www.cyberussell.com/og/og-worksheet.jpg"],
   },
 };
 

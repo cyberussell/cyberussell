@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: "8 Ways to Earn Online as a Filipino — Cyberussell",
     description: "Real income data, exact tools, and honest reality checks for 8 proven ways Filipinos earn online. Free. No email.",
-    url: "https://cyberussell.com/guides/8-ways",
+    url: "https://www.cyberussell.com/guides/8-ways",
     siteName: "Cyberussell",
-    images: [{ url: "https://cyberussell.com/og/og-8ways.png", width: 1200, height: 630, alt: "8 Ways to Earn Online as a Filipino — Cyberussell" }],
+    images: [{ url: "https://www.cyberussell.com/og/og-8ways.png", width: 1200, height: 630, alt: "8 Ways to Earn Online as a Filipino — Cyberussell" }],
     locale: "fil_PH",
     type: "website",
   },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "8 Ways to Earn Online as a Filipino — Cyberussell",
     description: "Real income data, exact tools, and honest reality checks for 8 proven ways Filipinos earn online. Free. No email.",
-    images: ["https://cyberussell.com/og/og-8ways.png"],
+    images: ["https://www.cyberussell.com/og/og-8ways.png"],
   },
 };
 

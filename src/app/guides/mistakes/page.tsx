@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: "5 Reasons Filipinos Fail at Earning Online — Cyberussell",
     description: "The honest mistakes that kill most online income attempts before they start — and exactly how to avoid each one.",
-    url: "https://cyberussell.com/guides/mistakes",
+    url: "https://www.cyberussell.com/guides/mistakes",
     siteName: "Cyberussell",
-    images: [{ url: "https://cyberussell.com/og/og-mistakes.png", width: 1200, height: 630, alt: "5 Reasons Filipinos Fail at Earning Online — Cyberussell" }],
+    images: [{ url: "https://www.cyberussell.com/og/og-mistakes.jpg", width: 1200, height: 630, alt: "5 Reasons Filipinos Fail at Earning Online — Cyberussell" }],
     locale: "fil_PH",
     type: "website",
   },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "5 Reasons Filipinos Fail at Earning Online — Cyberussell",
     description: "The honest mistakes that kill most online income attempts before they start — and exactly how to avoid each one.",
-    images: ["https://cyberussell.com/og/og-mistakes.png"],
+    images: ["https://www.cyberussell.com/og/og-mistakes.jpg"],
   },
 };
 
