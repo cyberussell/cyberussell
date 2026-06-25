@@ -5,14 +5,21 @@ import ClaudeGuide from "@/components/ClaudeGuide";
 
 export const metadata: Metadata = {
   title: "How to Use Claude AI to Start Earning Online — Cyberussell",
-  description:
-    "A real Filipino's guide to using Claude AI to find direction, build a business strategy, and start earning online. Real prompts. Honest story. Free.",
+  description: "7 steps with 10 copy-ready prompts. A real Filipino's guide to using Claude AI to find direction and earn.",
   openGraph: {
     title: "How to Use Claude AI to Start Earning Online — Cyberussell",
-    description:
-      "A real Filipino's guide to using Claude AI to find direction, build a business strategy, and start earning online.",
-    url: "https://www.cyberussell.com/guides/claude-ai",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    description: "7 steps with 10 copy-ready prompts. A real Filipino's guide to using Claude AI to find direction and earn.",
+    url: "https://cyberussell.com/guides/claude-ai",
+    siteName: "Cyberussell",
+    images: [{ url: "https://cyberussell.com/og/og-claude-guide.png", width: 1200, height: 630, alt: "How to Use Claude AI to Start Earning Online — Cyberussell" }],
+    locale: "fil_PH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "How to Use Claude AI to Start Earning Online — Cyberussell",
+    description: "7 steps with 10 copy-ready prompts. A real Filipino's guide to using Claude AI to find direction and earn.",
+    images: ["https://cyberussell.com/og/og-claude-guide.png"],
   },
 };
 

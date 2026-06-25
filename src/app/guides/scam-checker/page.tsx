@@ -5,8 +5,22 @@ import ScamChecker from "@/components/ScamChecker";
 
 export const metadata: Metadata = {
   title: "Online Scam Checker — Cyberussell",
-  description:
-    "Is that earn-online opportunity real or fake? Check it against known Philippine scam patterns before you click, pay, or share your personal information.",
+  description: "Is that earn-online opportunity real or fake? Check it against known Philippine scam patterns. Free. Instant. No email.",
+  openGraph: {
+    title: "Online Scam Checker — Cyberussell",
+    description: "Is that earn-online opportunity real or fake? Check it against known Philippine scam patterns. Free. Instant. No email.",
+    url: "https://cyberussell.com/guides/scam-checker",
+    siteName: "Cyberussell",
+    images: [{ url: "https://cyberussell.com/og/og-scam-checker.png", width: 1200, height: 630, alt: "Online Scam Checker — Cyberussell" }],
+    locale: "fil_PH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Online Scam Checker — Cyberussell",
+    description: "Is that earn-online opportunity real or fake? Check it against known Philippine scam patterns. Free. Instant. No email.",
+    images: ["https://cyberussell.com/og/og-scam-checker.png"],
+  },
 };
 
 export default function ScamCheckerPage() {

@@ -5,12 +5,21 @@ import EightWaysGuide from "@/components/EightWaysGuide";
 
 export const metadata: Metadata = {
   title: "8 Ways to Earn Online as a Filipino — Cyberussell",
-  description: "Interactive guide to 8 proven income paths for Filipinos — realistic pay, platforms, tools, and step-by-step instructions. Free.",
+  description: "Real income data, exact tools, and honest reality checks for 8 proven ways Filipinos earn online. Free. No email.",
   openGraph: {
-    title: "8 Ways to Earn Online as a Filipino",
-    description: "Interactive guide to 8 proven income paths for Filipinos — realistic pay, platforms, tools, and step-by-step instructions.",
-    url: "https://www.cyberussell.com/guides/8-ways",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    title: "8 Ways to Earn Online as a Filipino — Cyberussell",
+    description: "Real income data, exact tools, and honest reality checks for 8 proven ways Filipinos earn online. Free. No email.",
+    url: "https://cyberussell.com/guides/8-ways",
+    siteName: "Cyberussell",
+    images: [{ url: "https://cyberussell.com/og/og-8ways.png", width: 1200, height: 630, alt: "8 Ways to Earn Online as a Filipino — Cyberussell" }],
+    locale: "fil_PH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "8 Ways to Earn Online as a Filipino — Cyberussell",
+    description: "Real income data, exact tools, and honest reality checks for 8 proven ways Filipinos earn online. Free. No email.",
+    images: ["https://cyberussell.com/og/og-8ways.png"],
   },
 };
 

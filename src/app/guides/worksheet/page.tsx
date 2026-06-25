@@ -5,12 +5,21 @@ import SkillWorksheet from "@/components/SkillWorksheet";
 
 export const metadata: Metadata = {
   title: "Skill-to-Income Worksheet — Cyberussell",
-  description: "Identify your marketable skills and get a personalized income path recommendation. Free, no email required.",
+  description: "Answer 4 sections and get your personalized online income path. Free interactive worksheet. Takes 5 minutes.",
   openGraph: {
     title: "Skill-to-Income Worksheet — Cyberussell",
-    description: "Identify your marketable skills and get a personalized income path recommendation.",
-    url: "https://www.cyberussell.com/guides/worksheet",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    description: "Answer 4 sections and get your personalized online income path. Free interactive worksheet. Takes 5 minutes.",
+    url: "https://cyberussell.com/guides/worksheet",
+    siteName: "Cyberussell",
+    images: [{ url: "https://cyberussell.com/og/og-worksheet.png", width: 1200, height: 630, alt: "Skill-to-Income Worksheet — Cyberussell" }],
+    locale: "fil_PH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Skill-to-Income Worksheet — Cyberussell",
+    description: "Answer 4 sections and get your personalized online income path. Free interactive worksheet. Takes 5 minutes.",
+    images: ["https://cyberussell.com/og/og-worksheet.png"],
   },
 };
 

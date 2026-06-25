@@ -5,8 +5,22 @@ import MistakesGuide from "@/components/MistakesGuide";
 
 export const metadata: Metadata = {
   title: "5 Reasons Filipinos Fail at Earning Online — Cyberussell",
-  description:
-    "The honest mistakes that kill most online income attempts before they start — and exactly how to avoid each one. Based on real data from Filipino freelancers.",
+  description: "The honest mistakes that kill most online income attempts before they start — and exactly how to avoid each one.",
+  openGraph: {
+    title: "5 Reasons Filipinos Fail at Earning Online — Cyberussell",
+    description: "The honest mistakes that kill most online income attempts before they start — and exactly how to avoid each one.",
+    url: "https://cyberussell.com/guides/mistakes",
+    siteName: "Cyberussell",
+    images: [{ url: "https://cyberussell.com/og/og-mistakes.png", width: 1200, height: 630, alt: "5 Reasons Filipinos Fail at Earning Online — Cyberussell" }],
+    locale: "fil_PH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "5 Reasons Filipinos Fail at Earning Online — Cyberussell",
+    description: "The honest mistakes that kill most online income attempts before they start — and exactly how to avoid each one.",
+    images: ["https://cyberussell.com/og/og-mistakes.png"],
+  },
 };
 
 export default function MistakesGuidePage() {
