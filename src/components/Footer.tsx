@@ -25,7 +25,7 @@ const linkColumns = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0F0F1A] border-t border-white/[0.08]">
+    <footer className="bg-[#0F0F1A] border-t border-white/[0.08] pb-16 md:pb-0">
       {/* Top section */}
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-11 flex flex-col md:flex-row justify-between items-start gap-10">
         {/* Logo + tagline + description */}
