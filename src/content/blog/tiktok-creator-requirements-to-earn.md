@@ -1,10 +1,11 @@
 ---
 title: "What You Actually Need Before You Can Earn on TikTok"
 description: "Before TikTok pays you a single peso, there are real requirements you have to meet. Here is exactly what they are and how to hit them faster."
-date: "2026-06-25"
+date: "2026-06-24"
 lang: en
 tags: ["TikTok", "content creator", "earn online", "Philippines"]
 readTime: "6 min read"
+heroTitle: "What You {red}Actually Need{/red} Before You Can {yellow}Earn on TikTok{/yellow}"
 ---
 
 TikTok is not a get-rich-quick platform. But it is one of the fastest ways a Filipino creator can go from zero to earning real money online — if you know what the requirements actually are before you start.

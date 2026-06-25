@@ -10,6 +10,17 @@ import {
 import SkillFinderWidget from "./SkillFinderWidget";
 import HeroCTA from "./HeroCTA";
 
+const COLOR_MAP: Record<string, string> = { red: "text-[#E8373A]", yellow: "text-[#FFD23F]" };
+
+function renderHeroTitle(raw: string) {
+  const parts = raw.split(/(\{(?:red|yellow)\}.*?\{\/(?:red|yellow)\})/g);
+  return parts.map((part, i) => {
+    const match = part.match(/^\{(red|yellow)\}(.*?)\{\/\1\}$/);
+    if (match) return <span key={i} className={COLOR_MAP[match[1]]}>{match[2]}</span>;
+    return <span key={i} className="text-white">{part}</span>;
+  });
+}
+
 export default function Hero() {
   const posts = getAllPosts();
   const latestPost = posts[0] ?? null;
@@ -53,8 +64,8 @@ export default function Hero() {
 
           {featuredPost ? (
             <a href={`/blog/${featuredPost.slug}`} className="group flex flex-col gap-4">
-              <h1 className="font-sans text-[34px] md:text-[52px] font-extrabold leading-[1.1] tracking-tight text-white group-hover:text-[#FFD23F] transition-colors">
-                {featuredPost.title}
+              <h1 className="font-sans text-[34px] md:text-[52px] font-extrabold leading-[1.1] tracking-tight">
+                {featuredPost.heroTitle ? renderHeroTitle(featuredPost.heroTitle) : <span className="text-white">{featuredPost.title}</span>}
               </h1>
               <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/65 max-w-[480px] leading-[1.8]">
                 {featuredPost.description}

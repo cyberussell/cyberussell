@@ -15,6 +15,7 @@ export type Post = {
   lang: "en" | "fil";
   tags: string[];
   readTime: string;
+  heroTitle?: string;
   content?: string;
 };
 
@@ -34,6 +35,7 @@ export function getAllPosts(): Post[] {
         lang: data.lang ?? "en",
         tags: data.tags ?? [],
         readTime: data.readTime ?? "5 min read",
+        heroTitle: data.heroTitle,
       };
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());

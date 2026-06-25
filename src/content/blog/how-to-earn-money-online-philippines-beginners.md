@@ -1,10 +1,11 @@
 ---
 title: "Your Skill Has a Price. Most Filipinos Just Don't Know What It Is."
 description: "A practical, honest guide for Filipinos who want to start earning online — discover how to turn what you already know into real income."
-date: "2026-06-24"
+date: "2026-06-23"
 lang: en
 tags: ["earn online", "Philippines", "beginners", "freelancing"]
 readTime: "7 min read"
+heroTitle: "Your Skill Has a Price. {red}Most Filipinos{/red} Just {yellow}Don't Know What It Is.{/yellow}"
 ---
 
 Millions of Filipinos are earning money online right now — from Metro Manila, from Davao, from Isabela, from small barangays with just a smartphone and a WiFi connection. If you are reading this, you are already asking the right question.
