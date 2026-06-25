@@ -11,7 +11,9 @@ import SkillFinderWidget from "./SkillFinderWidget";
 import HeroCTA from "./HeroCTA";
 
 export default function Hero() {
-  const latestPost = getAllPosts()[0] ?? null;
+  const posts = getAllPosts();
+  const latestPost = posts[0] ?? null;
+  const featuredPost = posts[1] ?? latestPost;
 
   return (
     <main id="hero" className="bg-[#0F0F1A] relative flex flex-col flex-grow overflow-hidden">
@@ -49,17 +51,29 @@ export default function Hero() {
             </span>
           </div>
 
-          <h1 className="font-sans text-[34px] md:text-[52px] font-extrabold leading-[1.1] tracking-tight">
-            <span className="text-white">2.41 million</span>{" "}
-            <span className="text-[#E8373A]">Filipinos have no job.</span>
-            <br />
-            <span className="text-white">Will you be the next one</span>{" "}
-            <span className="text-[#FFD23F]">to break free?</span>
-          </h1>
-
-          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/65 max-w-[480px] leading-[1.8]">
-            {HERO_SUBTEXT}
-          </p>
+          {featuredPost ? (
+            <a href={`/blog/${featuredPost.slug}`} className="group flex flex-col gap-4">
+              <h1 className="font-sans text-[34px] md:text-[52px] font-extrabold leading-[1.1] tracking-tight text-white group-hover:text-[#FFD23F] transition-colors">
+                {featuredPost.title}
+              </h1>
+              <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/65 max-w-[480px] leading-[1.8]">
+                {featuredPost.description}
+              </p>
+            </a>
+          ) : (
+            <>
+              <h1 className="font-sans text-[34px] md:text-[52px] font-extrabold leading-[1.1] tracking-tight">
+                <span className="text-white">2.41 million</span>{" "}
+                <span className="text-[#E8373A]">Filipinos have no job.</span>
+                <br />
+                <span className="text-white">Will you be the next one</span>{" "}
+                <span className="text-[#FFD23F]">to break free?</span>
+              </h1>
+              <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/65 max-w-[480px] leading-[1.8]">
+                {HERO_SUBTEXT}
+              </p>
+            </>
+          )}
 
           <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/25 italic">
             {HERO_SOURCE}
