@@ -284,7 +284,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
 
 // ─── Downloads ───────────────────────────────────────────────────────────────
 
-export type GuideIcon = "BarChart2" | "BookOpen" | "ClipboardList" | "Bot" | "TrendingUp" | "MapPin";
+export type GuideIcon = "BarChart2" | "BookOpen" | "ClipboardList" | "Bot" | "ShieldAlert" | "AlertTriangle";
 
 export type Guide = {
   icon: GuideIcon;
@@ -339,7 +339,7 @@ export const GUIDES: Guide[] = [
     file: "/guides/claude-ai",
   },
   {
-    icon: "TrendingUp",
+    icon: "ShieldAlert",
     iconColor: "#E8373A",
     previewBg: "rgba(232,55,58,0.08)",
     title: "Online Scam Checker",
@@ -349,7 +349,7 @@ export const GUIDES: Guide[] = [
     file: "/guides/scam-checker",
   },
   {
-    icon: "MapPin",
+    icon: "AlertTriangle",
     iconColor: "#FFD23F",
     previewBg: "rgba(255,210,63,0.08)",
     title: "5 Reasons Filipinos Fail at Earning Online",

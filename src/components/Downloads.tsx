@@ -5,8 +5,8 @@ import {
   BookOpen,
   ClipboardList,
   Bot,
-  TrendingUp,
-  MapPin,
+  ShieldAlert,
+  AlertTriangle,
   Download,
   Bell,
   type LucideIcon,
@@ -19,8 +19,8 @@ const ICON_MAP: Record<string, LucideIcon> = {
   BookOpen,
   ClipboardList,
   Bot,
-  TrendingUp,
-  MapPin,
+  ShieldAlert,
+  AlertTriangle,
 };
 
 export default function Downloads() {
@@ -60,7 +60,7 @@ export default function Downloads() {
                 >
                   <Icon size={48} color={iconColor} strokeWidth={1.4} aria-hidden="true" />
                   <span className="absolute top-2 right-3 text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold tracking-[1px]">
-                    PDF
+                    {file?.startsWith("/guides") ? "INTERACTIVE" : "PDF"}
                   </span>
                 </div>
 
