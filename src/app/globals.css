@@ -59,3 +59,17 @@ body {
 .prose-cyberussell td { padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); }
 .prose-cyberussell blockquote { border-left: 3px solid #E8373A; padding-left: 1rem; color: rgba(255,255,255,0.55); font-style: italic; margin: 1.5rem 0; }
 .prose-cyberussell hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2rem 0; }
+
+@media print {
+  body { background: #fff !important; color: #111 !important; }
+  header, footer, nav, button, .sticky { display: none !important; }
+  #worksheet-results { color: #111; }
+  #worksheet-results * { color: #111 !important; border-color: #ddd !important; background: #fff !important; }
+  #worksheet-results h2, #worksheet-results h3 { color: #000 !important; }
+  #worksheet-results span[class*="text-[#00C97A]"] { color: #16a34a !important; }
+  #worksheet-results span[class*="text-[#FFD23F]"] { color: #b45309 !important; }
+  #worksheet-results span[class*="text-[#E8373A]"] { color: #dc2626 !important; }
+  #worksheet-results div[class*="bg-[#FFD23F]"] { background: #fef9c3 !important; }
+  #worksheet-results div[class*="bg-[#18181F]"] { background: #f8f8f8 !important; }
+  #worksheet-results div[class*="bg-[#0F0F1A]"] { background: #f0f0f0 !important; }
+}
