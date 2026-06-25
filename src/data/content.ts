@@ -334,8 +334,9 @@ export const GUIDES: Guide[] = [
     previewBg: "rgba(59,130,246,0.08)",
     title: "How to Use Claude AI to Start Earning",
     desc: "The exact process used to leverage AI as an assistant — not a replacement.",
-    meta: "Coming soon",
-    active: false,
+    meta: "Interactive · 7 Steps · 10 Copy-Ready Prompts",
+    active: true,
+    file: "/guides/claude-ai",
   },
   {
     icon: "TrendingUp",

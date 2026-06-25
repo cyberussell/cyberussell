@@ -82,7 +82,7 @@ export default function Downloads() {
                           href={file}
                           className="bg-[#FFD23F]/10 border border-[#FFD23F]/25 text-[#FFD23F] font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] hover:bg-[#FFD23F]/20 transition-colors flex items-center gap-1.5 min-h-[36px]"
                         >
-                          {file.includes("worksheet") ? "Open Worksheet →" : "Explore Guide →"}
+                          {file.includes("worksheet") ? "Open Worksheet →" : file.includes("claude") ? "Open Guide →" : "Explore Guide →"}
                         </a>
                       ) : (
                         <a
