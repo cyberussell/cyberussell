@@ -41,118 +41,161 @@ type Result = {
 };
 
 function getResults(skills: string[], situations: string[], goals: string[]): Result[] {
-  const results: Result[] = [];
+  const all: (Result & { score: number })[] = [];
 
   const hasPhone = situations.includes("phone");
-  const slowNet = situations.includes("slownet");
   const noCapital = situations.includes("nocapital");
   const shy = situations.includes("shy");
+  const partTime = situations.includes("parttime");
+  const fullTime = situations.includes("fulltime");
+  const slowNet = situations.includes("slownet");
   const wantsQuick = goals.includes("quick");
   const wantsStable = goals.includes("stable");
   const wantsHigh = goals.includes("high");
   const wantsPassive = goals.includes("passive");
 
-  if (skills.includes("admin") && !hasPhone) {
-    results.push({
-      title: "Virtual Assistant",
-      earning: "₱15,000–₱65,000/mo",
-      why: wantsStable ? "VAs get stable monthly retainers — exactly what you want." : "Most beginner-friendly online job with highest demand for Filipinos.",
-      firstStep: "Create your OnlineJobs.ph profile today and apply to 5 VA jobs.",
-      link: "/guides/8-ways",
-    });
-  }
-
-  if (skills.includes("teaching") && !shy) {
-    results.push({
-      title: "Online English Teaching",
-      earning: "₱10,000–₱55,000/mo",
-      why: "Filipinos are globally recognized as excellent English teachers. Fast to start.",
-      firstStep: "Create a Preply tutor profile with a 60-second intro video.",
-      link: "/guides/8-ways",
-    });
-  }
-
-  if (skills.includes("writing") && !hasPhone) {
-    results.push({
-      title: "Freelance Writing",
-      earning: "₱8,000–₱40,000/mo",
-      why: wantsHigh ? "Copywriters earn ₱10/word — the ceiling is high if you specialize." : "Every business needs content. Strong English = instant advantage.",
-      firstStep: "Write one 800-word sample article on Medium today.",
-      link: "/guides/8-ways",
-    });
-  }
-
-  if (skills.includes("design")) {
-    results.push({
-      title: "Canva Design",
-      earning: "₱5,000–₱30,000/mo",
-      why: wantsPassive ? "Sell Canva templates for passive income on Gumroad." : "Free tools, low barrier. Local businesses always need design.",
-      firstStep: "Create a free Canva account and design one sample logo today.",
-      link: "/guides/8-ways",
-    });
-  }
-
-  if (skills.includes("social") || skills.includes("selling")) {
-    results.push({
-      title: "TikTok Affiliate",
-      earning: "₱3,000–₱50,000/mo",
-      why: shy ? "Works without showing your face — product-focused content." : "Zero capital, no inventory. One viral video = thousands in commission.",
-      firstStep: "Post one TikTok video about a product you genuinely use today.",
-      link: "/guides/8-ways",
-    });
-  }
-
-  if (skills.includes("selling") && !noCapital) {
-    results.push({
-      title: "Online Selling",
-      earning: "₱2,000–₱100,000+/mo",
-      why: wantsQuick ? "Fastest path to first income — list products and sell this week." : "Philippine e-commerce is $20B in 2026. Shopee and TikTok Shop are free to start.",
-      firstStep: "Open a free Shopee Seller account and list your first product.",
-      link: "/guides/8-ways",
-    });
-  }
-
-  if (skills.includes("video") && !hasPhone) {
-    results.push({
-      title: "Video Editing",
-      earning: "₱5,000–₱30,000/mo",
-      why: "40% demand growth in 2025. Monthly retainers = stable income.",
-      firstStep: "Download CapCut and edit one 60-second sample video today.",
-      link: "/guides/8-ways",
-    });
-  }
-
-  if (skills.includes("ai") && !hasPhone) {
-    results.push({
-      title: "AI-Assisted Services",
-      earning: "₱20,000–₱100,000+/mo",
-      why: "Highest earning potential. AI makes you 10x faster than traditional freelancers.",
-      firstStep: "Go to claude.ai — ask it what AI service you should offer to PH businesses.",
-      link: "/guides/8-ways",
-    });
-  }
-
-  if (wantsQuick && noCapital && results.length === 0) {
-    results.push({
-      title: "Data Entry / Microtasks",
-      earning: "₱8,000–₱15,000/mo",
-      why: "Lowest barrier — if you can type, you qualify. Get started this week.",
+  const entries: {
+    id: string;
+    title: string;
+    earning: string;
+    skills: string[];
+    blocked: boolean;
+    whyMap: Record<string, string>;
+    defaultWhy: string;
+    firstStep: string;
+  }[] = [
+    {
+      id: "va", title: "Virtual Assistant", earning: "₱15,000–₱65,000/mo",
+      skills: ["admin", "writing", "social"],
+      blocked: hasPhone,
+      whyMap: { stable: "VAs get stable monthly retainers — exactly what you want.", quick: "VA jobs are the fastest to land — many hire within 1–2 weeks.", high: "Specialized VAs (real estate, ecommerce) earn ₱65,000+/mo." },
+      defaultWhy: "Most beginner-friendly online job. Filipinos are top-ranked VAs worldwide.",
+      firstStep: "Create your OnlineJobs.ph profile today. Set rate at ₱150/hour. Apply to 5 jobs tonight.",
+    },
+    {
+      id: "teaching", title: "Online English Teaching", earning: "₱10,000–₱55,000/mo",
+      skills: ["teaching"],
+      blocked: shy || hasPhone,
+      whyMap: { stable: "Build 5–10 regular weekly students for predictable monthly income.", passive: "Repeat students book weekly — income becomes semi-automatic.", quick: "Preply approves tutors fast — you can get your first student this week." },
+      defaultWhy: "Filipinos are globally recognized as excellent English teachers. Flexible schedule.",
+      firstStep: "Go to Preply.com now. Create your tutor profile, record a 60-second intro video.",
+    },
+    {
+      id: "writing", title: "Freelance Writing", earning: "₱8,000–₱40,000/mo",
+      skills: ["writing"],
+      blocked: hasPhone,
+      whyMap: { high: "Copywriters earn ₱10/word — the ceiling is high if you specialize.", stable: "Monthly retainer clients give you predictable writing income.", passive: "SEO articles you write keep earning you referrals for years." },
+      defaultWhy: "Every business needs content. Strong English = instant advantage.",
+      firstStep: "Choose your niche today. Write one 800-word sample article on Medium.",
+    },
+    {
+      id: "design", title: "Canva Design", earning: "₱5,000–₱30,000/mo",
+      skills: ["design"],
+      blocked: false,
+      whyMap: { passive: "Sell Canva templates on Gumroad — create once, earn forever.", quick: "Local businesses need logos and social media graphics this week. Offer yours.", stable: "Monthly social media design packages = recurring income." },
+      defaultWhy: hasPhone ? "Canva works on mobile too — start designing on your phone today." : "Free tools, low barrier. Local businesses always need design.",
+      firstStep: "Create a free Canva account today. Design one sample logo for a fictional Filipino business.",
+    },
+    {
+      id: "tiktok", title: "TikTok Affiliate", earning: "₱3,000–₱50,000/mo",
+      skills: ["social", "cooking", "selling", "tech"],
+      blocked: false,
+      whyMap: { quick: "Post today, earn commission this week if your video gets traction.", passive: "Older videos keep earning — your content works while you sleep.", high: "Top Filipino affiliates earn ₱50,000+/mo from commission alone." },
+      defaultWhy: shy ? "Works without showing your face — product-focused content converts well." : "Zero capital, no inventory. One viral video = thousands in commission.",
+      firstStep: "Post one TikTok video about a product you genuinely use today. That is your first affiliate content.",
+    },
+    {
+      id: "selling", title: "Online Selling", earning: "₱2,000–₱100,000+/mo",
+      skills: ["selling", "cooking"],
+      blocked: noCapital,
+      whyMap: { quick: "Fastest path to first sale — list products on Shopee and sell this week.", high: "TikTok Live sellers make hundreds of orders in a single session.", stable: "Once you find a winning product, income scales predictably." },
+      defaultWhy: "Philippine e-commerce is $20B in 2026. Shopee and TikTok Shop are free to start.",
+      firstStep: "Open a free Shopee Seller account. Take 5 product photos. List your first item today.",
+    },
+    {
+      id: "video", title: "Video Editing", earning: "₱5,000–₱30,000/mo",
+      skills: ["video"],
+      blocked: hasPhone,
+      whyMap: { stable: "Monthly retainers from creators = stable recurring income.", high: "YouTube editors earn ₱5,000/video. 6 videos/month = ₱30,000.", quick: "TikTok creators need editors NOW. Offer your first edit for free to get started." },
+      defaultWhy: "40% demand growth in 2025. CapCut is free and powerful.",
+      firstStep: "Download CapCut today. Watch one 30-minute tutorial. Edit a 60-second sample video.",
+    },
+    {
+      id: "ai", title: "AI-Assisted Services", earning: "₱20,000–₱100,000+/mo",
+      skills: ["ai"],
+      blocked: hasPhone,
+      whyMap: { high: "Highest earning ceiling of all 8 paths. AI makes you 10x faster than competitors.", quick: "Offer one AI service to a local business this week at ₱5,000–₱15,000.", stable: "AI consulting retainers from local businesses = recurring monthly income." },
+      defaultWhy: "The fastest-growing income path for Filipinos in 2026. Provincial businesses are completely underserved.",
+      firstStep: "Go to claude.ai. Ask: 'I want to offer AI services to Philippine businesses. What should I start with?'",
+    },
+    {
+      id: "food", title: "Food Content Creator", earning: "₱5,000–₱30,000/mo",
+      skills: ["cooking"],
+      blocked: false,
+      whyMap: { passive: "Recipe videos keep earning views and affiliate commission for months.", quick: "Food content gets fast engagement — post one cooking video today.", high: "Food sponsorships pay well once you hit 10K followers." },
+      defaultWhy: shy ? "Hands-only cooking videos perform great — no need to show your face." : "Food is one of the highest-engagement niches on TikTok Philippines.",
+      firstStep: "Film one cooking video today with your phone. Post it on TikTok. That is day one.",
+    },
+    {
+      id: "tech", title: "Tech Support & Tutorials", earning: "₱5,000–₱25,000/mo",
+      skills: ["tech"],
+      blocked: hasPhone,
+      whyMap: { passive: "Tutorial videos earn views and affiliate income long after posting.", stable: "Tech support retainers from businesses = monthly income.", quick: "Post one phone repair tip on TikTok today — tech tips get fast views." },
+      defaultWhy: "Phone repair tutorials and tech reviews get consistent views. Gadget affiliate links convert well in PH.",
+      firstStep: "Record one phone repair tip or gadget review today. Post it on TikTok.",
+    },
+    {
+      id: "data", title: "Data Entry / Microtasks", earning: "₱8,000–₱15,000/mo",
+      skills: ["admin"],
+      blocked: false,
+      whyMap: { quick: "Lowest barrier — start earning within days, not weeks.", stable: "Consistent daily tasks = predictable income." },
+      defaultWhy: hasPhone ? "Can be done on a phone — lowest barrier to start earning online." : "If you can type, you qualify. Get started this week.",
       firstStep: "Create an OnlineJobs.ph profile and apply to data entry jobs today.",
-      link: "/guides/8-ways",
-    });
+    },
+  ];
+
+  for (const entry of entries) {
+    if (entry.blocked) continue;
+
+    let score = 0;
+
+    const skillMatch = entry.skills.some((s) => skills.includes(s));
+    score += skillMatch ? 5 : 0;
+
+    const goalKey = wantsQuick ? "quick" : wantsStable ? "stable" : wantsHigh ? "high" : wantsPassive ? "passive" : "";
+    const why = entry.whyMap[goalKey] || entry.defaultWhy;
+
+    if (goalKey && entry.whyMap[goalKey]) score += 8;
+
+    if (noCapital && !["selling"].includes(entry.id)) score += 2;
+    if (hasPhone && ["tiktok", "food", "design", "data"].includes(entry.id)) score += 3;
+    if (partTime && ["teaching", "tiktok", "food", "design"].includes(entry.id)) score += 3;
+    if (fullTime && ["va", "writing", "ai", "video"].includes(entry.id)) score += 3;
+    if (shy && ["data", "writing", "design", "va"].includes(entry.id)) score += 3;
+    if (slowNet && ["data", "writing", "design"].includes(entry.id)) score += 2;
+
+    all.push({ title: entry.title, earning: entry.earning, why, firstStep: entry.firstStep, link: "/guides/8-ways", score });
   }
 
-  if (results.length === 0) {
-    results.push({
-      title: "Virtual Assistant",
-      earning: "₱15,000–₱65,000/mo",
+  all.sort((a, b) => b.score - a.score);
+
+  const seen = new Set<string>();
+  const unique = all.filter((r) => {
+    if (seen.has(r.title)) return false;
+    seen.add(r.title);
+    return true;
+  });
+
+  if (unique.length === 0) {
+    unique.push({
+      title: "Virtual Assistant", earning: "₱15,000–₱65,000/mo", score: 0,
       why: "The best starting point for anyone — no special skill needed, just reliability and English.",
       firstStep: "Create your OnlineJobs.ph profile today and apply to 5 VA jobs.",
       link: "/guides/8-ways",
     });
   }
 
-  return results.slice(0, 3);
+  return unique.slice(0, 3).map(({ score: _s, ...rest }) => rest);
 }
 
 export default function SkillWorksheet() {
