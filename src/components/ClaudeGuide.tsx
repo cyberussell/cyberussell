@@ -350,7 +350,7 @@ export default function ClaudeGuide() {
       </div>
 
       {/* ── Step nav ──────────────────────────────────────────────────── */}
-      <div ref={navRef} className="flex gap-1 flex-wrap pt-6 border-b border-white/10">
+      <div ref={navRef} className="flex gap-2 flex-wrap pt-6 pb-4 border-b border-white/10">
         {STEP_NAVS.map((s) => (
           <button
             key={s.num}
@@ -429,15 +429,6 @@ export default function ClaudeGuide() {
               <>On free plan you get around <B>10–20 conversations per day</B> — more than enough to start</>,
             ]}
           />
-
-          {/* Screenshot placeholder */}
-          <div className="bg-[#18181F] border border-dashed border-white/15 rounded-[10px] py-8 px-5 text-center my-3.5">
-            <div className="text-[32px] mb-2">🖥️</div>
-            <div className="text-[13px] text-white/35">claude.ai — sign up page</div>
-            <div className="text-[11px] text-white/20 mt-1">
-              Go here on your phone or laptop · Free account · No credit card
-            </div>
-          </div>
 
           <WarnBlock title="Common mistake">
             Most people open Claude and type &quot;how do I earn money online
