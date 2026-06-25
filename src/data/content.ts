@@ -324,8 +324,9 @@ export const GUIDES: Guide[] = [
     previewBg: "rgba(255,210,63,0.08)",
     title: "Skill-to-Income Worksheet",
     desc: "A printable worksheet to identify your marketable skills and learn how to package them as a service.",
-    meta: "Coming soon",
-    active: false,
+    meta: "Interactive · Free · No email",
+    active: true,
+    file: "/guides/worksheet",
   },
   {
     icon: "Bot",
