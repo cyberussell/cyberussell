@@ -35,7 +35,7 @@ export default function Downloads() {
           <h2 className="font-sans text-[26px] md:text-[38px] font-bold text-white leading-tight mb-4">
             Download. All Free. No Email Required.
           </h2>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 max-w-[560px] leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 max-w-[560px] leading-[1.8]">
             Genuinely useful guides — not lead magnets that sell you something
             at the end. Use them. Share them with people who need them.
           </p>
@@ -69,7 +69,7 @@ export default function Downloads() {
                   <h3 className="font-sans text-[18px] font-bold text-white mb-2 leading-tight">
                     {title}
                   </h3>
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.8] mb-4 flex-grow">
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-[1.8] mb-4 flex-grow">
                     {desc}
                   </p>
                   <div className="flex items-center justify-between mt-auto gap-3 flex-wrap">
@@ -116,7 +116,7 @@ export default function Downloads() {
                           const el = document.getElementById("subscribe-form");
                           el?.scrollIntoView({ behavior: "smooth", block: "center" });
                         }}
-                        className="bg-white/5 border border-white/10 text-white/50 font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] flex items-center gap-1.5 min-h-[36px] hover:bg-white/10 hover:text-white/70 transition-colors"
+                        className="bg-white/5 border border-white/10 text-white/65 font-[family-name:var(--font-inter)] text-[12px] font-bold px-[14px] py-[7px] rounded-[6px] flex items-center gap-1.5 min-h-[36px] hover:bg-white/10 hover:text-white/70 transition-colors"
                       >
                         <Bell size={14} strokeWidth={2.5} />
                         Notify Me

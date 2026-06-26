@@ -123,7 +123,7 @@ export default function BioGenerator() {
     <div className="max-w-[760px] mx-auto">
       {/* Stats */}
       <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/40">
+        <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55">
           {genCount} bios generated this session
         </span>
         <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/25">
@@ -150,7 +150,7 @@ export default function BioGenerator() {
         </div>
 
         <div className="mt-4">
-          <label className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 block mb-1.5">
+          <label className="font-[family-name:var(--font-inter)] text-[13px] text-white/65 block mb-1.5">
             Anything else? (optional — achievements, years of experience, certifications)
           </label>
           <input
@@ -241,7 +241,7 @@ export default function BioGenerator() {
         {(skills || result) && (
           <button
             onClick={() => { setSkills(""); setExperience(""); setResult(null); setError(""); }}
-            className="font-[family-name:var(--font-inter)] text-[12px] text-white/25 hover:text-white/50 transition-colors"
+            className="font-[family-name:var(--font-inter)] text-[12px] text-white/25 hover:text-white/65 transition-colors"
           >
             Clear
           </button>
@@ -362,7 +362,7 @@ export default function BioGenerator() {
                 if (navigator.share) { navigator.share({ title: "Bio Generator", text }).catch(() => {}); }
                 else { navigator.clipboard.writeText(text); setCopied("share"); setTimeout(() => setCopied(null), 2000); }
               }}
-              className="bg-white/5 border border-white/10 text-white/50 font-[family-name:var(--font-inter)] text-[13px] font-bold px-5 py-3 rounded-[8px] hover:bg-white/10 transition-colors"
+              className="bg-white/5 border border-white/10 text-white/65 font-[family-name:var(--font-inter)] text-[13px] font-bold px-5 py-3 rounded-[8px] hover:bg-white/10 transition-colors"
             >
               {copied === "share" ? "Copied!" : "Share This Tool"}
             </button>
@@ -375,7 +375,7 @@ export default function BioGenerator() {
         <h3 className="font-sans text-[16px] font-bold text-[#FFD23F] mb-2">
           Pro Tip
         </h3>
-        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.8]">
+        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.8]">
           Ang AI-generated bio ay isang starting point — hindi final draft. I-edit mo pa rin para ma-reflect
           ang totoong personality mo. Palitan ang mga generic phrases ng specific na details from your real experience.
           Mas specific, mas maraming clients ang mag-rerespond.

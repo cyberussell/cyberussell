@@ -177,7 +177,7 @@ export default function PlatformsPage() {
           <h1 className="font-sans text-[28px] md:text-[42px] font-bold text-white mb-4 leading-tight">
             Where to Find Online Work as a Filipino
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 max-w-[600px] leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 max-w-[600px] leading-[1.8]">
             Honest reviews of the best platforms for Filipino freelancers — which ones work, how much they pay, and how to get started on each one.
           </p>
         </div>
@@ -243,7 +243,7 @@ export default function PlatformsPage() {
         {/* Bottom CTA */}
         <div className="mt-12 bg-[#18181F] border border-white/[0.12] rounded-2xl p-6 md:p-8 text-center">
           <h3 className="font-sans text-[20px] font-bold text-white mb-2">Not sure which platform to start with?</h3>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 mb-5 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 mb-5 leading-[1.8]">
             Use the Skill Finder on the homepage — it will match your skill to the right platform and give you a first step.
           </p>
           <a
@@ -256,7 +256,7 @@ export default function PlatformsPage() {
 
         {/* Back link */}
         <div className="text-center mt-8">
-          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
+          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors">
             ← Back to Home
           </a>
         </div>

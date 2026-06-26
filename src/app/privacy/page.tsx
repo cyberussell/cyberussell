@@ -17,7 +17,7 @@ export default function PrivacyPage() {
           <h1 className="font-sans text-[30px] md:text-[40px] font-bold text-white leading-tight mb-4">
             Privacy Policy
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40">
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55">
             Last updated: June 24, 2026
           </p>
         </div>
@@ -83,7 +83,7 @@ export default function PrivacyPage() {
                 { name: "Google Sheets", url: "https://policies.google.com/privacy", note: "email list storage" },
               ].map(({ name, note }) => (
                 <li key={name} className="flex gap-3">
-                  <span className="text-white/40 mt-1 shrink-0">—</span>
+                  <span className="text-white/55 mt-1 shrink-0">—</span>
                   <span><strong className="text-white">{name}</strong> ({note})</span>
                 </li>
               ))}
@@ -163,7 +163,7 @@ export default function PrivacyPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
+          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors">
             ← Back to Home
           </a>
         </div>

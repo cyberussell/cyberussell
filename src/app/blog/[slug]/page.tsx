@@ -101,7 +101,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <h1 className="font-sans text-[26px] md:text-[38px] font-bold text-white leading-tight mb-4">
             {post.title}
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
             {post.description}
           </p>
         </div>
@@ -134,7 +134,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {/* CTA */}
         <div className="mt-10 bg-[#18181F] border border-white/[0.12] rounded-2xl p-6 text-center">
           <p className="font-sans text-[18px] font-bold text-white mb-2">Ready to find your income path?</p>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 mb-5">Use the free Skill Finder — type any skill and get your personalized income plan.</p>
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 mb-5">Use the free Skill Finder — type any skill and get your personalized income plan.</p>
           <a href="/#skill-finder" className="inline-block bg-[#E8373A] text-white font-[family-name:var(--font-inter)] font-bold text-[15px] py-3 px-8 rounded-lg hover:opacity-90 transition-all">
             Try the Skill Finder →
           </a>
@@ -168,10 +168,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         {/* Nav */}
         <div className="flex justify-between mt-8">
-          <a href="/blog" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
+          <a href="/blog" className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors">
             ← All Articles
           </a>
-          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
+          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors">
             Home →
           </a>
         </div>

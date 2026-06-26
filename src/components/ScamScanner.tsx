@@ -139,7 +139,7 @@ export default function ScamScanner() {
     <div className="max-w-[760px] mx-auto">
       {/* Stats */}
       <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/40">
+        <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55">
           {scanCount} scans this session
         </span>
         <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/25">
@@ -167,7 +167,7 @@ export default function ScamScanner() {
             <button
               key={sample.label}
               onClick={() => setInputText(sample.text)}
-              className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors"
+              className="font-[family-name:var(--font-inter)] text-[12px] text-white/55 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors"
             >
               {sample.label}
             </button>
@@ -203,7 +203,7 @@ export default function ScamScanner() {
             {(inputText || result) && (
               <button
                 onClick={() => { setInputText(""); setResult(null); setError(""); }}
-                className="font-[family-name:var(--font-inter)] text-[12px] text-white/25 hover:text-white/50 transition-colors"
+                className="font-[family-name:var(--font-inter)] text-[12px] text-white/25 hover:text-white/65 transition-colors"
               >
                 Clear
               </button>
@@ -347,7 +347,7 @@ export default function ScamScanner() {
             </button>
             <button
               onClick={() => { setInputText(""); setResult(null); setError(""); }}
-              className="bg-white/5 border border-white/10 text-white/50 font-[family-name:var(--font-inter)] text-[13px] font-bold px-5 py-3 rounded-[8px] hover:bg-white/10 transition-colors"
+              className="bg-white/5 border border-white/10 text-white/65 font-[family-name:var(--font-inter)] text-[13px] font-bold px-5 py-3 rounded-[8px] hover:bg-white/10 transition-colors"
             >
               Scan Another Posting
             </button>
@@ -360,7 +360,7 @@ export default function ScamScanner() {
         <h3 className="font-sans text-[18px] font-bold text-[#FFD23F] mb-2">
           Disclaimer
         </h3>
-        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.8]">
+        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.8]">
           Ang tool na ito ay gumagamit ng AI para mag-analyze ng text patterns. Hindi ito 100% accurate at hindi
           puwedeng palitan ang sarili mong judgment. Kung may doubt ka, huwag mag-send ng pera o personal
           information. I-report ang suspected scams sa NBI Cybercrime Division o PNP Anti-Cybercrime Group.

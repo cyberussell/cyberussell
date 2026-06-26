@@ -32,7 +32,7 @@ export default function PromptForgePage() {
             Turn weak prompts into{" "}
             <span className="text-[#FFD23F]">strong</span> instructions.
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] md:text-[16px] text-white/45 leading-[1.6]">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] md:text-[16px] text-white/60 leading-[1.6]">
             Paste anything — even a lazy one-liner. Claude AI scores it,
             explains exactly what&apos;s wrong, and tells you how to fix it.
             10 free analyses per day.

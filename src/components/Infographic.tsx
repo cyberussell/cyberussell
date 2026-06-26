@@ -15,7 +15,7 @@ export default function Infographic() {
           <h2 className="font-sans text-[26px] md:text-[38px] font-bold text-white mb-4 leading-tight">
             Who Is Earning Online and How Much They Make
           </h2>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
             Data-backed. No hype. Every figure has a source.
           </p>
         </div>

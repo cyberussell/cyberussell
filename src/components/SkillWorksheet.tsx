@@ -335,7 +335,7 @@ export default function SkillWorksheet() {
       {section === 1 && (
         <div>
           <h2 className="font-sans text-[22px] font-bold text-white mb-2">What can you do?</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 mb-6">Select all that apply — even if you are a beginner.</p>
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mb-6">Select all that apply — even if you are a beginner.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {SKILLS.map((skill) => (
               <button
@@ -368,7 +368,7 @@ export default function SkillWorksheet() {
       {section === 2 && (
         <div>
           <h2 className="font-sans text-[22px] font-bold text-white mb-2">What is your situation?</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 mb-6">Select all that apply so we can give you realistic recommendations.</p>
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mb-6">Select all that apply so we can give you realistic recommendations.</p>
           <div className="flex flex-col gap-3">
             {SITUATIONS.map((sit) => (
               <button
@@ -399,7 +399,7 @@ export default function SkillWorksheet() {
       {section === 3 && (
         <div>
           <h2 className="font-sans text-[22px] font-bold text-white mb-2">What is your goal?</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 mb-6">Pick the one that matters most to you right now.</p>
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mb-6">Pick the one that matters most to you right now.</p>
           <div className="flex flex-col gap-3">
             {GOALS.map((goal) => (
               <button
@@ -434,7 +434,7 @@ export default function SkillWorksheet() {
       {section === 4 && (
         <div id="worksheet-results">
           <h2 className="font-sans text-[26px] md:text-[32px] font-bold text-white mb-2">Your Personalized Income Plan</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 mb-8">
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mb-8">
             Based on your skills, situation, and goals — here is your roadmap.
           </p>
 
@@ -465,7 +465,7 @@ export default function SkillWorksheet() {
                           <CheckCircle size={14} className="text-[#00C97A] shrink-0 mt-[2px]" aria-hidden="true" />
                           <div>
                             <p className="font-[family-name:var(--font-inter)] text-[13px] text-white font-bold">{tool.name}</p>
-                            <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/40">
+                            <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/55">
                               {tool.note} · {tool.free ? <span className="text-[#00C97A]">Free</span> : <span className="text-[#FFD23F]">Paid</span>}
                             </p>
                           </div>
@@ -483,7 +483,7 @@ export default function SkillWorksheet() {
                           <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A] bg-[#E8373A]/10 rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-[1px]">
                             {si + 1}
                           </span>
-                          <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6]">{step}</p>
+                          <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/70 leading-[1.6]">{step}</p>
                         </div>
                       ))}
                     </div>
@@ -515,7 +515,7 @@ export default function SkillWorksheet() {
           {/* Disclaimer */}
           <div className="mt-8 bg-[#18181F] border border-white/[0.06] rounded-xl p-5">
             <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/35 leading-[1.7]">
-              <strong className="text-white/50">Earnings disclaimer:</strong> The income ranges shown are based on market data and real Filipino freelancer reports. Actual earnings depend on your consistency, effort, skill development, and market conditions. These are not guarantees — they are realistic ranges based on what others have achieved. Your results will vary.
+              <strong className="text-white/65">Earnings disclaimer:</strong> The income ranges shown are based on market data and real Filipino freelancer reports. Actual earnings depend on your consistency, effort, skill development, and market conditions. These are not guarantees — they are realistic ranges based on what others have achieved. Your results will vary.
             </p>
           </div>
 
@@ -524,7 +524,7 @@ export default function SkillWorksheet() {
             <p className="font-sans text-[20px] md:text-[24px] font-bold text-white leading-[1.4] mb-3">
               &ldquo;The best time to start was yesterday.<br />The second best time is right now.&rdquo;
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55">
               Your plan is ready. The only thing left is to do step one.
             </p>
           </div>

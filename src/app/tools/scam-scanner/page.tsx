@@ -39,7 +39,7 @@ export default function ScamScannerPage() {
             Scam Scanner —{" "}
             <span className="text-[#FFD23F]">AI-Powered Job Scam Detector</span>
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8] mb-6">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8] mb-6">
             May nakita kang job posting o &quot;opportunity&quot; online? I-paste dito at
             i-analyze ng AI kung legit o scam. Hindi na kailangan mag-guess —
             makikita mo agad ang red flags.

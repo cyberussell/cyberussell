@@ -37,7 +37,7 @@ export default function ToolsPage() {
         <h1 className="text-white text-[28px] md:text-[36px] font-bold mb-2">
           Free AI & Business Tools
         </h1>
-        <p className="text-white/45 text-[15px] md:text-[16px] max-w-lg leading-relaxed mb-10 font-[family-name:var(--font-inter)]">
+        <p className="text-white/60 text-[15px] md:text-[16px] max-w-lg leading-relaxed mb-10 font-[family-name:var(--font-inter)]">
           Free tools to help Filipino freelancers and small businesses work smarter with AI.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -53,7 +53,7 @@ export default function ToolsPage() {
               <h2 className="text-white text-[18px] font-bold mb-2 group-hover:text-[#FFD23F] transition-colors">
                 {tool.title}
               </h2>
-              <p className="text-white/40 text-[14px] leading-[1.6] font-[family-name:var(--font-inter)]">
+              <p className="text-white/55 text-[14px] leading-[1.6] font-[family-name:var(--font-inter)]">
                 {tool.desc}
               </p>
             </a>

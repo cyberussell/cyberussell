@@ -69,7 +69,7 @@ export default function FaqAccordion() {
                 {faq.q}
               </span>
               <span
-                className={`text-white/40 text-[20px] shrink-0 transition-transform duration-200 ${isOpen ? "rotate-45" : ""}`}
+                className={`text-white/55 text-[20px] shrink-0 transition-transform duration-200 ${isOpen ? "rotate-45" : ""}`}
               >
                 +
               </span>

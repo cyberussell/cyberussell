@@ -48,7 +48,7 @@ export default function MistakesGuidePage() {
             5 Reasons Filipinos{" "}
             <span className="text-[#E8373A]">Fail</span> at Earning Online
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8] mb-6">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8] mb-6">
             Hindi ito motivational speech. Ito ay honest na data mula sa
             totoong Filipino freelancers — at kung paano mo maiiwasan ang bawat
             pagkakamali.

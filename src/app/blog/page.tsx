@@ -59,7 +59,7 @@ export default async function BlogPage() {
 
         {/* Back link */}
         <div className="text-center mt-10">
-          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
+          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors">
             ← Back to Home
           </a>
         </div>

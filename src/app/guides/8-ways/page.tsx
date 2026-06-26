@@ -65,7 +65,7 @@ export default function EightWaysPage() {
         <div className="max-w-4xl mx-auto mt-10">
           <div className="bg-[#18181F] border border-white/[0.12] rounded-2xl p-6 md:p-8 text-center">
             <p className="font-sans text-[20px] font-bold text-white mb-2">Find your personal income path</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 mb-5">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 mb-5">
               Not sure which of these 8 paths fits you best? Use our free Skill Finder tool.
             </p>
             <a href="/#skill-finder" className="inline-block bg-[#E8373A] text-white font-[family-name:var(--font-inter)] font-bold text-[15px] py-3 px-8 rounded-lg hover:opacity-90 transition-all">

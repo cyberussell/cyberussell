@@ -36,7 +36,7 @@ export default function DownloadContent() {
     return (
       <div className="text-center">
         <Loader2 size={32} className="text-[#FFD23F] animate-spin mx-auto mb-4" />
-        <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55">
+        <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70">
           Verifying your purchase...
         </p>
       </div>
@@ -50,7 +50,7 @@ export default function DownloadContent() {
         <h2 className="font-sans text-[24px] font-bold text-white mb-3">
           Link Expired or Invalid
         </h2>
-        <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8] mb-6">
+        <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8] mb-6">
           This download link has expired or is invalid. If you already paid,
           please contact us and we&apos;ll send you the file.
         </p>
@@ -70,7 +70,7 @@ export default function DownloadContent() {
       <h2 className="font-sans text-[24px] font-bold text-white mb-3">
         Payment Successful!
       </h2>
-      <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8] mb-2">
+      <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8] mb-2">
         Salamat sa purchase mo! Your download is ready:
       </p>
       <p className="font-sans text-[18px] font-bold text-[#FFD23F] mb-6">

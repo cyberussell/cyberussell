@@ -28,7 +28,7 @@ export default function ShareSiteButton() {
   return (
     <button
       onClick={handleShare}
-      className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors text-left"
+      className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 hover:text-white transition-colors text-left"
     >
       {copied ? "Link Copied!" : "Share This Site"}
     </button>

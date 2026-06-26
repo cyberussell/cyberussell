@@ -23,7 +23,7 @@ export default function ShareButtons({ slug, title }: { slug: string; title: str
 
   return (
     <div className="mt-10 pt-8 border-t border-white/10">
-      <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 mb-4">Share this article</p>
+      <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 mb-4">Share this article</p>
       <div className="flex gap-3 flex-wrap">
         <button
           onClick={shareOnFacebook}

@@ -70,7 +70,7 @@ export default function SharePage() {
           <h1 className="font-sans text-[28px] md:text-[38px] font-bold text-white mb-4 leading-tight">
             Help a Filipino earn online today
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
             This site is free. No email. No payment. The best thing you can do
             is share it with someone who needs it.
           </p>
@@ -142,7 +142,7 @@ export default function SharePage() {
         <div className="text-center mt-10">
           <a
             href="/"
-            className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors"
+            className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors"
           >
             ← Back to Home
           </a>

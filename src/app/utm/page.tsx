@@ -44,7 +44,7 @@ export default function UTMPage() {
           <h1 className="font-sans text-[26px] md:text-[34px] font-bold text-white mb-3 leading-tight">
             Social Media Link Tracker
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
             Generate tracking links for your social media posts. GA4 will show you exactly which platform and campaign is driving traffic to your site.
           </p>
         </div>
@@ -53,7 +53,7 @@ export default function UTMPage() {
         <div className="flex flex-col gap-5">
           {/* Platform */}
           <div className="flex flex-col gap-2">
-            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50 uppercase tracking-[1px]">
+            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
               Platform
             </label>
             <div className="flex flex-wrap gap-2">
@@ -75,7 +75,7 @@ export default function UTMPage() {
 
           {/* Page */}
           <div className="flex flex-col gap-2">
-            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50 uppercase tracking-[1px]">
+            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
               Destination Page
             </label>
             <select
@@ -91,7 +91,7 @@ export default function UTMPage() {
 
           {/* Campaign */}
           <div className="flex flex-col gap-2">
-            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50 uppercase tracking-[1px]">
+            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
               Campaign Name <span className="text-white/25 normal-case font-normal">(optional — e.g. "skill-video", "june-promo")</span>
             </label>
             <input
@@ -105,7 +105,7 @@ export default function UTMPage() {
 
           {/* Result */}
           <div className="flex flex-col gap-2">
-            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50 uppercase tracking-[1px]">
+            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
               Your Tracking Link
             </label>
             <div className="bg-[#18181F] border border-[#FFD23F]/30 rounded-lg px-4 py-3 flex items-center justify-between gap-3">
@@ -123,7 +123,7 @@ export default function UTMPage() {
 
           {/* Instructions */}
           <div className="bg-[#18181F] border border-white/[0.08] rounded-xl p-5">
-            <p className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 uppercase tracking-[1px] mb-3">How to use</p>
+            <p className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/55 uppercase tracking-[1px] mb-3">How to use</p>
             <ol className="flex flex-col gap-2">
               {[
                 "Select the platform where you will post",
@@ -134,7 +134,7 @@ export default function UTMPage() {
               ].map((step, i) => (
                 <li key={i} className="flex gap-3 items-start">
                   <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A] bg-[#E8373A]/10 rounded-full w-5 h-5 flex items-center justify-center shrink-0 mt-[1px]">{i + 1}</span>
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6]">{step}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/70 leading-[1.6]">{step}</span>
                 </li>
               ))}
             </ol>
@@ -142,7 +142,7 @@ export default function UTMPage() {
         </div>
 
         <div className="text-center mt-10">
-          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
+          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors">
             ← Back to Home
           </a>
         </div>

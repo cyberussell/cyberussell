@@ -459,7 +459,7 @@ export default function BlogShelf({ posts, onSelectPost }: { posts: Post[]; onSe
               <h2 className="font-[family-name:var(--font-syne)] text-[17px] font-bold text-white mb-1.5 leading-snug">
                 {post.title}
               </h2>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-relaxed mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/65 leading-relaxed mb-3">
                 {post.description}
               </p>
               <div className="flex flex-wrap gap-1.5">

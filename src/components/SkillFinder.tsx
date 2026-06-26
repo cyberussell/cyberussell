@@ -85,7 +85,7 @@ export default function SkillFinder() {
           <h2 className="font-sans text-[26px] md:text-[38px] font-bold text-white mb-4 leading-tight">
             &ldquo;Yes, I Can Do That&rdquo; — Find Your Skill
           </h2>
-          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 max-w-[560px] leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/70 max-w-[560px] leading-[1.8]">
             Type any skill — in English or Filipino. We will show you exactly
             how to earn from it, based on real market data.
           </p>
@@ -97,7 +97,7 @@ export default function SkillFinder() {
             <p className="font-sans text-[18px] font-bold text-white">
               Skill-to-Income Matcher
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-0.5">
+            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/60 mt-0.5">
               Type your skill or pick a category below
             </p>
           </div>
@@ -146,7 +146,7 @@ export default function SkillFinder() {
         {/* Loading state */}
         {loading && (
           <div className="animate-pulse space-y-3 p-4 bg-[#18181F] rounded-2xl border border-white/10 mb-6">
-            <div className="text-sm text-white/40 mb-3">Finding your income paths...</div>
+            <div className="text-sm text-white/55 mb-3">Finding your income paths...</div>
             <div className="h-3 bg-white/10 rounded w-3/4"></div>
             <div className="h-3 bg-white/10 rounded w-1/2"></div>
             <div className="h-3 bg-white/10 rounded w-2/3"></div>
@@ -198,7 +198,7 @@ export default function SkillFinder() {
                     <p className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white">
                       {path.title}
                     </p>
-                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/55 mt-0.5">
+                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/70 mt-0.5">
                       {path.detail}
                     </p>
                   </div>
@@ -224,9 +224,9 @@ export default function SkillFinder() {
               Get the Full Guide — Subscribe Free →
             </a>
             <div className="flex justify-center gap-4">
-              <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">TikTok</a>
-              <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">Facebook</a>
-              <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">YouTube</a>
+              <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/55 hover:text-white transition-colors">TikTok</a>
+              <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/55 hover:text-white transition-colors">Facebook</a>
+              <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/55 hover:text-white transition-colors">YouTube</a>
             </div>
           </div>
         )}
@@ -304,7 +304,7 @@ export default function SkillFinder() {
         <div className="bg-gradient-to-r from-[#E8373A]/10 to-[#FFD23F]/10 border border-white/10 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <h4 className="font-sans text-[20px] font-bold text-white mb-1">Want detailed guides for your skill?</h4>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55">
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70">
               Subscribe and follow — we send new income guides every week.
             </p>
           </div>
@@ -316,9 +316,9 @@ export default function SkillFinder() {
               Subscribe — Free
             </a>
             <div className="flex justify-center gap-4">
-              <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">TikTok</a>
-              <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">Facebook</a>
-              <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/40 hover:text-white transition-colors">YouTube</a>
+              <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/55 hover:text-white transition-colors">TikTok</a>
+              <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/55 hover:text-white transition-colors">Facebook</a>
+              <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/55 hover:text-white transition-colors">YouTube</a>
             </div>
           </div>
         </div>

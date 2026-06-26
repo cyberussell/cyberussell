@@ -60,7 +60,7 @@ export default function SkillFinderWidget() {
           </h3>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-[#00C97A] animate-pulse" />
-            <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/50 uppercase tracking-[0.05em]">
+            <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/65 uppercase tracking-[0.05em]">
               Active
             </span>
           </div>
@@ -108,7 +108,7 @@ export default function SkillFinderWidget() {
         {/* Loading */}
         {loading && (
           <div className="animate-pulse space-y-2 p-3 rounded-lg" style={{ background: "rgba(255,255,255,0.04)" }}>
-            <p className="text-[12px] text-white/40">Finding your income paths...</p>
+            <p className="text-[12px] text-white/55">Finding your income paths...</p>
             <div className="h-2 rounded" style={{ background: "rgba(255,255,255,0.08)", width: "75%" }} />
             <div className="h-2 rounded" style={{ background: "rgba(255,255,255,0.08)", width: "50%" }} />
             <div className="h-2 rounded" style={{ background: "rgba(255,255,255,0.08)", width: "65%" }} />
@@ -190,7 +190,7 @@ export default function SkillFinderWidget() {
               {HERO_WIDGET_STATS.map(({ value, label, color }) => (
                 <div key={value} className="bg-[#222230] p-4 rounded-lg flex flex-col justify-start border border-white/5">
                   <span className={`font-sans text-[20px] font-bold ${color}`}>{value}</span>
-                  <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/50 leading-[1.5] mt-1">{label}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/65 leading-[1.5] mt-1">{label}</span>
                 </div>
               ))}
             </div>
@@ -200,7 +200,7 @@ export default function SkillFinderWidget() {
                 <Wallet size={11} strokeWidth={2.5} />
                 GCash
               </div>
-              <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/40">
+              <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/55">
                 No credit card · PDF instantly
               </span>
             </div>

@@ -32,7 +32,7 @@ export default function FinalCTA() {
           ↓ Get the Free Guides
         </a>
 
-        <div className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 font-[family-name:var(--font-inter)] text-[14px] text-white/45">
+        <div className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 font-[family-name:var(--font-inter)] text-[14px] text-white/60">
           {["Free", "No sign-up", "No payment", "Share with everyone"].map((item) => (
             <span key={item} className="flex items-center gap-1.5">
               <CheckCircle size={15} color="#00C97A" strokeWidth={2.5} className="shrink-0" />

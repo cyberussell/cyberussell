@@ -16,7 +16,7 @@ export default function NotFound() {
       <h1 className="font-sans text-[26px] md:text-[36px] font-bold text-white mb-4 leading-tight">
         This page doesn&apos;t exist.
       </h1>
-      <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 max-w-[400px] leading-[1.8] mb-10">
+      <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/65 max-w-[400px] leading-[1.8] mb-10">
         But your income path does. Head back and use the free Skill Finder to find it.
       </p>
 

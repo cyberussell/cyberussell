@@ -38,7 +38,7 @@ export default function Footer() {
             <span className="text-white">Cyber</span>
             <span className="text-[#FFD23F]">ussell</span>
           </a>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 italic">
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 italic">
             Diskarte mo, Pera mo.
           </p>
           <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/35 leading-[1.7]">
@@ -53,7 +53,7 @@ export default function Footer() {
           <h5 className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[0.1em]">
             Stay Updated
           </h5>
-          <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 leading-[1.7]">
+          <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.7]">
             Get new guides when they drop. Free. No spam.
           </p>
           <SubscribeForm />
@@ -70,7 +70,7 @@ export default function Footer() {
                 <a
                   key={label}
                   href={href}
-                  className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors"
+                  className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 hover:text-white transition-colors"
                 >
                   {label}
                 </a>

@@ -50,7 +50,7 @@ export default function ContactPage() {
           <h1 className="font-sans text-[28px] md:text-[38px] font-bold text-white mb-3 leading-tight">
             Get in Touch
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
             Questions, suggestions, or just want to say hi — send a message and I&apos;ll get back to you.
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function ContactPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50 uppercase tracking-[1px]">
+              <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
                 Name <span className="text-[#E8373A]">*</span>
               </label>
               <input
@@ -102,7 +102,7 @@ export default function ContactPage() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50 uppercase tracking-[1px]">
+              <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
                 Email <span className="text-[#E8373A]">*</span>
               </label>
               <input
@@ -118,7 +118,7 @@ export default function ContactPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50 uppercase tracking-[1px]">
+            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
               Subject
             </label>
             <input
@@ -132,7 +132,7 @@ export default function ContactPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50 uppercase tracking-[1px]">
+            <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
               Message <span className="text-[#E8373A]">*</span>
             </label>
             <textarea
@@ -164,7 +164,7 @@ export default function ContactPage() {
 
         {/* Back link */}
         <div className="text-center mt-10">
-          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
+          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors">
             ← Back to Home
           </a>
         </div>

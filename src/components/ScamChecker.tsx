@@ -241,7 +241,7 @@ export default function ScamChecker() {
         </h2>
         <div className="space-y-4">
           <div>
-            <label className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 block mb-1.5">
+            <label className="font-[family-name:var(--font-inter)] text-[13px] text-white/65 block mb-1.5">
               Name ng opportunity o company
             </label>
             <input
@@ -253,7 +253,7 @@ export default function ScamChecker() {
             />
           </div>
           <div>
-            <label className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 block mb-1.5">
+            <label className="font-[family-name:var(--font-inter)] text-[13px] text-white/65 block mb-1.5">
               Ano ang promise nila?
             </label>
             <input
@@ -298,7 +298,7 @@ export default function ScamChecker() {
         <h2 className="font-sans text-[20px] font-bold text-white mb-1">
           <span className="text-[#E8373A]">Red Flags</span> — Danger Signs
         </h2>
-        <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 mb-4">
+        <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 mb-4">
           I-check lahat ng applicable
         </p>
         <Checkbox items={redFlags} checked={redChecked} setChecked={setRedChecked} color="#E8373A" bg="rgba(232,55,58,0.08)" />
@@ -309,7 +309,7 @@ export default function ScamChecker() {
         <h2 className="font-sans text-[20px] font-bold text-white mb-1">
           <span className="text-[#FFD23F]">Yellow Flags</span> — Proceed with Caution
         </h2>
-        <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 mb-4">
+        <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 mb-4">
           Hindi automatic na scam, pero mag-ingat
         </p>
         <Checkbox items={yellowFlags} checked={yellowChecked} setChecked={setYellowChecked} color="#FFD23F" bg="rgba(255,210,63,0.08)" />
@@ -320,7 +320,7 @@ export default function ScamChecker() {
         <h2 className="font-sans text-[20px] font-bold text-white mb-1">
           <span className="text-[#00C97A]">Green Flags</span> — Good Signs
         </h2>
-        <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 mb-4">
+        <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 mb-4">
           Mga signs na mukhang legitimate
         </p>
         <Checkbox items={greenFlags} checked={greenChecked} setChecked={setGreenChecked} color="#00C97A" bg="rgba(0,201,122,0.08)" />
@@ -352,7 +352,7 @@ export default function ScamChecker() {
               {verdict.level}
             </h2>
             {oppName && (
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mb-3">
                 Opportunity checked: <strong className="text-white/80">{oppName}</strong>
               </p>
             )}
@@ -428,7 +428,7 @@ export default function ScamChecker() {
             </button>
             <button
               onClick={reset}
-              className="bg-white/5 border border-white/10 text-white/50 font-[family-name:var(--font-inter)] text-[13px] font-bold px-5 py-3 rounded-[8px] hover:bg-white/10 transition-colors"
+              className="bg-white/5 border border-white/10 text-white/65 font-[family-name:var(--font-inter)] text-[13px] font-bold px-5 py-3 rounded-[8px] hover:bg-white/10 transition-colors"
             >
               Check Another Opportunity
             </button>
@@ -441,7 +441,7 @@ export default function ScamChecker() {
         <h2 className="font-sans text-[24px] md:text-[32px] font-bold text-white mb-2">
           Known Philippine Online Scams
         </h2>
-        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-8">
+        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 mb-8">
           Kung nakita mo ang isa sa mga ito — iwasan agad.
         </p>
         <div className="space-y-4">
@@ -450,7 +450,7 @@ export default function ScamChecker() {
               <h3 className="font-sans text-[16px] font-bold text-[#E8373A] mb-2">
                 {scam.name}
               </h3>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.8]">
+              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/70 leading-[1.8]">
                 {scam.desc}
               </p>
             </div>

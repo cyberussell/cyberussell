@@ -92,7 +92,7 @@ export default function Navbar() {
                 key={href}
                 href={href}
                 className={`text-[10px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase transition-colors
-                  ${isActive ? "text-[#E8373A]" : "text-white/40 hover:text-white/70"}`}
+                  ${isActive ? "text-[#E8373A]" : "text-white/55 hover:text-white/70"}`}
               >
                 {label}
               </a>
@@ -113,7 +113,7 @@ export default function Navbar() {
                   href={href}
                   onClick={handleNavClick}
                   className={`text-[13px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase py-3 border-b border-white/[0.06] transition-colors
-                    ${isActive ? "text-[#E8373A]" : "text-white/50"}`}
+                    ${isActive ? "text-[#E8373A]" : "text-white/65"}`}
                 >
                   {label}
                 </a>

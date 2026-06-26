@@ -21,7 +21,7 @@ export default function HeroCTA({ ctaBelow }: { ctaBelow: string }) {
           ↓ Get the Free Guide
         </a>
       </div>
-      <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 text-center md:text-left md:max-w-[380px]">
+      <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/60 text-center md:text-left md:max-w-[380px]">
         {ctaBelow}
       </p>
 

@@ -38,7 +38,7 @@ export default function ShopPage() {
           <h1 className="font-sans text-[28px] md:text-[36px] font-bold text-white leading-tight mb-3">
             eBooks & Templates
           </h1>
-          <p className="text-white/45 text-[15px] md:text-[16px] max-w-lg leading-relaxed font-[family-name:var(--font-inter)]">
+          <p className="text-white/60 text-[15px] md:text-[16px] max-w-lg leading-relaxed font-[family-name:var(--font-inter)]">
             Guides and templates to help you earn more online. Some are free —
             the rest are priced para accessible sa lahat.
           </p>

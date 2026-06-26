@@ -48,7 +48,7 @@ export default function ScamCheckerPage() {
             Online Scam Checker —{" "}
             <span className="text-[#FFD23F]">Is This Opportunity Real?</span>
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8] mb-6">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8] mb-6">
             Bago ka mag-click, magbayad, o mag-share ng personal information —
             i-check muna dito. Ino-compare namin ang opportunity na nakita mo sa
             known Philippine online scam patterns.

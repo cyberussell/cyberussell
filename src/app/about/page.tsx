@@ -109,15 +109,15 @@ export default function AboutPage() {
         {/* Social */}
         <div className="mt-10 flex flex-wrap gap-4">
           <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer"
-            className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/50 hover:text-white border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg transition-all">
+            className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/65 hover:text-white border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg transition-all">
             TikTok @cyberussell
           </a>
           <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer"
-            className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/50 hover:text-white border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg transition-all">
+            className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/65 hover:text-white border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg transition-all">
             Facebook @cyberussellofficial
           </a>
           <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer"
-            className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/50 hover:text-white border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg transition-all">
+            className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/65 hover:text-white border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg transition-all">
             YouTube @CyberRussell
           </a>
         </div>
@@ -125,7 +125,7 @@ export default function AboutPage() {
         {/* CTA */}
         <div className="mt-10 bg-[#18181F] border border-white/[0.08] rounded-2xl p-6 text-center">
           <p className="font-sans text-[18px] font-bold text-white mb-2">Ready to find your income path?</p>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 mb-5">
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 mb-5">
             Use the free Skill Finder — type any skill and get your personalized income plan.
           </p>
           <a href="/#skill-finder"
@@ -135,7 +135,7 @@ export default function AboutPage() {
         </div>
 
         <div className="text-center mt-8">
-          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors">
+          <a href="/" className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors">
             ← Back to Home
           </a>
         </div>

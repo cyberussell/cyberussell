@@ -165,11 +165,11 @@ export default function PromptForge() {
     <div className="max-w-[1080px] mx-auto">
       {/* Stats bar */}
       <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/40">
+        <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55">
           {forgedCount} prompts analyzed
         </span>
         {bestIQ > 0 && (
-          <span className="bg-white/5 border border-white/10 rounded-full px-3 py-1 font-[family-name:var(--font-inter)] text-[13px] text-white/50">
+          <span className="bg-white/5 border border-white/10 rounded-full px-3 py-1 font-[family-name:var(--font-inter)] text-[13px] text-white/65">
             Best IQ <span className="font-bold text-[#FFD23F]">{bestIQ}</span>
           </span>
         )}
@@ -220,7 +220,7 @@ export default function PromptForge() {
             {(promptText || analysis) && (
               <button
                 onClick={() => { setPromptText(""); setAnalysis(null); setError(""); setExpandedCat(null); }}
-                className="font-[family-name:var(--font-inter)] text-[12px] text-white/25 hover:text-white/50 transition-colors"
+                className="font-[family-name:var(--font-inter)] text-[12px] text-white/25 hover:text-white/65 transition-colors"
               >
                 Clear
               </button>
@@ -273,7 +273,7 @@ export default function PromptForge() {
                 </div>
               </div>
 
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 mt-3 max-w-[280px]">
+              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 mt-3 max-w-[280px]">
                 {analysis.overall >= 85
                   ? "Exceptional. This prompt is doing real work for you."
                   : analysis.overall >= 65
@@ -304,7 +304,7 @@ export default function PromptForge() {
 
               <button
                 onClick={shareResult}
-                className="mt-4 bg-white/5 border border-white/10 text-white/50 font-[family-name:var(--font-inter)] text-[13px] font-bold px-4 py-2.5 rounded-[8px] hover:bg-white/10 transition-colors"
+                className="mt-4 bg-white/5 border border-white/10 text-white/65 font-[family-name:var(--font-inter)] text-[13px] font-bold px-4 py-2.5 rounded-[8px] hover:bg-white/10 transition-colors"
               >
                 Share result
               </button>

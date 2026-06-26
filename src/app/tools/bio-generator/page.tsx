@@ -39,7 +39,7 @@ export default function BioGeneratorPage() {
             Bio Generator —{" "}
             <span className="text-[#FFD23F]">AI Freelancer Profile Writer</span>
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8] mb-6">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8] mb-6">
             Hindi mo kailangang mag-isip kung paano isulat ang profile mo.
             I-paste lang ang skills mo at gagawa ang AI ng professional na bio —
             optimized para sa platform na gusto mo.

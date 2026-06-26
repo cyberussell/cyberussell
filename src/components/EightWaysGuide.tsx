@@ -370,7 +370,7 @@ export default function EightWaysGuide() {
             <span className="inline-block bg-[#00C97A]/10 border border-[#00C97A]/20 text-[#00C97A] font-[family-name:var(--font-inter)] text-[13px] font-bold px-3 py-1 rounded-full mb-5">
               {way.earn}
             </span>
-            <div className="flex flex-wrap gap-4 font-[family-name:var(--font-inter)] text-[13px] text-white/50">
+            <div className="flex flex-wrap gap-4 font-[family-name:var(--font-inter)] text-[13px] text-white/65">
               <span>Time to first income: <strong className="text-white">{way.time}</strong></span>
               <span>Capital needed: <strong className="text-white">{way.capital}</strong></span>
               <span>Best platform: <strong className="text-white">{way.platform}</strong></span>
@@ -391,7 +391,7 @@ export default function EightWaysGuide() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {way.levels.map((level) => (
               <div key={level.label} className={`${level.color.split(" ")[0]} border ${level.color.split(" ")[1]} rounded-xl p-4`}>
-                <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/50 mb-1">{level.label}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/65 mb-1">{level.label}</p>
                 <p className={`font-sans text-[18px] font-bold ${level.color.split(" ")[2]}`}>{level.amount}</p>
               </div>
             ))}
@@ -421,7 +421,7 @@ export default function EightWaysGuide() {
                   <CheckCircle size={16} className="text-[#00C97A] shrink-0 mt-[2px]" strokeWidth={2.5} aria-hidden="true" />
                   <div>
                     <p className="font-[family-name:var(--font-inter)] text-[13px] text-white font-bold">{tool.name}</p>
-                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">{tool.note}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/55">{tool.note}</p>
                     {tool.link && (
                       <a href={tool.link} target="_blank" rel={`noopener noreferrer${tool.link.includes('sjv.io') ? ' sponsored' : ''}`} className="font-[family-name:var(--font-inter)] text-[11px] text-[#E8373A] hover:underline">
                         Go to site &rarr;
@@ -444,7 +444,7 @@ export default function EightWaysGuide() {
                   <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A] bg-[#E8373A]/10 rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-[1px]">
                     {i + 1}
                   </span>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6]">{step}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/70 leading-[1.6]">{step}</p>
                 </div>
               ))}
             </div>
@@ -460,7 +460,7 @@ export default function EightWaysGuide() {
             {way.platforms.map((p) => (
               <div key={p.name} className="bg-[#18181F] border border-white/10 rounded-xl p-4 flex flex-col">
                 <p className="font-sans text-[15px] font-bold text-white mb-1">{p.name}</p>
-                <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 mb-3 flex-grow">{p.desc}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/60 mb-3 flex-grow">{p.desc}</p>
                 {p.link !== "#" && (
                   <a href={p.link} target="_blank" rel={`noopener noreferrer${p.link.includes('sjv.io') ? ' sponsored' : ''}`} className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-[#E8373A] hover:underline">
                     Sign up free &rarr;

@@ -219,7 +219,7 @@ export default function MistakesGuide() {
             className={`px-4 py-2.5 rounded-[8px] font-[family-name:var(--font-inter)] text-[13px] font-bold transition-all ${
               activeMistake === m.number
                 ? "bg-[#E8373A] text-white"
-                : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60"
+                : "bg-white/5 text-white/55 hover:bg-white/10 hover:text-white/60"
             }`}
           >
             #{m.number}
@@ -237,7 +237,7 @@ export default function MistakesGuide() {
           <h2 className="font-sans text-[22px] md:text-[28px] font-bold text-white leading-tight mb-3">
             {current.title}
           </h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 italic">
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 italic">
             {current.quote}
           </p>
         </div>
@@ -265,7 +265,7 @@ export default function MistakesGuide() {
 
           {/* Story Card */}
           <div className="border-l-[3px] border-[#FFD23F] pl-5 py-1">
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.85] italic mb-2">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-[1.85] italic mb-2">
               {current.story.text}
             </p>
             <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/35">
@@ -278,7 +278,7 @@ export default function MistakesGuide() {
             <h3 className="font-sans text-[18px] font-bold text-[#00C97A] mb-2">
               The Fix: {current.fix.title}
             </h3>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7] mb-4">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-[1.7] mb-4">
               {current.fix.text}
             </p>
             <ol className="space-y-2">
@@ -341,7 +341,7 @@ export default function MistakesGuide() {
             {activeMistake > 1 ? (
               <button
                 onClick={() => goTo(activeMistake - 1)}
-                className="bg-white/5 border border-white/10 text-white/50 font-[family-name:var(--font-inter)] text-[13px] font-bold px-5 py-3 rounded-[8px] hover:bg-white/10 transition-colors"
+                className="bg-white/5 border border-white/10 text-white/65 font-[family-name:var(--font-inter)] text-[13px] font-bold px-5 py-3 rounded-[8px] hover:bg-white/10 transition-colors"
               >
                 ← Mistake #{activeMistake - 1}
               </button>
@@ -366,7 +366,7 @@ export default function MistakesGuide() {
           <h3 className="font-sans text-[22px] font-bold text-white mb-3">
             Alam mo na ang mistakes. Ready ka na ba?
           </h3>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.8] mb-5 max-w-[500px] mx-auto">
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.8] mb-5 max-w-[500px] mx-auto">
             Gamitin ang Skill Finder para malaman kung anong online income path
             ang best fit sa skills at situation mo — libre, walang sign-up.
           </p>

@@ -64,7 +64,7 @@ export default function AboutStory() {
               <br />
               <span className="text-[#E8373A]">Don&apos;t repeat them.&rdquo;</span>
             </h2>
-            <div className="flex flex-col gap-[12px] font-[family-name:var(--font-inter)] text-[17px] text-white/55 leading-[1.8]">
+            <div className="flex flex-col gap-[12px] font-[family-name:var(--font-inter)] text-[17px] text-white/70 leading-[1.8]">
               <p>
                 Cyberussell exists to help Filipinos earn online — with real
                 data, not hype. Most of what you need is here for free. I

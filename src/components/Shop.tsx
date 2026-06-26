@@ -108,7 +108,7 @@ export default function Shop() {
                 <span className="font-sans text-[16px] md:text-[18px] font-bold text-white text-center mt-4 px-4 leading-tight">
                   {featured.title}
                 </span>
-                <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/40 mt-2 uppercase tracking-[0.1em]">
+                <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/55 mt-2 uppercase tracking-[0.1em]">
                   Cyberussell
                 </span>
               </div>
@@ -123,7 +123,7 @@ export default function Shop() {
             <h2 className="font-sans text-[24px] md:text-[32px] font-bold text-white leading-tight mb-3">
               {featured.title}
             </h2>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8] mb-6">
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8] mb-6">
               {featured.description}
             </p>
 
@@ -181,7 +181,7 @@ export default function Shop() {
             Trending — Premium Guides
           </h3>
         </div>
-        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">
+        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 mb-6">
           Based on what Filipino online workers are searching for right now.
         </p>
 
@@ -222,7 +222,7 @@ export default function Shop() {
 
                 {/* Body */}
                 <div className="p-6 flex flex-col flex-grow">
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 leading-[1.8] mb-5 flex-grow">
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-5 flex-grow">
                     {product.description}
                   </p>
                   {product.active && product.price > 0 ? (
@@ -240,7 +240,7 @@ export default function Shop() {
                     </button>
                   ) : (
                     <button
-                      className="w-full bg-white/5 border border-white/10 text-white/40 font-[family-name:var(--font-inter)] text-[13px] font-bold py-3 rounded-[8px] flex items-center justify-center gap-2 cursor-not-allowed"
+                      className="w-full bg-white/5 border border-white/10 text-white/55 font-[family-name:var(--font-inter)] text-[13px] font-bold py-3 rounded-[8px] flex items-center justify-center gap-2 cursor-not-allowed"
                       disabled
                     >
                       <Bell size={14} strokeWidth={2.5} />
@@ -257,12 +257,12 @@ export default function Shop() {
       {/* ── Already Paid? ── */}
       <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 md:p-8">
         <div className="flex items-center gap-3 mb-2">
-          <HelpCircle size={18} className="text-white/50" strokeWidth={2.5} />
+          <HelpCircle size={18} className="text-white/65" strokeWidth={2.5} />
           <h3 className="font-sans text-[18px] md:text-[20px] font-bold text-white">
             Already paid but didn&apos;t get your download?
           </h3>
         </div>
-        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-5">
+        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 mb-5">
           Enter your PayMongo reference number and we&apos;ll generate a new download link for you.
         </p>
 

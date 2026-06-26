@@ -127,7 +127,7 @@ export default function BlogShelfWithReader({ posts }: { posts: Post[] }) {
             <h2 className="font-sans text-[26px] md:text-[38px] font-bold text-white leading-tight mb-4">
               {post.title}
             </h2>
-            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               {post.description}
             </p>
           </div>
@@ -151,7 +151,7 @@ export default function BlogShelfWithReader({ posts }: { posts: Post[] }) {
           <div className="text-center mt-10">
             <button
               onClick={scrollToShelf}
-              className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white transition-colors cursor-pointer bg-transparent border-none"
+              className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 hover:text-white transition-colors cursor-pointer bg-transparent border-none"
             >
               ↑ Back to the shelf
             </button>

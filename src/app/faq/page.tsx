@@ -34,7 +34,7 @@ export default function FaqPage() {
           <h1 className="text-white text-[28px] md:text-[36px] font-bold mb-3">
             Real Talk: Online Earning FAQ
           </h1>
-          <p className="text-white/50 text-[15px] md:text-[17px] max-w-md mx-auto leading-relaxed">
+          <p className="text-white/65 text-[15px] md:text-[17px] max-w-md mx-auto leading-relaxed">
             Walang hype. Walang pa-flex. Puro totoo lang.
           </p>
         </div>

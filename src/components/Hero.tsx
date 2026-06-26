@@ -46,7 +46,7 @@ export default function Hero() {
                 <span className="font-[family-name:var(--font-inter)] text-[14px] md:text-[15px] font-bold text-white leading-snug group-hover:text-[#FFD23F] transition-colors line-clamp-2">
                   {latestPost.title}
                 </span>
-                <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">
+                <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/55">
                   {latestPost.readTime} · Read now →
                 </span>
               </div>
