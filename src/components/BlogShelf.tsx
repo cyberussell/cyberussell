@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Post } from "@/lib/blog";
 
-type BookDesign = {
+export type BookDesign = {
   main: string;
   accent: string;
   textColor: string;
@@ -12,7 +12,7 @@ type BookDesign = {
   font: { family: string; weight: number; letterSpacing: number; fontSize: number };
 };
 
-const BOOK_DESIGNS: BookDesign[] = [
+export const BOOK_DESIGNS: BookDesign[] = [
   { main: "#E24B4A", accent: "#B82E31", textColor: "#fff", accentTextColor: "#fff", layout: "band-top", font: { family: "var(--font-syne), sans-serif", weight: 900, letterSpacing: 1, fontSize: 18 } },
   { main: "#185FA5", accent: "#F5C842", textColor: "#fff", accentTextColor: "#185FA5", layout: "stripe-bottom", font: { family: "'Georgia', serif", weight: 700, letterSpacing: 3, fontSize: 16 } },
   { main: "#1D9E75", accent: "#FFFFFF", textColor: "#fff", accentTextColor: "#1D9E75", layout: "full-accent-top", font: { family: "system-ui, sans-serif", weight: 900, letterSpacing: 0, fontSize: 20 } },
@@ -236,7 +236,7 @@ function FaceCreases() {
   );
 }
 
-export default function BlogShelf({ posts }: { posts: Post[] }) {
+export default function BlogShelf({ posts, onSelectPost }: { posts: Post[]; onSelectPost?: (index: number) => void }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -259,9 +259,8 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
             const isFirst = i === 0;
 
             return (
-              <a
+              <div
                 key={post.slug}
-                href={`/blog/${post.slug}`}
                 className="no-underline block relative"
                 style={{
                   width: currentWidth,
@@ -272,6 +271,7 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
                   ...(isFirst && !isOpen ? { transform: "rotate(4deg)", transformOrigin: "bottom left", marginRight: 30 } : {}),
                 }}
                 onMouseEnter={() => setOpenIndex(i)}
+                onClick={() => onSelectPost?.(i)}
               >
                 {/* Spine — visible when closed */}
                 <div
@@ -394,7 +394,7 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
                     </div>
                   </div>
                 </div>
-              </a>
+              </div>
             );
           })}
           {/* Coming soon placeholder */}
@@ -424,13 +424,6 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
           <div style={{ height: 3, background: "rgba(255,255,255,0.12)", borderRadius: 1 }} />
           <div style={{ height: 10, background: "linear-gradient(to bottom, rgba(255,255,255,0.04), transparent)", borderRadius: "0 0 4px 4px" }} />
         </div>
-        {/* Hint */}
-        <p
-          className="text-center font-[family-name:var(--font-inter)] py-4"
-          style={{ fontSize: 11, color: "rgba(255,255,255,0.25)" }}
-        >
-          Hover a book to peek, click to read
-        </p>
       </div>
 
       {/* Mobile card list */}
@@ -438,10 +431,10 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
         {posts.map((post, i) => {
           const d = BOOK_DESIGNS[i % BOOK_DESIGNS.length];
           return (
-            <a
+            <div
               key={post.slug}
-              href={`/blog/${post.slug}`}
-              className="block rounded-2xl p-5 no-underline"
+              onClick={() => onSelectPost?.(i)}
+              className="block rounded-2xl p-5 no-underline cursor-pointer"
               style={{ background: "#18181F", borderLeft: `4px solid ${d.main}` }}
             >
               <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -480,7 +473,7 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
                   </span>
                 ))}
               </div>
-            </a>
+            </div>
           );
         })}
       </div>

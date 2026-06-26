@@ -43,6 +43,17 @@ export function getAllPosts(): Post[] {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
+export async function getAllPostsWithContent(): Promise<Post[]> {
+  const posts = getAllPosts();
+  const withContent = await Promise.all(
+    posts.map(async (post) => {
+      const full = await getPostBySlug(post.slug);
+      return full ?? post;
+    })
+  );
+  return withContent;
+}
+
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   const filePath = path.join(BLOG_DIR, `${slug}.md`);
   if (!fs.existsSync(filePath)) return null;
@@ -57,6 +68,8 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     lang: data.lang ?? "en",
     tags: data.tags ?? [],
     readTime: data.readTime ?? "5 min read",
+    heroTitle: data.heroTitle,
+    spineTitle: data.spineTitle,
     content: processed.toString(),
   };
 }

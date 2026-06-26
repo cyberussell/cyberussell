@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { getAllPosts } from "@/lib/blog";
+import { getAllPostsWithContent } from "@/lib/blog";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import BlogShelf from "@/components/BlogShelf";
+import BlogShelfWithReader from "@/components/BlogShelfWithReader";
 
 export const metadata: Metadata = {
   title: "Earn Money Online Philippines — Guides & Tips | Cyberussell",
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+export default async function BlogPage() {
+  const posts = await getAllPostsWithContent();
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -48,11 +48,14 @@ export default function BlogPage() {
             Guides
           </p>
           <h1 className="font-sans text-[28px] md:text-[42px] font-bold text-white leading-tight">
-            Guides for<br />Earning Online
+            Guides for Earning Online
           </h1>
+          <p className="hidden md:block font-[family-name:var(--font-inter)] mt-3" style={{ fontSize: 11, color: "rgba(255,255,255,0.25)" }}>
+            Hover a book to peek, click to read
+          </p>
         </div>
 
-        <BlogShelf posts={posts} />
+        <BlogShelfWithReader posts={posts} />
 
         {/* Back link */}
         <div className="text-center mt-10">
