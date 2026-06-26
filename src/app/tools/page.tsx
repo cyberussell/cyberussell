@@ -21,6 +21,12 @@ const tools = [
     href: "/tools/scam-scanner",
     tag: "Safety",
   },
+  {
+    title: "Bio Generator",
+    desc: "Paste your skills and experience. AI writes a professional freelancer bio optimized for Upwork, OJP, Fiverr, or LinkedIn.",
+    href: "/tools/bio-generator",
+    tag: "Freelancing",
+  },
 ];
 
 export default function ToolsPage() {

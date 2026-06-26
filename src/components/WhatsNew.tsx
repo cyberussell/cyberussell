@@ -1,20 +1,20 @@
 const updates = [
   {
     label: "New Tool",
+    title: "Bio Generator — AI writes your freelancer profile bio",
+    href: "/tools/bio-generator",
+    color: "#E8373A",
+  },
+  {
+    label: "New Tool",
     title: "Scam Scanner — AI-powered job scam detector",
     href: "/tools/scam-scanner",
-    color: "#E8373A",
+    color: "#FFD23F",
   },
   {
     label: "New Tool",
     title: "Prompt Trainer — score and improve your AI prompts",
     href: "/tools/prompt-forge",
-    color: "#FFD23F",
-  },
-  {
-    label: "Guide",
-    title: "Online Scam Checker — check opportunities against known PH scam patterns",
-    href: "/guides/scam-checker",
     color: "#00C97A",
   },
 ];
