@@ -48,7 +48,7 @@ export const PRODUCTS: Product[] = [
     coverIcon: "Bot",
     coverColor: "#3B82F6",
     coverBg: "rgba(59,130,246,0.08)",
-    active: true,
+    active: false,
   },
   {
     id: "prompt-engineering-for-online-workers",
