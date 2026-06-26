@@ -28,11 +28,11 @@ export default function PromptForgePage() {
           <div className="inline-flex items-center gap-2 text-[12px] tracking-[0.08em] uppercase text-[#E8373A] bg-[#E8373A]/8 border border-[#E8373A]/25 px-3 py-1 rounded-full mb-4 font-[family-name:var(--font-inter)]">
             Free Tool
           </div>
-          <h1 className="font-sans text-[32px] md:text-[42px] font-bold text-white leading-[1.1] mb-3 max-w-[680px]">
+          <h1 className="font-sans text-[32px] md:text-[42px] font-bold text-white leading-[1.1] mb-3">
             Turn weak prompts into{" "}
             <span className="text-[#FFD23F]">strong</span> instructions.
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[15px] md:text-[16px] text-white/45 max-w-[560px] leading-[1.6]">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] md:text-[16px] text-white/45 leading-[1.6]">
             Paste anything — even a lazy one-liner. Claude AI scores it,
             explains exactly what&apos;s wrong, and tells you how to fix it.
             10 free analyses per day.
