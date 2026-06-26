@@ -1,4 +1,5 @@
 import ShareSiteButton from "@/components/ShareSiteButton";
+import SubscribeForm from "@/components/SubscribeForm";
 
 const linkColumns = [
   {
@@ -45,6 +46,12 @@ export default function Footer() {
             Free. Simple. Built by someone from the province, for people from
             the province.
           </p>
+          <div className="mt-4">
+            <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 mb-2">
+              Get new guides when they drop.
+            </p>
+            <SubscribeForm />
+          </div>
         </div>
 
         {/* Link columns */}
