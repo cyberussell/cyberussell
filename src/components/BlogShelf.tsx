@@ -3,111 +3,162 @@
 import { useState } from "react";
 import type { Post } from "@/lib/blog";
 
-const BOOK_COLORS = ["#E24B4A", "#185FA5", "#1D9E75", "#BA7517", "#534AB7", "#D4537E", "#D85A30", "#639922"];
+type BookDesign = {
+  main: string;
+  accent: string;
+  textColor: string;
+  accentTextColor: string;
+  layout: "band-top" | "band-bottom" | "split" | "stripe-top" | "stripe-bottom" | "full-accent-top" | "full-accent-bottom" | "double-band";
+  font: { family: string; weight: number; letterSpacing: number; fontSize: number };
+};
 
-const SPINE_FONTS = [
-  { family: "var(--font-syne), sans-serif", weight: 900, letterSpacing: 1, uppercase: true, fontSize: 18 },
-  { family: "'Georgia', serif", weight: 700, letterSpacing: 3, uppercase: true, fontSize: 16 },
-  { family: "system-ui, sans-serif", weight: 900, letterSpacing: 0, uppercase: true, fontSize: 20 },
-  { family: "'Courier New', monospace", weight: 700, letterSpacing: 2, uppercase: true, fontSize: 15 },
-  { family: "var(--font-inter), sans-serif", weight: 800, letterSpacing: 4, uppercase: true, fontSize: 14 },
-  { family: "'Impact', sans-serif", weight: 400, letterSpacing: 1, uppercase: true, fontSize: 18 },
-  { family: "var(--font-syne), sans-serif", weight: 800, letterSpacing: 2, uppercase: true, fontSize: 16 },
-  { family: "system-ui, sans-serif", weight: 900, letterSpacing: 1, uppercase: true, fontSize: 17 },
+const BOOK_DESIGNS: BookDesign[] = [
+  { main: "#E24B4A", accent: "#B82E31", textColor: "#fff", accentTextColor: "#fff", layout: "band-top", font: { family: "var(--font-syne), sans-serif", weight: 900, letterSpacing: 1, fontSize: 18 } },
+  { main: "#185FA5", accent: "#F5C842", textColor: "#fff", accentTextColor: "#185FA5", layout: "stripe-bottom", font: { family: "'Georgia', serif", weight: 700, letterSpacing: 3, fontSize: 16 } },
+  { main: "#1D9E75", accent: "#FFFFFF", textColor: "#fff", accentTextColor: "#1D9E75", layout: "full-accent-top", font: { family: "system-ui, sans-serif", weight: 900, letterSpacing: 0, fontSize: 20 } },
+  { main: "#BA7517", accent: "#2B2117", textColor: "#fff", accentTextColor: "#F5C842", layout: "split", font: { family: "'Courier New', monospace", weight: 700, letterSpacing: 2, fontSize: 15 } },
+  { main: "#534AB7", accent: "#FFFFFF", textColor: "#fff", accentTextColor: "#534AB7", layout: "band-bottom", font: { family: "var(--font-inter), sans-serif", weight: 800, letterSpacing: 4, fontSize: 14 } },
+  { main: "#D4537E", accent: "#F7D6E0", textColor: "#fff", accentTextColor: "#D4537E", layout: "double-band", font: { family: "var(--font-syne), sans-serif", weight: 800, letterSpacing: 2, fontSize: 16 } },
+  { main: "#D85A30", accent: "#FFFFFF", textColor: "#fff", accentTextColor: "#D85A30", layout: "stripe-top", font: { family: "system-ui, sans-serif", weight: 900, letterSpacing: 1, fontSize: 17 } },
+  { main: "#2D5F4A", accent: "#E8D5B0", textColor: "#fff", accentTextColor: "#2D5F4A", layout: "full-accent-bottom", font: { family: "'Georgia', serif", weight: 700, letterSpacing: 3, fontSize: 16 } },
 ];
 
 const BOOK_HEIGHTS = [520, 460, 490, 430, 480, 450, 500, 420];
 const SPINE_WIDTHS = [85, 75, 90, 78, 85, 76, 82, 86];
 const FACE_WIDTH = 240;
 
-type SpineStamp = {
-  type: "publisher" | "edition" | "barcode" | "seal" | "stripe" | "dot-pattern" | "year-mark" | "logo-block";
-  position: "top" | "bottom";
-};
+function SpineLayout({ design, spineText, height }: { design: BookDesign; spineText: string; height: number }) {
+  const { main, accent, textColor, accentTextColor, layout, font } = design;
+  const displayText = spineText.toUpperCase();
+  const bandH = Math.round(height * 0.18);
+  const stripeH = 3;
 
-const SPINE_STAMPS: SpineStamp[][] = [
-  [{ type: "publisher", position: "bottom" }, { type: "stripe", position: "top" }],
-  [{ type: "barcode", position: "bottom" }, { type: "dot-pattern", position: "top" }],
-  [{ type: "seal", position: "bottom" }, { type: "year-mark", position: "top" }],
-  [{ type: "logo-block", position: "top" }, { type: "edition", position: "bottom" }],
-  [{ type: "stripe", position: "top" }, { type: "publisher", position: "bottom" }],
-  [{ type: "year-mark", position: "top" }, { type: "barcode", position: "bottom" }],
-  [{ type: "edition", position: "bottom" }, { type: "seal", position: "top" }],
-  [{ type: "dot-pattern", position: "top" }, { type: "logo-block", position: "bottom" }],
-];
+  const titleEl = (color: string) => (
+    <span style={{
+      writingMode: "vertical-rl", textOrientation: "mixed",
+      fontFamily: font.family, fontSize: font.fontSize, fontWeight: font.weight,
+      color, letterSpacing: font.letterSpacing, lineHeight: 1.2,
+      textAlign: "center", whiteSpace: "nowrap",
+    }}>
+      {displayText}
+    </span>
+  );
 
-function StampElement({ stamp, spineWidth }: { stamp: SpineStamp; spineWidth: number }) {
-  const w = spineWidth - 16;
-  const o = "rgba(255,255,255,0.2)";
-  const o2 = "rgba(255,255,255,0.12)";
+  const publisherEl = (color: string) => (
+    <span style={{
+      writingMode: "vertical-rl", textOrientation: "mixed",
+      fontFamily: "'Courier New', monospace", fontSize: 7, fontWeight: 700,
+      color, letterSpacing: 1.5, opacity: 0.7,
+    }}>
+      CYBERUSSELL
+    </span>
+  );
 
-  switch (stamp.type) {
-    case "publisher":
+  const horizontalLines = (color: string, count: number) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 3, width: "60%", alignSelf: "center" }}>
+      {Array.from({ length: count }).map((_, j) => (
+        <div key={j} style={{ height: stripeH, background: color, opacity: 0.5, borderRadius: 1 }} />
+      ))}
+    </div>
+  );
+
+  switch (layout) {
+    case "band-top":
       return (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
-          <div style={{ width: 20, height: 20, border: `1.5px solid ${o}`, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontFamily: "'Georgia', serif", fontSize: 9, color: o, fontWeight: 700 }}>C</span>
+        <>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: bandH, background: accent, borderRadius: "3px 3px 0 0", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 4, padding: "8px 0" }}>
+            {horizontalLines(accentTextColor, 3)}
           </div>
-          <span style={{ fontFamily: "'Courier New', monospace", fontSize: 6, color: o2, letterSpacing: 1 }}>PRESS</span>
-        </div>
-      );
-    case "barcode":
-      return (
-        <div style={{ display: "flex", gap: 1.5, alignItems: "flex-end", height: 18 }}>
-          {[12, 16, 10, 18, 8, 14, 12, 16, 10, 14, 8].map((h, j) => (
-            <div key={j} style={{ width: 2, height: h, background: o2, borderRadius: 0.5 }} />
-          ))}
-        </div>
-      );
-    case "seal":
-      return (
-        <div style={{ position: "relative", width: 28, height: 28 }}>
-          <div style={{
-            width: 28, height: 28, border: `1.5px solid ${o}`, borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <div style={{ width: 18, height: 18, border: `1px solid ${o2}`, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 7, color: o, fontFamily: "'Georgia', serif", fontWeight: 700 }}>★</span>
-            </div>
+          <div style={{ position: "absolute", top: bandH, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "16px 6px" }}>
+            <div style={{ flex: 1, display: "flex", alignItems: "center" }}>{titleEl(textColor)}</div>
+            <div style={{ flexShrink: 0, marginTop: 8 }}>{publisherEl(textColor)}</div>
           </div>
-        </div>
+        </>
       );
-    case "edition":
+    case "band-bottom":
       return (
-        <div style={{ border: `1px solid ${o2}`, padding: "3px 6px", borderRadius: 2 }}>
-          <span style={{ fontFamily: "'Courier New', monospace", fontSize: 7, color: o, letterSpacing: 1 }}>1ST ED.</span>
-        </div>
-      );
-    case "stripe":
-      return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 2, width: Math.min(w, 40) }}>
-          <div style={{ height: 2, background: o2, borderRadius: 1 }} />
-          <div style={{ height: 2, background: o, borderRadius: 1 }} />
-          <div style={{ height: 2, background: o2, borderRadius: 1 }} />
-        </div>
-      );
-    case "dot-pattern":
-      return (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 4px)", gap: 3 }}>
-          {Array.from({ length: 9 }).map((_, j) => (
-            <div key={j} style={{ width: 4, height: 4, borderRadius: "50%", background: j % 2 === 0 ? o : o2 }} />
-          ))}
-        </div>
-      );
-    case "year-mark":
-      return (
-        <span style={{ fontFamily: "'Georgia', serif", fontSize: 9, color: o, fontStyle: "italic" }}>2026</span>
-      );
-    case "logo-block":
-      return (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <div style={{ width: 16, height: 16, background: o2, borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: 8, height: 8, border: `1.5px solid ${o}`, borderRadius: 1 }} />
+        <>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: bandH, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "16px 6px" }}>
+            <div style={{ flexShrink: 0, marginBottom: 8 }}>{publisherEl(textColor)}</div>
+            <div style={{ flex: 1, display: "flex", alignItems: "center" }}>{titleEl(textColor)}</div>
           </div>
-        </div>
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: bandH, background: accent, borderRadius: "0 0 3px 3px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {horizontalLines(accentTextColor, 2)}
+          </div>
+        </>
       );
-    default:
-      return null;
+    case "split":
+      return (
+        <>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "45%", background: accent, borderRadius: "3px 3px 0 0", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px 6px" }}>
+            {titleEl(accentTextColor)}
+          </div>
+          <div style={{ position: "absolute", top: "45%", left: 0, right: 0, height: 4, display: "flex", gap: 0 }}>
+            <div style={{ flex: 1, height: "100%", background: "rgba(255,255,255,0.3)" }} />
+          </div>
+          <div style={{ position: "absolute", top: "45%", left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "16px 6px" }}>
+            {publisherEl(textColor)}
+          </div>
+        </>
+      );
+    case "stripe-top":
+      return (
+        <>
+          <div style={{ position: "absolute", top: 12, left: "15%", right: "15%", display: "flex", flexDirection: "column", gap: 3 }}>
+            <div style={{ height: stripeH, background: accent, borderRadius: 1 }} />
+            <div style={{ height: stripeH, background: accent, opacity: 0.5, borderRadius: 1 }} />
+          </div>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 6px 24px" }}>
+            <div style={{ flex: 1, display: "flex", alignItems: "center" }}>{titleEl(textColor)}</div>
+            <div style={{ flexShrink: 0, marginTop: 8 }}>{publisherEl(textColor)}</div>
+          </div>
+        </>
+      );
+    case "stripe-bottom":
+      return (
+        <>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 6px 40px" }}>
+            <div style={{ flexShrink: 0, marginBottom: 8 }}>{publisherEl(textColor)}</div>
+            <div style={{ flex: 1, display: "flex", alignItems: "center" }}>{titleEl(textColor)}</div>
+          </div>
+          <div style={{ position: "absolute", bottom: 16, left: "12%", right: "12%", height: bandH * 0.4, background: accent, borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontFamily: "'Courier New', monospace", fontSize: 6, color: accentTextColor, fontWeight: 700, letterSpacing: 1 }}>2026</span>
+          </div>
+        </>
+      );
+    case "full-accent-top":
+      return (
+        <>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: bandH * 1.5, background: accent, borderRadius: "3px 3px 0 0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", padding: "8px 6px" }}>
+            {publisherEl(accentTextColor)}
+          </div>
+          <div style={{ position: "absolute", top: bandH * 1.5, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "8px 6px" }}>
+            {titleEl(textColor)}
+          </div>
+        </>
+      );
+    case "full-accent-bottom":
+      return (
+        <>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: bandH * 1.2, display: "flex", alignItems: "center", justifyContent: "center", padding: "8px 6px" }}>
+            {titleEl(textColor)}
+          </div>
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: bandH * 1.2, background: accent, borderRadius: "0 0 3px 3px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "8px 6px" }}>
+            {publisherEl(accentTextColor)}
+          </div>
+        </>
+      );
+    case "double-band":
+      return (
+        <>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: bandH * 0.6, background: accent, borderRadius: "3px 3px 0 0" }} />
+          <div style={{ position: "absolute", top: bandH * 0.6, left: 0, right: 0, bottom: bandH * 0.6, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "8px 6px" }}>
+            <div style={{ flex: 1, display: "flex", alignItems: "center" }}>{titleEl(textColor)}</div>
+            <div style={{ flexShrink: 0, marginTop: 6 }}>{publisherEl(textColor)}</div>
+          </div>
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: bandH * 0.6, background: accent, borderRadius: "0 0 3px 3px" }} />
+        </>
+      );
   }
 }
 
@@ -198,17 +249,12 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
           onMouseLeave={() => setOpenIndex(null)}
         >
           {posts.map((post, i) => {
-            const color = BOOK_COLORS[i % BOOK_COLORS.length];
-            const spineFont = SPINE_FONTS[i % SPINE_FONTS.length];
+            const design = BOOK_DESIGNS[i % BOOK_DESIGNS.length];
             const height = BOOK_HEIGHTS[i % BOOK_HEIGHTS.length];
             const spineWidth = SPINE_WIDTHS[i % SPINE_WIDTHS.length];
-            const stamps = SPINE_STAMPS[i % SPINE_STAMPS.length];
             const isOpen = openIndex === i;
             const currentWidth = isOpen ? FACE_WIDTH : spineWidth;
             const spineText = post.spineTitle || post.title.toUpperCase();
-            const displayText = spineFont.uppercase ? spineText.toUpperCase() : spineText;
-            const topStamp = stamps.find((s) => s.position === "top");
-            const bottomStamp = stamps.find((s) => s.position === "bottom");
 
             const isFirst = i === 0;
 
@@ -232,53 +278,15 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
                   style={{
                     position: "absolute",
                     inset: 0,
-                    background: color,
+                    background: design.main,
                     borderRadius: 3,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "24px 6px",
                     opacity: isOpen ? 0 : 1,
                     transition: "opacity 0.3s ease",
                     overflow: "hidden",
                   }}
                 >
                   <SpineCreases />
-
-                  {/* Top stamp */}
-                  {topStamp && (
-                    <div style={{ flexShrink: 0, zIndex: 1 }}>
-                      <StampElement stamp={topStamp} spineWidth={spineWidth} />
-                    </div>
-                  )}
-
-                  {/* Title */}
-                  <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1 }}>
-                    <span
-                      style={{
-                        writingMode: "vertical-rl",
-                        textOrientation: "mixed",
-                        fontFamily: spineFont.family,
-                        fontSize: spineFont.fontSize,
-                        fontWeight: spineFont.weight,
-                        color: "#fff",
-                        letterSpacing: spineFont.letterSpacing,
-                        lineHeight: 1.2,
-                        textAlign: "center",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {displayText}
-                    </span>
-                  </div>
-
-                  {/* Bottom stamp */}
-                  {bottomStamp && (
-                    <div style={{ flexShrink: 0, zIndex: 1 }}>
-                      <StampElement stamp={bottomStamp} spineWidth={spineWidth} />
-                    </div>
-                  )}
+                  <SpineLayout design={design} spineText={spineText} height={height} />
                 </div>
 
                 {/* Face — visible when open */}
@@ -286,7 +294,7 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
                   style={{
                     position: "absolute",
                     inset: 0,
-                    background: color,
+                    background: design.main,
                     borderRadius: "3px 8px 8px 3px",
                     padding: "32px 28px 28px 32px",
                     display: "flex",
@@ -428,22 +436,22 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
       {/* Mobile card list */}
       <div className="md:hidden flex flex-col gap-3">
         {posts.map((post, i) => {
-          const color = BOOK_COLORS[i % BOOK_COLORS.length];
+          const d = BOOK_DESIGNS[i % BOOK_DESIGNS.length];
           return (
             <a
               key={post.slug}
               href={`/blog/${post.slug}`}
               className="block rounded-2xl p-5 no-underline"
-              style={{ background: "#18181F", borderLeft: `4px solid ${color}` }}
+              style={{ background: "#18181F", borderLeft: `4px solid ${d.main}` }}
             >
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span
                   className="font-[family-name:var(--font-inter)] font-bold rounded-full px-2.5 py-0.5"
                   style={{
                     fontSize: 11,
-                    color,
-                    background: `${color}15`,
-                    border: `1px solid ${color}30`,
+                    color: d.main,
+                    background: `${d.main}15`,
+                    border: `1px solid ${d.main}30`,
                   }}
                 >
                   {post.lang === "fil" ? "Filipino" : "English"}
