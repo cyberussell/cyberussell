@@ -2,7 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { PRODUCTS } from "@/data/products";
 import { generateToken } from "@/lib/download-token";
 
+const RATE_LIMIT = 10;
+const rateLimiter = new Map<string, { count: number; resetAt: number }>();
+
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  const now = Date.now();
+  const entry = rateLimiter.get(ip);
+  if (entry && now < entry.resetAt) {
+    if (entry.count >= RATE_LIMIT) {
+      return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
+    }
+    entry.count++;
+  } else {
+    rateLimiter.set(ip, { count: 1, resetAt: now + 3600000 });
+  }
+
   try {
     const { productId } = await req.json();
 
