@@ -73,7 +73,7 @@ export default function Footer() {
       <div className="border-t border-white/[0.06] px-6 md:px-10 py-5">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/25 text-center md:text-left">
-            © 2026 Cyberussell · Russell · Isabela, Cagayan Valley · Built with Claude AI · Data: PSA, DOLE
+            © 2026 Cyberussell. All rights reserved.
           </span>
 
           {/* Social icons */}
