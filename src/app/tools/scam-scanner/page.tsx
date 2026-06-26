@@ -17,6 +17,13 @@ export const metadata: Metadata = {
     images: [{ url: "/og/og-scam-scanner.jpg", width: 1200, height: 630 }],
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Scam Scanner — AI-Powered Job Scam Detector",
+    description:
+      "Paste any job posting. Get an AI-powered scam analysis with red flags, risk score, and actionable advice — free.",
+    images: ["/og/og-scam-scanner.jpg"],
+  },
 };
 
 export default function ScamScannerPage() {

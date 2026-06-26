@@ -17,6 +17,13 @@ export const metadata: Metadata = {
     images: [{ url: "/og/og-bio-generator.jpg", width: 1200, height: 630 }],
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bio Generator — AI Freelancer Profile Writer",
+    description:
+      "Paste your skills. Get a ready-to-use freelancer bio optimized for your platform — free.",
+    images: ["/og/og-bio-generator.jpg"],
+  },
 };
 
 export default function BioGeneratorPage() {
