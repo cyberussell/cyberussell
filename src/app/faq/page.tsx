@@ -7,6 +7,22 @@ export const metadata: Metadata = {
   title: "FAQ — Cyberussell",
   description:
     "Mga honest na sagot tungkol sa online earning, freelancing, at passive income para sa mga Pilipino.",
+  openGraph: {
+    title: "Real Talk: Online Earning FAQ — Cyberussell",
+    description:
+      "Walang hype. Walang pa-flex. Puro totoo lang. 11 honest na sagot para sa mga Pilipinong curious sa online earning.",
+    url: "https://www.cyberussell.com/faq",
+    siteName: "Cyberussell",
+    images: [{ url: "/og/og-faq.jpg", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Real Talk: Online Earning FAQ — Cyberussell",
+    description:
+      "Walang hype. Walang pa-flex. Puro totoo lang. 11 honest na sagot para sa mga Pilipinong curious sa online earning.",
+    images: ["/og/og-faq.jpg"],
+  },
 };
 
 export default function FaqPage() {
