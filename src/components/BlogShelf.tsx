@@ -6,18 +6,18 @@ import type { Post } from "@/lib/blog";
 const BOOK_COLORS = ["#E24B4A", "#185FA5", "#1D9E75", "#BA7517", "#534AB7", "#D4537E", "#D85A30", "#639922"];
 
 const SPINE_FONTS = [
-  { family: "'Georgia', serif", weight: 400, letterSpacing: 3, uppercase: true, fontSize: 13 },
-  { family: "'Courier New', monospace", weight: 700, letterSpacing: 2, uppercase: true, fontSize: 12 },
-  { family: "var(--font-syne), sans-serif", weight: 800, letterSpacing: 0, uppercase: false, fontSize: 14 },
-  { family: "'Times New Roman', serif", weight: 400, letterSpacing: 4, uppercase: true, fontSize: 14 },
-  { family: "var(--font-inter), sans-serif", weight: 300, letterSpacing: 6, uppercase: true, fontSize: 11 },
-  { family: "'Impact', sans-serif", weight: 400, letterSpacing: 1, uppercase: true, fontSize: 13 },
-  { family: "'Palatino', 'Book Antiqua', serif", weight: 400, letterSpacing: 2, uppercase: false, fontSize: 13 },
-  { family: "system-ui, sans-serif", weight: 900, letterSpacing: 0, uppercase: true, fontSize: 12 },
+  { family: "var(--font-syne), sans-serif", weight: 900, letterSpacing: 1, uppercase: true, fontSize: 18 },
+  { family: "'Georgia', serif", weight: 700, letterSpacing: 3, uppercase: true, fontSize: 16 },
+  { family: "system-ui, sans-serif", weight: 900, letterSpacing: 0, uppercase: true, fontSize: 20 },
+  { family: "'Courier New', monospace", weight: 700, letterSpacing: 2, uppercase: true, fontSize: 15 },
+  { family: "var(--font-inter), sans-serif", weight: 800, letterSpacing: 4, uppercase: true, fontSize: 14 },
+  { family: "'Impact', sans-serif", weight: 400, letterSpacing: 1, uppercase: true, fontSize: 18 },
+  { family: "var(--font-syne), sans-serif", weight: 800, letterSpacing: 2, uppercase: true, fontSize: 16 },
+  { family: "system-ui, sans-serif", weight: 900, letterSpacing: 1, uppercase: true, fontSize: 17 },
 ];
 
 const BOOK_HEIGHTS = [520, 460, 490, 430, 480, 450, 500, 420];
-const SPINE_WIDTHS = [80, 70, 85, 75, 80, 72, 78, 82];
+const SPINE_WIDTHS = [85, 75, 90, 78, 85, 76, 82, 86];
 const FACE_WIDTH = 240;
 
 type SpineStamp = {
@@ -210,6 +210,8 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
             const topStamp = stamps.find((s) => s.position === "top");
             const bottomStamp = stamps.find((s) => s.position === "bottom");
 
+            const isFirst = i === 0;
+
             return (
               <a
                 key={post.slug}
@@ -221,6 +223,7 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
                   transition: "width 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
                   cursor: "pointer",
                   flexShrink: 0,
+                  ...(isFirst && !isOpen ? { transform: "rotate(4deg)", transformOrigin: "bottom left", marginRight: 30 } : {}),
                 }}
                 onMouseEnter={() => setOpenIndex(i)}
               >
@@ -388,18 +391,20 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
           })}
           {/* Coming soon placeholder */}
           <div
-            className="rounded-[3px] flex items-center justify-center flex-shrink-0"
-            style={{ width: 70, height: 360, border: "1px dashed rgba(255,255,255,0.15)", transform: "rotate(4deg)", transformOrigin: "bottom left" }}
+            className="rounded-[3px] flex items-center justify-center flex-shrink-0 relative"
+            style={{ width: 70, height: 400, background: "rgba(255,255,255,0.06)" }}
           >
+            <SpineCreases />
             <span
               style={{
                 writingMode: "vertical-rl",
                 textOrientation: "mixed",
                 fontFamily: "'Georgia', serif",
-                fontSize: 9,
-                color: "rgba(255,255,255,0.2)",
+                fontSize: 11,
+                color: "rgba(255,255,255,0.35)",
                 letterSpacing: 3,
                 textTransform: "uppercase",
+                fontWeight: 700,
               }}
             >
               Coming Soon
