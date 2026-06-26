@@ -291,6 +291,11 @@ export default function SkillFinder() {
                   <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-[1.6]">{path}</span>
                 </div>
               ))}
+              {activeCategory.result.recommendedLink && (
+                <a href={activeCategory.result.recommendedLink.url} target="_blank" rel="noopener noreferrer sponsored" className="inline-flex items-center gap-1 font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#E8373A] hover:underline mt-1">
+                  {activeCategory.result.recommendedLink.text}
+                </a>
+              )}
             </div>
           </div>
         )}

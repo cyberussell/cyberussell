@@ -77,12 +77,12 @@ const WAYS: Way[] = [
     tools: [
       { name: "Laptop with camera and mic", note: "Required" },
       { name: "Stable internet 10+ Mbps", note: "Required" },
-      { name: "Preply account", note: "Free", link: "https://www.preply.com" },
+      { name: "Preply account", note: "Free", link: "https://preply.sjv.io/OYyGGN" },
       { name: "iTalki account", note: "Free", link: "https://www.italki.com" },
       { name: "TEFL certificate (optional)", note: "+30–50% rate increase", link: "https://www.tefl.org" },
     ],
     platforms: [
-      { name: "Preply", desc: "Most popular, good student volume.", link: "https://www.preply.com" },
+      { name: "Preply", desc: "Most popular, good student volume.", link: "https://preply.sjv.io/OYyGGN" },
       { name: "iTalki", desc: "Lower commission, flexible.", link: "https://www.italki.com" },
       { name: "51Talk", desc: "Focused on Chinese students.", link: "https://www.51talk.com" },
     ],
@@ -93,7 +93,7 @@ const WAYS: Way[] = [
       "Build 5–10 regular weekly students for stable income",
       "After 5+ reviews — raise rate to ₱250–₱350/hour",
     ],
-    firststep: "Go to Preply.com now. Create your tutor profile, record a 60-second intro video, set rate at ₱150/hour. Apply as a tutor and wait for your first trial lesson request.",
+    firststep: "Go to Preply now. Create your tutor profile, record a 60-second intro video, set rate at ₱150/hour. Apply as a tutor and wait for your first trial lesson request.",
     good: "Flexible schedule, high demand, Filipinos have natural advantage. Jenny from Davao earns ₱55,000/mo teaching 6 hours a day.",
     bad: "Building first 5 reviews takes patience. Most students book at Asian timezones — early mornings common.",
     bestfor: "Patient, enjoys teaching, confident English speaker",
@@ -423,7 +423,7 @@ export default function EightWaysGuide() {
                     <p className="font-[family-name:var(--font-inter)] text-[13px] text-white font-bold">{tool.name}</p>
                     <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">{tool.note}</p>
                     {tool.link && (
-                      <a href={tool.link} target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[11px] text-[#E8373A] hover:underline">
+                      <a href={tool.link} target="_blank" rel={`noopener noreferrer${tool.link.includes('sjv.io') ? ' sponsored' : ''}`} className="font-[family-name:var(--font-inter)] text-[11px] text-[#E8373A] hover:underline">
                         Go to site &rarr;
                       </a>
                     )}
@@ -462,7 +462,7 @@ export default function EightWaysGuide() {
                 <p className="font-sans text-[15px] font-bold text-white mb-1">{p.name}</p>
                 <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 mb-3 flex-grow">{p.desc}</p>
                 {p.link !== "#" && (
-                  <a href={p.link} target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-[#E8373A] hover:underline">
+                  <a href={p.link} target="_blank" rel={`noopener noreferrer${p.link.includes('sjv.io') ? ' sponsored' : ''}`} className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-[#E8373A] hover:underline">
                     Sign up free &rarr;
                   </a>
                 )}

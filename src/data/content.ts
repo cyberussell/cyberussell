@@ -114,7 +114,7 @@ export const INCOME_TIERS = [
 export const INCOME_STAT_CARDS = [
   { value: "₱300/page",     label: "What Filipino writers earn for copy and content",                         source: "Wise.com, 2026",   color: "text-[#FFD23F]" },
   { value: "₱28,915",       label: "Average monthly income of Filipino virtual assistants",                   source: "Wise.com, 2026",   color: "text-[#00C97A]" },
-  { value: "₱55,000",       label: "Monthly income of a Filipino online English teacher (6hrs/day)",          source: "OKGames, 2026",    color: "text-[#E8373A]" },
+  { value: "₱55,000",       label: "Monthly income of a Filipino online English teacher (6hrs/day)",          source: "OKGames, 2026",    color: "text-[#E8373A]", cta: { text: "Gusto mong subukan? → Try Preply", url: "https://preply.sjv.io/OYyGGN" } },
   { value: "₱25K–₱45K",    label: "Monthly rate for social media management for international companies",    source: "OKGames, 2026",    color: "text-[#FFD23F]" },
   { value: "3–15%",         label: "TikTok affiliate marketing commission rate",                              source: "Ecomobi, 2026",    color: "text-[#00C97A]" },
   { value: "2–4 weeks",     label: "Average time before a new freelancer gets their first payment",           source: "OKGames, 2026",    color: "text-[#E8373A]" },
@@ -127,6 +127,7 @@ export type SkillResult = {
   earning: string;
   paths: readonly string[];
   button: string;
+  recommendedLink?: { text: string; url: string };
 };
 
 export type SkillCategory = {
@@ -240,12 +241,13 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
         "Filipinos are recognized as some of the best English teachers in the world. Jenny from Davao earns ₱55,000 per month from online English tutoring — just 6 hours a day on 3 platforms.",
       earning: "₱100–₱300/hour",
       paths: [
-        "Online English tutor — Preply, iTalki",
+        "Online English tutor — Find students on Preply",
         "Academic tutor — Math, Science",
         "Skills coach or mentor",
         "Online course creator — passive income",
       ],
       button: "Get the Teaching Guide",
+      recommendedLink: { text: "Try Preply →", url: "https://preply.sjv.io/OYyGGN" },
     },
   },
   {

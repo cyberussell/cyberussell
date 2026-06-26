@@ -51,11 +51,16 @@ export default function Infographic() {
 
         {/* Stat cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-5">
-          {INCOME_STAT_CARDS.map(({ value, label, source, color }) => (
+          {INCOME_STAT_CARDS.map(({ value, label, source, color, ...rest }) => (
             <div key={label} className="bg-[#222230] border border-white/5 rounded-[10px] p-4 md:px-[18px] hover:border-white/20 transition-colors">
               <div className={`font-sans text-[24px] font-bold mb-2 ${color}`}>{value}</div>
               <div className="font-[family-name:var(--font-inter)] text-[13px] text-white/80 mb-3 leading-[1.5]">{label}</div>
               <div className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/30 uppercase tracking-[0.05em]">{source}</div>
+              {"cta" in rest && rest.cta && (
+                <a href={rest.cta.url} target="_blank" rel="noopener noreferrer sponsored" className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A] hover:underline mt-2 inline-block">
+                  {rest.cta.text}
+                </a>
+              )}
             </div>
           ))}
         </div>

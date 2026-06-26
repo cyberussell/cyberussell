@@ -75,7 +75,7 @@ const PLATFORMS: Platform[] = [
     ease: "Medium",
     filipinoFriendly: "Yes",
     take: "Filipinos are globally recognized as excellent English teachers. Both platforms let you set your own rate and schedule. Preply pays better per hour. iTalki has more students. You can teach from any province.",
-    url: "https://www.preply.com",
+    url: "https://preply.sjv.io/OYyGGN",
   },
   {
     name: "Shopee Affiliate",
@@ -231,7 +231,7 @@ export default function PlatformsPage() {
               <a
                 href={p.url}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel={`noopener noreferrer${p.url.includes('sjv.io') ? ' sponsored' : ''}`}
                 className="inline-flex items-center gap-1.5 font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#FFD23F] hover:text-white transition-colors"
               >
                 Go to {p.name} →
