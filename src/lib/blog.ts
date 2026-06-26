@@ -16,6 +16,7 @@ export type Post = {
   tags: string[];
   readTime: string;
   heroTitle?: string;
+  spineTitle?: string;
   content?: string;
 };
 
@@ -36,6 +37,7 @@ export function getAllPosts(): Post[] {
         tags: data.tags ?? [],
         readTime: data.readTime ?? "5 min read",
         heroTitle: data.heroTitle,
+        spineTitle: data.spineTitle,
       };
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());

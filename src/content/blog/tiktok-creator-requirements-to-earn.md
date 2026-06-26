@@ -6,6 +6,7 @@ lang: en
 tags: ["TikTok", "content creator", "earn online", "Philippines"]
 readTime: "6 min read"
 heroTitle: "What You {red}Actually Need{/red} Before You Can {yellow}Earn on TikTok{/yellow}"
+spineTitle: "TIKTOK"
 ---
 
 TikTok is not a get-rich-quick platform. But it is one of the fastest ways a Filipino creator can go from zero to earning real money online — if you know what the requirements actually are before you start.

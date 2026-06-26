@@ -6,6 +6,7 @@ lang: en
 tags: ["online jobs", "Philippines", "no experience", "beginners", "work from home", "2026"]
 readTime: "10 min read"
 heroTitle: "How to Start {red}Earning Online{/red} in the Philippines with {yellow}Zero Experience{/yellow}"
+spineTitle: "ONLINE JOBS"
 ---
 
 You have no experience. No portfolio. No fancy equipment. Maybe you are reading this on your phone right now with mobile data because your WiFi is slow.

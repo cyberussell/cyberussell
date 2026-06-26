@@ -6,6 +6,7 @@ lang: en
 tags: ["free tools", "business", "Philippines", "productivity", "digital tools", "freelancing"]
 readTime: "7 min read"
 heroTitle: "The {red}Hidden Cost{/red} of {yellow}Free Tools{/yellow}"
+spineTitle: "FREE TOOLS"
 ---
 
 You downloaded a free logo maker. A free website builder. A free invoicing app. A free project management tool. You felt smart — why pay when free exists?

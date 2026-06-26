@@ -6,6 +6,7 @@ lang: en
 tags: ["earn online", "Philippines", "beginners", "freelancing"]
 readTime: "7 min read"
 heroTitle: "Your Skill Has a Price. {red}Most Filipinos{/red} Just {yellow}Don't Know What It Is.{/yellow}"
+spineTitle: "EARN ONLINE"
 ---
 
 Millions of Filipinos are earning money online right now — from Metro Manila, from Davao, from Isabela, from small barangays with just a smartphone and a WiFi connection. If you are reading this, you are already asking the right question.
