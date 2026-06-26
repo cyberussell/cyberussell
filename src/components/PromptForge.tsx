@@ -209,9 +209,19 @@ export default function PromptForge() {
           <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/20 flex items-center gap-1.5">
             Powered by Claude AI
           </span>
-          <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/20">
-            {promptText.length}/2000
-          </span>
+          <div className="flex items-center gap-3">
+            {(promptText || analysis) && (
+              <button
+                onClick={() => { setPromptText(""); setAnalysis(null); setError(""); setExpandedCat(null); }}
+                className="font-[family-name:var(--font-inter)] text-[12px] text-white/25 hover:text-white/50 transition-colors"
+              >
+                Clear
+              </button>
+            )}
+            <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/20">
+              {promptText.length}/2000
+            </span>
+          </div>
         </div>
       </div>
 
