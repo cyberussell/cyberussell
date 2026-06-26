@@ -1,0 +1,237 @@
+"use client";
+
+import { useState } from "react";
+import {
+  Rocket,
+  Bot,
+  FileText,
+  Download,
+  ShoppingCart,
+  Bell,
+  CheckCircle2,
+  Star,
+  Zap,
+  BookOpen,
+  Loader2,
+  type LucideIcon,
+} from "lucide-react";
+import { track } from "@vercel/analytics";
+import { PRODUCTS } from "@/data/products";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  Rocket,
+  Bot,
+  FileText,
+};
+
+export default function Shop() {
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const status = params?.get("status");
+
+  async function handleBuy(productId: string) {
+    setLoadingId(productId);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId }),
+      });
+      const data = await res.json();
+      if (data.checkoutUrl) {
+        track("shop_checkout", { product: productId });
+        window.location.href = data.checkoutUrl;
+      } else {
+        alert(data.error || "Something went wrong. Please try again.");
+      }
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoadingId(null);
+    }
+  }
+  const featured = PRODUCTS[0];
+  const FeaturedIcon = ICON_MAP[featured.coverIcon];
+  const rest = PRODUCTS.slice(1);
+
+  return (
+    <div className="space-y-16">
+      {status === "success" && (
+        <div className="bg-[#00C97A]/10 border border-[#00C97A]/25 rounded-[10px] p-5 flex items-center gap-3">
+          <CheckCircle2 size={20} className="text-[#00C97A] shrink-0" />
+          <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/80">
+            Payment successful! Check your email for the download link. Salamat!
+          </span>
+        </div>
+      )}
+      {status === "cancelled" && (
+        <div className="bg-[#E8373A]/10 border border-[#E8373A]/25 rounded-[10px] p-5 flex items-center gap-3">
+          <Bell size={20} className="text-[#E8373A] shrink-0" />
+          <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/80">
+            Payment was cancelled. No charges were made.
+          </span>
+        </div>
+      )}
+
+      {/* ── Featured Product (Hero Card) ── */}
+      <div className="relative bg-gradient-to-br from-[#00C97A]/10 via-[#18181F] to-[#18181F] border border-[#00C97A]/25 rounded-[16px] overflow-hidden">
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#00C97A]/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+          {/* Cover */}
+          <div className="relative flex items-center justify-center py-16 md:py-20 border-b md:border-b-0 md:border-r border-white/[0.07]" style={{ backgroundColor: featured.coverBg }}>
+            <div className="relative">
+              <div className="w-[180px] h-[240px] md:w-[200px] md:h-[270px] bg-gradient-to-br from-[#00C97A]/20 to-[#00C97A]/5 border border-[#00C97A]/30 rounded-[8px] flex flex-col items-center justify-center shadow-2xl shadow-[#00C97A]/10"
+                style={{ transform: "perspective(800px) rotateY(-5deg)" }}>
+                <FeaturedIcon size={48} color="#00C97A" strokeWidth={1.2} />
+                <span className="font-sans text-[16px] md:text-[18px] font-bold text-white text-center mt-4 px-4 leading-tight">
+                  {featured.title}
+                </span>
+                <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/40 mt-2 uppercase tracking-[0.1em]">
+                  Cyberussell
+                </span>
+              </div>
+            </div>
+            <div className="absolute top-4 left-4 bg-[#00C97A] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[11px] font-extrabold uppercase tracking-[0.1em] px-3 py-1.5 rounded-full">
+              Free Download
+            </div>
+          </div>
+
+          {/* Details */}
+          <div className="p-8 md:p-10 flex flex-col justify-center">
+            <h2 className="font-sans text-[24px] md:text-[32px] font-bold text-white leading-tight mb-3">
+              {featured.title}
+            </h2>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.8] mb-6">
+              {featured.description}
+            </p>
+
+            {/* What's inside */}
+            <ul className="space-y-3 mb-8">
+              {(featured.highlights ?? []).map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <CheckCircle2 size={16} className="text-[#00C97A] mt-0.5 shrink-0" strokeWidth={2.5} />
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-[1.6]">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            {/* Price + CTA */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <a
+                href={featured.file ?? "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                onClick={(e) => {
+                  if (featured.file) {
+                    e.preventDefault();
+                    track("shop_download", { product: featured.id });
+                    if (typeof window !== "undefined" && window.gtag) {
+                      window.gtag("event", "shop_download", {
+                        product_name: featured.title,
+                        event_callback: () => { window.open(featured.file, "_blank"); },
+                      });
+                    } else {
+                      window.open(featured.file, "_blank");
+                    }
+                  }
+                }}
+                className="bg-[#00C97A] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[15px] font-extrabold px-8 py-4 rounded-[10px] hover:opacity-90 transition-all flex items-center gap-2 min-h-[52px] shadow-lg shadow-[#00C97A]/20"
+              >
+                <Download size={18} strokeWidth={2.5} />
+                Download Free PDF
+              </a>
+              <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/35">
+                No email required · Instant download
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Coming Soon Section ── */}
+      <div>
+        <div className="flex items-center gap-3 mb-2">
+          <Zap size={18} className="text-[#E8373A]" strokeWidth={2.5} />
+          <h3 className="font-sans text-[20px] md:text-[24px] font-bold text-white">
+            Trending — Premium Guides
+          </h3>
+        </div>
+        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">
+          Based on what Filipino online workers are searching for right now.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {rest.map((product) => {
+            const Icon = ICON_MAP[product.coverIcon];
+            return (
+              <div
+                key={product.id}
+                className="bg-[#18181F] border border-white/[0.08] rounded-[14px] overflow-hidden flex flex-col h-full opacity-70"
+              >
+                {/* Mini cover */}
+                <div className="flex items-center gap-5 p-6 border-b border-white/[0.06]">
+                  <div
+                    className="w-[72px] h-[96px] shrink-0 rounded-[6px] flex items-center justify-center border grayscale"
+                    style={{
+                      backgroundColor: product.coverBg,
+                      borderColor: `${product.coverColor}30`,
+                    }}
+                  >
+                    <Icon size={28} color={product.coverColor} strokeWidth={1.4} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span
+                      className="inline-block text-[10px] font-bold font-[family-name:var(--font-inter)] tracking-[0.1em] uppercase px-2 py-0.5 rounded mb-2"
+                      style={{
+                        color: product.tagColor,
+                        backgroundColor: `${product.tagColor}15`,
+                      }}
+                    >
+                      {product.tag}
+                    </span>
+                    <h4 className="font-sans text-[17px] font-bold text-white leading-tight">
+                      {product.title}
+                    </h4>
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 leading-[1.8] mb-5 flex-grow">
+                    {product.description}
+                  </p>
+                  {product.active && product.price > 0 ? (
+                    <button
+                      onClick={() => handleBuy(product.id)}
+                      disabled={loadingId === product.id}
+                      className="w-full bg-[#FFD23F]/10 border border-[#FFD23F]/25 text-[#FFD23F] font-[family-name:var(--font-inter)] text-[13px] font-bold py-3 rounded-[8px] flex items-center justify-center gap-2 hover:bg-[#FFD23F]/20 transition-colors"
+                    >
+                      {loadingId === product.id ? (
+                        <Loader2 size={14} strokeWidth={2.5} className="animate-spin" />
+                      ) : (
+                        <ShoppingCart size={14} strokeWidth={2.5} />
+                      )}
+                      {loadingId === product.id ? "Processing..." : `Buy Now — ${product.priceLabel}`}
+                    </button>
+                  ) : (
+                    <button
+                      className="w-full bg-white/5 border border-white/10 text-white/40 font-[family-name:var(--font-inter)] text-[13px] font-bold py-3 rounded-[8px] flex items-center justify-center gap-2 cursor-not-allowed"
+                      disabled
+                    >
+                      <Bell size={14} strokeWidth={2.5} />
+                      Coming Soon
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}

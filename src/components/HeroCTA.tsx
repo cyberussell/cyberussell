@@ -26,14 +26,14 @@ export default function HeroCTA({ ctaBelow }: { ctaBelow: string }) {
       </p>
 
       <a
-        href="/tools/bio-generator"
+        href="/shop"
         className="group flex items-center gap-2 mt-2 md:max-w-[380px]"
       >
         <span className="shrink-0 text-[9px] font-bold font-[family-name:var(--font-inter)] tracking-[0.08em] uppercase bg-[#FFD23F]/12 border border-[#FFD23F]/20 text-[#FFD23F] px-2 py-0.5 rounded">
           What&apos;s New
         </span>
         <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/35 group-hover:text-white/60 transition-colors truncate">
-          Bio Generator — AI writes your freelancer profile bio
+          Shop — eBooks & templates for Filipino freelancers
         </span>
       </a>
     </div>
