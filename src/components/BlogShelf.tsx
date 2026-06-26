@@ -386,14 +386,10 @@ export default function BlogShelf({ posts }: { posts: Post[] }) {
               </a>
             );
           })}
-          {/* Decorative accent spine */}
-          <div className="flex-shrink-0 relative" style={{ width: 18, height: 460, background: "#534AB7", borderRadius: 3 }}>
-            <SpineCreases />
-          </div>
           {/* Coming soon placeholder */}
           <div
             className="rounded-[3px] flex items-center justify-center flex-shrink-0"
-            style={{ width: 70, height: 360, border: "1px dashed rgba(255,255,255,0.15)" }}
+            style={{ width: 70, height: 360, border: "1px dashed rgba(255,255,255,0.15)", transform: "rotate(4deg)", transformOrigin: "bottom left" }}
           >
             <span
               style={{
