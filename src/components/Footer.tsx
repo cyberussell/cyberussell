@@ -46,12 +46,17 @@ export default function Footer() {
             Free. Simple. Built by someone from the province, for people from
             the province.
           </p>
-          <div className="mt-4">
-            <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 mb-2">
-              Get new guides when they drop.
-            </p>
-            <SubscribeForm />
-          </div>
+        </div>
+
+        {/* Subscribe */}
+        <div className="flex flex-col gap-3 max-w-[260px]">
+          <h5 className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[0.1em]">
+            Stay Updated
+          </h5>
+          <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 leading-[1.7]">
+            Get new guides when they drop. Free. No spam.
+          </p>
+          <SubscribeForm />
         </div>
 
         {/* Link columns */}
