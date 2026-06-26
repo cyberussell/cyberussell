@@ -13,7 +13,7 @@ const sectionLinks = [
 const pageLinks = [
   { label: "Tools", href: "/tools" },
   { label: "Find Work", href: "/platforms" },
-  { label: "Blog", href: "/blog" },
+  { label: "BlogShelf", href: "/blog" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact Us", href: "/contact" },
 ];
