@@ -101,6 +101,13 @@ export default function ScamScanner() {
       setResult(data);
       incrementDailyCount();
       setScanCount((c) => c + 1);
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "tool_used", {
+          event_category: "tools",
+          event_label: "scam-scanner",
+          value: 1,
+        });
+      }
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     } catch {
       setError("Network error. Please check your connection and try again.");

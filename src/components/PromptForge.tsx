@@ -124,6 +124,13 @@ export default function PromptForge() {
       setAnalysis(data);
       incrementDailyCount();
       setForgedCount((c) => c + 1);
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "tool_used", {
+          event_category: "tools",
+          event_label: "prompt-forge",
+          value: 1,
+        });
+      }
       const iq = iqFromScore(data.overall, wordCount);
       setBestIQ((prev) => Math.max(prev, iq));
       showToast("Prompt analyzed — results ready below");
