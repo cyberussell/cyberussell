@@ -15,6 +15,12 @@ const tools = [
     href: "/tools/prompt-forge",
     tag: "AI Prompts",
   },
+  {
+    title: "Scam Scanner",
+    desc: "Paste any job posting or online opportunity. AI detects red flags and scam patterns common in the Philippines.",
+    href: "/tools/scam-scanner",
+    tag: "Safety",
+  },
 ];
 
 export default function ToolsPage() {
