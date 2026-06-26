@@ -6,6 +6,7 @@ import EightWaysGuide from "@/components/EightWaysGuide";
 export const metadata: Metadata = {
   title: "8 Ways to Earn Online as a Filipino — Cyberussell",
   description: "Real income data, exact tools, and honest reality checks for 8 proven ways Filipinos earn online. Free. No email.",
+  alternates: { canonical: "https://www.cyberussell.com/guides/8-ways" },
   openGraph: {
     title: "8 Ways to Earn Online as a Filipino — Cyberussell",
     description: "Real income data, exact tools, and honest reality checks for 8 proven ways Filipinos earn online. Free. No email.",
@@ -24,8 +25,19 @@ export const metadata: Metadata = {
 };
 
 export default function EightWaysPage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.cyberussell.com" },
+      { "@type": "ListItem", position: 2, name: "Guides", item: "https://www.cyberussell.com/guides" },
+      { "@type": "ListItem", position: 3, name: "8 Ways to Earn Online as a Filipino", item: "https://www.cyberussell.com/guides/8-ways" },
+    ],
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
       <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
         {/* Page title */}

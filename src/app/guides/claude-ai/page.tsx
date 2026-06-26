@@ -6,6 +6,7 @@ import ClaudeGuide from "@/components/ClaudeGuide";
 export const metadata: Metadata = {
   title: "How to Use Claude AI to Start Earning Online — Cyberussell",
   description: "7 steps with 10 copy-ready prompts. A real Filipino's guide to using Claude AI to find direction and earn.",
+  alternates: { canonical: "https://www.cyberussell.com/guides/claude-ai" },
   openGraph: {
     title: "How to Use Claude AI to Start Earning Online — Cyberussell",
     description: "7 steps with 10 copy-ready prompts. A real Filipino's guide to using Claude AI to find direction and earn.",
@@ -24,8 +25,19 @@ export const metadata: Metadata = {
 };
 
 export default function ClaudeAIGuidePage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.cyberussell.com" },
+      { "@type": "ListItem", position: 2, name: "Guides", item: "https://www.cyberussell.com/guides" },
+      { "@type": "ListItem", position: 3, name: "How to Use Claude AI to Start Earning Online", item: "https://www.cyberussell.com/guides/claude-ai" },
+    ],
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
       <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
         <ClaudeGuide />

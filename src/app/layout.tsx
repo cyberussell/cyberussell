@@ -34,6 +34,7 @@ export const metadata: Metadata = {
   facebook: {
     appId: "1580424853524034",
   },
+  alternates: { canonical: "https://www.cyberussell.com" },
   openGraph: {
     title: "Cyberussell — Your Skills. Your Income.",
     description:
@@ -80,66 +81,42 @@ export default function RootLayout({
               "mainEntity": [
                 {
                   "@type": "Question",
-                  "name": "Can I earn money online in the Philippines without experience?",
+                  "name": "Why is it hard to earn online in the Philippines?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Yes. Many online jobs in the Philippines like virtual assistant work, affiliate marketing, and online selling require no prior experience — just your existing skills and a smartphone or laptop."
+                    "text": "The problem is systemic — not enough jobs especially in the province, low minimum wages (Region II is among the lowest nationally), and most guides are written for Metro Manila or other markets, not for Filipinos starting from zero."
                   }
                 },
                 {
                   "@type": "Question",
-                  "name": "How much can a Filipino earn online per month?",
+                  "name": "How much can a beginner Filipino earn online?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Filipino freelancers typically earn ₱5,000–₱20,000/month as beginners. With 6–12 months of experience, earning ₱30,000–₱80,000/month is realistic for online jobs in design, writing, or tech."
+                    "text": "Beginners in their first 1–3 months can realistically earn ₱1,800–₱5,000/month through microtasks, basic VA work, affiliate marketing, or online selling. With 6–18 months of experience this grows to ₱10,000–₱20,000/month."
                   }
                 },
                 {
                   "@type": "Question",
-                  "name": "What skills do I need to earn money online in the Philippines?",
+                  "name": "Do I need a college degree to earn online in the Philippines?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Any skill can earn online — cooking, Canva design, writing, phone repair, teaching English, and video editing are all in demand. Use the free Skill Finder on Cyberussell to match your skill to an income path."
+                    "text": "No. Most online jobs — virtual assistant, data entry, social media management, content writing — require no degree. You need a skill, a device, and internet access."
                   }
                 },
                 {
                   "@type": "Question",
-                  "name": "Is it possible to earn online from the province in the Philippines?",
+                  "name": "What is the best platform for Filipino beginners to find online work?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Yes. Filipinos from Isabela, Cagayan Valley, Mindanao, and other provinces earn online full-time. All you need is a smartphone or laptop and a stable internet connection."
+                    "text": "OnlineJobs.ph is the most beginner-friendly — employers there are specifically searching for Filipino workers, and there is no bidding against the whole world."
                   }
                 },
                 {
                   "@type": "Question",
-                  "name": "How do I receive online earnings in the Philippines?",
+                  "name": "Is Cyberussell free?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Most freelancing platforms pay via GCash, PayPal, Payoneer, or direct bank transfer — all widely available across the Philippines including rural areas."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "What is the easiest online job for beginners in the Philippines?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Virtual assistant work and online selling via Shopee or Facebook Marketplace are the most beginner-friendly online jobs for Filipinos — low barrier to entry and high demand from international clients."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "How long does it take to start earning online in the Philippines?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Online selling and affiliate marketing can generate income within the first week. Freelancing on platforms like Upwork or OnlineJobs.ph typically takes 2–8 weeks to land the first client."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "How can Cyberussell help me earn online?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Cyberussell provides free, data-backed guides and tools to help Filipinos find the right online income path. Use the AI-powered Skill Finder to discover how to earn from what you already know, download free PDF guides, and explore the best platforms for Filipino freelancers — all in one place."
+                    "text": "Yes. All guides, tools, and downloads on Cyberussell are completely free. No email required, no payment, no upsell."
                   }
                 }
               ]
@@ -154,8 +131,12 @@ export default function RootLayout({
               "@type": "Organization",
               "name": "Cyberussell",
               "url": "https://www.cyberussell.com",
-              "logo": "https://www.cyberussell.com/favicon.png",
+              "logo": "https://www.cyberussell.com/og-image.jpg",
               "description": "Data-backed guides for Filipinos who want to earn online. Free. No email. No payment.",
+              "foundingLocation": {
+                "@type": "Place",
+                "name": "Isabela, Cagayan Valley, Philippines"
+              },
               "sameAs": [
                 "https://www.tiktok.com/@cyberussell",
                 "https://www.facebook.com/cyberussellofficial",

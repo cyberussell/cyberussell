@@ -17,6 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${post.title} — Cyberussell`,
     description: post.description,
+    alternates: { canonical: `https://www.cyberussell.com/blog/${slug}` },
     openGraph: {
       title: post.title,
       description: post.description,
@@ -38,26 +39,46 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
+  const postImage = slug === "how-to-earn-money-online-philippines-beginners" ? "/blog-og-skill-price-v2.jpg" : slug === "tiktok-creator-requirements-to-earn" ? "/blog_2_tiktok_will_pay_you.png" : "/og-image.jpg";
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
     description: post.description,
-    datePublished: post.date,
-    dateModified: post.date,
-    author: { "@type": "Organization", name: "Cyberussell" },
+    author: {
+      "@type": "Person",
+      name: "Russell",
+      url: "https://www.cyberussell.com/about",
+    },
     publisher: {
       "@type": "Organization",
       name: "Cyberussell",
-      logo: { "@type": "ImageObject", url: "https://www.cyberussell.com/favicon.png" },
+      url: "https://www.cyberussell.com",
+      logo: { "@type": "ImageObject", url: "https://www.cyberussell.com/og-image.jpg" },
     },
-    mainEntityOfPage: `https://www.cyberussell.com/blog/${slug}`,
-    image: `https://www.cyberussell.com${slug === "how-to-earn-money-online-philippines-beginners" ? "/blog-og-skill-price-v2.jpg" : slug === "tiktok-creator-requirements-to-earn" ? "/blog_2_tiktok_will_pay_you.png" : "/og-image.jpg"}`,
+    datePublished: new Date(post.date).toISOString(),
+    dateModified: new Date(post.date).toISOString(),
+    image: `https://www.cyberussell.com${postImage}`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://www.cyberussell.com/blog/${slug}`,
+    },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.cyberussell.com" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.cyberussell.com/blog" },
+      { "@type": "ListItem", position: 3, name: post.title, item: `https://www.cyberussell.com/blog/${slug}` },
+    ],
   };
 
   return (
     <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-2xl mx-auto">

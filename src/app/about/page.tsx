@@ -3,19 +3,38 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "About — Cyberussell",
-  description: "The story behind Cyberussell — why it was built, and who it's for.",
+  title: "About Cyberussell — Filipino Online Income Guides Built in the Province",
+  description: "The story behind Cyberussell — built by someone from Isabela, Cagayan Valley, for Filipinos who want to earn online without the hype.",
+  alternates: { canonical: "https://www.cyberussell.com/about" },
   openGraph: {
-    title: "About Cyberussell — Built by a Filipino, for Filipinos",
-    description: "The story behind Cyberussell — why it was built, and who it's for.",
+    title: "About Cyberussell — Filipino Online Income Guides Built in the Province",
+    description: "The story behind Cyberussell — built by someone from Isabela, Cagayan Valley, for Filipinos who want to earn online without the hype.",
     url: "https://www.cyberussell.com/about",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    siteName: "Cyberussell",
+    images: [{ url: "/og-image.jpg?v=2", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Cyberussell — Filipino Online Income Guides Built in the Province",
+    description: "The story behind Cyberussell — built by someone from Isabela, Cagayan Valley, for Filipinos who want to earn online without the hype.",
+    images: ["/og-image.jpg?v=2"],
   },
 };
 
 export default function AboutPage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.cyberussell.com" },
+      { "@type": "ListItem", position: 2, name: "About", item: "https://www.cyberussell.com/about" },
+    ],
+  };
+
   return (
     <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-2xl mx-auto">

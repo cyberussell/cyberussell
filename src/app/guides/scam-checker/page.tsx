@@ -6,6 +6,7 @@ import ScamChecker from "@/components/ScamChecker";
 export const metadata: Metadata = {
   title: "Online Scam Checker — Cyberussell",
   description: "Is that earn-online opportunity real or fake? Check it against known Philippine scam patterns. Free. Instant. No email.",
+  alternates: { canonical: "https://www.cyberussell.com/guides/scam-checker" },
   openGraph: {
     title: "Online Scam Checker — Cyberussell",
     description: "Is that earn-online opportunity real or fake? Check it against known Philippine scam patterns. Free. Instant. No email.",
@@ -24,8 +25,19 @@ export const metadata: Metadata = {
 };
 
 export default function ScamCheckerPage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.cyberussell.com" },
+      { "@type": "ListItem", position: 2, name: "Guides", item: "https://www.cyberussell.com/guides" },
+      { "@type": "ListItem", position: 3, name: "Online Scam Checker", item: "https://www.cyberussell.com/guides/scam-checker" },
+    ],
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
       <main className="bg-[#0F0F1A] px-6 py-16 md:py-24">
         <div className="max-w-[760px] mx-auto mb-10">

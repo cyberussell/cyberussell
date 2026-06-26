@@ -6,6 +6,7 @@ import MistakesGuide from "@/components/MistakesGuide";
 export const metadata: Metadata = {
   title: "5 Reasons Filipinos Fail at Earning Online — Cyberussell",
   description: "The honest mistakes that kill most online income attempts before they start — and exactly how to avoid each one.",
+  alternates: { canonical: "https://www.cyberussell.com/guides/mistakes" },
   openGraph: {
     title: "5 Reasons Filipinos Fail at Earning Online — Cyberussell",
     description: "The honest mistakes that kill most online income attempts before they start — and exactly how to avoid each one.",
@@ -24,8 +25,19 @@ export const metadata: Metadata = {
 };
 
 export default function MistakesGuidePage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.cyberussell.com" },
+      { "@type": "ListItem", position: 2, name: "Guides", item: "https://www.cyberussell.com/guides" },
+      { "@type": "ListItem", position: 3, name: "5 Reasons Filipinos Fail at Earning Online", item: "https://www.cyberussell.com/guides/mistakes" },
+    ],
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
       <main className="bg-[#0F0F1A] px-6 py-16 md:py-24">
         <div className="max-w-[780px] mx-auto mb-10">

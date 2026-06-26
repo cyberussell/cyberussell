@@ -3,9 +3,23 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Where to Find Online Work as a Filipino — Cyberussell",
-  description:
-    "Honest reviews of the best platforms for Filipino freelancers — which ones work, how much they pay, and how to get started.",
+  title: "Where to Find Online Work as a Filipino | Cyberussell",
+  description: "Honest reviews of the best platforms for Filipino freelancers — which ones work, how much they pay, and how to get started.",
+  alternates: { canonical: "https://www.cyberussell.com/platforms" },
+  openGraph: {
+    title: "Where to Find Online Work as a Filipino | Cyberussell",
+    description: "Honest reviews of the best platforms for Filipino freelancers — which ones work, how much they pay, and how to get started.",
+    url: "https://www.cyberussell.com/platforms",
+    siteName: "Cyberussell",
+    images: [{ url: "/og-image.jpg?v=2", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Where to Find Online Work as a Filipino | Cyberussell",
+    description: "Honest reviews of the best platforms for Filipino freelancers — which ones work, how much they pay, and how to get started.",
+    images: ["/og-image.jpg?v=2"],
+  },
 };
 
 type Difficulty = "Easy" | "Medium" | "Hard";
@@ -138,8 +152,18 @@ const FF_COLOR: Record<FilipinoFriendly, string> = {
 };
 
 export default function PlatformsPage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.cyberussell.com" },
+      { "@type": "ListItem", position: 2, name: "Find Work", item: "https://www.cyberussell.com/platforms" },
+    ],
+  };
+
   return (
     <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     <Navbar />
     <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
       <div className="max-w-4xl mx-auto">

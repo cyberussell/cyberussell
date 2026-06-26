@@ -6,6 +6,7 @@ import SkillWorksheet from "@/components/SkillWorksheet";
 export const metadata: Metadata = {
   title: "Skill-to-Income Worksheet — Cyberussell",
   description: "Answer 4 sections and get your personalized online income path. Free interactive worksheet. Takes 5 minutes.",
+  alternates: { canonical: "https://www.cyberussell.com/guides/worksheet" },
   openGraph: {
     title: "Skill-to-Income Worksheet — Cyberussell",
     description: "Answer 4 sections and get your personalized online income path. Free interactive worksheet. Takes 5 minutes.",
@@ -24,8 +25,19 @@ export const metadata: Metadata = {
 };
 
 export default function WorksheetPage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.cyberussell.com" },
+      { "@type": "ListItem", position: 2, name: "Guides", item: "https://www.cyberussell.com/guides" },
+      { "@type": "ListItem", position: 3, name: "Skill-to-Income Worksheet", item: "https://www.cyberussell.com/guides/worksheet" },
+    ],
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
       <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
         <div className="max-w-3xl mx-auto mb-10">
