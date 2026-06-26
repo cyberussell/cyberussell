@@ -13,14 +13,14 @@ export const metadata: Metadata = {
     description: "Practical, honest articles for Filipinos who want to earn online — written in English and Filipino.",
     url: "https://www.cyberussell.com/blog",
     siteName: "Cyberussell",
-    images: [{ url: "/og-image.jpg?v=2", width: 1200, height: 630 }],
+    images: [{ url: "/blog-og.png", width: 1200, height: 630 }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Earn Money Online Philippines — Guides & Tips | Cyberussell",
     description: "Practical, honest articles for Filipinos who want to earn online — written in English and Filipino.",
-    images: ["/og-image.jpg?v=2"],
+    images: ["/blog-og.png"],
   },
 };
 
