@@ -7,6 +7,7 @@ export type Product = {
   tag: string;
   tagColor: string;
   file?: string; // direct download for free products
+  paidFile?: string; // download path for paid products after purchase
   highlights?: string[];
   coverIcon: string;
   coverColor: string;
@@ -45,6 +46,7 @@ export const PRODUCTS: Product[] = [
     priceLabel: "₱149",
     tag: "Trending",
     tagColor: "#E8373A",
+    paidFile: "/downloads/chatgpt-claude-for-filipinos.pdf",
     coverIcon: "Bot",
     coverColor: "#3B82F6",
     coverBg: "rgba(59,130,246,0.08)",
@@ -59,6 +61,7 @@ export const PRODUCTS: Product[] = [
     priceLabel: "₱199",
     tag: "Trending",
     tagColor: "#E8373A",
+    paidFile: "/downloads/prompt-engineering-for-online-workers.pdf",
     coverIcon: "FileText",
     coverColor: "#FFD23F",
     coverBg: "rgba(255,210,63,0.08)",

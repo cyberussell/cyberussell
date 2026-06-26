@@ -13,6 +13,7 @@ import {
   Zap,
   BookOpen,
   Loader2,
+  HelpCircle,
   type LucideIcon,
 } from "lucide-react";
 import { track } from "@vercel/analytics";
@@ -26,9 +27,37 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 export default function Shop() {
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [refInput, setRefInput] = useState("");
+  const [disputeState, setDisputeState] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [disputeMsg, setDisputeMsg] = useState("");
+  const [disputeUrl, setDisputeUrl] = useState("");
+
+  async function handleDispute() {
+    if (!refInput.trim()) return;
+    setDisputeState("loading");
+    try {
+      const res = await fetch("/api/dispute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ referenceId: refInput.trim() }),
+      });
+      const data = await res.json();
+      if (data.downloadUrl) {
+        setDisputeState("success");
+        setDisputeMsg(data.productTitle);
+        setDisputeUrl(data.downloadUrl);
+      } else {
+        setDisputeState("error");
+        setDisputeMsg(data.error || "Something went wrong.");
+      }
+    } catch {
+      setDisputeState("error");
+      setDisputeMsg("Something went wrong. Please try again.");
+    }
+  }
 
   const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
-  const status = params?.get("status");
+  const status = params?.get("status") as string | null;
 
   async function handleBuy(productId: string) {
     setLoadingId(productId);
@@ -57,14 +86,6 @@ export default function Shop() {
 
   return (
     <div className="space-y-16">
-      {status === "success" && (
-        <div className="bg-[#00C97A]/10 border border-[#00C97A]/25 rounded-[10px] p-5 flex items-center gap-3">
-          <CheckCircle2 size={20} className="text-[#00C97A] shrink-0" />
-          <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/80">
-            Payment successful! Check your email for the download link. Salamat!
-          </span>
-        </div>
-      )}
       {status === "cancelled" && (
         <div className="bg-[#E8373A]/10 border border-[#E8373A]/25 rounded-[10px] p-5 flex items-center gap-3">
           <Bell size={20} className="text-[#E8373A] shrink-0" />
@@ -231,6 +252,74 @@ export default function Shop() {
             );
           })}
         </div>
+      </div>
+
+      {/* ── Already Paid? ── */}
+      <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 md:p-8">
+        <div className="flex items-center gap-3 mb-2">
+          <HelpCircle size={18} className="text-white/50" strokeWidth={2.5} />
+          <h3 className="font-sans text-[18px] md:text-[20px] font-bold text-white">
+            Already paid but didn&apos;t get your download?
+          </h3>
+        </div>
+        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-5">
+          Enter your PayMongo reference number and we&apos;ll generate a new download link for you.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            value={refInput}
+            onChange={(e) => {
+              setRefInput(e.target.value);
+              if (disputeState !== "idle") setDisputeState("idle");
+            }}
+            placeholder="e.g. cs_xxxxx or reference number"
+            className="flex-1 bg-[#0F0F1A] border border-white/10 rounded-[8px] px-4 py-3 font-[family-name:var(--font-inter)] text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:border-[#FFD23F]/40 transition-colors"
+          />
+          <button
+            onClick={handleDispute}
+            disabled={disputeState === "loading" || !refInput.trim()}
+            className="bg-white/10 border border-white/15 text-white font-[family-name:var(--font-inter)] text-[13px] font-bold px-6 py-3 rounded-[8px] hover:bg-white/15 transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+          >
+            {disputeState === "loading" ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              "Get Download Link"
+            )}
+          </button>
+        </div>
+
+        {disputeState === "success" && (
+          <div className="mt-4 bg-[#00C97A]/10 border border-[#00C97A]/25 rounded-[8px] p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <CheckCircle2 size={18} className="text-[#00C97A] shrink-0" />
+            <div className="flex-1">
+              <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/80">
+                Found it! <span className="font-bold text-[#FFD23F]">{disputeMsg}</span>
+              </span>
+            </div>
+            <a
+              href={disputeUrl}
+              className="bg-[#00C97A] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[12px] font-extrabold px-4 py-2 rounded-[6px] hover:opacity-90 transition-all flex items-center gap-1.5 shrink-0"
+            >
+              <Download size={14} strokeWidth={2.5} />
+              Download
+            </a>
+          </div>
+        )}
+
+        {disputeState === "error" && (
+          <div className="mt-4 bg-[#E8373A]/10 border border-[#E8373A]/25 rounded-[8px] p-4 flex items-start gap-3">
+            <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/70">
+              {disputeMsg}
+            </span>
+          </div>
+        )}
+
+        <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/25 mt-4">
+          Can&apos;t find your reference? Check your GCash/Maya/bank app for the transaction details, or{" "}
+          <a href="/contact" className="text-[#E8373A] hover:underline">contact us</a>.
+        </p>
       </div>
     </div>
   );

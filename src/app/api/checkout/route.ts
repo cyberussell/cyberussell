@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PRODUCTS } from "@/data/products";
+import { generateToken } from "@/lib/download-token";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
               "paymaya",
               "card",
             ],
-            success_url: `${origin}/shop?status=success&product=${product.id}`,
+            success_url: `${origin}/shop/download?token=${generateToken(product.id)}`,
             cancel_url: `${origin}/shop?status=cancelled`,
             description: `Cyberussell — ${product.title}`,
           },
