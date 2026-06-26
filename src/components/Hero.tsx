@@ -1,10 +1,7 @@
 import { getAllPosts } from "@/lib/blog";
 import {
-  HERO_BADGE,
-  HERO_SOURCE,
   HERO_SUBTEXT,
   HERO_CTA_BELOW,
-  HERO_STATS,
   TRUST_BAR_ITEMS,
 } from "@/data/content";
 import SkillFinderWidget from "./SkillFinderWidget";
@@ -56,12 +53,6 @@ export default function Hero() {
             </a>
           )}
 
-          <div className="inline-flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/20 rounded-full px-4 py-1.5 w-fit">
-            <span className="text-[#FFD23F] text-[12px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase">
-              {HERO_BADGE}
-            </span>
-          </div>
-
           {featuredPost ? (
             <a href={`/blog/${featuredPost.slug}`} className="group flex flex-col gap-4">
               <h1 className="font-sans text-[34px] md:text-[52px] font-extrabold leading-[1.1] tracking-tight">
@@ -85,19 +76,6 @@ export default function Hero() {
               </p>
             </>
           )}
-
-          <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/25 italic">
-            {HERO_SOURCE}
-          </p>
-
-          <div className="flex flex-wrap gap-4 mt-2">
-            {HERO_STATS.map(({ value, label, color, bg, border }) => (
-              <div key={value} className={`flex flex-col ${bg} border ${border} rounded-lg p-4 min-w-[140px] flex-1`}>
-                <span className={`font-sans text-[20px] font-bold ${color}`}>{value}</span>
-                <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">{label}</span>
-              </div>
-            ))}
-          </div>
 
           <HeroCTA ctaBelow={HERO_CTA_BELOW} />
         </div>

@@ -7,6 +7,7 @@ import Infographic from "@/components/Infographic";
 import SkillFinder from "@/components/SkillFinder";
 import Downloads from "@/components/Downloads";
 import AboutStory from "@/components/AboutStory";
+import WhatsNew from "@/components/WhatsNew";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 import SubscribeForm from "@/components/SubscribeForm";
@@ -17,6 +18,7 @@ export default function Home() {
       <WelcomeBanner />
       <Navbar />
       <Hero />
+      <WhatsNew />
       <PainSection />
       <Infographic />
       <SkillFinder />

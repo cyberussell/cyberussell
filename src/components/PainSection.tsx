@@ -5,7 +5,7 @@ import {
   Lightbulb,
   type LucideIcon,
 } from "lucide-react";
-import { PAIN_STAT_CARDS, PAIN_ITEMS } from "@/data/content";
+import { HERO_BADGE, HERO_SOURCE, HERO_STATS, PAIN_STAT_CARDS, PAIN_ITEMS } from "@/data/content";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   MapPin,
@@ -30,6 +30,25 @@ export default function PainSection() {
             This is not a problem of laziness or lack of talent. It is a
             systemic problem — and the data proves it.
           </p>
+
+          <div className="inline-flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/20 rounded-full px-4 py-1.5 w-fit mt-6">
+            <span className="text-[#FFD23F] text-[12px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase">
+              {HERO_BADGE}
+            </span>
+          </div>
+
+          <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/25 italic mt-2">
+            {HERO_SOURCE}
+          </p>
+
+          <div className="flex flex-wrap gap-4 mt-4">
+            {HERO_STATS.map(({ value, label, color, bg, border }) => (
+              <div key={value} className={`flex flex-col ${bg} border ${border} rounded-lg p-4 min-w-[140px] flex-1`}>
+                <span className={`font-sans text-[20px] font-bold ${color}`}>{value}</span>
+                <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">{label}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
