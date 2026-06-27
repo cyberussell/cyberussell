@@ -21,7 +21,7 @@ export default function WelcomeBanner() {
   return (
     <div className="w-full bg-[#FFD23F] text-[#0F0F1A] px-4 py-2.5 flex items-center justify-center gap-3 relative">
       <p className="font-[family-name:var(--font-inter)] text-[13px] font-semibold text-center leading-[1.5]">
-        👋 Welcome! Everything here is free — no email, no payment. Start with the free PDF below.
+        👋 Welcome! Free tools, guides, and affordable digital products para sa Filipino freelancers.
       </p>
       <button
         onClick={dismiss}

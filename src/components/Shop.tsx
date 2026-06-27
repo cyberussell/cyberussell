@@ -224,10 +224,9 @@ export default function Shop() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <a
                 href="/shop/freelancer-kit"
-                className="bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[15px] font-extrabold px-8 py-4 rounded-[10px] hover:opacity-90 transition-all flex items-center gap-2 min-h-[52px] shadow-lg shadow-[#FFD23F]/20"
+                className="bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[15px] font-extrabold px-8 py-4 rounded-[10px] hover:opacity-90 transition-all flex items-center min-h-[52px] shadow-lg shadow-[#FFD23F]/20"
               >
-                <ShoppingCart size={18} strokeWidth={2.5} />
-                Bilhin ito sa halagang— ₱199
+                Click to see details
               </a>
               <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/35">
                 Instant download · 11 files · PayMongo / GCash / Maya accepted
