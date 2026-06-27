@@ -130,6 +130,9 @@ export default function BlogShelfWithReader({ posts }: { posts: Post[] }) {
             <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               {post.description}
             </p>
+            <span className="inline-block mt-3 font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#E8373A] cursor-pointer hover:underline" onClick={() => readerRef.current?.querySelector('.prose-cyberussell')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+              Read full article &darr;
+            </span>
           </div>
           <div style={{ clear: "both" }} />
           <div className="h-[1px] bg-white/10 mb-8" />

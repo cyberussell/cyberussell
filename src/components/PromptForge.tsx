@@ -382,6 +382,31 @@ export default function PromptForge() {
         </>
       )}
 
+      {/* EBOOK CTA */}
+      {analysis && (
+        <div className="mt-8 bg-gradient-to-br from-[#3B82F6]/10 via-[#18181F] to-[#18181F] border border-[#3B82F6]/20 rounded-[14px] p-6 md:p-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+            <div className="flex-1">
+              <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#3B82F6]/70 uppercase tracking-[0.15em] mb-1 block">Next Step</span>
+              <h3 className="font-sans text-[18px] md:text-[20px] font-bold text-white mb-2">
+                {analysis.overall >= 70 ? "You write great prompts. Now monetize them." : "Want 10 ready-to-use prompts that score 90+?"}
+              </h3>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+                {analysis.overall >= 70
+                  ? "Learn 3 earning paths using ChatGPT and Claude — with real income data from PSA and DOLE."
+                  : "The ChatGPT & Claude guide includes 10 copy-paste prompts, 3 earning paths, and a cheat sheet you'll use every day."}
+              </p>
+            </div>
+            <a
+              href="/shop/chatgpt-claude"
+              className="shrink-0 bg-[#3B82F6] text-white font-[family-name:var(--font-inter)] text-[14px] font-extrabold px-6 py-3.5 rounded-[10px] hover:opacity-90 transition-all shadow-lg shadow-[#3B82F6]/20"
+            >
+              Get the Guide — ₱99
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* BUILDER STORY */}
       <div className="mt-16 mb-4">
         <div className="bg-gradient-to-br from-[#FFD23F]/[0.06] to-transparent border border-[#FFD23F]/15 rounded-[12px] p-6 md:p-8">
