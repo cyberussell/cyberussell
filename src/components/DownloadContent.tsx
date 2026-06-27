@@ -87,6 +87,11 @@ export default function DownloadContent() {
       <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/30 mt-4">
         This link expires in 24 hours. Download it now.
       </p>
+      <div className="mt-8 bg-white/[0.03] border border-white/[0.08] rounded-[10px] px-5 py-4 text-left">
+        <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/35 leading-[1.8]">
+          By downloading, you agree to the license terms: This product is licensed to one person only. Redistribution, reselling, uploading, or sharing publicly is prohibited.
+        </p>
+      </div>
     </div>
   );
 }
