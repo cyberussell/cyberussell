@@ -205,11 +205,11 @@ export default function Shop() {
         </div>
 
         {/* Complete Edition — top right compact card */}
-        <a href="/shop/freelancer-kit" className="col-span-5 relative bg-gradient-to-br from-[#FFD23F]/8 via-[#18181F] to-[#18181F] border border-[#FFD23F]/20 rounded-[16px] overflow-hidden group hover:border-[#FFD23F]/40 transition-colors block">
+        <div className="col-span-5 relative bg-gradient-to-br from-[#FFD23F]/8 via-[#18181F] to-[#18181F] border border-[#FFD23F]/20 rounded-[16px] overflow-hidden group hover:border-[#FFD23F]/40 transition-colors">
           <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-[#FFD23F]/5 rounded-full blur-[80px] pointer-events-none" />
-          <div className="p-6 relative">
+          <div className="p-6 relative flex flex-col h-full">
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-[72px] h-[96px] shrink-0 bg-gradient-to-br from-[#FFD23F]/20 to-[#FFD23F]/5 border border-[#FFD23F]/30 rounded-[6px] flex flex-col items-center justify-center shadow-lg shadow-[#FFD23F]/10 group-hover:scale-[1.05] transition-transform duration-500">
+              <div className="w-[72px] h-[96px] shrink-0 bg-gradient-to-br from-[#FFD23F]/20 to-[#FFD23F]/5 border border-[#FFD23F]/30 rounded-[6px] flex flex-col items-center justify-center shadow-lg shadow-[#FFD23F]/10">
                 <PaidIcon size={28} color="#FFD23F" strokeWidth={1.2} />
                 <span className="font-[family-name:var(--font-inter)] text-[8px] text-white/50 mt-1 uppercase tracking-[0.1em]">Cyberussell</span>
               </div>
@@ -221,26 +221,26 @@ export default function Shop() {
                 <h3 className="font-sans text-[19px] font-bold text-white leading-tight">{paid.title}</h3>
               </div>
             </div>
-            <ul className="space-y-1.5 mb-4">
+            <ul className="space-y-3 mb-6 flex-1">
               {(paid.highlights ?? []).slice(0, 3).map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <CheckCircle2 size={12} className="text-[#FFD23F] mt-0.5 shrink-0" strokeWidth={2.5} />
-                  <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/55 leading-[1.4]">{item}</span>
+                  <CheckCircle2 size={14} className="text-[#FFD23F] mt-0.5 shrink-0" strokeWidth={2.5} />
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.6]">{item}</span>
                 </li>
               ))}
             </ul>
-            <div className="flex items-center gap-2 text-[#FFD23F] font-[family-name:var(--font-inter)] text-[13px] font-bold group-hover:gap-3 transition-all">
-              See details <ArrowRight size={14} strokeWidth={2.5} />
-            </div>
+            <a href="/shop/freelancer-kit" className="w-full bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[14px] font-extrabold py-3.5 rounded-[10px] hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FFD23F]/20">
+              See Details <ArrowRight size={14} strokeWidth={2.5} />
+            </a>
           </div>
-        </a>
+        </div>
 
         {/* AI Guide — bottom right compact card */}
-        <a href="/shop/chatgpt-claude" className="col-span-5 relative bg-gradient-to-br from-[#3B82F6]/8 via-[#18181F] to-[#18181F] border border-[#3B82F6]/20 rounded-[16px] overflow-hidden group hover:border-[#3B82F6]/40 transition-colors block">
+        <div className="col-span-5 relative bg-gradient-to-br from-[#3B82F6]/8 via-[#18181F] to-[#18181F] border border-[#3B82F6]/20 rounded-[16px] overflow-hidden group hover:border-[#3B82F6]/40 transition-colors">
           <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-[#3B82F6]/5 rounded-full blur-[80px] pointer-events-none" />
-          <div className="p-6 relative">
+          <div className="p-6 relative flex flex-col h-full">
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-[72px] h-[96px] shrink-0 bg-gradient-to-br from-[#3B82F6]/20 to-[#3B82F6]/5 border border-[#3B82F6]/30 rounded-[6px] flex flex-col items-center justify-center shadow-lg shadow-[#3B82F6]/10 group-hover:scale-[1.05] transition-transform duration-500">
+              <div className="w-[72px] h-[96px] shrink-0 bg-gradient-to-br from-[#3B82F6]/20 to-[#3B82F6]/5 border border-[#3B82F6]/30 rounded-[6px] flex flex-col items-center justify-center shadow-lg shadow-[#3B82F6]/10">
                 <AiGuideIcon size={28} color="#3B82F6" strokeWidth={1.2} />
                 <span className="font-[family-name:var(--font-inter)] text-[8px] text-white/50 mt-1 uppercase tracking-[0.1em]">Cyberussell</span>
               </div>
@@ -252,19 +252,19 @@ export default function Shop() {
                 <h3 className="font-sans text-[19px] font-bold text-white leading-tight">{aiGuide.title}</h3>
               </div>
             </div>
-            <ul className="space-y-1.5 mb-4">
+            <ul className="space-y-3 mb-6 flex-1">
               {(aiGuide.highlights ?? []).slice(0, 3).map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <CheckCircle2 size={12} className="text-[#3B82F6] mt-0.5 shrink-0" strokeWidth={2.5} />
-                  <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/55 leading-[1.4]">{item}</span>
+                  <CheckCircle2 size={14} className="text-[#3B82F6] mt-0.5 shrink-0" strokeWidth={2.5} />
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.6]">{item}</span>
                 </li>
               ))}
             </ul>
-            <div className="flex items-center gap-2 text-[#3B82F6] font-[family-name:var(--font-inter)] text-[13px] font-bold group-hover:gap-3 transition-all">
-              See details <ArrowRight size={14} strokeWidth={2.5} />
-            </div>
+            <a href="/shop/chatgpt-claude" className="w-full bg-[#3B82F6] text-white font-[family-name:var(--font-inter)] text-[14px] font-extrabold py-3.5 rounded-[10px] hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#3B82F6]/20">
+              See Details <ArrowRight size={14} strokeWidth={2.5} />
+            </a>
           </div>
-        </a>
+        </div>
       </div>
 
       {/* ═══ MOBILE — stacked cards ═══ */}
