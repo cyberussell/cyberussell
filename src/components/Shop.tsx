@@ -7,6 +7,7 @@ import {
   FileText,
   Download,
   ShoppingCart,
+  ArrowRight,
   Bell,
   CheckCircle2,
   Star,
@@ -162,7 +163,7 @@ export default function Shop() {
                     }
                   }
                 }}
-                className="bg-[#00C97A] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[15px] font-extrabold px-8 py-4 rounded-[10px] hover:opacity-90 transition-all flex items-center gap-2 min-h-[52px] shadow-lg shadow-[#00C97A]/20"
+                className="bg-[#00C97A] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[15px] font-extrabold px-8 py-4 rounded-[10px] hover:opacity-90 transition-all flex items-center justify-center gap-2 min-h-[52px] min-w-[260px] shadow-lg shadow-[#00C97A]/20"
               >
                 <Download size={18} strokeWidth={2.5} />
                 Download Free PDF
@@ -224,9 +225,10 @@ export default function Shop() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <a
                 href="/shop/freelancer-kit"
-                className="bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[15px] font-extrabold px-8 py-4 rounded-[10px] hover:opacity-90 transition-all flex items-center min-h-[52px] shadow-lg shadow-[#FFD23F]/20"
+                className="bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[15px] font-extrabold px-8 py-4 rounded-[10px] hover:opacity-90 transition-all flex items-center justify-center gap-2 min-h-[52px] min-w-[260px] shadow-lg shadow-[#FFD23F]/20"
               >
                 Click to see details
+                <ArrowRight size={18} strokeWidth={2.5} />
               </a>
               <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/35">
                 Instant download · 11 files · PayMongo / GCash / Maya accepted
