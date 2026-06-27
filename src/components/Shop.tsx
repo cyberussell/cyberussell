@@ -381,38 +381,85 @@ export default function Shop() {
 
       {/* ═══ LEARNING PATH ═══ */}
       <div>
-        <div className="mb-6">
+        <div className="mb-8">
           <h3 className="font-sans text-[20px] md:text-[24px] font-bold text-white mb-2">Learning Path</h3>
           <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50">Follow the roadmap — from zero to earning.</p>
         </div>
-        <div className="relative bg-[#18181F] border border-white/[0.08] rounded-[16px] p-6 md:p-8">
-          <div className="flex items-center gap-2 mb-6">
-            <Rocket size={16} className="text-[#FFD23F]" />
-            <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F]/80 uppercase tracking-[0.15em]">Freelancer Path</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-3 relative">
-            {[
-              { step: "01", title: featured.title, desc: "Learn what to prepare and where to sign up.", price: "Free", color: "#00C97A", href: featured.file, isDownload: true },
-              { step: "02", title: paid.title, desc: "Templates, action plans, and contracts for your first client.", price: paid.priceLabel, color: "#FFD23F", href: "/shop/freelancer-kit" },
-              { step: "03", title: aiGuide.title, desc: "Use AI to 10x your output and earn more per hour.", price: aiGuide.priceLabel, color: "#3B82F6", href: "/shop/chatgpt-claude" },
-            ].map((step, i) => (
-              <div key={i} className="relative">
-                {i < 2 && (
-                  <div className="hidden md:block absolute top-1/2 -right-3 w-6 text-white/15 z-10">
-                    <ArrowRight size={20} />
+        <div className="relative bg-[#18181F] border border-white/[0.08] rounded-[16px] p-6 md:p-10">
+          {/* Desktop: horizontal tracker with text below each node */}
+          <div className="hidden md:block">
+            {(() => {
+              const steps = [
+                { title: featured.title, desc: "Learn what to prepare and where to sign up.", price: "Free", color: "#00C97A", href: featured.file, isDownload: true },
+                { title: paid.title, desc: "Templates, action plans, and contracts for your first client.", price: paid.priceLabel, color: "#FFD23F", href: "/shop/freelancer-kit" },
+                { title: aiGuide.title, desc: "Use AI to 10x your output and earn more per hour.", price: aiGuide.priceLabel, color: "#3B82F6", href: "/shop/chatgpt-claude" },
+              ];
+              return (
+                <div className="relative">
+                  {/* Track line behind nodes */}
+                  <div className="absolute top-7 left-[calc(16.67%)] right-[calc(16.67%)] h-[4px] bg-white/[0.06] rounded-full" />
+                  <div className="absolute top-7 left-[calc(16.67%)] right-[calc(16.67%)] h-[4px] rounded-full bg-gradient-to-r from-[#00C97A] via-[#FFD23F] to-[#3B82F6]" />
+
+                  {/* Nodes + text as unified columns */}
+                  <div className="relative z-10 grid grid-cols-3 gap-4">
+                    {steps.map((step, i) => (
+                      <a
+                        key={i}
+                        href={step.href}
+                        {...(step.isDownload ? { target: "_blank", rel: "noopener noreferrer", download: true } : {})}
+                        className="flex flex-col items-center text-center group"
+                      >
+                        <div
+                          className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 mb-4"
+                          style={{ backgroundColor: step.color, boxShadow: `0 0 20px ${step.color}40` }}
+                        >
+                          {i === 0 && <Rocket size={22} className="text-[#0F0F1A]" strokeWidth={2} />}
+                          {i === 1 && <FileText size={22} className="text-[#0F0F1A]" strokeWidth={2} />}
+                          {i === 2 && <Bot size={22} className="text-[#0F0F1A]" strokeWidth={2} />}
+                        </div>
+                        <h4 className="font-sans text-[15px] font-bold text-white mb-1 leading-tight group-hover:underline">{step.title}</h4>
+                        <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 leading-relaxed mb-2">{step.desc}</p>
+                        <span className="font-[family-name:var(--font-inter)] text-[14px] font-bold" style={{ color: step.color }}>{step.price}</span>
+                      </a>
+                    ))}
                   </div>
-                )}
-                <a
-                  href={step.href}
-                  {...(step.isDownload ? { target: "_blank", rel: "noopener noreferrer", download: true } : {})}
-                  className="block bg-[#0F0F1A] border border-white/[0.06] rounded-[12px] p-5 hover:border-white/15 transition-all h-full"
-                >
-                  <span className="font-sans text-[32px] font-extrabold leading-none" style={{ color: `${step.color}30` }}>{step.step}</span>
-                  <h4 className="font-sans text-[16px] font-bold text-white mt-2 mb-1.5 leading-tight">{step.title}</h4>
-                  <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 leading-relaxed mb-3">{step.desc}</p>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Mobile: vertical tracker */}
+          <div className="md:hidden">
+            {[
+              { title: featured.title, desc: "Learn what to prepare and where to sign up.", price: "Free", color: "#00C97A", href: featured.file, isDownload: true },
+              { title: paid.title, desc: "Templates, action plans, and contracts for your first client.", price: paid.priceLabel, color: "#FFD23F", href: "/shop/freelancer-kit" },
+              { title: aiGuide.title, desc: "Use AI to 10x your output and earn more per hour.", price: aiGuide.priceLabel, color: "#3B82F6", href: "/shop/chatgpt-claude" },
+            ].map((step, i, arr) => (
+              <a
+                key={i}
+                href={step.href}
+                {...(step.isDownload ? { target: "_blank", rel: "noopener noreferrer", download: true } : {})}
+                className="flex items-start gap-4 group"
+              >
+                <div className="flex flex-col items-center">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-lg"
+                    style={{ backgroundColor: step.color, boxShadow: `0 0 16px ${step.color}40` }}
+                  >
+                    {i === 0 && <Rocket size={20} className="text-[#0F0F1A]" strokeWidth={2} />}
+                    {i === 1 && <FileText size={20} className="text-[#0F0F1A]" strokeWidth={2} />}
+                    {i === 2 && <Bot size={20} className="text-[#0F0F1A]" strokeWidth={2} />}
+                  </div>
+                  {i < arr.length - 1 && (
+                    <div className="w-[3px] h-10 rounded-full my-1" style={{ backgroundColor: `${step.color}40` }} />
+                  )}
+                </div>
+                <div className={i < arr.length - 1 ? "pb-6" : ""}>
+                  <h4 className="font-sans text-[15px] font-bold text-white mb-1 leading-tight group-hover:underline">{step.title}</h4>
+                  <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 leading-relaxed mb-1">{step.desc}</p>
                   <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold" style={{ color: step.color }}>{step.price}</span>
-                </a>
-              </div>
+                </div>
+              </a>
             ))}
           </div>
         </div>
