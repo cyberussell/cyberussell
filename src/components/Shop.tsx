@@ -469,7 +469,7 @@ export default function Shop() {
       <div>
         <div className="flex items-center gap-3 mb-2">
           <Zap size={18} className="text-[#E8373A]" strokeWidth={2.5} />
-          <h3 className="font-sans text-[20px] md:text-[24px] font-bold text-white">Coming Soon</h3>
+          <h3 className="font-sans text-[20px] md:text-[24px] font-bold text-white">Up Next</h3>
         </div>
         <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 mb-6">Based on what Filipino online workers are searching for right now.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -499,7 +499,7 @@ export default function Shop() {
                   ) : (
                     <button className="w-full bg-white/5 border border-white/10 text-white/55 font-[family-name:var(--font-inter)] text-[13px] font-bold py-3 rounded-[8px] flex items-center justify-center gap-2 cursor-not-allowed" disabled>
                       <Bell size={14} strokeWidth={2.5} />
-                      Coming Soon
+                      Up Next
                     </button>
                   )}
                 </div>
