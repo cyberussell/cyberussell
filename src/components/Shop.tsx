@@ -468,7 +468,7 @@ export default function Shop() {
         {/* Left: FAQ + Subscribe */}
         <div className="flex flex-col gap-6">
           <div>
-            <h3 className="font-sans text-[20px] md:text-[24px] font-bold text-white mb-6">Frequently Asked Questions</h3>
+            <h3 className="font-sans text-[20px] md:text-[24px] font-bold text-white mb-6">Buying & Downloads FAQ</h3>
             <div className="flex flex-col gap-3">
               {SHOP_FAQS.map((faq, i) => {
                 const isOpen = openFaq === i;

@@ -96,4 +96,32 @@ export const PRODUCTS: Product[] = [
     coverBg: "rgba(255,210,63,0.08)",
     active: false,
   },
+  {
+    id: "you-are-smarter-than-ai",
+    title: "You Are Smarter Than AI",
+    description:
+      "Hindi ka papalitan ng AI — at ito ang proof. An in-depth myth-busting guide na nagde-debunk ng mga AI fears at nagpapakita kung bakit ang Filipino workers ang pinakamagandang partner ng AI, hindi ang kapalit nito. With real data, expert insights, at actionable confidence boosters.",
+    price: 14900,
+    priceLabel: "₱149",
+    tag: "Coming Soon",
+    tagColor: "#00C97A",
+    coverIcon: "Bot",
+    coverColor: "#00C97A",
+    coverBg: "rgba(0,201,122,0.08)",
+    active: false,
+  },
+  {
+    id: "websites-even-nanay-can-build",
+    title: "Websites Even Nanay Can Build",
+    description:
+      "Kung kaya mong mag-Facebook, kaya mo ring gumawa ng website. A step-by-step guide para sa mga Filipinos na walang coding background — no CS degree needed. Mula sa pagpili ng domain hanggang sa live na website, lahat ay explained na parang sinasabi ng kaibigan mo.",
+    price: 14900,
+    priceLabel: "₱149",
+    tag: "Coming Soon",
+    tagColor: "#3B82F6",
+    coverIcon: "FileText",
+    coverColor: "#3B82F6",
+    coverBg: "rgba(59,130,246,0.08)",
+    active: false,
+  },
 ];
