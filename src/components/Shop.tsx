@@ -85,7 +85,9 @@ export default function Shop() {
   const FeaturedIcon = ICON_MAP[featured.coverIcon];
   const paid = PRODUCTS.find((p) => p.id === "freelancer-starter-kit-complete")!;
   const PaidIcon = ICON_MAP[paid.coverIcon];
-  const rest = PRODUCTS.filter((p) => p.id !== featured.id && p.id !== paid.id);
+  const aiGuide = PRODUCTS.find((p) => p.id === "chatgpt-claude-for-filipinos")!;
+  const AiGuideIcon = ICON_MAP[aiGuide.coverIcon];
+  const rest = PRODUCTS.filter((p) => p.id !== featured.id && p.id !== paid.id && p.id !== aiGuide.id);
 
   return (
     <div className="space-y-16">
@@ -232,6 +234,66 @@ export default function Shop() {
               </a>
               <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/35">
                 Instant download · 11 files · PayMongo / GCash / Maya accepted
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── AI Guide (ChatGPT & Claude) ── */}
+      <div className="relative bg-gradient-to-br from-[#3B82F6]/10 via-[#18181F] to-[#18181F] border border-[#3B82F6]/25 rounded-[16px] overflow-hidden">
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#3B82F6]/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+          <div className="relative flex items-center justify-center py-16 md:py-20 border-b md:border-b-0 md:border-r border-white/[0.07]" style={{ backgroundColor: aiGuide.coverBg }}>
+            <div className="relative">
+              <div className="w-[180px] h-[240px] md:w-[200px] md:h-[270px] bg-gradient-to-br from-[#3B82F6]/20 to-[#3B82F6]/5 border border-[#3B82F6]/30 rounded-[8px] flex flex-col items-center justify-center shadow-2xl shadow-[#3B82F6]/10"
+                style={{ transform: "perspective(800px) rotateY(-5deg)" }}>
+                <AiGuideIcon size={48} color="#3B82F6" strokeWidth={1.2} />
+                <span className="font-sans text-[16px] md:text-[18px] font-bold text-white text-center mt-4 px-4 leading-tight">
+                  {aiGuide.title}
+                </span>
+                <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/55 mt-2 uppercase tracking-[0.1em]">
+                  Cyberussell
+                </span>
+              </div>
+            </div>
+            <div className="absolute top-4 left-4 bg-[#3B82F6] text-white font-[family-name:var(--font-inter)] text-[11px] font-extrabold uppercase tracking-[0.1em] px-3 py-1.5 rounded-full">
+              {aiGuide.priceLabel}
+            </div>
+          </div>
+
+          <div className="p-8 md:p-10 flex flex-col justify-center">
+            <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#3B82F6]/70 uppercase tracking-[0.15em] mb-2">
+              {aiGuide.tag}
+            </span>
+            <h2 className="font-sans text-[24px] md:text-[32px] font-bold text-white leading-tight mb-3">
+              {aiGuide.title}
+            </h2>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8] mb-6">
+              {aiGuide.description}
+            </p>
+
+            <ul className="space-y-3 mb-8">
+              {(aiGuide.highlights ?? []).map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <CheckCircle2 size={16} className="text-[#3B82F6] mt-0.5 shrink-0" strokeWidth={2.5} />
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-[1.6]">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <a
+                href="/shop/chatgpt-claude"
+                className="bg-[#3B82F6] text-white font-[family-name:var(--font-inter)] text-[15px] font-extrabold px-8 py-4 rounded-[10px] hover:opacity-90 transition-all flex items-center justify-center gap-2 min-h-[52px] min-w-[260px] shadow-lg shadow-[#3B82F6]/20"
+              >
+                Click to see details
+                <ArrowRight size={18} strokeWidth={2.5} />
+              </a>
+              <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/35">
+                Instant download · 20 pages · PayMongo / GCash / Maya accepted
               </span>
             </div>
           </div>
