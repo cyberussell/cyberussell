@@ -82,7 +82,9 @@ export default function Shop() {
   }
   const featured = PRODUCTS[0];
   const FeaturedIcon = ICON_MAP[featured.coverIcon];
-  const rest = PRODUCTS.slice(1);
+  const paid = PRODUCTS.find((p) => p.id === "freelancer-starter-kit-complete")!;
+  const PaidIcon = ICON_MAP[paid.coverIcon];
+  const rest = PRODUCTS.filter((p) => p.id !== featured.id && p.id !== paid.id);
 
   return (
     <div className="space-y-16">
@@ -167,6 +169,68 @@ export default function Shop() {
               </a>
               <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/35">
                 No email required · Instant download
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Paid Product (Complete Edition) ── */}
+      <div className="relative bg-gradient-to-br from-[#FFD23F]/10 via-[#18181F] to-[#18181F] border border-[#FFD23F]/25 rounded-[16px] overflow-hidden">
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#FFD23F]/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+          {/* Cover */}
+          <div className="relative flex items-center justify-center py-16 md:py-20 border-b md:border-b-0 md:border-r border-white/[0.07]" style={{ backgroundColor: paid.coverBg }}>
+            <div className="relative">
+              <div className="w-[180px] h-[240px] md:w-[200px] md:h-[270px] bg-gradient-to-br from-[#FFD23F]/20 to-[#FFD23F]/5 border border-[#FFD23F]/30 rounded-[8px] flex flex-col items-center justify-center shadow-2xl shadow-[#FFD23F]/10"
+                style={{ transform: "perspective(800px) rotateY(-5deg)" }}>
+                <PaidIcon size={48} color="#FFD23F" strokeWidth={1.2} />
+                <span className="font-sans text-[16px] md:text-[18px] font-bold text-white text-center mt-4 px-4 leading-tight">
+                  {paid.title}
+                </span>
+                <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/55 mt-2 uppercase tracking-[0.1em]">
+                  Cyberussell
+                </span>
+              </div>
+            </div>
+            <div className="absolute top-4 left-4 bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[11px] font-extrabold uppercase tracking-[0.1em] px-3 py-1.5 rounded-full">
+              {paid.priceLabel}
+            </div>
+          </div>
+
+          {/* Details */}
+          <div className="p-8 md:p-10 flex flex-col justify-center">
+            <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#FFD23F]/70 uppercase tracking-[0.15em] mb-2">
+              {paid.tag}
+            </span>
+            <h2 className="font-sans text-[24px] md:text-[32px] font-bold text-white leading-tight mb-3">
+              {paid.title}
+            </h2>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8] mb-6">
+              {paid.description}
+            </p>
+
+            <ul className="space-y-3 mb-8">
+              {(paid.highlights ?? []).map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <CheckCircle2 size={16} className="text-[#FFD23F] mt-0.5 shrink-0" strokeWidth={2.5} />
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-[1.6]">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <a
+                href="/shop/freelancer-kit"
+                className="bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[15px] font-extrabold px-8 py-4 rounded-[10px] hover:opacity-90 transition-all flex items-center gap-2 min-h-[52px] shadow-lg shadow-[#FFD23F]/20"
+              >
+                <ShoppingCart size={18} strokeWidth={2.5} />
+                Bilhin ito sa halagang— ₱199
+              </a>
+              <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/35">
+                Instant download · 11 files · PayMongo / GCash / Maya accepted
               </span>
             </div>
           </div>

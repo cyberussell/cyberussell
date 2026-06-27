@@ -38,6 +38,28 @@ export const PRODUCTS: Product[] = [
     active: true,
   },
   {
+    id: "freelancer-starter-kit-complete",
+    title: "Freelancer Starter Kit — Complete Edition",
+    description:
+      "11 ready-to-use files para sa mga Filipino beginners na gustong kumita online — mula sa pag-setup ng device at internet, hanggang sa pagkuha ng unang client at unang kita. Lahat ng kailangan mo, nasa iisang download.",
+    price: 19900,
+    priceLabel: "₱199",
+    tag: "Freelancer Starter Kit · Cyberussell",
+    tagColor: "#FFD23F",
+    paidFile: "/downloads/Cyberussell-Freelancer-Starter-Kit.zip",
+    highlights: [
+      "30-day action plan — 1 oras lang sa kada-araw, step by step",
+      "5 proposal templates — copy, fill in the blanks, send (may Taglish version)",
+      "Invoice, contract, at tracker templates — ready to use agad",
+      "Scam protection checklist + access sa FREE Cyberussell Scam Scanner",
+      "Honest income expectations — Month 1 hanggang Year 1, real numbers",
+    ],
+    coverIcon: "Rocket",
+    coverColor: "#FFD23F",
+    coverBg: "rgba(255,210,63,0.08)",
+    active: true,
+  },
+  {
     id: "chatgpt-claude-for-filipinos",
     title: "ChatGPT & Claude for Filipinos",
     description:
