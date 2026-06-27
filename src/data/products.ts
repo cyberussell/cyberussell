@@ -25,7 +25,7 @@ export const PRODUCTS: Product[] = [
     priceLabel: "Free",
     tag: "Free Download",
     tagColor: "#00C97A",
-    file: "/downloads/freelancer-starter-kit.pdf",
+    file: "/downloads/Freelancer-Starter-Kit-FREE.pdf",
     highlights: [
       "Step-by-step checklist — from zero to first client",
       "Where to sign up and which platforms actually pay",
