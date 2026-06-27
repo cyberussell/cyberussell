@@ -573,8 +573,8 @@ export default function Shop() {
                 <div key={point.title} className="flex items-center gap-3 bg-[#18181F] border border-white/[0.08] rounded-[12px] px-5 min-h-[56px]">
                   <point.icon size={16} className="text-[#FFD23F] shrink-0" strokeWidth={1.8} />
                   <div>
-                    <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white">{point.title}</span>
-                    <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/40 ml-2">{point.desc}</span>
+                    <span className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white">{point.title}</span>
+                    <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 ml-2">{point.desc}</span>
                   </div>
                 </div>
               ))}
