@@ -6,10 +6,10 @@ export const HERO_SOURCE =
   "PSA Labor Force Survey, April 2026 · Philippine Freelance Economy Report, 2025";
 
 export const HERO_SUBTEXT =
-  "This is not a motivational speech. This is real data from PSA — and there is a solution. 2.5 million Filipinos are already earning online. Find out how they started.";
+  "Type any skill — cooking, design, phone repair, kahit ano. We'll show you how to earn from it online, based on real data.";
 
 export const HERO_CTA_BELOW =
-  "No sign-up · No payment · PDF instantly · Free forever";
+  "No sign-up · No payment · Free forever";
 
 export const HERO_STATS = [
   { value: "2.41M", label: "unemployed right now",    color: "text-[#E8373A]", bg: "bg-[#E8373A]/10", border: "border-[#E8373A]/20" },
@@ -27,7 +27,7 @@ export const HERO_WIDGET_STATS = [
 ] as const;
 
 export const TRUST_BAR_ITEMS = [
-  "Built for Filipinos who are ready to start.",
+  "Research-backed · Built for Filipinos · Beginner-friendly · No income hype",
 ] as const;
 
 // ─── Pain Section ─────────────────────────────────────────────────────────────

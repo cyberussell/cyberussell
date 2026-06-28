@@ -33,17 +33,17 @@ export default function Downloads() {
             FREE RESOURCES
           </div>
           <h2 className="font-sans text-[26px] md:text-[38px] font-bold text-white leading-tight mb-4">
-            Download. All Free. No Email Required.
+            Free resources to help you start earning.
           </h2>
           <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 max-w-[560px] leading-[1.8]">
-            Genuinely useful guides — not lead magnets that sell you something
-            at the end. Use them. Share them with people who need them.
+            Guides, tools, and worksheets — all free, no email required.
+            Use them. Share them with people who need them.
           </p>
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {GUIDES.map(({ icon, iconColor, previewBg, title, desc, meta, active, file }) => {
+          {GUIDES.filter((g) => g.active).map(({ icon, iconColor, previewBg, title, desc, meta, active, file }) => {
             const Icon = ICON_MAP[icon];
             return (
               <div

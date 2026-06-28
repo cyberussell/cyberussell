@@ -16,7 +16,7 @@ export default function FinalCTA() {
         <h2 className="font-sans text-[28px] md:text-[48px] font-bold mb-6 flex flex-col gap-2 leading-[1.1]">
           <span className="text-white">Stop Hesitating.</span>
           <span className="text-[#FFD23F]">It&apos;s Free.</span>
-          <span className="text-[#E8373A]">Download Now.</span>
+          <span className="text-[#E8373A]">Try It Now.</span>
         </h2>
 
         <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/60 max-w-[480px] mb-10 leading-[1.8]">
@@ -25,11 +25,11 @@ export default function FinalCTA() {
         </p>
 
         <a
-          href="#downloads"
+          href="#hero"
           className="w-full md:w-auto md:max-w-[380px] bg-[#E8373A] hover:bg-[#FF4A4D] text-white font-[family-name:var(--font-inter)] font-bold text-[17px] py-[18px] px-12 rounded-[10px] min-h-[52px] flex items-center justify-center transition-all duration-300 hover:-translate-y-[2px] mb-8"
           style={{ boxShadow: "0 8px 30px rgba(232,55,58,0.2)" }}
         >
-          ↓ Get the Free Guides
+          ↑ Find your earning path
         </a>
 
         <div className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 font-[family-name:var(--font-inter)] text-[14px] text-white/60">

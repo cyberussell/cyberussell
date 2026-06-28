@@ -7,7 +7,7 @@ export default function HeroCTA({ ctaBelow }: { ctaBelow: string }) {
         👇 Start here — it&apos;s free
       </p>
       <div className="relative w-full md:max-w-[380px]">
-        <div className="absolute inset-0 rounded-[10px] border-2 border-[#E8373A] animate-pulse pointer-events-none" />
+        <div className="absolute inset-0 rounded-[10px] border-2 border-[#E8373A]/40 pointer-events-none" />
         <a
           href="#downloads"
           onClick={() => {
@@ -18,7 +18,7 @@ export default function HeroCTA({ ctaBelow }: { ctaBelow: string }) {
           className="relative bg-[#E8373A] text-white font-[family-name:var(--font-inter)] font-bold text-[17px] py-[18px] px-9 rounded-[10px] w-full min-h-[56px] flex justify-center items-center gap-2 hover:opacity-90 transition-all"
           style={{ boxShadow: "0 0 20px rgba(232,55,58,0.3)" }}
         >
-          ↓ Get the Free Guide
+          ↓ Or grab the Free Starter Guide
         </a>
       </div>
       <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/60 text-center md:text-left md:max-w-[380px]">

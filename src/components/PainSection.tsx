@@ -51,7 +51,7 @@ export default function PainSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 mb-10">
           {/* Left: Stat cards */}
           <div className="flex flex-col gap-6">
             {PAIN_STAT_CARDS.map(({ stat, title, desc, source }) => (
@@ -102,6 +102,18 @@ export default function PainSection() {
               );
             })}
           </div>
+        </div>
+
+        <div className="text-center mt-2">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/50 mb-4">
+            The good news? There is a path.
+          </p>
+          <a
+            href="#hero"
+            className="inline-block font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#FFD23F] hover:text-[#FFD23F]/80 transition-colors"
+          >
+            ↑ Try the Skill Finder — find your earning path
+          </a>
         </div>
       </div>
     </section>

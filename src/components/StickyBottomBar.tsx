@@ -20,11 +20,11 @@ export default function StickyBottomBar() {
 
   return (
     <a
-      href="#downloads"
+      href="#hero"
       className={`md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center bg-[#E8373A] text-white font-[family-name:var(--font-inter)] font-bold text-[15px] transition-transform duration-300 ${visible ? "translate-y-0" : "translate-y-full"}`}
       style={{ height: 56, boxShadow: "0 -4px 20px rgba(232,55,58,0.4)" }}
     >
-      ↓ Download Free Guide — No Email Needed
+      ↑ Find your earning path — Free, No Sign-up
     </a>
   );
 }

@@ -14,7 +14,7 @@ const pageLinks = [
   { label: "Tools", href: "/tools" },
   { label: "Find Work", href: "/platforms" },
   { label: "Shop", href: "/shop" },
-  { label: "BlogShelf", href: "/blog" },
+  { label: "Blog", href: "/blog" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact Us", href: "/contact" },
 ];
@@ -105,6 +105,17 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-[#111118] border-t border-white/10 w-full">
           <nav className="flex flex-col px-6 py-4 gap-1">
+            {pageLinks.map(({ label, href }) => (
+              <a
+                key={href}
+                href={href}
+                onClick={handleNavClick}
+                className="text-[16px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase py-3 border-b border-white/[0.06] text-white/70 transition-colors"
+              >
+                {label}
+              </a>
+            ))}
+            <span className="h-px w-full bg-white/10 my-2" />
             {sectionLinks.map(({ label, href }) => {
               const sectionId = href.replace("/#", "");
               const isActive = activeSection === sectionId;
@@ -120,17 +131,6 @@ export default function Navbar() {
                 </a>
               );
             })}
-            <span className="h-px w-full bg-white/10 my-2" />
-            {pageLinks.map(({ label, href }) => (
-              <a
-                key={href}
-                href={href}
-                onClick={handleNavClick}
-                className="text-[16px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase py-3 border-b border-white/[0.06] text-white/70 transition-colors"
-              >
-                {label}
-              </a>
-            ))}
           </nav>
         </div>
       )}
