@@ -9,6 +9,7 @@ import {
   Sparkles,
   Target,
   Gift,
+  RotateCcw,
   ChefHat,
   Palette,
   Wrench,
@@ -85,6 +86,13 @@ export default function SkillFinderWidget() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleReset() {
+    setSkillInput("");
+    setResult(null);
+    setError(null);
+    inputRef.current?.focus();
   }
 
   return (
@@ -272,11 +280,18 @@ export default function SkillFinderWidget() {
                   >
                     ↓ Get free guides to start earning →
                   </a>
-                  <div className="flex justify-center gap-3">
+                  <div className="flex justify-center gap-3 mb-3">
                     <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold font-[family-name:var(--font-inter)]" style={{ color: "rgba(255,255,255,0.4)" }}>TikTok</a>
                     <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold font-[family-name:var(--font-inter)]" style={{ color: "rgba(255,255,255,0.4)" }}>Facebook</a>
                     <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold font-[family-name:var(--font-inter)]" style={{ color: "rgba(255,255,255,0.4)" }}>YouTube</a>
                   </div>
+                  <button
+                    onClick={handleReset}
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] font-medium text-white/40 hover:text-white/60 hover:border-white/[0.15] transition-colors"
+                  >
+                    <RotateCcw size={13} strokeWidth={2} />
+                    Try another skill
+                  </button>
                 </div>
               </div>
             )}
