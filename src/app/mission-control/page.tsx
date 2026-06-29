@@ -62,7 +62,7 @@ export default function DashboardPage() {
             <div className="mb-10">
               <h2 className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1px] mb-3">Quick Actions</h2>
               <div className="flex flex-wrap gap-2">
-                <a href="/mission-control/blueprints?new=1" className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white text-[#0a0a12] font-[family-name:var(--font-inter)] text-[13px] font-bold hover:bg-white/90 transition-colors">
+                <a href="/mission-control/blueprints" className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white text-[#0a0a12] font-[family-name:var(--font-inter)] text-[13px] font-bold hover:bg-white/90 transition-colors">
                   <Plus size={15} strokeWidth={2.5} />
                   New Blueprint
                 </a>

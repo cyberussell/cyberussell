@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { Plus, Search, ExternalLink, Copy, Trash2, Pencil } from "lucide-react";
 import AuthGuard from "@/components/mission-control/AuthGuard";
 import Sidebar from "@/components/mission-control/Sidebar";
@@ -19,15 +18,10 @@ export default function BlueprintLibraryPage() {
   const [blueprints, setBlueprints] = useState<BlueprintSummary[]>([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("all");
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     fetch("/api/mission-control/blueprints").then((r) => r.json()).then(setBlueprints);
   }, []);
-
-  useEffect(() => {
-    if (searchParams.get("new") === "1") handleNew();
-  }, [searchParams]);
 
   async function handleNew() {
     const name = prompt("Blueprint name (e.g. Writing, Canva, SEO):");
