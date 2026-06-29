@@ -62,12 +62,18 @@ export default function CareersIndex() {
                   {career.tagline}
                 </p>
                 <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between">
-                  <span className="font-sans text-[14px] font-bold text-[#00C97A]">
-                    ₱{career.earning_range.min.toLocaleString()}–₱{career.earning_range.max.toLocaleString()}
-                  </span>
-                  <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/25">
-                    {career.time_to_first_income}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/25 uppercase tracking-[0.5px]">Potential monthly earning</span>
+                    <span className="font-sans text-[14px] font-bold text-[#00C97A]">
+                      ₱{career.earning_range.min.toLocaleString()}–₱{career.earning_range.max.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/25 uppercase tracking-[0.5px]">First income in</span>
+                    <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 font-medium">
+                      {career.time_to_first_income}
+                    </span>
+                  </div>
                 </div>
               </a>
             ))}
