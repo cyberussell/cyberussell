@@ -7,7 +7,7 @@ const linkColumns = [
     links: [
       { label: "Career Blueprints", href: "/careers" },
       { label: "Discover Your Skill", href: "/discover" },
-      { label: "Free Resources", href: "/resources" },
+      { label: "Recommended For You", href: "/resources" },
       { label: "Find Work", href: "/platforms" },
       { label: "Blog", href: "/blog" },
     ],

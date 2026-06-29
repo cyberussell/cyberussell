@@ -4,8 +4,8 @@ import Downloads from "@/components/Downloads";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Free Resources — Cyberussell",
-  description: "Free guides, tools, and worksheets for Filipinos who want to earn online. No sign-up. No payment. Just use them.",
+  title: "Recommended For You — Cyberussell",
+  description: "Guides, tools, and worksheets recommended for Filipinos who want to earn online. All free. No sign-up required.",
 };
 
 export default function ResourcesPage() {

@@ -30,10 +30,10 @@ export default function Downloads() {
         {/* Header */}
         <div className="mb-11">
           <div className="text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold tracking-[2.5px] uppercase mb-4">
-            FREE RESOURCES
+            RECOMMENDED FOR YOU
           </div>
           <h2 className="font-sans text-[26px] md:text-[38px] font-bold text-white leading-tight mb-4">
-            Free resources to help you start earning.
+            Recommended for you.
           </h2>
           <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 max-w-[560px] leading-[1.8]">
             Guides, tools, and worksheets — all free, no email required.
