@@ -30,6 +30,9 @@ export default function CareerPlatforms({ platforms }: { platforms: Platform[] }
                     {p.name}
                   </h3>
                   <ExternalLink size={13} className="text-white/20 group-hover:text-[#FFD23F]/60 transition-colors" strokeWidth={2} />
+                  <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[0.05em] text-[#FFD23F]/60 bg-[#FFD23F]/[0.06] border border-[#FFD23F]/10 px-2 py-0.5 rounded-full ml-auto">
+                    {p.best_for}
+                  </span>
                 </div>
                 <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">
                   {p.why}

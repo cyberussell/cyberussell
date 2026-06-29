@@ -7,6 +7,14 @@
   "earning_range": { "min": 5000, "max": 40000 },
   "time_to_first_income": "1–2 weeks",
   "prerequisites": ["Smartphone or laptop", "Internet connection", "Free Canva account"],
+  "todays_mission": {
+    "tasks": [
+      "Create a free Canva account",
+      "Design 3 sample social media posts",
+      "Message 1 local business offering your design service"
+    ],
+    "estimated_time": "90 minutes"
+  },
   "summary": {
     "description": "Canva is one of the easiest tools to turn into income. Thousands of small businesses need social media graphics, flyers, presentations, and menus — but can't afford a professional designer. If you can make clean, readable designs in Canva, you already have a marketable skill.",
     "who_is_this_for": [
@@ -15,50 +23,139 @@
       "Students comfortable with visual tools",
       "Anyone who already uses Canva for personal projects"
     ],
-    "reality_check": "Canva design is a low-barrier skill, which means competition is high. Your first gigs will pay ₱100–₱500 per design. The path to higher income requires specializing (e.g. real estate flyers, restaurant menus) or bundling design with social media management. Speed matters more than perfection."
+    "reality_check": {
+      "honest_assessment": "Canva design is a low-barrier skill, which means competition is high. Your first gigs will pay ₱100–₱500 per design. The path to higher income requires specializing or bundling design with social media management.",
+      "what_beginners_underestimate": "How many designs you need to produce to earn a meaningful income. At ₱200/design, you need 50 designs/month for ₱10,000. Speed and templates are what make this viable.",
+      "why_people_fail": "They spend weeks perfecting their portfolio instead of reaching out to clients. Or they price so low that they burn out from volume. Or they don't specialize and compete against everyone.",
+      "how_to_avoid_failure": "Start by offering a free trial to 3 local businesses this week. One will say yes. Use that real project as your portfolio piece. Then immediately set a price for ongoing work."
+    }
   },
   "roadmap": [
     {
       "phase": 1,
       "title": "Set Up",
+      "why": "You need a Canva account, a portfolio, and a presence on freelance platforms before anyone can hire you.",
       "duration": "Week 1",
       "steps": [
-        { "action": "Create a Canva account", "detail": "The free plan is enough to start. Don't pay for Pro until you're earning from it." },
-        { "action": "Build a portfolio of 10 sample designs", "detail": "Make 3 social media posts, 3 flyers, 2 presentations, and 2 menus. Use real-looking brand names. Save them as a PDF or link to your Canva profile." },
-        { "action": "Set up profiles on Fiverr and OnlineJobsPH", "detail": "On Fiverr, create a gig: 'I will design social media graphics in Canva.' On OnlineJobsPH, search for 'graphic designer' or 'social media assistant.'" }
+        {
+          "action": "Create a Canva account",
+          "detail": "The free plan is enough to start. Don't pay for Pro until you're earning from it.",
+          "estimated_time": "5 minutes",
+          "difficulty": "easy",
+          "outcome": "You have access to your design workspace.",
+          "action_url": "https://www.canva.com",
+          "action_label": "Open Canva"
+        },
+        {
+          "action": "Build a portfolio of 10 sample designs",
+          "detail": "Make 3 social media posts, 3 flyers, 2 presentations, and 2 menus. Use real-looking brand names.",
+          "estimated_time": "3 hours",
+          "difficulty": "moderate",
+          "outcome": "You have a diverse portfolio that shows clients you can handle different design types.",
+          "resources": ["Canva templates for social media", "Design inspiration on Pinterest"]
+        },
+        {
+          "action": "Set up profiles on Fiverr and OnlineJobsPH",
+          "detail": "On Fiverr, create a gig: 'I will design social media graphics in Canva.' On OnlineJobsPH, search for 'graphic designer' or 'social media assistant.'",
+          "estimated_time": "45 minutes",
+          "difficulty": "easy",
+          "outcome": "You're visible to clients on the two most relevant platforms for Filipino designers.",
+          "action_url": "https://www.fiverr.com",
+          "action_label": "Create Fiverr gig"
+        }
       ],
       "milestone": "Portfolio of 10 designs ready and profiles live"
     },
     {
       "phase": 2,
       "title": "Get Your First Client",
+      "why": "One real client teaches you more than 100 practice designs. This phase gets you paid work and real feedback.",
       "duration": "Week 2",
       "steps": [
-        { "action": "Message 10 local businesses on Facebook", "detail": "Find restaurants, salons, or shops with weak social media. Send: 'I made a sample post for your page — here it is. I can do more for ₱500/week.'" },
-        { "action": "Join Filipino freelancer Facebook groups", "detail": "Search 'Canva designer Philippines' or 'VA hiring PH.' Post your portfolio. Many clients recruit from these groups." },
-        { "action": "Offer a free trial", "detail": "Create 3 free posts for one business. If they like it, propose a weekly package." }
+        {
+          "action": "Message 10 local businesses on Facebook",
+          "detail": "Find restaurants, salons, or shops with weak social media. Send: 'I made a sample post for your page — here it is. I can do more for ₱500/week.'",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You have direct conversations with potential paying clients.",
+          "resources": ["How to write a cold pitch for design services"]
+        },
+        {
+          "action": "Join Filipino freelancer Facebook groups",
+          "detail": "Search 'Canva designer Philippines' or 'VA hiring PH.' Post your portfolio. Many clients recruit from these groups.",
+          "estimated_time": "20 minutes",
+          "difficulty": "easy",
+          "outcome": "You're exposed to a stream of job postings from Philippine businesses."
+        },
+        {
+          "action": "Offer a free trial to one business",
+          "detail": "Create 3 free posts for one business. If they like it, propose a weekly package.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You convert a free trial into your first paying client — and get a real portfolio piece."
+        }
       ],
       "milestone": "First paid design project completed"
     },
     {
       "phase": 3,
       "title": "Build Consistency",
+      "why": "One client won't sustain you. This phase builds recurring revenue and makes your workflow fast enough to be profitable.",
       "duration": "Month 2",
       "steps": [
-        { "action": "Create branded templates for each client", "detail": "Save their colors, fonts, and logo as Canva brand kits. This speeds up your work and makes clients dependent on you." },
-        { "action": "Bundle design with social media posting", "detail": "Offer: 'I'll design 12 posts/month AND schedule them for ₱3,000–₱5,000.' Bundling increases your value per client." },
-        { "action": "Deliver faster than expected", "detail": "If a client asks for 24-hour turnaround, deliver in 12. Speed builds trust and referrals." }
+        {
+          "action": "Create branded templates for each client",
+          "detail": "Save their colors, fonts, and logo as Canva brand kits. This speeds up your work and makes clients dependent on you.",
+          "estimated_time": "30 minutes per client",
+          "difficulty": "easy",
+          "outcome": "You deliver designs 3x faster and clients can't easily replace you."
+        },
+        {
+          "action": "Bundle design with social media posting",
+          "detail": "Offer: 'I'll design 12 posts/month AND schedule them for ₱3,000–₱5,000.' Bundling increases your value per client.",
+          "estimated_time": "15 minutes to pitch",
+          "difficulty": "moderate",
+          "outcome": "You double your income per client without doubling your work hours."
+        },
+        {
+          "action": "Deliver faster than expected",
+          "detail": "If a client asks for 24-hour turnaround, deliver in 12. Speed builds trust and referrals.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "Clients refer you to other businesses without you asking."
+        }
       ],
       "milestone": "2–3 recurring clients on monthly packages"
     },
     {
       "phase": 4,
       "title": "Increase Your Income",
+      "why": "Trading time for money has a ceiling. This phase introduces scalable income through specialization and digital products.",
       "duration": "Month 3+",
       "steps": [
-        { "action": "Specialize in one industry", "detail": "Pick restaurants, real estate, or fitness. Industry-specific portfolios win more clients than generic ones." },
-        { "action": "Sell Canva templates on Gumroad or Etsy", "detail": "Create template packs (e.g. '30 Instagram templates for cafes') and sell them for ₱200–₱500 each. Passive income." },
-        { "action": "Raise your rates", "detail": "After 10+ completed projects, increase by 30%. New clients won't know your old rate. Good clients stay." }
+        {
+          "action": "Specialize in one industry",
+          "detail": "Pick restaurants, real estate, or fitness. Industry-specific portfolios win more clients than generic ones.",
+          "estimated_time": "30 minutes to decide",
+          "difficulty": "moderate",
+          "outcome": "You become the go-to designer for that industry and can charge premium rates."
+        },
+        {
+          "action": "Sell Canva templates on Gumroad or Etsy",
+          "detail": "Create template packs (e.g. '30 Instagram templates for cafes') and sell them for ₱200–₱500 each. Passive income.",
+          "estimated_time": "4–6 hours to create a pack",
+          "difficulty": "moderate",
+          "outcome": "You earn money while you sleep — each pack sells repeatedly.",
+          "action_url": "https://gumroad.com",
+          "action_label": "Set up Gumroad store"
+        },
+        {
+          "action": "Raise your rates by 30%",
+          "detail": "After 10+ completed projects, increase your rate. New clients won't know your old rate. Good clients stay.",
+          "estimated_time": "5 minutes",
+          "difficulty": "easy",
+          "outcome": "You earn significantly more for the same quality of work."
+        }
       ],
       "milestone": "Earning ₱15,000+/month from design work and template sales"
     }
@@ -67,35 +164,51 @@
     {
       "title": "Social Media Graphics",
       "detail": "Design Facebook, Instagram, and TikTok posts for businesses. Most common starting point. Clients pay per batch or monthly retainer.",
-      "earning_range": { "min": 3000, "max": 15000 }
+      "earning_range": { "min": 3000, "max": 15000 },
+      "best_for": "Complete beginners who want their first paying client fast",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Designing what looks good to you instead of what works for the client's audience",
+      "time_to_first_income": "1–2 weeks"
     },
     {
       "title": "Presentations & Pitch Decks",
       "detail": "Create professional slides for startups, agencies, and corporate clients. Higher pay per project. Requires understanding layout and storytelling.",
-      "earning_range": { "min": 5000, "max": 25000 }
+      "earning_range": { "min": 5000, "max": 25000 },
+      "best_for": "People with a corporate background or understanding of business communication",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Cramming too much text on slides — great presentations use visuals, not paragraphs",
+      "time_to_first_income": "2–3 weeks"
     },
     {
       "title": "Print Design (Menus, Flyers, Brochures)",
       "detail": "Design materials for restaurants, events, and local businesses. Often leads to ongoing relationships when menus or promos change seasonally.",
-      "earning_range": { "min": 3000, "max": 15000 }
+      "earning_range": { "min": 3000, "max": 15000 },
+      "best_for": "People who enjoy working with local businesses face-to-face",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Not accounting for print bleed and resolution — designs look different printed than on screen",
+      "time_to_first_income": "1–2 weeks"
     },
     {
       "title": "Template Selling",
       "detail": "Create and sell reusable Canva template packs on Gumroad, Etsy, or Creative Market. Build once, sell repeatedly.",
-      "earning_range": { "min": 2000, "max": 40000 }
+      "earning_range": { "min": 2000, "max": 40000 },
+      "best_for": "Designers who want passive income and don't mind the upfront work of creating quality templates",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Creating templates nobody wants — research what's selling on Etsy before building your first pack",
+      "time_to_first_income": "4–6 weeks"
     }
   ],
   "platforms": [
-    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Best for selling packaged design services. Clients browse and buy directly — less pitching required." },
-    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Many Philippine businesses look for Canva-skilled VAs here. Often leads to long-term employment." },
-    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Direct access to local businesses. Post samples and respond to hiring posts in Filipino freelancer groups." },
-    { "name": "Gumroad", "url": "https://gumroad.com", "why": "Sell Canva template packs. No upfront cost. You keep most of the revenue." }
+    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Best for selling packaged design services. Clients browse and buy directly — less pitching required.", "best_for": "Best for passive income" },
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Many Philippine businesses look for Canva-skilled VAs here. Often leads to long-term employment.", "best_for": "Best for long-term career" },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Direct access to local businesses. Post samples and respond to hiring posts in Filipino freelancer groups.", "best_for": "Best for beginners" },
+    { "name": "Gumroad", "url": "https://gumroad.com", "why": "Sell Canva template packs. No upfront cost. You keep most of the revenue.", "best_for": "Best for passive income" }
   ],
   "tools": [
-    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Your primary design tool. Free plan covers most client needs." },
-    { "name": "Unsplash", "url": "https://unsplash.com", "is_free": true, "purpose": "Free stock photos for your designs. Commercial use allowed." },
-    { "name": "Coolors", "url": "https://coolors.co", "is_free": true, "purpose": "Generate color palettes that look professional. Helpful when clients have no brand colors." },
-    { "name": "Google Drive", "url": "https://drive.google.com", "is_free": true, "purpose": "Organize and share design files with clients." }
+    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Your primary design tool. Free plan covers most client needs.", "why_it_matters": "This is literally the tool you're selling as a service. Master it before anything else.", "required": true, "when_to_start": "Day 1 — sign up immediately" },
+    { "name": "Unsplash", "url": "https://unsplash.com", "is_free": true, "purpose": "Free stock photos for your designs. Commercial use allowed.", "why_it_matters": "Good stock photos make amateur designs look professional. Bad photos ruin everything.", "required": true, "when_to_start": "Day 1 — bookmark it and use it in every design" },
+    { "name": "Coolors", "url": "https://coolors.co", "is_free": true, "purpose": "Generate color palettes that look professional.", "why_it_matters": "Bad color choices are the #1 reason beginner designs look amateur. Coolors prevents this.", "required": false, "when_to_start": "When a client has no brand colors and you need to suggest a palette" },
+    { "name": "Google Drive", "url": "https://drive.google.com", "is_free": true, "purpose": "Organize and share design files with clients.", "why_it_matters": "Clients need a clean, organized way to access their files. Sending designs via Messenger looks unprofessional.", "required": true, "when_to_start": "Before delivering your first project" }
   ],
   "faq": [
     { "question": "Can I really earn from Canva without formal design training?", "answer": "Yes. Most clients hiring Canva designers are small businesses who need clean, simple graphics — not award-winning art. If you can follow brand guidelines and create readable layouts, you qualify." },

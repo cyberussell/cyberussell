@@ -7,6 +7,14 @@
   "earning_range": { "min": 3000, "max": 35000 },
   "time_to_first_income": "2–4 weeks",
   "prerequisites": ["Smartphone with camera", "Internet connection", "Basic cooking ability"],
+  "todays_mission": {
+    "tasks": [
+      "Film and post your first 30-second cooking video on TikTok",
+      "Create a Facebook page for your food content or food business",
+      "Study 3 viral Filipino food TikToks and note their format"
+    ],
+    "estimated_time": "2 hours"
+  },
   "summary": {
     "description": "You don't need a culinary degree or a commercial kitchen. Filipinos who can cook well are earning online through food content, recipe blogs, online food selling, and cooking tutorials. The key is combining your cooking skill with one digital skill — video, writing, or social media.",
     "who_is_this_for": [
@@ -15,50 +23,145 @@
       "Anyone who enjoys sharing recipes",
       "People interested in food content creation"
     ],
-    "reality_check": "Cooking alone won't pay you online. You need to pair it with content creation (TikTok/YouTube), food selling (GrabFood/Facebook), or recipe writing. The fastest path is food content on TikTok — you can monetize through brand deals at 10K+ followers. Food selling earns faster but requires capital and logistics."
+    "reality_check": {
+      "honest_assessment": "Cooking alone won't pay you online. You need to pair it with content creation (TikTok/YouTube), food selling (GrabFood/Facebook), or recipe writing. Your first month will likely earn ₱0–₱3,000. The fastest path is food content on TikTok — you can monetize through brand deals at 10K+ followers. Food selling earns faster but requires capital and logistics.",
+      "what_beginners_underestimate": "How much content you need to post before anything goes viral. Expect to post 30–50 videos before one gets real traction. Also, food selling has hidden costs — packaging, delivery, and ingredient waste add up fast.",
+      "why_people_fail": "They post 5 videos, get 50 views each, and quit. Or they start a food business without calculating costs and end up losing money. Or they try both content and selling at the same time and do neither well.",
+      "how_to_avoid_failure": "Pick ONE path — content or selling — and commit to it for 30 days straight. For content, post daily. For selling, start with just 2–3 menu items. Track every peso spent and earned from day one."
+    }
   },
   "roadmap": [
     {
       "phase": 1,
       "title": "Choose Your Path",
+      "why": "Cooking can earn money in very different ways. Picking one path early prevents you from spreading yourself thin and quitting from overwhelm.",
       "duration": "Week 1",
       "steps": [
-        { "action": "Decide: content creator or food seller", "detail": "Content = TikTok/YouTube cooking videos. Selling = home-based food business via Facebook/GrabFood. Pick one to start. You can add the other later." },
-        { "action": "Set up your platform", "detail": "For content: create a TikTok account focused on cooking. For selling: create a Facebook page with your menu, prices, and delivery area." },
-        { "action": "Study 5 successful Filipino food creators", "detail": "Watch how they shoot, what angles they use, how short their videos are. Copy the format, not the recipes." }
+        {
+          "action": "Decide: content creator or food seller",
+          "detail": "Content = TikTok/YouTube cooking videos. Selling = home-based food business via Facebook/GrabFood. Pick one to start. You can add the other later.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "You have a clear direction and can focus all your energy on one path."
+        },
+        {
+          "action": "Set up your platform",
+          "detail": "For content: create a TikTok account focused on cooking. For selling: create a Facebook page with your menu, prices, and delivery area.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "Your platform is live and ready for your first post or menu listing.",
+          "action_url": "https://www.tiktok.com",
+          "action_label": "Create TikTok account"
+        },
+        {
+          "action": "Study 5 successful Filipino food creators",
+          "detail": "Watch how they shoot, what angles they use, how short their videos are. Copy the format, not the recipes.",
+          "estimated_time": "1 hour",
+          "difficulty": "easy",
+          "outcome": "You understand the format that works and can replicate it with your own recipes.",
+          "resources": ["Search TikTok for #LutongBahay", "Search YouTube for 'Filipino cooking channel'"]
+        }
       ],
       "milestone": "Platform chosen and account set up"
     },
     {
       "phase": 2,
       "title": "Create Your First Content or Product",
+      "why": "Nothing happens until you publish. Your first 10 posts teach you more than any tutorial — and they give the algorithm data to work with.",
       "duration": "Week 2–3",
       "steps": [
-        { "action": "Post 10 cooking videos or list 5 menu items", "detail": "For content: film 10 short recipe videos (30–60 seconds). For selling: photograph 5 dishes with prices and post on your Facebook page." },
-        { "action": "Use natural lighting and a clean background", "detail": "You don't need equipment. A window and a white plate make food look professional. Shoot during daytime." },
-        { "action": "Share in local Facebook groups", "detail": "Post your videos or menu in community groups, food groups, and buy-and-sell groups in your area." }
+        {
+          "action": "Post 10 cooking videos or list 5 menu items",
+          "detail": "For content: film 10 short recipe videos (30–60 seconds). For selling: photograph 5 dishes with prices and post on your Facebook page.",
+          "estimated_time": "3–5 hours total",
+          "difficulty": "moderate",
+          "outcome": "You have real content or products online that people can find, share, and buy."
+        },
+        {
+          "action": "Use natural lighting and a clean background",
+          "detail": "You don't need equipment. A window and a white plate make food look professional. Shoot during daytime.",
+          "estimated_time": "5 minutes per video",
+          "difficulty": "easy",
+          "outcome": "Your food photos and videos look clean and appetizing without spending on gear.",
+          "resources": ["YouTube: 'food photography with phone'", "Snapseed food editing tutorial"]
+        },
+        {
+          "action": "Share in local Facebook groups",
+          "detail": "Post your videos or menu in community groups, food groups, and buy-and-sell groups in your area.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "You get your first views, comments, and potentially your first customers from your own community.",
+          "action_url": "https://www.facebook.com/groups",
+          "action_label": "Find local food groups"
+        }
       ],
       "milestone": "First 10 posts published or first 5 orders received"
     },
     {
       "phase": 3,
       "title": "Build an Audience or Customer Base",
+      "why": "One-time views don't pay the bills. Repeat followers and repeat customers create the foundation for real income.",
       "duration": "Month 2",
       "steps": [
-        { "action": "Post consistently — 1 video or menu update per day", "detail": "Algorithms reward consistency. TikTok promotes daily posters. Food customers return to pages that update regularly." },
-        { "action": "Engage with every comment", "detail": "Reply to every comment within 1 hour. Ask questions back: 'What recipe should I try next?' Engagement boosts reach." },
-        { "action": "Start a recipe blog on Medium or WordPress", "detail": "Write 5 recipes with photos. Add affiliate links to kitchen tools. This creates passive income alongside your main path." }
+        {
+          "action": "Post consistently — 1 video or menu update per day",
+          "detail": "Algorithms reward consistency. TikTok promotes daily posters. Food customers return to pages that update regularly.",
+          "estimated_time": "30 minutes/day",
+          "difficulty": "moderate",
+          "outcome": "The algorithm starts pushing your content to more people, and customers check your page regularly."
+        },
+        {
+          "action": "Engage with every comment",
+          "detail": "Reply to every comment within 1 hour. Ask questions back: 'What recipe should I try next?' Engagement boosts reach.",
+          "estimated_time": "15 minutes/day",
+          "difficulty": "easy",
+          "outcome": "Your engagement rate increases, which triggers more algorithmic reach and builds community trust."
+        },
+        {
+          "action": "Start a recipe blog on Medium or WordPress",
+          "detail": "Write 5 recipes with photos. Add affiliate links to kitchen tools. This creates passive income alongside your main path.",
+          "estimated_time": "3 hours total",
+          "difficulty": "moderate",
+          "outcome": "You have a second income stream through affiliate commissions and a written portfolio of your recipes.",
+          "action_url": "https://medium.com/new-story",
+          "action_label": "Write your first recipe",
+          "resources": ["How to write a recipe blog post", "Amazon Associates PH affiliate program"]
+        }
       ],
       "milestone": "1,000+ followers or 20+ repeat customers"
     },
     {
       "phase": 4,
       "title": "Monetize",
+      "why": "An audience without monetization is a hobby. This phase turns your following or customer base into predictable income.",
       "duration": "Month 3+",
       "steps": [
-        { "action": "For content: pitch local food brands for sponsorships", "detail": "At 5K+ followers, message brands: 'I'll feature your product in a cooking video for ₱1,000–₱3,000.' Start with local sauces, condiments, or kitchen tools." },
-        { "action": "For selling: join GrabFood or Foodpanda", "detail": "Expand beyond Facebook orders. Platform delivery increases volume. Register your home kitchen with your local LGU if required." },
-        { "action": "Create a digital recipe book", "detail": "Compile your best 20 recipes into a PDF. Sell it for ₱99–₱199 on Gumroad. Use your TikTok or Facebook audience to promote it." }
+        {
+          "action": "For content: pitch local food brands for sponsorships",
+          "detail": "At 5K+ followers, message brands: 'I'll feature your product in a cooking video for ₱1,000–₱3,000.' Start with local sauces, condiments, or kitchen tools.",
+          "estimated_time": "1 hour",
+          "difficulty": "challenging",
+          "outcome": "You earn per video from brand deals, turning content creation into a real income source."
+        },
+        {
+          "action": "For selling: join GrabFood or Foodpanda",
+          "detail": "Expand beyond Facebook orders. Platform delivery increases volume. Register your home kitchen with your local LGU if required.",
+          "estimated_time": "2–3 hours for registration",
+          "difficulty": "moderate",
+          "outcome": "You reach customers outside your immediate network, significantly increasing daily orders.",
+          "action_url": "https://www.grab.com/ph/food",
+          "action_label": "Apply to GrabFood"
+        },
+        {
+          "action": "Create a digital recipe book",
+          "detail": "Compile your best 20 recipes into a PDF. Sell it for ₱99–₱199 on Gumroad. Use your TikTok or Facebook audience to promote it.",
+          "estimated_time": "4–6 hours",
+          "difficulty": "moderate",
+          "outcome": "You have a passive income product that earns while you sleep — every new follower is a potential buyer.",
+          "action_url": "https://gumroad.com",
+          "action_label": "Create Gumroad account",
+          "resources": ["Canva recipe book templates", "How to create a PDF ebook"]
+        }
       ],
       "milestone": "Earning ₱10,000+/month from cooking-related income"
     }
@@ -67,35 +170,51 @@
     {
       "title": "Food Content Creation",
       "detail": "Create cooking videos on TikTok, YouTube, or Instagram Reels. Earn from brand sponsorships, affiliate links, and platform monetization.",
-      "earning_range": { "min": 3000, "max": 30000 }
+      "earning_range": { "min": 3000, "max": 30000 },
+      "best_for": "People who enjoy being on camera (or showing their hands) and can post consistently every day",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Focusing on production quality instead of volume — your first 20 videos should be fast and imperfect, not polished",
+      "time_to_first_income": "4–8 weeks (need followers before brand deals)"
     },
     {
       "title": "Home-Based Food Selling",
       "detail": "Sell home-cooked meals, baked goods, or meal prep packages via Facebook, GrabFood, or direct delivery in your area.",
-      "earning_range": { "min": 5000, "max": 35000 }
+      "earning_range": { "min": 5000, "max": 35000 },
+      "best_for": "People who prefer tangible work and already cook daily — this monetizes what you're already doing",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Not tracking ingredient costs and thinking all revenue is profit — always calculate cost per serving before setting prices",
+      "time_to_first_income": "1–2 weeks"
     },
     {
       "title": "Recipe Writing & Blogging",
       "detail": "Write recipes for food blogs, content sites, or your own blog with ad revenue and affiliate links to kitchen products.",
-      "earning_range": { "min": 2000, "max": 15000 }
+      "earning_range": { "min": 2000, "max": 15000 },
+      "best_for": "People who enjoy writing and photography — this is the slowest path but builds long-term passive income",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Writing recipes without SEO — nobody will find your recipe if you don't target what people actually search for",
+      "time_to_first_income": "4–8 weeks"
     },
     {
       "title": "Digital Recipe Products",
       "detail": "Create and sell recipe eBooks, meal plan PDFs, or cooking guides on Gumroad or your own site.",
-      "earning_range": { "min": 1000, "max": 10000 }
+      "earning_range": { "min": 1000, "max": 10000 },
+      "best_for": "People who already have an audience (even small) and want to create something once and sell it repeatedly",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Creating the product before building an audience — you need people to sell to first",
+      "time_to_first_income": "6–10 weeks"
     }
   ],
   "platforms": [
-    { "name": "TikTok", "url": "https://www.tiktok.com", "why": "Fastest way to build a food audience. Short recipe videos can go viral even with zero followers." },
-    { "name": "Facebook", "url": "https://www.facebook.com", "why": "Best for local food selling. Create a page, join community groups, and take orders directly via Messenger." },
-    { "name": "GrabFood", "url": "https://www.grab.com/ph/food", "why": "Expand your delivery range beyond personal contacts. Requires registration but significantly increases order volume." },
-    { "name": "Gumroad", "url": "https://gumroad.com", "why": "Sell digital recipe books and meal plans. No upfront cost. GCash-compatible via PayPal." }
+    { "name": "TikTok", "url": "https://www.tiktok.com", "why": "Fastest way to build a food audience. Short recipe videos can go viral even with zero followers.", "best_for": "Best for beginners" },
+    { "name": "Facebook", "url": "https://www.facebook.com", "why": "Best for local food selling. Create a page, join community groups, and take orders directly via Messenger.", "best_for": "Best for fastest first client" },
+    { "name": "GrabFood", "url": "https://www.grab.com/ph/food", "why": "Expand your delivery range beyond personal contacts. Requires registration but significantly increases order volume.", "best_for": "Best for scaling food sales" },
+    { "name": "Gumroad", "url": "https://gumroad.com", "why": "Sell digital recipe books and meal plans. No upfront cost. GCash-compatible via PayPal.", "best_for": "Best for passive income" }
   ],
   "tools": [
-    { "name": "CapCut", "url": "https://www.capcut.com", "is_free": true, "purpose": "Edit cooking videos for TikTok and Reels. Free, mobile-friendly, and has food-specific templates." },
-    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Create recipe cards, menu designs, and food business branding." },
-    { "name": "Google Docs", "url": "https://docs.google.com", "is_free": true, "purpose": "Write and organize recipes before turning them into content or products." },
-    { "name": "Snapseed", "url": "https://snapseed.online", "is_free": true, "purpose": "Edit food photos on your phone. Adjust brightness and contrast to make dishes look appetizing." }
+    { "name": "CapCut", "url": "https://www.capcut.com", "is_free": true, "purpose": "Edit cooking videos for TikTok and Reels. Free, mobile-friendly, and has food-specific templates.", "why_it_matters": "Raw footage looks amateur. Even 5 minutes of editing — cuts, music, text overlay — makes your food content look professional and shareable.", "required": true, "when_to_start": "Day 1 — before posting your first video" },
+    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Create recipe cards, menu designs, and food business branding.", "why_it_matters": "A clean menu or recipe card makes your food business look legitimate. Clients and followers trust polished presentation.", "required": false, "when_to_start": "Week 2 — after you've decided your path and need branding" },
+    { "name": "Google Docs", "url": "https://docs.google.com", "is_free": true, "purpose": "Write and organize recipes before turning them into content or products.", "why_it_matters": "Keeping recipes organized saves you from re-inventing every time you post. It also becomes the raw material for your recipe eBook.", "required": true, "when_to_start": "Day 1 — start documenting your recipes immediately" },
+    { "name": "Snapseed", "url": "https://snapseed.online", "is_free": true, "purpose": "Edit food photos on your phone. Adjust brightness and contrast to make dishes look appetizing.", "why_it_matters": "Food photos with proper lighting and color correction get 2–3x more engagement than dark, unedited shots.", "required": false, "when_to_start": "Week 1 — use it for your food selling photos or blog posts" }
   ],
   "faq": [
     { "question": "Do I need a commercial kitchen to sell food online?", "answer": "For small-scale Facebook selling, most Filipinos start from their home kitchen. If you scale to GrabFood or Foodpanda, check your local LGU requirements — some require basic food safety permits." },

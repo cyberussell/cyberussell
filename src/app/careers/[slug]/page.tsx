@@ -10,6 +10,7 @@ import CareerPlatforms from "@/components/career/CareerPlatforms";
 import CareerTools from "@/components/career/CareerTools";
 import CareerFAQ from "@/components/career/CareerFAQ";
 import CareerCTA from "@/components/career/CareerCTA";
+import CareerMission from "@/components/career/CareerMission";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -37,13 +38,14 @@ export default async function CareerPage({ params }: Props) {
     <>
       <Navbar />
       <CareerHero career={career} />
+      <CareerMission mission={career.todays_mission} />
       <CareerSummary summary={career.summary} />
       <CareerRoadmap roadmap={career.roadmap} />
       <CareerIncomePaths paths={career.income_paths} />
       <CareerPlatforms platforms={career.platforms} />
       <CareerTools tools={career.tools} />
       <CareerFAQ faq={career.faq} />
-      <CareerCTA skill={career.skill} />
+      <CareerCTA skill={career.skill} mission={career.todays_mission} />
       <Footer />
     </>
   );

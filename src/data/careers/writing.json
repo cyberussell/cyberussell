@@ -7,6 +7,14 @@
   "earning_range": { "min": 5000, "max": 50000 },
   "time_to_first_income": "2–3 weeks",
   "prerequisites": ["Smartphone or laptop", "Internet connection", "Basic English or Filipino writing ability"],
+  "todays_mission": {
+    "tasks": [
+      "Create an Upwork profile with a clear headline",
+      "Write and publish 1 sample article on Medium",
+      "Send your first 3 job proposals"
+    ],
+    "estimated_time": "2 hours"
+  },
   "summary": {
     "description": "Writing is one of the fastest ways for Filipinos to start earning online. Businesses, blogs, and agencies constantly need content — and most don't care about your degree. They care about your output. You can start with blog posts, product descriptions, or social media captions, then specialize as you build experience.",
     "who_is_this_for": [
@@ -15,50 +23,145 @@
       "Students looking for part-time income",
       "Anyone willing to learn SEO and content marketing basics"
     ],
-    "reality_check": "Your first gig will probably pay ₱300/page or less. That's normal. Most writers earn ₱5,000–₱15,000/month in their first 3 months. The path to ₱30,000+ requires specializing in a niche (like finance, health, or tech) and building repeat clients. Expect rejection — your first 10 proposals will likely be ignored."
+    "reality_check": {
+      "honest_assessment": "Your first gig will probably pay ₱300/page or less. That's normal. Most writers earn ₱5,000–₱15,000/month in their first 3 months. The path to ₱30,000+ requires specializing in a niche and building repeat clients.",
+      "what_beginners_underestimate": "The number of proposals you need to send before landing your first client. Expect to send 30–50 proposals. Most will be ignored. This is normal, not a sign that you're not good enough.",
+      "why_people_fail": "They send 5 proposals, get no response, and quit. Or they underprice themselves so much that the work isn't sustainable. Or they wait for the 'perfect' portfolio before starting.",
+      "how_to_avoid_failure": "Send proposals every single day for 2 weeks straight. Don't wait until your portfolio is perfect — 2 Medium articles is enough to start. Price yourself fairly (₱1.50–₱3/word for beginners) and raise your rate after every 5 completed projects."
+    }
   },
   "roadmap": [
     {
       "phase": 1,
       "title": "Set Up",
+      "why": "You need a profile, portfolio, and payment method before you can earn. This phase removes all excuses for not starting.",
       "duration": "Week 1",
       "steps": [
-        { "action": "Create an Upwork profile", "detail": "Use a professional photo. Write a headline that states your niche (e.g. 'Blog Writer for Small Businesses'). Skip the generic 'hardworking freelancer' intro." },
-        { "action": "Write 2 sample articles", "detail": "Pick topics you know well. Publish them on Medium.com (free). These become your portfolio pieces." },
-        { "action": "Set up a GCash account", "detail": "You'll need this to receive payments from local clients and to withdraw from Payoneer/Wise." }
+        {
+          "action": "Create an Upwork profile",
+          "detail": "Use a professional photo. Write a headline that states your niche (e.g. 'Blog Writer for Small Businesses'). Skip the generic 'hardworking freelancer' intro.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "Your freelance profile is live and visible to clients worldwide.",
+          "action_url": "https://www.upwork.com/signup",
+          "action_label": "Open Upwork",
+          "resources": ["Upwork profile tips on YouTube", "Example headlines for Filipino writers"]
+        },
+        {
+          "action": "Write 2 sample articles",
+          "detail": "Pick topics you know well. Publish them on Medium.com (free). These become your portfolio pieces.",
+          "estimated_time": "2 hours",
+          "difficulty": "moderate",
+          "outcome": "You have 2 published writing samples to show potential clients.",
+          "action_url": "https://medium.com/new-story",
+          "action_label": "Start writing on Medium",
+          "resources": ["How to write a blog post (beginner guide)", "SEO writing basics"]
+        },
+        {
+          "action": "Set up a GCash account",
+          "detail": "You'll need this to receive payments from local clients and to withdraw from Payoneer/Wise.",
+          "estimated_time": "15 minutes",
+          "difficulty": "easy",
+          "outcome": "You can receive payments from clients in the Philippines.",
+          "action_url": "https://www.gcash.com",
+          "action_label": "Download GCash"
+        }
       ],
       "milestone": "Upwork profile live with 2 portfolio samples"
     },
     {
       "phase": 2,
       "title": "Get Your First Client",
+      "why": "Your first paying client proves this is real. After that, the psychological barrier disappears and momentum builds.",
       "duration": "Week 2–3",
       "steps": [
-        { "action": "Send 5 proposals per day on Upwork", "detail": "Filter for 'content writing' jobs posted in the last 24 hours. Customize every proposal — mention the client's business name and suggest a specific angle for their content." },
-        { "action": "Apply on OnlineJobsPH", "detail": "Create a profile. Search for 'content writer' or 'blog writer'. Many PH-based businesses hire here and pay via bank transfer." },
-        { "action": "Offer free or discounted first articles to local businesses", "detail": "Find 3 small businesses in your area with weak social media. Message them: 'I'll write 3 Facebook posts for free so you can see the quality.'" }
+        {
+          "action": "Send 5 proposals per day on Upwork",
+          "detail": "Filter for 'content writing' jobs posted in the last 24 hours. Customize every proposal — mention the client's business name and suggest a specific angle for their content.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're actively competing for paid work and improving your proposal writing with each attempt.",
+          "action_url": "https://www.upwork.com/nx/find-work/",
+          "action_label": "Find writing jobs"
+        },
+        {
+          "action": "Apply on OnlineJobsPH",
+          "detail": "Create a profile. Search for 'content writer' or 'blog writer'. Many PH-based businesses hire here and pay via bank transfer.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "You're visible to Philippine employers who prefer hiring locally.",
+          "action_url": "https://www.onlinejobs.ph",
+          "action_label": "Open OnlineJobsPH"
+        },
+        {
+          "action": "Offer free or discounted first articles to local businesses",
+          "detail": "Find 3 small businesses in your area with weak social media. Message them: 'I'll write 3 Facebook posts for free so you can see the quality.'",
+          "estimated_time": "30 minutes",
+          "difficulty": "moderate",
+          "outcome": "You build real-world samples and potentially convert them into paying clients.",
+          "resources": ["How to find local businesses that need content"]
+        }
       ],
       "milestone": "First paid writing project completed"
     },
     {
       "phase": 3,
       "title": "Build Consistency",
+      "why": "One project doesn't pay the bills. This phase turns freelancing from a lucky break into a reliable income source.",
       "duration": "Month 2",
       "steps": [
-        { "action": "Deliver every project on time", "detail": "Reliability beats talent in freelancing. Clients rehire writers who meet deadlines, not writers who write perfectly but miss dates." },
-        { "action": "Ask every client for a review", "detail": "After delivering, send: 'If you're happy with the work, a quick review on Upwork would help me a lot.' Reviews compound — 5 reviews makes you 3x more likely to win proposals." },
-        { "action": "Learn basic SEO", "detail": "Watch one YouTube tutorial on 'SEO writing for beginners.' Learn keyword placement, headings, and meta descriptions. This immediately increases your value." }
+        {
+          "action": "Deliver every project on time",
+          "detail": "Reliability beats talent in freelancing. Clients rehire writers who meet deadlines, not writers who write perfectly but miss dates.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "Clients trust you and offer repeat work without you having to pitch."
+        },
+        {
+          "action": "Ask every client for a review",
+          "detail": "After delivering, send: 'If you're happy with the work, a quick review on Upwork would help me a lot.' Reviews compound — 5 reviews makes you 3x more likely to win proposals.",
+          "estimated_time": "2 minutes per client",
+          "difficulty": "easy",
+          "outcome": "Your profile builds social proof that wins future clients automatically."
+        },
+        {
+          "action": "Learn basic SEO",
+          "detail": "Watch one YouTube tutorial on 'SEO writing for beginners.' Learn keyword placement, headings, and meta descriptions. This immediately increases your value.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You can charge 30–50% more by offering 'SEO-optimized' content.",
+          "resources": ["Ahrefs SEO writing guide", "Google Keyword Planner (free)"]
+        }
       ],
       "milestone": "3+ completed projects with client reviews"
     },
     {
       "phase": 4,
       "title": "Raise Your Rates",
+      "why": "Working harder isn't the path to higher income — working smarter is. Specialization and retainers create financial stability.",
       "duration": "Month 3+",
       "steps": [
-        { "action": "Pick a niche", "detail": "Specializing in one industry (health, real estate, tech, finance) lets you charge 2–3x more. 'Health blog writer' beats 'general writer' in every proposal." },
-        { "action": "Raise your rate by 20–30%", "detail": "After 5+ completed projects, increase your rate. New clients won't see your old rate. Existing clients will stay if your work is good." },
-        { "action": "Pitch retainer agreements", "detail": "Tell repeat clients: 'I can guarantee 8 articles per month for ₱X.' Retainers create predictable income." }
+        {
+          "action": "Pick a niche",
+          "detail": "Specializing in one industry (health, real estate, tech, finance) lets you charge 2–3x more. 'Health blog writer' beats 'general writer' in every proposal.",
+          "estimated_time": "30 minutes to decide",
+          "difficulty": "moderate",
+          "outcome": "You stand out from thousands of general writers and attract higher-paying clients."
+        },
+        {
+          "action": "Raise your rate by 20–30%",
+          "detail": "After 5+ completed projects, increase your rate. New clients won't see your old rate. Existing clients will stay if your work is good.",
+          "estimated_time": "5 minutes",
+          "difficulty": "easy",
+          "outcome": "You earn more per hour without working more hours."
+        },
+        {
+          "action": "Pitch retainer agreements",
+          "detail": "Tell repeat clients: 'I can guarantee 8 articles per month for ₱X.' Retainers create predictable income.",
+          "estimated_time": "15 minutes per client",
+          "difficulty": "challenging",
+          "outcome": "You have predictable monthly income instead of project-to-project uncertainty."
+        }
       ],
       "milestone": "Earning ₱15,000+/month with repeat clients"
     }
@@ -67,36 +170,52 @@
     {
       "title": "Blog & Article Writing",
       "detail": "Write blog posts for businesses, agencies, or content sites. Most common entry point. Pay per article ranges from ₱300–₱3,000 depending on length and niche.",
-      "earning_range": { "min": 5000, "max": 30000 }
+      "earning_range": { "min": 5000, "max": 30000 },
+      "best_for": "Beginners who can write clearly and follow instructions",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Writing for free indefinitely instead of setting a price after the first 2–3 samples",
+      "time_to_first_income": "1–2 weeks"
     },
     {
       "title": "Copywriting for Ads & Landing Pages",
       "detail": "Write sales copy for Facebook ads, email campaigns, and landing pages. Higher pay but requires understanding persuasion and marketing fundamentals.",
-      "earning_range": { "min": 10000, "max": 50000 }
+      "earning_range": { "min": 10000, "max": 50000 },
+      "best_for": "Writers who enjoy persuasion, marketing, and understanding what makes people buy",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Trying to sound clever instead of clear — the best sales copy is simple and direct",
+      "time_to_first_income": "3–4 weeks"
     },
     {
       "title": "Social Media Content Writing",
       "detail": "Write captions, scripts, and post copy for brands on Facebook, Instagram, and TikTok. Often bundled with basic Canva graphics. Good for beginners.",
-      "earning_range": { "min": 5000, "max": 20000 }
+      "earning_range": { "min": 5000, "max": 20000 },
+      "best_for": "People who spend a lot of time on social media and understand what makes posts engaging",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Writing captions that sound professional instead of conversational — social media copy should sound like a person, not a brochure",
+      "time_to_first_income": "1–2 weeks"
     },
     {
       "title": "Technical & Specialized Writing",
       "detail": "Write for SaaS companies, medical sites, or finance blogs. Requires niche knowledge but commands premium rates. Often remote-friendly.",
-      "earning_range": { "min": 15000, "max": 60000 }
+      "earning_range": { "min": 15000, "max": 60000 },
+      "best_for": "Writers with background knowledge in a specific industry (health, tech, finance, law)",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Not leveraging existing industry knowledge — if you worked in healthcare, you already know more than most writers",
+      "time_to_first_income": "3–6 weeks"
     }
   ],
   "platforms": [
-    { "name": "Upwork", "url": "https://www.upwork.com", "why": "Largest freelance marketplace. Best for building a track record with international clients. Payments via Payoneer or Wise." },
-    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Filipino-focused job board. Many clients here prefer long-term hires and pay via local bank transfer." },
-    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Good for offering packaged writing services (e.g. '1 blog post for $15'). Clients come to you instead of you pitching." },
-    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search for 'Filipino freelancers' or 'content writers PH' groups. Many local businesses post writing jobs here directly." }
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "Largest freelance marketplace. Best for building a track record with international clients. Payments via Payoneer or Wise.", "best_for": "Best for long-term career building" },
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Filipino-focused job board. Many clients here prefer long-term hires and pay via local bank transfer.", "best_for": "Best for fastest first client" },
+    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Good for offering packaged writing services (e.g. '1 blog post for $15'). Clients come to you instead of you pitching.", "best_for": "Best for passive income" },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search for 'Filipino freelancers' or 'content writers PH' groups. Many local businesses post writing jobs here directly.", "best_for": "Best for beginners" }
   ],
   "tools": [
-    { "name": "Google Docs", "url": "https://docs.google.com", "is_free": true, "purpose": "Write and share your work. Clients expect Google Docs links." },
-    { "name": "Grammarly", "url": "https://www.grammarly.com", "is_free": true, "purpose": "Catch grammar and spelling errors before submitting. Free version is enough." },
-    { "name": "Hemingway Editor", "url": "https://hemingwayapp.com", "is_free": true, "purpose": "Make your writing clearer and more readable. Highlights complex sentences." },
-    { "name": "Medium", "url": "https://medium.com", "is_free": true, "purpose": "Publish sample articles to build a free portfolio. Looks professional to clients." },
-    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Create simple featured images for blog posts. Adds value to your writing deliverables." }
+    { "name": "Google Docs", "url": "https://docs.google.com", "is_free": true, "purpose": "Write and share your work. Clients expect Google Docs links.", "why_it_matters": "This is the standard delivery format. Clients will reject files sent as .docx attachments.", "required": true, "when_to_start": "Day 1 — before you write anything" },
+    { "name": "Grammarly", "url": "https://www.grammarly.com", "is_free": true, "purpose": "Catch grammar and spelling errors before submitting. Free version is enough.", "why_it_matters": "One typo in a proposal can cost you the job. Grammarly catches mistakes you'll miss after staring at your own writing.", "required": true, "when_to_start": "Day 1 — install the browser extension immediately" },
+    { "name": "Hemingway Editor", "url": "https://hemingwayapp.com", "is_free": true, "purpose": "Make your writing clearer and more readable. Highlights complex sentences.", "why_it_matters": "Clients want clear, scannable content — not academic prose. Hemingway forces you to simplify.", "required": false, "when_to_start": "After your first 3 articles — use it to improve your editing" },
+    { "name": "Medium", "url": "https://medium.com", "is_free": true, "purpose": "Publish sample articles to build a free portfolio. Looks professional to clients.", "why_it_matters": "You need a portfolio link in your proposals. Medium gives you one in 10 minutes, for free.", "required": true, "when_to_start": "Day 1 — publish your first sample before sending proposals" },
+    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Create simple featured images for blog posts. Adds value to your writing deliverables.", "why_it_matters": "Writers who include a featured image with each article charge 20% more and get rehired more often.", "required": false, "when_to_start": "After your first 5 articles — add it as a value-add to your service" }
   ],
   "faq": [
     { "question": "Do I need a college degree to become a freelance writer?", "answer": "No. Most clients care about your writing samples, not your diploma. If you can write a clear, useful article, you can get hired." },

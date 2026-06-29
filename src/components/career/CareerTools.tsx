@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Clock } from "lucide-react";
 import type { Tool } from "@/lib/careers/types";
 
 export default function CareerTools({ tools }: { tools: Tool[] }) {
@@ -12,7 +12,7 @@ export default function CareerTools({ tools }: { tools: Tool[] }) {
           Set these up before you start.
         </h2>
         <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/50 mb-10">
-          All free or have free plans. No investment needed.
+          Required tools first, optional tools later. All free or have free plans.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -22,7 +22,7 @@ export default function CareerTools({ tools }: { tools: Tool[] }) {
               href={tool.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group bg-[#18181F] border border-white/[0.08] rounded-xl p-5 flex flex-col gap-2 hover:border-white/[0.15] transition-colors"
+              className="group bg-[#18181F] border border-white/[0.08] rounded-xl p-5 flex flex-col gap-2.5 hover:border-white/[0.15] transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -31,13 +31,28 @@ export default function CareerTools({ tools }: { tools: Tool[] }) {
                   </h3>
                   <ExternalLink size={12} className="text-white/20 group-hover:text-[#FFD23F]/60 transition-colors" strokeWidth={2} />
                 </div>
-                <span className={`font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[0.05em] px-2 py-0.5 rounded-full ${tool.is_free ? "text-[#00C97A] bg-[#00C97A]/10 border border-[#00C97A]/20" : "text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/20"}`}>
-                  {tool.is_free ? "Free" : "Paid"}
+                <div className="flex items-center gap-2">
+                  {tool.required && (
+                    <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[0.05em] text-[#E8373A] bg-[#E8373A]/10 border border-[#E8373A]/20 px-2 py-0.5 rounded-full">
+                      Required
+                    </span>
+                  )}
+                  <span className={`font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[0.05em] px-2 py-0.5 rounded-full ${tool.is_free ? "text-[#00C97A] bg-[#00C97A]/10 border border-[#00C97A]/20" : "text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/20"}`}>
+                    {tool.is_free ? "Free" : "Paid"}
+                  </span>
+                </div>
+              </div>
+
+              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6]">
+                {tool.why_it_matters}
+              </p>
+
+              <div className="flex items-center gap-1.5 mt-auto">
+                <Clock size={11} className="text-white/20" strokeWidth={2} />
+                <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/25">
+                  {tool.when_to_start}
                 </span>
               </div>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.6]">
-                {tool.purpose}
-              </p>
             </a>
           ))}
         </div>

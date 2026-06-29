@@ -7,6 +7,14 @@
   "earning_range": { "min": 5000, "max": 60000 },
   "time_to_first_income": "2–3 weeks",
   "prerequisites": ["Smartphone or laptop", "Internet connection", "Willingness to learn CapCut or DaVinci Resolve"],
+  "todays_mission": {
+    "tasks": [
+      "Download CapCut and edit a 30-second practice video using free stock footage",
+      "Create an Upwork profile with the headline 'Video Editor for TikTok & YouTube'",
+      "DM 3 small TikTok creators offering to edit one video for free"
+    ],
+    "estimated_time": "2.5 hours"
+  },
   "summary": {
     "description": "Every business and creator needs video content, but most don't want to edit it themselves. Filipino video editors are in high demand because of competitive rates and strong English skills. You can start with short-form edits (TikTok, Reels) using free tools, then move to long-form YouTube editing as your skills grow.",
     "who_is_this_for": [
@@ -15,50 +23,145 @@
       "Anyone with patience for detail-oriented work",
       "Students looking for a creative side income"
     ],
-    "reality_check": "Short-form editing (TikTok/Reels) is the fastest entry point — you can learn CapCut in a weekend. But it's competitive and pays less (₱200–₱500/video). Long-form YouTube editing pays ₱2,000–₱10,000/video but requires more skill. Expect to edit 5–10 free or cheap videos before landing consistent paid work."
+    "reality_check": {
+      "honest_assessment": "Short-form editing (TikTok/Reels) is the fastest entry point — you can learn CapCut in a weekend. But it's competitive and pays less (₱200–₱500/video). Long-form YouTube editing pays ₱2,000–₱10,000/video but requires more skill. Expect to edit 5–10 free or cheap videos before landing consistent paid work.",
+      "what_beginners_underestimate": "How long editing actually takes. A 30-second TikTok can take 1–2 hours when you're learning. A 10-minute YouTube video can take 6–8 hours. Speed comes with practice, but your first month will feel painfully slow.",
+      "why_people_fail": "They spend weeks watching tutorials without editing real videos. Or they quote professional rates with a beginner portfolio and get zero responses. Or they take on too many projects, miss deadlines, and lose clients permanently.",
+      "how_to_avoid_failure": "Edit a real video every single day for your first 2 weeks — even if nobody asked you to. Start with free or low-cost edits to build your portfolio fast. Only take on projects you can finish within the deadline, even if it means saying no to money."
+    }
   },
   "roadmap": [
     {
       "phase": 1,
       "title": "Learn the Basics",
+      "why": "You need baseline editing skills before anyone will trust you with their content. This phase gives you the muscle memory to edit confidently.",
       "duration": "Week 1",
       "steps": [
-        { "action": "Pick your editing tool", "detail": "Phone: CapCut (free). Laptop: DaVinci Resolve (free). Don't buy software — free tools are professional-grade." },
-        { "action": "Edit 3 practice videos", "detail": "Download free stock footage from Pexels. Edit a 30-second TikTok, a 60-second Reel, and a 5-minute YouTube-style video. Focus on cuts, text overlays, and music." },
-        { "action": "Watch 2 YouTube tutorials on your chosen tool", "detail": "Search '[tool name] editing tutorial for beginners.' Learn keyboard shortcuts — they double your speed." }
+        {
+          "action": "Pick your editing tool",
+          "detail": "Phone: CapCut (free). Laptop: DaVinci Resolve (free). Don't buy software — free tools are professional-grade.",
+          "estimated_time": "15 minutes",
+          "difficulty": "easy",
+          "outcome": "You have a professional editing tool installed and ready to use.",
+          "action_url": "https://www.capcut.com",
+          "action_label": "Download CapCut"
+        },
+        {
+          "action": "Edit 3 practice videos",
+          "detail": "Download free stock footage from Pexels. Edit a 30-second TikTok, a 60-second Reel, and a 5-minute YouTube-style video. Focus on cuts, text overlays, and music.",
+          "estimated_time": "4–6 hours total",
+          "difficulty": "moderate",
+          "outcome": "You understand the basic workflow: import, cut, add text/music, export.",
+          "action_url": "https://www.pexels.com/videos",
+          "action_label": "Get free stock footage"
+        },
+        {
+          "action": "Watch 2 YouTube tutorials on your chosen tool",
+          "detail": "Search '[tool name] editing tutorial for beginners.' Learn keyboard shortcuts — they double your speed.",
+          "estimated_time": "1 hour",
+          "difficulty": "easy",
+          "outcome": "You learn shortcuts and techniques that save hours on every future edit.",
+          "resources": ["CapCut tutorial for beginners (YouTube)", "DaVinci Resolve beginner guide (YouTube)"]
+        }
       ],
       "milestone": "3 practice videos completed"
     },
     {
       "phase": 2,
       "title": "Build Your Portfolio",
+      "why": "No client will hire you without proof you can edit. Free edits for small creators are the fastest way to get real samples.",
       "duration": "Week 2",
       "steps": [
-        { "action": "Edit 3 videos for small creators for free", "detail": "Find TikTok creators with 1K–10K followers in your niche. DM: 'I'll edit your next 3 videos for free as portfolio pieces.' Most will say yes." },
-        { "action": "Create a portfolio showcase", "detail": "Upload your best 5 edits to a Google Drive folder or create a simple Carrd.co page (free) with video links." },
-        { "action": "Set up profiles on Fiverr and Upwork", "detail": "Fiverr gig: 'I will edit your TikTok or YouTube video.' Upwork profile: highlight turnaround speed and specific editing styles." }
+        {
+          "action": "Edit 3 videos for small creators for free",
+          "detail": "Find TikTok creators with 1K–10K followers in your niche. DM: 'I'll edit your next 3 videos for free as portfolio pieces.' Most will say yes.",
+          "estimated_time": "6–9 hours total",
+          "difficulty": "moderate",
+          "outcome": "You have real client work in your portfolio — not just practice edits with stock footage."
+        },
+        {
+          "action": "Create a portfolio showcase",
+          "detail": "Upload your best 5 edits to a Google Drive folder or create a simple Carrd.co page (free) with video links.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "You have a shareable portfolio link to include in every proposal and DM.",
+          "action_url": "https://carrd.co",
+          "action_label": "Create free portfolio site"
+        },
+        {
+          "action": "Set up profiles on Fiverr and Upwork",
+          "detail": "Fiverr gig: 'I will edit your TikTok or YouTube video.' Upwork profile: highlight turnaround speed and specific editing styles.",
+          "estimated_time": "1 hour",
+          "difficulty": "easy",
+          "outcome": "Your freelance profiles are live and clients can find you through search.",
+          "action_url": "https://www.fiverr.com",
+          "action_label": "Create Fiverr gig"
+        }
       ],
       "milestone": "Portfolio with 5+ sample edits and freelance profiles live"
     },
     {
       "phase": 3,
       "title": "Get Paying Clients",
+      "why": "Free edits prove your skills, but paid work proves your business. This phase turns your portfolio into actual income.",
       "duration": "Month 2",
       "steps": [
-        { "action": "Send 5 proposals per day on Upwork", "detail": "Filter for 'video editor' posted in last 24 hours. In your proposal, mention the client's content specifically — generic proposals get ignored." },
-        { "action": "Pitch creators directly on social media", "detail": "Find YouTubers or TikTokers who post good content with poor editing. DM with a sample re-edit of their video." },
-        { "action": "Join video editing Facebook groups", "detail": "Search 'video editor hiring PH' or 'Filipino video editors.' Post your portfolio. Respond to job posts within 1 hour." }
+        {
+          "action": "Send 5 proposals per day on Upwork",
+          "detail": "Filter for 'video editor' posted in last 24 hours. In your proposal, mention the client's content specifically — generic proposals get ignored.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're actively competing for paid work and improving your proposal game daily.",
+          "action_url": "https://www.upwork.com/nx/find-work/",
+          "action_label": "Find video editing jobs"
+        },
+        {
+          "action": "Pitch creators directly on social media",
+          "detail": "Find YouTubers or TikTokers who post good content with poor editing. DM with a sample re-edit of their video.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "challenging",
+          "outcome": "You bypass job boards and land clients who didn't even know they needed an editor."
+        },
+        {
+          "action": "Join video editing Facebook groups",
+          "detail": "Search 'video editor hiring PH' or 'Filipino video editors.' Post your portfolio. Respond to job posts within 1 hour.",
+          "estimated_time": "30 minutes/day",
+          "difficulty": "easy",
+          "outcome": "You tap into the Filipino freelancer network where many editors find their first recurring clients.",
+          "action_url": "https://www.facebook.com/groups",
+          "action_label": "Find editor groups"
+        }
       ],
       "milestone": "First 3 paid editing projects completed"
     },
     {
       "phase": 4,
       "title": "Scale and Specialize",
+      "why": "General editors compete on price. Specialists compete on value — and value pays 2–3x more.",
       "duration": "Month 3+",
       "steps": [
-        { "action": "Pick a niche", "detail": "Specializing in one content type (podcasts, gaming, business) lets you charge more and edit faster. 'Podcast video editor' beats 'video editor' in every proposal." },
-        { "action": "Offer monthly retainer packages", "detail": "Tell repeat clients: 'I'll edit 8 videos/month for ₱X.' Retainers give you predictable income." },
-        { "action": "Learn motion graphics basics", "detail": "After Effects or Canva animations. Adding intros, lower thirds, and transitions increases your rate by 50–100%." }
+        {
+          "action": "Pick a niche",
+          "detail": "Specializing in one content type (podcasts, gaming, business) lets you charge more and edit faster. 'Podcast video editor' beats 'video editor' in every proposal.",
+          "estimated_time": "30 minutes to decide",
+          "difficulty": "moderate",
+          "outcome": "You stand out from thousands of general editors and attract clients willing to pay premium rates."
+        },
+        {
+          "action": "Offer monthly retainer packages",
+          "detail": "Tell repeat clients: 'I'll edit 8 videos/month for ₱X.' Retainers give you predictable income.",
+          "estimated_time": "15 minutes per pitch",
+          "difficulty": "challenging",
+          "outcome": "You have predictable monthly income instead of hustling for every single project."
+        },
+        {
+          "action": "Learn motion graphics basics",
+          "detail": "After Effects or Canva animations. Adding intros, lower thirds, and transitions increases your rate by 50–100%.",
+          "estimated_time": "5–10 hours to learn basics",
+          "difficulty": "challenging",
+          "outcome": "You can offer premium editing services that justify ₱5,000–₱10,000 per video.",
+          "resources": ["After Effects basics for editors (YouTube)", "Canva animation tutorial"]
+        }
       ],
       "milestone": "Earning ₱20,000+/month with retainer clients"
     }
@@ -67,36 +170,52 @@
     {
       "title": "Short-Form Video Editing (TikTok/Reels)",
       "detail": "Edit 30–90 second videos for creators and brands. High volume, fast turnaround. Most accessible entry point.",
-      "earning_range": { "min": 5000, "max": 20000 }
+      "earning_range": { "min": 5000, "max": 20000 },
+      "best_for": "Complete beginners who want to start earning within 2 weeks — low barrier, high volume",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Spending 3 hours perfecting a ₱300 edit — speed matters more than perfection for short-form content",
+      "time_to_first_income": "1–2 weeks"
     },
     {
       "title": "YouTube Video Editing",
       "detail": "Edit long-form content (10–30 minutes) for YouTubers. Higher pay per video, requires more skill in pacing and storytelling.",
-      "earning_range": { "min": 10000, "max": 50000 }
+      "earning_range": { "min": 10000, "max": 50000 },
+      "best_for": "Editors who enjoy storytelling and are willing to invest time learning pacing, B-roll, and audio mixing",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Not watching enough of the creator's existing content before editing — you need to match their style, not impose yours",
+      "time_to_first_income": "3–4 weeks"
     },
     {
       "title": "Business & Marketing Videos",
       "detail": "Edit ads, product demos, and corporate videos. Businesses pay premium rates for professional-looking content.",
-      "earning_range": { "min": 10000, "max": 60000 }
+      "earning_range": { "min": 10000, "max": 60000 },
+      "best_for": "Editors with a clean, professional style who understand marketing — this pays the most but requires business communication skills",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Using trendy editing styles (jump cuts, memes) in corporate videos — businesses want clean, professional, brand-aligned content",
+      "time_to_first_income": "4–6 weeks"
     },
     {
       "title": "Podcast Video Editing",
       "detail": "Edit video podcasts — syncing audio, adding captions, cutting dead air. Growing niche with recurring work.",
-      "earning_range": { "min": 8000, "max": 30000 }
+      "earning_range": { "min": 8000, "max": 30000 },
+      "best_for": "Patient editors who enjoy audio work — podcasts are repetitive but provide the most stable recurring income",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Not learning basic audio editing — podcast editors who can clean up audio are 2x more valuable than those who only do video cuts",
+      "time_to_first_income": "2–3 weeks"
     }
   ],
   "platforms": [
-    { "name": "Upwork", "url": "https://www.upwork.com", "why": "Best for finding international clients who pay in USD. Filter for 'video editor' and sort by recent posts." },
-    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Good for short-form editing gigs. Clients come to you. Start with low prices to build reviews." },
-    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Filipino employers often hire full-time remote video editors. Stable income with local bank payments." },
-    { "name": "Twitter/X", "url": "https://x.com", "why": "Many YouTube creators post 'looking for an editor' on Twitter. Follow creators in your niche and engage with their content." }
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "Best for finding international clients who pay in USD. Filter for 'video editor' and sort by recent posts.", "best_for": "Best for long-term career building" },
+    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Good for short-form editing gigs. Clients come to you. Start with low prices to build reviews.", "best_for": "Best for beginners" },
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Filipino employers often hire full-time remote video editors. Stable income with local bank payments.", "best_for": "Best for stable full-time income" },
+    { "name": "Twitter/X", "url": "https://x.com", "why": "Many YouTube creators post 'looking for an editor' on Twitter. Follow creators in your niche and engage with their content.", "best_for": "Best for fastest first client" }
   ],
   "tools": [
-    { "name": "CapCut", "url": "https://www.capcut.com", "is_free": true, "purpose": "Best free editor for short-form content. Works on phone and desktop." },
-    { "name": "DaVinci Resolve", "url": "https://www.blackmagicdesign.com/products/davinciresolve", "is_free": true, "purpose": "Professional-grade desktop editor. Free version has everything you need for client work." },
-    { "name": "Pexels", "url": "https://www.pexels.com/videos", "is_free": true, "purpose": "Free stock video footage for practice projects and portfolio pieces." },
-    { "name": "Google Drive", "url": "https://drive.google.com", "is_free": true, "purpose": "Share large video files with clients. 15GB free storage." },
-    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Create thumbnails and simple motion graphics to add to video deliverables." }
+    { "name": "CapCut", "url": "https://www.capcut.com", "is_free": true, "purpose": "Best free editor for short-form content. Works on phone and desktop.", "why_it_matters": "This is the industry standard for TikTok/Reels editing. Clients expect you to know it. You can start earning with just this one tool.", "required": true, "when_to_start": "Day 1 — download and edit your first practice video today" },
+    { "name": "DaVinci Resolve", "url": "https://www.blackmagicdesign.com/products/davinciresolve", "is_free": true, "purpose": "Professional-grade desktop editor. Free version has everything you need for client work.", "why_it_matters": "When you're ready for long-form YouTube and business editing, this is what professionals use. It's free and rivals paid software costing ₱30,000+.", "required": false, "when_to_start": "Week 3 — after you've mastered short-form and want to take on YouTube clients" },
+    { "name": "Pexels", "url": "https://www.pexels.com/videos", "is_free": true, "purpose": "Free stock video footage for practice projects and portfolio pieces.", "why_it_matters": "You need footage to practice with before you have real clients. Pexels gives you unlimited material to build skills without waiting.", "required": true, "when_to_start": "Day 1 — download footage for your first practice edit" },
+    { "name": "Google Drive", "url": "https://drive.google.com", "is_free": true, "purpose": "Share large video files with clients. 15GB free storage.", "why_it_matters": "Clients need to send you raw footage and receive finished edits. Google Drive is the simplest way — no sign-up needed on their end.", "required": true, "when_to_start": "Day 1 — set up your file delivery system" },
+    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Create thumbnails and simple motion graphics to add to video deliverables.", "why_it_matters": "Editors who deliver a video plus a thumbnail charge 20–30% more. Canva makes thumbnail creation a 5-minute add-on.", "required": false, "when_to_start": "After your first 5 paid projects — add it as a value-add to increase your rates" }
   ],
   "faq": [
     { "question": "Can I start video editing on my phone?", "answer": "Yes. CapCut on a smartphone is enough for short-form editing (TikTok, Reels). For YouTube-length videos, you'll eventually need a laptop — but you can earn your first income on a phone." },
