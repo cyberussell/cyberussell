@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import crypto from "crypto";
 
-const PASSWORD = process.env.MISSION_CONTROL_PASSWORD ?? "cyberussell-admin";
+const PASSWORD = process.env.MISSION_CONTROL_PASSWORD ?? "";
 const SESSION_NAME = "mc-session";
 
 function createToken(): string {
