@@ -17,7 +17,9 @@ export default function DashboardPage() {
   const [blueprints, setBlueprints] = useState<BlueprintSummary[]>([]);
 
   useEffect(() => {
-    fetch("/api/mission-control/blueprints").then((r) => r.json()).then(setBlueprints);
+    fetch("/api/mission-control/blueprints").then((r) => r.json()).then((data) => {
+      if (Array.isArray(data)) setBlueprints(data);
+    });
   }, []);
 
   const published = blueprints.filter((b) => b.status === "published");

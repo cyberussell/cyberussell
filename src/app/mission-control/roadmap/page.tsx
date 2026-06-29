@@ -23,7 +23,9 @@ export default function RoadmapPage() {
   useEffect(() => {
     fetch("/api/mission-control/blueprints")
       .then((r) => r.json())
-      .then((blueprints: { slug: string; skill: string; category: string; status: string; updated_at: string }[]) => {
+      .then((data: unknown) => {
+        if (!Array.isArray(data)) return;
+        const blueprints = data as { slug: string; skill: string; category: string; status: string; updated_at: string }[];
         setCards(
           blueprints.map((b) => ({
             slug: b.slug,
