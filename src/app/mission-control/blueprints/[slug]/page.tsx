@@ -2,18 +2,21 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Save, Eye, ChevronDown, ChevronRight, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { Save, Eye, ChevronDown, ChevronRight, Plus, Trash2, ArrowLeft, ArrowUp, ArrowDown } from "lucide-react";
 import AuthGuard from "@/components/mission-control/AuthGuard";
 import Sidebar from "@/components/mission-control/Sidebar";
 
 type AnyData = Record<string, unknown>;
 
-function Section({ title, defaultOpen = false, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
+function Section({ title, count, defaultOpen = false, children }: { title: string; count?: number; defaultOpen?: boolean; children: React.ReactNode }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="bg-[#14141e] border border-white/[0.06] rounded-xl overflow-hidden">
       <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/[0.02] transition-colors">
-        <h3 className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white">{title}</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white">{title}</h3>
+          {count !== undefined && <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/20 bg-white/[0.04] px-1.5 py-0.5 rounded">{count}</span>}
+        </div>
         {open ? <ChevronDown size={16} className="text-white/30" /> : <ChevronRight size={16} className="text-white/30" />}
       </button>
       {open && <div className="px-5 pb-5 flex flex-col gap-4 border-t border-white/[0.04] pt-4">{children}</div>}
@@ -30,8 +33,22 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+function MoveButtons({ index, total, onMove }: { index: number; total: number; onMove: (from: number, to: number) => void }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      <button disabled={index === 0} onClick={() => onMove(index, index - 1)} className="p-1 rounded text-white/15 hover:text-white/40 disabled:opacity-20 transition-colors" title="Move up">
+        <ArrowUp size={12} strokeWidth={2} />
+      </button>
+      <button disabled={index === total - 1} onClick={() => onMove(index, index + 1)} className="p-1 rounded text-white/15 hover:text-white/40 disabled:opacity-20 transition-colors" title="Move down">
+        <ArrowDown size={12} strokeWidth={2} />
+      </button>
+    </div>
+  );
+}
+
 const inputClass = "w-full bg-[#0e0e18] border border-white/[0.08] rounded-lg py-2.5 px-3.5 text-white text-[13px] placeholder-white/20 focus:outline-none focus:border-white/20 transition-colors font-[family-name:var(--font-inter)]";
 const textareaClass = `${inputClass} min-h-[100px] resize-y`;
+const smallTextareaClass = `${inputClass} min-h-[60px] resize-y`;
 
 export default function BlueprintEditorPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -51,20 +68,19 @@ export default function BlueprintEditorPage() {
       const next = JSON.parse(JSON.stringify(prev));
       const keys = path.split(".");
       let obj = next;
-      for (let i = 0; i < keys.length - 1; i++) {
-        obj = obj[keys[i]];
-      }
+      for (let i = 0; i < keys.length - 1; i++) obj = obj[keys[i]];
       obj[keys[keys.length - 1]] = value;
       return next;
     });
     setSaved(false);
   }, []);
 
-  async function handleSave(publish = false) {
+  const handleSave = useCallback(async (publish = false) => {
+    if (!data) return;
     setSaving(true);
     const payload = { ...data };
     if (publish) delete payload._status;
-    else if (!publish && payload._status === undefined) payload._status = "draft";
+    else if (payload._status === undefined) payload._status = "draft";
     await fetch(`/api/mission-control/blueprints/${slug}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -73,6 +89,32 @@ export default function BlueprintEditorPage() {
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  }, [data, slug]);
+
+  // Cmd+S keyboard shortcut
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        handleSave(false);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [handleSave]);
+
+  function moveItem(path: string, from: number, to: number) {
+    setData((prev: AnyData) => {
+      const next = JSON.parse(JSON.stringify(prev));
+      const keys = path.split(".");
+      let obj = next;
+      for (const k of keys) obj = obj[k];
+      const arr = obj as unknown[];
+      const [item] = arr.splice(from, 1);
+      arr.splice(to, 0, item);
+      return next;
+    });
+    setSaved(false);
   }
 
   if (!data) {
@@ -103,7 +145,7 @@ export default function BlueprintEditorPage() {
               <span className={`font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${data._status === "draft" ? "text-[#FFD23F] bg-[#FFD23F]/10" : "text-[#00C97A] bg-[#00C97A]/10"}`}>
                 {data._status === "draft" ? "Draft" : "Published"}
               </span>
-              {saved && <span className="font-[family-name:var(--font-inter)] text-[12px] text-[#00C97A]">Saved</span>}
+              {saved && <span className="font-[family-name:var(--font-inter)] text-[12px] text-[#00C97A] animate-pulse">Saved</span>}
             </div>
             <div className="flex items-center gap-2">
               <a href={`/careers/${slug}`} target="_blank" className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/60 font-[family-name:var(--font-inter)] text-[12px] font-medium hover:bg-white/[0.10] transition-colors">
@@ -112,7 +154,8 @@ export default function BlueprintEditorPage() {
               </a>
               <button onClick={() => handleSave(false)} disabled={saving} className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/60 font-[family-name:var(--font-inter)] text-[12px] font-medium hover:bg-white/[0.10] transition-colors disabled:opacity-50">
                 <Save size={14} strokeWidth={2} />
-                Save Draft
+                Save
+                <span className="text-[10px] text-white/20 ml-0.5">⌘S</span>
               </button>
               <button onClick={() => handleSave(true)} disabled={saving} className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white text-[#0a0a12] font-[family-name:var(--font-inter)] text-[12px] font-bold hover:bg-white/90 transition-colors disabled:opacity-50">
                 <Save size={14} strokeWidth={2} />
@@ -121,114 +164,85 @@ export default function BlueprintEditorPage() {
             </div>
           </div>
 
-          {/* Editor sections */}
+          {/* Editor */}
           <div className="p-8 md:p-12 max-w-4xl flex flex-col gap-4">
             {/* Basic Info */}
             <Section title="Basic Information" defaultOpen={true}>
               <div className="grid grid-cols-2 gap-4">
-                <Field label="Skill Name">
-                  <input className={inputClass} value={data.skill} onChange={(e) => set("skill", e.target.value)} />
-                </Field>
-                <Field label="Slug">
-                  <input className={inputClass} value={data.slug} disabled />
-                </Field>
+                <Field label="Skill Name"><input className={inputClass} value={data.skill} onChange={(e) => set("skill", e.target.value)} /></Field>
+                <Field label="Slug"><input className={inputClass} value={data.slug} disabled /></Field>
               </div>
-              <Field label="Tagline">
-                <input className={inputClass} value={data.tagline} onChange={(e) => set("tagline", e.target.value)} placeholder="One-line description..." />
-              </Field>
+              <Field label="Tagline"><input className={inputClass} value={data.tagline} onChange={(e) => set("tagline", e.target.value)} placeholder="One-line description..." /></Field>
               <div className="grid grid-cols-3 gap-4">
                 <Field label="Category">
                   <select className={inputClass} value={data.category} onChange={(e) => set("category", e.target.value)}>
-                    {["creative", "technical", "service", "teaching", "selling", "content", "trades", "admin"].map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
+                    {["creative", "technical", "service", "teaching", "selling", "content", "trades", "admin"].map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </Field>
                 <Field label="Difficulty">
                   <select className={inputClass} value={data.difficulty} onChange={(e) => set("difficulty", e.target.value)}>
-                    {["beginner", "intermediate", "advanced"].map((d) => (
-                      <option key={d} value={d}>{d}</option>
-                    ))}
+                    {["beginner", "intermediate", "advanced"].map((d) => <option key={d} value={d}>{d}</option>)}
                   </select>
                 </Field>
-                <Field label="Time to First Income">
-                  <input className={inputClass} value={data.time_to_first_income} onChange={(e) => set("time_to_first_income", e.target.value)} />
-                </Field>
+                <Field label="Time to First Income"><input className={inputClass} value={data.time_to_first_income} onChange={(e) => set("time_to_first_income", e.target.value)} /></Field>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Field label="Min Earning (₱/month)">
-                  <input type="number" className={inputClass} value={data.earning_range.min} onChange={(e) => set("earning_range.min", Number(e.target.value))} />
-                </Field>
-                <Field label="Max Earning (₱/month)">
-                  <input type="number" className={inputClass} value={data.earning_range.max} onChange={(e) => set("earning_range.max", Number(e.target.value))} />
-                </Field>
+                <Field label="Min Earning (₱/month)"><input type="number" className={inputClass} value={data.earning_range.min} onChange={(e) => set("earning_range.min", Number(e.target.value))} /></Field>
+                <Field label="Max Earning (₱/month)"><input type="number" className={inputClass} value={data.earning_range.max} onChange={(e) => set("earning_range.max", Number(e.target.value))} /></Field>
               </div>
-              <Field label="Prerequisites (one per line)">
-                <textarea className={textareaClass} value={(data.prerequisites ?? []).join("\n")} onChange={(e) => set("prerequisites", e.target.value.split("\n").filter(Boolean))} />
-              </Field>
+              <Field label="Prerequisites (one per line)"><textarea className={textareaClass} value={(data.prerequisites ?? []).join("\n")} onChange={(e) => set("prerequisites", e.target.value.split("\n").filter(Boolean))} /></Field>
             </Section>
 
             {/* Today's Mission */}
             <Section title="Today's Mission">
-              <Field label="Tasks (one per line)">
-                <textarea className={textareaClass} value={(data.todays_mission?.tasks ?? []).join("\n")} onChange={(e) => set("todays_mission.tasks", e.target.value.split("\n").filter(Boolean))} />
-              </Field>
-              <Field label="Estimated Time">
-                <input className={inputClass} value={data.todays_mission?.estimated_time ?? ""} onChange={(e) => set("todays_mission.estimated_time", e.target.value)} />
-              </Field>
+              <Field label="Tasks (one per line)"><textarea className={textareaClass} value={(data.todays_mission?.tasks ?? []).join("\n")} onChange={(e) => set("todays_mission.tasks", e.target.value.split("\n").filter(Boolean))} /></Field>
+              <Field label="Estimated Time"><input className={inputClass} value={data.todays_mission?.estimated_time ?? ""} onChange={(e) => set("todays_mission.estimated_time", e.target.value)} /></Field>
             </Section>
 
             {/* Summary */}
             <Section title="Summary">
-              <Field label="Description">
-                <textarea className={textareaClass} value={data.summary?.description ?? ""} onChange={(e) => set("summary.description", e.target.value)} />
-              </Field>
-              <Field label="Who Is This For (one per line)">
-                <textarea className={textareaClass} value={(data.summary?.who_is_this_for ?? []).join("\n")} onChange={(e) => set("summary.who_is_this_for", e.target.value.split("\n").filter(Boolean))} />
-              </Field>
+              <Field label="Description"><textarea className={textareaClass} value={data.summary?.description ?? ""} onChange={(e) => set("summary.description", e.target.value)} /></Field>
+              <Field label="Who Is This For (one per line)"><textarea className={textareaClass} value={(data.summary?.who_is_this_for ?? []).join("\n")} onChange={(e) => set("summary.who_is_this_for", e.target.value.split("\n").filter(Boolean))} /></Field>
             </Section>
 
             {/* Reality Check */}
             <Section title="Reality Check">
-              <Field label="Honest Assessment">
-                <textarea className={textareaClass} value={data.summary?.reality_check?.honest_assessment ?? ""} onChange={(e) => set("summary.reality_check.honest_assessment", e.target.value)} />
-              </Field>
-              <Field label="What Beginners Underestimate">
-                <textarea className={textareaClass} value={data.summary?.reality_check?.what_beginners_underestimate ?? ""} onChange={(e) => set("summary.reality_check.what_beginners_underestimate", e.target.value)} />
-              </Field>
-              <Field label="Why People Fail">
-                <textarea className={textareaClass} value={data.summary?.reality_check?.why_people_fail ?? ""} onChange={(e) => set("summary.reality_check.why_people_fail", e.target.value)} />
-              </Field>
-              <Field label="How to Avoid Failure">
-                <textarea className={textareaClass} value={data.summary?.reality_check?.how_to_avoid_failure ?? ""} onChange={(e) => set("summary.reality_check.how_to_avoid_failure", e.target.value)} />
-              </Field>
+              <Field label="Honest Assessment"><textarea className={textareaClass} value={data.summary?.reality_check?.honest_assessment ?? ""} onChange={(e) => set("summary.reality_check.honest_assessment", e.target.value)} /></Field>
+              <Field label="What Beginners Underestimate"><textarea className={textareaClass} value={data.summary?.reality_check?.what_beginners_underestimate ?? ""} onChange={(e) => set("summary.reality_check.what_beginners_underestimate", e.target.value)} /></Field>
+              <Field label="Why People Fail"><textarea className={textareaClass} value={data.summary?.reality_check?.why_people_fail ?? ""} onChange={(e) => set("summary.reality_check.why_people_fail", e.target.value)} /></Field>
+              <Field label="How to Avoid Failure"><textarea className={textareaClass} value={data.summary?.reality_check?.how_to_avoid_failure ?? ""} onChange={(e) => set("summary.reality_check.how_to_avoid_failure", e.target.value)} /></Field>
             </Section>
 
             {/* Roadmap */}
-            <Section title="Roadmap">
+            <Section title="Roadmap" count={data.roadmap?.length ?? 0}>
               {(data.roadmap ?? []).map((phase: AnyData, pi: number) => (
                 <div key={pi} className="bg-[#0e0e18] border border-white/[0.06] rounded-lg p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50">Phase {pi + 1}</span>
-                    <button onClick={() => { const r = [...data.roadmap]; r.splice(pi, 1); set("roadmap", r); }} className="text-white/20 hover:text-[#E8373A] transition-colors">
-                      <Trash2 size={14} />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <MoveButtons index={pi} total={data.roadmap.length} onMove={(f, t) => moveItem("roadmap", f, t)} />
+                      <button onClick={() => { const r = [...data.roadmap]; r.splice(pi, 1); set("roadmap", r); }} className="p-1 text-white/20 hover:text-[#E8373A] transition-colors"><Trash2 size={13} /></button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Title"><input className={inputClass} value={phase.title as string} onChange={(e) => set(`roadmap.${pi}.title`, e.target.value)} /></Field>
                     <Field label="Duration"><input className={inputClass} value={phase.duration as string} onChange={(e) => set(`roadmap.${pi}.duration`, e.target.value)} /></Field>
                   </div>
-                  <Field label="Why"><textarea className={`${inputClass} min-h-[60px] resize-y`} value={phase.why as string ?? ""} onChange={(e) => set(`roadmap.${pi}.why`, e.target.value)} /></Field>
+                  <Field label="Why"><textarea className={smallTextareaClass} value={phase.why as string ?? ""} onChange={(e) => set(`roadmap.${pi}.why`, e.target.value)} /></Field>
                   <Field label="Milestone"><input className={inputClass} value={phase.milestone as string} onChange={(e) => set(`roadmap.${pi}.milestone`, e.target.value)} /></Field>
 
+                  {/* Steps */}
                   {((phase.steps as AnyData[]) ?? []).map((step: AnyData, si: number) => (
                     <div key={si} className="bg-[#0a0a12] border border-white/[0.04] rounded-lg p-3 flex flex-col gap-2">
                       <div className="flex items-center justify-between">
                         <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/25">Step {si + 1}</span>
-                        <button onClick={() => { const s = [...(phase.steps as AnyData[])]; s.splice(si, 1); set(`roadmap.${pi}.steps`, s); }} className="text-white/15 hover:text-[#E8373A]"><Trash2 size={12} /></button>
+                        <div className="flex items-center gap-0.5">
+                          <MoveButtons index={si} total={(phase.steps as AnyData[]).length} onMove={(f, t) => moveItem(`roadmap.${pi}.steps`, f, t)} />
+                          <button onClick={() => { const s = [...(phase.steps as AnyData[])]; s.splice(si, 1); set(`roadmap.${pi}.steps`, s); }} className="p-1 text-white/15 hover:text-[#E8373A]"><Trash2 size={11} /></button>
+                        </div>
                       </div>
                       <Field label="Action"><input className={inputClass} value={step.action as string} onChange={(e) => set(`roadmap.${pi}.steps.${si}.action`, e.target.value)} /></Field>
-                      <Field label="Detail"><textarea className={`${inputClass} min-h-[60px] resize-y`} value={step.detail as string} onChange={(e) => set(`roadmap.${pi}.steps.${si}.detail`, e.target.value)} /></Field>
+                      <Field label="Detail"><textarea className={smallTextareaClass} value={step.detail as string} onChange={(e) => set(`roadmap.${pi}.steps.${si}.detail`, e.target.value)} /></Field>
                       <div className="grid grid-cols-3 gap-2">
                         <Field label="Est. Time"><input className={inputClass} value={step.estimated_time as string ?? ""} onChange={(e) => set(`roadmap.${pi}.steps.${si}.estimated_time`, e.target.value)} /></Field>
                         <Field label="Difficulty">
@@ -238,10 +252,14 @@ export default function BlueprintEditorPage() {
                         </Field>
                         <Field label="Action URL"><input className={inputClass} value={step.action_url as string ?? ""} onChange={(e) => set(`roadmap.${pi}.steps.${si}.action_url`, e.target.value)} /></Field>
                       </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Field label="Action Label"><input className={inputClass} value={step.action_label as string ?? ""} onChange={(e) => set(`roadmap.${pi}.steps.${si}.action_label`, e.target.value)} placeholder="e.g. Open Upwork" /></Field>
+                        <Field label="Resources (comma-separated)"><input className={inputClass} value={((step.resources as string[]) ?? []).join(", ")} onChange={(e) => set(`roadmap.${pi}.steps.${si}.resources`, e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} /></Field>
+                      </div>
                       <Field label="Outcome"><input className={inputClass} value={step.outcome as string ?? ""} onChange={(e) => set(`roadmap.${pi}.steps.${si}.outcome`, e.target.value)} /></Field>
                     </div>
                   ))}
-                  <button onClick={() => { const s = [...((phase.steps as AnyData[]) ?? []), { action: "", detail: "", estimated_time: "", difficulty: "easy", outcome: "" }]; set(`roadmap.${pi}.steps`, s); }} className="flex items-center gap-1.5 font-[family-name:var(--font-inter)] text-[12px] text-white/30 hover:text-white/50 transition-colors">
+                  <button onClick={() => { const s = [...((phase.steps as AnyData[]) ?? []), { action: "", detail: "", estimated_time: "", difficulty: "easy", outcome: "", action_url: "", action_label: "", resources: [] }]; set(`roadmap.${pi}.steps`, s); }} className="flex items-center gap-1.5 font-[family-name:var(--font-inter)] text-[12px] text-white/30 hover:text-white/50 transition-colors">
                     <Plus size={14} /> Add Step
                   </button>
                 </div>
@@ -252,15 +270,18 @@ export default function BlueprintEditorPage() {
             </Section>
 
             {/* Income Paths */}
-            <Section title="Income Paths">
+            <Section title="Income Paths" count={data.income_paths?.length ?? 0}>
               {(data.income_paths ?? []).map((path: AnyData, i: number) => (
                 <div key={i} className="bg-[#0e0e18] border border-white/[0.06] rounded-lg p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50">Path {i + 1}</span>
-                    <button onClick={() => { const p = [...data.income_paths]; p.splice(i, 1); set("income_paths", p); }} className="text-white/20 hover:text-[#E8373A]"><Trash2 size={14} /></button>
+                    <div className="flex items-center gap-1">
+                      <MoveButtons index={i} total={data.income_paths.length} onMove={(f, t) => moveItem("income_paths", f, t)} />
+                      <button onClick={() => { const p = [...data.income_paths]; p.splice(i, 1); set("income_paths", p); }} className="p-1 text-white/20 hover:text-[#E8373A]"><Trash2 size={13} /></button>
+                    </div>
                   </div>
                   <Field label="Title"><input className={inputClass} value={path.title as string} onChange={(e) => set(`income_paths.${i}.title`, e.target.value)} /></Field>
-                  <Field label="Detail"><textarea className={`${inputClass} min-h-[60px] resize-y`} value={path.detail as string} onChange={(e) => set(`income_paths.${i}.detail`, e.target.value)} /></Field>
+                  <Field label="Detail"><textarea className={smallTextareaClass} value={path.detail as string} onChange={(e) => set(`income_paths.${i}.detail`, e.target.value)} /></Field>
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Min ₱/month"><input type="number" className={inputClass} value={(path.earning_range as AnyData)?.min as number ?? 0} onChange={(e) => set(`income_paths.${i}.earning_range.min`, Number(e.target.value))} /></Field>
                     <Field label="Max ₱/month"><input type="number" className={inputClass} value={(path.earning_range as AnyData)?.max as number ?? 0} onChange={(e) => set(`income_paths.${i}.earning_range.max`, Number(e.target.value))} /></Field>
@@ -283,19 +304,19 @@ export default function BlueprintEditorPage() {
             </Section>
 
             {/* Platforms */}
-            <Section title="Platforms">
+            <Section title="Platforms" count={data.platforms?.length ?? 0}>
               {(data.platforms ?? []).map((p: AnyData, i: number) => (
                 <div key={i} className="bg-[#0e0e18] border border-white/[0.06] rounded-lg p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50">Platform {i + 1}</span>
-                    <button onClick={() => { const pl = [...data.platforms]; pl.splice(i, 1); set("platforms", pl); }} className="text-white/20 hover:text-[#E8373A]"><Trash2 size={14} /></button>
+                    <button onClick={() => { const pl = [...data.platforms]; pl.splice(i, 1); set("platforms", pl); }} className="p-1 text-white/20 hover:text-[#E8373A]"><Trash2 size={13} /></button>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Name"><input className={inputClass} value={p.name as string} onChange={(e) => set(`platforms.${i}.name`, e.target.value)} /></Field>
                     <Field label="URL"><input className={inputClass} value={p.url as string} onChange={(e) => set(`platforms.${i}.url`, e.target.value)} /></Field>
                   </div>
-                  <Field label="Why"><textarea className={`${inputClass} min-h-[60px] resize-y`} value={p.why as string} onChange={(e) => set(`platforms.${i}.why`, e.target.value)} /></Field>
-                  <Field label="Best For"><input className={inputClass} value={p.best_for as string ?? ""} onChange={(e) => set(`platforms.${i}.best_for`, e.target.value)} /></Field>
+                  <Field label="Why"><textarea className={smallTextareaClass} value={p.why as string} onChange={(e) => set(`platforms.${i}.why`, e.target.value)} /></Field>
+                  <Field label="Best For"><input className={inputClass} value={p.best_for as string ?? ""} onChange={(e) => set(`platforms.${i}.best_for`, e.target.value)} placeholder="e.g. Best for beginners" /></Field>
                 </div>
               ))}
               <button onClick={() => set("platforms", [...(data.platforms ?? []), { name: "", url: "", why: "", best_for: "" }])} className="flex items-center gap-1.5 font-[family-name:var(--font-inter)] text-[12px] text-white/30 hover:text-white/50">
@@ -304,19 +325,19 @@ export default function BlueprintEditorPage() {
             </Section>
 
             {/* Tools */}
-            <Section title="Tools">
+            <Section title="Tools" count={data.tools?.length ?? 0}>
               {(data.tools ?? []).map((t: AnyData, i: number) => (
                 <div key={i} className="bg-[#0e0e18] border border-white/[0.06] rounded-lg p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50">Tool {i + 1}</span>
-                    <button onClick={() => { const tl = [...data.tools]; tl.splice(i, 1); set("tools", tl); }} className="text-white/20 hover:text-[#E8373A]"><Trash2 size={14} /></button>
+                    <button onClick={() => { const tl = [...data.tools]; tl.splice(i, 1); set("tools", tl); }} className="p-1 text-white/20 hover:text-[#E8373A]"><Trash2 size={13} /></button>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Name"><input className={inputClass} value={t.name as string} onChange={(e) => set(`tools.${i}.name`, e.target.value)} /></Field>
                     <Field label="URL"><input className={inputClass} value={t.url as string} onChange={(e) => set(`tools.${i}.url`, e.target.value)} /></Field>
                   </div>
                   <Field label="Purpose"><input className={inputClass} value={t.purpose as string} onChange={(e) => set(`tools.${i}.purpose`, e.target.value)} /></Field>
-                  <Field label="Why It Matters"><textarea className={`${inputClass} min-h-[60px] resize-y`} value={t.why_it_matters as string ?? ""} onChange={(e) => set(`tools.${i}.why_it_matters`, e.target.value)} /></Field>
+                  <Field label="Why It Matters"><textarea className={smallTextareaClass} value={t.why_it_matters as string ?? ""} onChange={(e) => set(`tools.${i}.why_it_matters`, e.target.value)} /></Field>
                   <div className="grid grid-cols-3 gap-3">
                     <Field label="Free?">
                       <select className={inputClass} value={t.is_free ? "true" : "false"} onChange={(e) => set(`tools.${i}.is_free`, e.target.value === "true")}>
@@ -338,12 +359,15 @@ export default function BlueprintEditorPage() {
             </Section>
 
             {/* FAQ */}
-            <Section title="FAQ">
+            <Section title="FAQ" count={data.faq?.length ?? 0}>
               {(data.faq ?? []).map((f: AnyData, i: number) => (
                 <div key={i} className="bg-[#0e0e18] border border-white/[0.06] rounded-lg p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/50">Q{i + 1}</span>
-                    <button onClick={() => { const fq = [...data.faq]; fq.splice(i, 1); set("faq", fq); }} className="text-white/20 hover:text-[#E8373A]"><Trash2 size={14} /></button>
+                    <div className="flex items-center gap-1">
+                      <MoveButtons index={i} total={data.faq.length} onMove={(f, t) => moveItem("faq", f, t)} />
+                      <button onClick={() => { const fq = [...data.faq]; fq.splice(i, 1); set("faq", fq); }} className="p-1 text-white/20 hover:text-[#E8373A]"><Trash2 size={13} /></button>
+                    </div>
                   </div>
                   <Field label="Question"><input className={inputClass} value={f.question as string} onChange={(e) => set(`faq.${i}.question`, e.target.value)} /></Field>
                   <Field label="Answer"><textarea className={textareaClass} value={f.answer as string} onChange={(e) => set(`faq.${i}.answer`, e.target.value)} /></Field>
