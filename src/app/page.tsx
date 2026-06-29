@@ -2,10 +2,9 @@ import WelcomeBanner from "@/components/WelcomeBanner";
 import StickyBottomBar from "@/components/StickyBottomBar";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import SkillFinder from "@/components/SkillFinder";
+import ChoosePath from "@/components/ChoosePath";
 import Downloads from "@/components/Downloads";
 import AboutStory from "@/components/AboutStory";
-import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 export default function Home() {
   return (
@@ -13,10 +12,9 @@ export default function Home() {
       <WelcomeBanner />
       <Navbar />
       <Hero />
-      <SkillFinder />
+      <ChoosePath />
       <Downloads />
       <AboutStory />
-      <FinalCTA />
       <Footer />
       <StickyBottomBar />
     </>
