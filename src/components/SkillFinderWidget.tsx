@@ -354,6 +354,16 @@ export default function SkillFinderWidget({ careerSlugs = [] }: { careerSlugs?: 
                 </div>
               </div>
             )}
+
+            {/* Discovery link */}
+            {!result && !loading && (
+              <a
+                href="/discover"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-white/[0.06] font-[family-name:var(--font-inter)] text-[12px] font-medium text-white/35 hover:text-white/55 hover:border-white/[0.12] hover:bg-white/[0.02] transition-all"
+              >
+                Not sure what your skill is? Discover it →
+              </a>
+            )}
           </div>
         </div>
       </div>

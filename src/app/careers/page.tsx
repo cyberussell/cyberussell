@@ -33,9 +33,15 @@ export default function CareersIndex() {
           <h1 className="font-sans text-[32px] md:text-[48px] font-extrabold text-white leading-[1.1] tracking-tight mb-4">
             Pick a skill. Get your blueprint.
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 max-w-[560px] leading-[1.7] mb-12">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 max-w-[560px] leading-[1.7] mb-6">
             Each blueprint is a complete step-by-step plan — from zero to earning online. No fluff. Just decisions, actions, and resources.
           </p>
+          <a
+            href="/discover"
+            className="inline-flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] font-medium text-[#FFD23F]/70 hover:text-[#FFD23F] transition-colors mb-12"
+          >
+            Not sure which skill to choose? Discover your best match →
+          </a>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {careers.map((career) => (
