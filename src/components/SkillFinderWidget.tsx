@@ -274,10 +274,12 @@ export default function SkillFinderWidget({ careerSlugs = [] }: { careerSlugs?: 
                 return matchedSlug ? (
                   <a
                     href={`/careers/${matchedSlug}`}
-                    className="block w-full text-center py-3 rounded-lg font-bold text-[13px] text-white mb-2 font-[family-name:var(--font-inter)]"
+                    className="relative block w-full text-center py-3 rounded-lg font-bold text-[13px] text-white mb-2 font-[family-name:var(--font-inter)] overflow-hidden"
                     style={{ background: "#E8373A" }}
                   >
-                    View Complete Career Blueprint →
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_ease-in-out_infinite]" />
+                    <span className="relative">View Complete Career Blueprint →</span>
+                    <style>{`@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`}</style>
                   </a>
                 ) : (
                   <a
