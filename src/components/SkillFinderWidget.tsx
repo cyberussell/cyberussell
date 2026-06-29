@@ -106,20 +106,6 @@ export default function SkillFinderWidget({ careerSlugs = [] }: { careerSlugs?: 
     <div
       className={`flex flex-col items-center w-full max-w-[520px] transition-all duration-700 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
     >
-      {/* Start Here label */}
-      <div className="flex flex-col items-center gap-2 mb-5">
-        <div className="flex items-center gap-3">
-          <span className="h-px w-8 bg-[#FFD23F]/30" />
-          <span className="font-[family-name:var(--font-inter)] text-[13px] font-extrabold text-[#FFD23F] uppercase tracking-[4px]">
-            Start Here
-          </span>
-          <span className="h-px w-8 bg-[#FFD23F]/30" />
-        </div>
-        <svg width="12" height="8" viewBox="0 0 12 8" className="text-[#FFD23F]/60 animate-bounce" style={{ animationDuration: "2s" }}>
-          <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </div>
-
       {/* Widget card with gradient border */}
       <div
         className="relative w-full rounded-2xl p-[1.5px]"
