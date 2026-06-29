@@ -2,7 +2,6 @@ import { getAllPosts } from "@/lib/blog";
 import {
   HERO_SUBTEXT,
   HERO_CTA_BELOW,
-  TRUST_BAR_ITEMS,
 } from "@/data/content";
 import { getAllCareers } from "@/lib/careers/data";
 import SkillFinderWidget from "./SkillFinderWidget";
@@ -62,14 +61,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Trust bar */}
-      <div className="bg-[#F7F7FB] text-[#0F0F1A] border-t border-b border-black/5 py-5 w-full mt-auto">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 flex justify-center items-center">
-          <span className="font-sans text-[18px] md:text-[22px] font-bold text-center">
-            {TRUST_BAR_ITEMS[0]}
-          </span>
-        </div>
-      </div>
     </main>
   );
 }
