@@ -40,7 +40,7 @@ type AIResult = {
   first_step: string;
 };
 
-export default function SkillFinderWidget() {
+export default function SkillFinderWidget({ careerSlugs = [] }: { careerSlugs?: string[] }) {
   const [skillInput, setSkillInput] = useState("");
   const [result, setResult] = useState<AIResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -86,6 +86,13 @@ export default function SkillFinderWidget() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function findCareerSlug(input: string): string | null {
+    const normalized = input.toLowerCase().trim().replace(/\s+/g, "-");
+    if (careerSlugs.includes(normalized)) return normalized;
+    const single = careerSlugs.find((s) => s.includes(normalized) || normalized.includes(s));
+    return single ?? null;
   }
 
   function handleReset() {
@@ -273,6 +280,17 @@ export default function SkillFinderWidget() {
                     </p>
                   </div>
 
+                  {(() => {
+                const matchedSlug = findCareerSlug(skillInput);
+                return matchedSlug ? (
+                  <a
+                    href={`/careers/${matchedSlug}`}
+                    className="block w-full text-center py-3 rounded-lg font-bold text-[13px] text-white mb-2 font-[family-name:var(--font-inter)]"
+                    style={{ background: "#E8373A" }}
+                  >
+                    View Complete Career Blueprint →
+                  </a>
+                ) : (
                   <a
                     href="/#downloads"
                     className="block w-full text-center py-3 rounded-lg font-bold text-[13px] text-white mb-2 font-[family-name:var(--font-inter)]"
@@ -280,6 +298,8 @@ export default function SkillFinderWidget() {
                   >
                     ↓ Get free guides to start earning →
                   </a>
+                );
+              })()}
                   <div className="flex justify-center gap-3 mb-3">
                     <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold font-[family-name:var(--font-inter)]" style={{ color: "rgba(255,255,255,0.4)" }}>TikTok</a>
                     <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold font-[family-name:var(--font-inter)]" style={{ color: "rgba(255,255,255,0.4)" }}>Facebook</a>

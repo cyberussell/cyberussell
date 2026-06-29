@@ -1,0 +1,108 @@
+{
+  "slug": "writing",
+  "skill": "Writing",
+  "tagline": "Turn your writing skills into a steady online income — even without a portfolio.",
+  "category": "creative",
+  "difficulty": "beginner",
+  "earning_range": { "min": 5000, "max": 50000 },
+  "time_to_first_income": "2–3 weeks",
+  "prerequisites": ["Smartphone or laptop", "Internet connection", "Basic English or Filipino writing ability"],
+  "summary": {
+    "description": "Writing is one of the fastest ways for Filipinos to start earning online. Businesses, blogs, and agencies constantly need content — and most don't care about your degree. They care about your output. You can start with blog posts, product descriptions, or social media captions, then specialize as you build experience.",
+    "who_is_this_for": [
+      "People who enjoy writing in English or Filipino",
+      "Stay-at-home parents who need flexible work",
+      "Students looking for part-time income",
+      "Anyone willing to learn SEO and content marketing basics"
+    ],
+    "reality_check": "Your first gig will probably pay ₱300/page or less. That's normal. Most writers earn ₱5,000–₱15,000/month in their first 3 months. The path to ₱30,000+ requires specializing in a niche (like finance, health, or tech) and building repeat clients. Expect rejection — your first 10 proposals will likely be ignored."
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Set Up",
+      "duration": "Week 1",
+      "steps": [
+        { "action": "Create an Upwork profile", "detail": "Use a professional photo. Write a headline that states your niche (e.g. 'Blog Writer for Small Businesses'). Skip the generic 'hardworking freelancer' intro." },
+        { "action": "Write 2 sample articles", "detail": "Pick topics you know well. Publish them on Medium.com (free). These become your portfolio pieces." },
+        { "action": "Set up a GCash account", "detail": "You'll need this to receive payments from local clients and to withdraw from Payoneer/Wise." }
+      ],
+      "milestone": "Upwork profile live with 2 portfolio samples"
+    },
+    {
+      "phase": 2,
+      "title": "Get Your First Client",
+      "duration": "Week 2–3",
+      "steps": [
+        { "action": "Send 5 proposals per day on Upwork", "detail": "Filter for 'content writing' jobs posted in the last 24 hours. Customize every proposal — mention the client's business name and suggest a specific angle for their content." },
+        { "action": "Apply on OnlineJobsPH", "detail": "Create a profile. Search for 'content writer' or 'blog writer'. Many PH-based businesses hire here and pay via bank transfer." },
+        { "action": "Offer free or discounted first articles to local businesses", "detail": "Find 3 small businesses in your area with weak social media. Message them: 'I'll write 3 Facebook posts for free so you can see the quality.'" }
+      ],
+      "milestone": "First paid writing project completed"
+    },
+    {
+      "phase": 3,
+      "title": "Build Consistency",
+      "duration": "Month 2",
+      "steps": [
+        { "action": "Deliver every project on time", "detail": "Reliability beats talent in freelancing. Clients rehire writers who meet deadlines, not writers who write perfectly but miss dates." },
+        { "action": "Ask every client for a review", "detail": "After delivering, send: 'If you're happy with the work, a quick review on Upwork would help me a lot.' Reviews compound — 5 reviews makes you 3x more likely to win proposals." },
+        { "action": "Learn basic SEO", "detail": "Watch one YouTube tutorial on 'SEO writing for beginners.' Learn keyword placement, headings, and meta descriptions. This immediately increases your value." }
+      ],
+      "milestone": "3+ completed projects with client reviews"
+    },
+    {
+      "phase": 4,
+      "title": "Raise Your Rates",
+      "duration": "Month 3+",
+      "steps": [
+        { "action": "Pick a niche", "detail": "Specializing in one industry (health, real estate, tech, finance) lets you charge 2–3x more. 'Health blog writer' beats 'general writer' in every proposal." },
+        { "action": "Raise your rate by 20–30%", "detail": "After 5+ completed projects, increase your rate. New clients won't see your old rate. Existing clients will stay if your work is good." },
+        { "action": "Pitch retainer agreements", "detail": "Tell repeat clients: 'I can guarantee 8 articles per month for ₱X.' Retainers create predictable income." }
+      ],
+      "milestone": "Earning ₱15,000+/month with repeat clients"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Blog & Article Writing",
+      "detail": "Write blog posts for businesses, agencies, or content sites. Most common entry point. Pay per article ranges from ₱300–₱3,000 depending on length and niche.",
+      "earning_range": { "min": 5000, "max": 30000 }
+    },
+    {
+      "title": "Copywriting for Ads & Landing Pages",
+      "detail": "Write sales copy for Facebook ads, email campaigns, and landing pages. Higher pay but requires understanding persuasion and marketing fundamentals.",
+      "earning_range": { "min": 10000, "max": 50000 }
+    },
+    {
+      "title": "Social Media Content Writing",
+      "detail": "Write captions, scripts, and post copy for brands on Facebook, Instagram, and TikTok. Often bundled with basic Canva graphics. Good for beginners.",
+      "earning_range": { "min": 5000, "max": 20000 }
+    },
+    {
+      "title": "Technical & Specialized Writing",
+      "detail": "Write for SaaS companies, medical sites, or finance blogs. Requires niche knowledge but commands premium rates. Often remote-friendly.",
+      "earning_range": { "min": 15000, "max": 60000 }
+    }
+  ],
+  "platforms": [
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "Largest freelance marketplace. Best for building a track record with international clients. Payments via Payoneer or Wise." },
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Filipino-focused job board. Many clients here prefer long-term hires and pay via local bank transfer." },
+    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Good for offering packaged writing services (e.g. '1 blog post for $15'). Clients come to you instead of you pitching." },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search for 'Filipino freelancers' or 'content writers PH' groups. Many local businesses post writing jobs here directly." }
+  ],
+  "tools": [
+    { "name": "Google Docs", "url": "https://docs.google.com", "is_free": true, "purpose": "Write and share your work. Clients expect Google Docs links." },
+    { "name": "Grammarly", "url": "https://www.grammarly.com", "is_free": true, "purpose": "Catch grammar and spelling errors before submitting. Free version is enough." },
+    { "name": "Hemingway Editor", "url": "https://hemingwayapp.com", "is_free": true, "purpose": "Make your writing clearer and more readable. Highlights complex sentences." },
+    { "name": "Medium", "url": "https://medium.com", "is_free": true, "purpose": "Publish sample articles to build a free portfolio. Looks professional to clients." },
+    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Create simple featured images for blog posts. Adds value to your writing deliverables." }
+  ],
+  "faq": [
+    { "question": "Do I need a college degree to become a freelance writer?", "answer": "No. Most clients care about your writing samples, not your diploma. If you can write a clear, useful article, you can get hired." },
+    { "question": "Can I write in Filipino instead of English?", "answer": "Yes. Many Philippine businesses need Filipino-language content for social media and blogs. English pays more for international clients, but Filipino writing has less competition locally." },
+    { "question": "How long until I earn my first ₱5,000?", "answer": "Most beginners reach ₱5,000 within 3–4 weeks if they send proposals daily. The biggest bottleneck is not skill — it's consistency in applying." },
+    { "question": "What if I don't have a laptop?", "answer": "You can start with a smartphone using Google Docs. It's harder but doable. Save up for a secondhand laptop (₱5,000–₱8,000) as soon as you earn from your first projects." },
+    { "question": "Is freelance writing still viable with AI tools like ChatGPT?", "answer": "Yes, but the market is shifting. Writers who use AI as a drafting tool and add human insight, local knowledge, and editing skills are more valuable than ever. Pure 'write 500 words on any topic' gigs are declining." }
+  ]
+}

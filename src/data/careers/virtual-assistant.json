@@ -1,0 +1,108 @@
+{
+  "slug": "virtual-assistant",
+  "skill": "Virtual Assistant",
+  "tagline": "Become a virtual assistant — the most in-demand Filipino skill online.",
+  "category": "admin",
+  "difficulty": "beginner",
+  "earning_range": { "min": 10000, "max": 45000 },
+  "time_to_first_income": "1–3 weeks",
+  "prerequisites": ["Laptop or desktop computer", "Stable internet connection", "Basic English communication skills"],
+  "summary": {
+    "description": "Virtual assistant (VA) work is the most common entry point for Filipinos earning online. Businesses worldwide hire Filipino VAs for email management, scheduling, data entry, customer service, and social media. The barrier to entry is low — if you can use email and spreadsheets, you can start. The ceiling is high — experienced VAs earn ₱30,000–₱45,000/month.",
+    "who_is_this_for": [
+      "Anyone comfortable with email, spreadsheets, and basic computer tasks",
+      "People who are organized and detail-oriented",
+      "Stay-at-home parents who want stable remote income",
+      "Employees looking to transition to remote work"
+    ],
+    "reality_check": "Entry-level VA work pays ₱15,000–₱20,000/month full-time, which is competitive with many office jobs. But the first 2 weeks are the hardest — you'll apply to 50+ jobs before getting hired. The biggest differentiator is not skill, it's reliability. Clients fire VAs who miss deadlines or disappear, and rehire VAs who show up consistently."
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Prepare",
+      "duration": "Week 1",
+      "steps": [
+        { "action": "Audit your existing skills", "detail": "List everything you can do: email, spreadsheets, scheduling, social media, data entry, customer support. Most people underestimate their skills." },
+        { "action": "Create an OnlineJobsPH profile", "detail": "This is the #1 platform for Filipino VA hiring. Fill out every section. Upload a professional photo. Write a clear headline: 'General Virtual Assistant — Email, Scheduling, Data Entry.'" },
+        { "action": "Set up a professional email and Google Workspace", "detail": "Use firstname.lastname@gmail.com, not a nickname. Familiarize yourself with Google Docs, Sheets, and Calendar — most clients use these." }
+      ],
+      "milestone": "OnlineJobsPH profile complete and ready for applications"
+    },
+    {
+      "phase": 2,
+      "title": "Apply and Get Hired",
+      "duration": "Week 2–3",
+      "steps": [
+        { "action": "Apply to 10 VA jobs per day on OnlineJobsPH", "detail": "Filter for 'virtual assistant' posted in the last 7 days. Read the full job post. Reference specific requirements in your application." },
+        { "action": "Create an Upwork profile as backup", "detail": "Some clients prefer Upwork. Your profile should mirror OnlineJobsPH but emphasize hourly availability and timezone flexibility." },
+        { "action": "Prepare for interviews", "detail": "Most VA interviews are via Zoom or Google Meet. Test your camera, mic, and internet beforehand. Practice answering: 'Tell me about your experience' and 'How do you handle multiple tasks.'" }
+      ],
+      "milestone": "First VA job offer received"
+    },
+    {
+      "phase": 3,
+      "title": "Prove Yourself",
+      "duration": "Month 2",
+      "steps": [
+        { "action": "Over-communicate in the first 2 weeks", "detail": "Send daily end-of-day summaries: what you completed, what's pending, and any questions. Clients fear silence from remote workers." },
+        { "action": "Learn your client's tools within 48 hours", "detail": "If they use Trello, Slack, or HubSpot, watch a 15-minute YouTube tutorial immediately. Don't ask the client to teach you basics." },
+        { "action": "Anticipate needs before being asked", "detail": "If you notice their calendar is double-booked, fix it and tell them. Proactive VAs get raises. Reactive VAs get replaced." }
+      ],
+      "milestone": "Client trusts you with independent tasks"
+    },
+    {
+      "phase": 4,
+      "title": "Level Up",
+      "duration": "Month 3+",
+      "steps": [
+        { "action": "Specialize in one high-value area", "detail": "Pick one: social media management, bookkeeping, project management, or executive assistance. Specialists earn 50–100% more than general VAs." },
+        { "action": "Ask for a raise after 3 months of solid work", "detail": "Message your client: 'I've been here 3 months and I'd like to discuss a rate increase.' Bring examples of how you've helped their business. Ask for 15–25% more." },
+        { "action": "Take on a second client if part-time", "detail": "If your first client only needs 4 hours/day, find a second client for the other 4. Two part-time clients = higher total income than one full-time." }
+      ],
+      "milestone": "Earning ₱25,000+/month as a specialized VA"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "General Virtual Assistant",
+      "detail": "Handle email, scheduling, data entry, and basic admin tasks. The most common starting role. Stable and reliable income.",
+      "earning_range": { "min": 10000, "max": 25000 }
+    },
+    {
+      "title": "Social Media VA",
+      "detail": "Manage social media accounts — scheduling posts, responding to comments, creating basic graphics. Growing demand from small businesses.",
+      "earning_range": { "min": 12000, "max": 30000 }
+    },
+    {
+      "title": "Executive Assistant",
+      "detail": "Support business owners with calendar management, travel booking, meeting prep, and communication. Higher trust, higher pay.",
+      "earning_range": { "min": 20000, "max": 45000 }
+    },
+    {
+      "title": "E-commerce VA",
+      "detail": "Manage product listings, process orders, handle customer inquiries for Shopify or Amazon sellers. Specialized knowledge commands premium rates.",
+      "earning_range": { "min": 15000, "max": 35000 }
+    }
+  ],
+  "platforms": [
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "The #1 platform for Filipino VA hiring. Most employers here prefer long-term, full-time remote workers. Pay via local bank transfer." },
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "International clients. Good for hourly work and building a global track record. Payments via Payoneer or Wise." },
+    { "name": "Belay", "url": "https://belaysolutions.com", "why": "US-based VA agency that hires remote assistants. Higher pay but selective hiring process." },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search 'VA hiring PH' or 'virtual assistant Philippines.' Many employers post directly in these groups." }
+  ],
+  "tools": [
+    { "name": "Google Workspace", "url": "https://workspace.google.com", "is_free": true, "purpose": "Email, Docs, Sheets, Calendar — the core tools most clients use. Master these first." },
+    { "name": "Slack", "url": "https://slack.com", "is_free": true, "purpose": "Team communication. Most remote teams use Slack for daily messaging." },
+    { "name": "Trello", "url": "https://trello.com", "is_free": true, "purpose": "Task management. Many clients assign work through Trello boards." },
+    { "name": "Zoom", "url": "https://zoom.us", "is_free": true, "purpose": "Video calls and meetings. Free plan allows 40-minute meetings." },
+    { "name": "LastPass", "url": "https://www.lastpass.com", "is_free": true, "purpose": "Password manager. Clients will share account access securely through tools like this." }
+  ],
+  "faq": [
+    { "question": "How much can a Filipino VA realistically earn?", "answer": "Entry-level: ₱15,000–₱20,000/month full-time. After 6 months: ₱20,000–₱30,000. Specialized VAs (bookkeeping, project management): ₱30,000–₱45,000. These are realistic ranges, not marketing hype." },
+    { "question": "Do I need experience to become a VA?", "answer": "No formal experience required. If you've managed your own email, organized schedules, or used social media for a business or organization, you have transferable skills. Your first client cares about reliability more than experience." },
+    { "question": "What hours do VAs work?", "answer": "Depends on the client. US-based clients often need PH nightshift (9PM–6AM PH time). Australian clients align with PH daytime. Local PH clients follow regular hours. Always ask about timezone requirements before accepting." },
+    { "question": "Can I be a VA using only a smartphone?", "answer": "No. VA work requires a laptop or desktop. You need to manage spreadsheets, switch between multiple apps, and join video calls — these are impractical on a phone. Budget ₱8,000–₱15,000 for a secondhand laptop." },
+    { "question": "What if I get fired by my first client?", "answer": "It happens and it's not the end. Ask for feedback, update your profile with what you learned, and apply to 10 more jobs the same week. Most successful VAs went through 2–3 clients before finding a long-term match." }
+  ]
+}

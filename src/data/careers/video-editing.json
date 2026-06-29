@@ -1,0 +1,108 @@
+{
+  "slug": "video-editing",
+  "skill": "Video Editing",
+  "tagline": "Edit videos for creators and businesses — start earning with just a phone.",
+  "category": "creative",
+  "difficulty": "beginner",
+  "earning_range": { "min": 5000, "max": 60000 },
+  "time_to_first_income": "2–3 weeks",
+  "prerequisites": ["Smartphone or laptop", "Internet connection", "Willingness to learn CapCut or DaVinci Resolve"],
+  "summary": {
+    "description": "Every business and creator needs video content, but most don't want to edit it themselves. Filipino video editors are in high demand because of competitive rates and strong English skills. You can start with short-form edits (TikTok, Reels) using free tools, then move to long-form YouTube editing as your skills grow.",
+    "who_is_this_for": [
+      "People who enjoy watching and creating video content",
+      "TikTok or YouTube users who want to monetize their screen time",
+      "Anyone with patience for detail-oriented work",
+      "Students looking for a creative side income"
+    ],
+    "reality_check": "Short-form editing (TikTok/Reels) is the fastest entry point — you can learn CapCut in a weekend. But it's competitive and pays less (₱200–₱500/video). Long-form YouTube editing pays ₱2,000–₱10,000/video but requires more skill. Expect to edit 5–10 free or cheap videos before landing consistent paid work."
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Learn the Basics",
+      "duration": "Week 1",
+      "steps": [
+        { "action": "Pick your editing tool", "detail": "Phone: CapCut (free). Laptop: DaVinci Resolve (free). Don't buy software — free tools are professional-grade." },
+        { "action": "Edit 3 practice videos", "detail": "Download free stock footage from Pexels. Edit a 30-second TikTok, a 60-second Reel, and a 5-minute YouTube-style video. Focus on cuts, text overlays, and music." },
+        { "action": "Watch 2 YouTube tutorials on your chosen tool", "detail": "Search '[tool name] editing tutorial for beginners.' Learn keyboard shortcuts — they double your speed." }
+      ],
+      "milestone": "3 practice videos completed"
+    },
+    {
+      "phase": 2,
+      "title": "Build Your Portfolio",
+      "duration": "Week 2",
+      "steps": [
+        { "action": "Edit 3 videos for small creators for free", "detail": "Find TikTok creators with 1K–10K followers in your niche. DM: 'I'll edit your next 3 videos for free as portfolio pieces.' Most will say yes." },
+        { "action": "Create a portfolio showcase", "detail": "Upload your best 5 edits to a Google Drive folder or create a simple Carrd.co page (free) with video links." },
+        { "action": "Set up profiles on Fiverr and Upwork", "detail": "Fiverr gig: 'I will edit your TikTok or YouTube video.' Upwork profile: highlight turnaround speed and specific editing styles." }
+      ],
+      "milestone": "Portfolio with 5+ sample edits and freelance profiles live"
+    },
+    {
+      "phase": 3,
+      "title": "Get Paying Clients",
+      "duration": "Month 2",
+      "steps": [
+        { "action": "Send 5 proposals per day on Upwork", "detail": "Filter for 'video editor' posted in last 24 hours. In your proposal, mention the client's content specifically — generic proposals get ignored." },
+        { "action": "Pitch creators directly on social media", "detail": "Find YouTubers or TikTokers who post good content with poor editing. DM with a sample re-edit of their video." },
+        { "action": "Join video editing Facebook groups", "detail": "Search 'video editor hiring PH' or 'Filipino video editors.' Post your portfolio. Respond to job posts within 1 hour." }
+      ],
+      "milestone": "First 3 paid editing projects completed"
+    },
+    {
+      "phase": 4,
+      "title": "Scale and Specialize",
+      "duration": "Month 3+",
+      "steps": [
+        { "action": "Pick a niche", "detail": "Specializing in one content type (podcasts, gaming, business) lets you charge more and edit faster. 'Podcast video editor' beats 'video editor' in every proposal." },
+        { "action": "Offer monthly retainer packages", "detail": "Tell repeat clients: 'I'll edit 8 videos/month for ₱X.' Retainers give you predictable income." },
+        { "action": "Learn motion graphics basics", "detail": "After Effects or Canva animations. Adding intros, lower thirds, and transitions increases your rate by 50–100%." }
+      ],
+      "milestone": "Earning ₱20,000+/month with retainer clients"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Short-Form Video Editing (TikTok/Reels)",
+      "detail": "Edit 30–90 second videos for creators and brands. High volume, fast turnaround. Most accessible entry point.",
+      "earning_range": { "min": 5000, "max": 20000 }
+    },
+    {
+      "title": "YouTube Video Editing",
+      "detail": "Edit long-form content (10–30 minutes) for YouTubers. Higher pay per video, requires more skill in pacing and storytelling.",
+      "earning_range": { "min": 10000, "max": 50000 }
+    },
+    {
+      "title": "Business & Marketing Videos",
+      "detail": "Edit ads, product demos, and corporate videos. Businesses pay premium rates for professional-looking content.",
+      "earning_range": { "min": 10000, "max": 60000 }
+    },
+    {
+      "title": "Podcast Video Editing",
+      "detail": "Edit video podcasts — syncing audio, adding captions, cutting dead air. Growing niche with recurring work.",
+      "earning_range": { "min": 8000, "max": 30000 }
+    }
+  ],
+  "platforms": [
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "Best for finding international clients who pay in USD. Filter for 'video editor' and sort by recent posts." },
+    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Good for short-form editing gigs. Clients come to you. Start with low prices to build reviews." },
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Filipino employers often hire full-time remote video editors. Stable income with local bank payments." },
+    { "name": "Twitter/X", "url": "https://x.com", "why": "Many YouTube creators post 'looking for an editor' on Twitter. Follow creators in your niche and engage with their content." }
+  ],
+  "tools": [
+    { "name": "CapCut", "url": "https://www.capcut.com", "is_free": true, "purpose": "Best free editor for short-form content. Works on phone and desktop." },
+    { "name": "DaVinci Resolve", "url": "https://www.blackmagicdesign.com/products/davinciresolve", "is_free": true, "purpose": "Professional-grade desktop editor. Free version has everything you need for client work." },
+    { "name": "Pexels", "url": "https://www.pexels.com/videos", "is_free": true, "purpose": "Free stock video footage for practice projects and portfolio pieces." },
+    { "name": "Google Drive", "url": "https://drive.google.com", "is_free": true, "purpose": "Share large video files with clients. 15GB free storage." },
+    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Create thumbnails and simple motion graphics to add to video deliverables." }
+  ],
+  "faq": [
+    { "question": "Can I start video editing on my phone?", "answer": "Yes. CapCut on a smartphone is enough for short-form editing (TikTok, Reels). For YouTube-length videos, you'll eventually need a laptop — but you can earn your first income on a phone." },
+    { "question": "Do I need a powerful computer?", "answer": "Not for short-form. For long-form YouTube editing, a laptop with 8GB RAM and an SSD is the minimum. A secondhand ThinkPad (₱8,000–₱15,000) handles DaVinci Resolve well." },
+    { "question": "How long does it take to edit a 10-minute YouTube video?", "answer": "Beginners: 4–8 hours. Experienced editors: 2–3 hours. Speed comes from keyboard shortcuts, templates, and knowing your editing software well." },
+    { "question": "What's the difference between short-form and long-form editing?", "answer": "Short-form (TikTok/Reels) is fast cuts, trending audio, and text overlays. Long-form (YouTube) is pacing, b-roll, transitions, and audio mixing. Start with short-form, graduate to long-form." },
+    { "question": "Is video editing still a good career with AI tools?", "answer": "Yes. AI tools speed up tasks like captioning and color correction, but creative editing — pacing, storytelling, knowing what to cut — is still human work. Editors who use AI as a tool are faster, not replaced." }
+  ]
+}

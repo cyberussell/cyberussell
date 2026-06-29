@@ -4,12 +4,14 @@ import {
   HERO_CTA_BELOW,
   TRUST_BAR_ITEMS,
 } from "@/data/content";
+import { getAllCareers } from "@/lib/careers/data";
 import SkillFinderWidget from "./SkillFinderWidget";
 import HeroCTA from "./HeroCTA";
 
 export default function Hero() {
   const posts = getAllPosts();
   const latestPost = posts[0] ?? null;
+  const careerSlugs = getAllCareers().map((c) => c.slug);
 
   return (
     <main id="hero" className="bg-[#0F0F1A] relative flex flex-col flex-grow overflow-hidden">
@@ -56,7 +58,7 @@ export default function Hero() {
 
         {/* Right column: Skill Finder widget */}
         <div className="w-full lg:w-1/2 flex justify-center lg:justify-end mt-8 lg:mt-0">
-          <SkillFinderWidget />
+          <SkillFinderWidget careerSlugs={careerSlugs} />
         </div>
       </div>
 

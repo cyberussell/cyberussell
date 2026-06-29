@@ -1,0 +1,107 @@
+{
+  "slug": "cooking",
+  "skill": "Cooking",
+  "tagline": "Turn your cooking skills into online income — without opening a restaurant.",
+  "category": "creative",
+  "difficulty": "beginner",
+  "earning_range": { "min": 3000, "max": 35000 },
+  "time_to_first_income": "2–4 weeks",
+  "prerequisites": ["Smartphone with camera", "Internet connection", "Basic cooking ability"],
+  "summary": {
+    "description": "You don't need a culinary degree or a commercial kitchen. Filipinos who can cook well are earning online through food content, recipe blogs, online food selling, and cooking tutorials. The key is combining your cooking skill with one digital skill — video, writing, or social media.",
+    "who_is_this_for": [
+      "Home cooks who get compliments on their food",
+      "Stay-at-home parents who already cook daily",
+      "Anyone who enjoys sharing recipes",
+      "People interested in food content creation"
+    ],
+    "reality_check": "Cooking alone won't pay you online. You need to pair it with content creation (TikTok/YouTube), food selling (GrabFood/Facebook), or recipe writing. The fastest path is food content on TikTok — you can monetize through brand deals at 10K+ followers. Food selling earns faster but requires capital and logistics."
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Choose Your Path",
+      "duration": "Week 1",
+      "steps": [
+        { "action": "Decide: content creator or food seller", "detail": "Content = TikTok/YouTube cooking videos. Selling = home-based food business via Facebook/GrabFood. Pick one to start. You can add the other later." },
+        { "action": "Set up your platform", "detail": "For content: create a TikTok account focused on cooking. For selling: create a Facebook page with your menu, prices, and delivery area." },
+        { "action": "Study 5 successful Filipino food creators", "detail": "Watch how they shoot, what angles they use, how short their videos are. Copy the format, not the recipes." }
+      ],
+      "milestone": "Platform chosen and account set up"
+    },
+    {
+      "phase": 2,
+      "title": "Create Your First Content or Product",
+      "duration": "Week 2–3",
+      "steps": [
+        { "action": "Post 10 cooking videos or list 5 menu items", "detail": "For content: film 10 short recipe videos (30–60 seconds). For selling: photograph 5 dishes with prices and post on your Facebook page." },
+        { "action": "Use natural lighting and a clean background", "detail": "You don't need equipment. A window and a white plate make food look professional. Shoot during daytime." },
+        { "action": "Share in local Facebook groups", "detail": "Post your videos or menu in community groups, food groups, and buy-and-sell groups in your area." }
+      ],
+      "milestone": "First 10 posts published or first 5 orders received"
+    },
+    {
+      "phase": 3,
+      "title": "Build an Audience or Customer Base",
+      "duration": "Month 2",
+      "steps": [
+        { "action": "Post consistently — 1 video or menu update per day", "detail": "Algorithms reward consistency. TikTok promotes daily posters. Food customers return to pages that update regularly." },
+        { "action": "Engage with every comment", "detail": "Reply to every comment within 1 hour. Ask questions back: 'What recipe should I try next?' Engagement boosts reach." },
+        { "action": "Start a recipe blog on Medium or WordPress", "detail": "Write 5 recipes with photos. Add affiliate links to kitchen tools. This creates passive income alongside your main path." }
+      ],
+      "milestone": "1,000+ followers or 20+ repeat customers"
+    },
+    {
+      "phase": 4,
+      "title": "Monetize",
+      "duration": "Month 3+",
+      "steps": [
+        { "action": "For content: pitch local food brands for sponsorships", "detail": "At 5K+ followers, message brands: 'I'll feature your product in a cooking video for ₱1,000–₱3,000.' Start with local sauces, condiments, or kitchen tools." },
+        { "action": "For selling: join GrabFood or Foodpanda", "detail": "Expand beyond Facebook orders. Platform delivery increases volume. Register your home kitchen with your local LGU if required." },
+        { "action": "Create a digital recipe book", "detail": "Compile your best 20 recipes into a PDF. Sell it for ₱99–₱199 on Gumroad. Use your TikTok or Facebook audience to promote it." }
+      ],
+      "milestone": "Earning ₱10,000+/month from cooking-related income"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Food Content Creation",
+      "detail": "Create cooking videos on TikTok, YouTube, or Instagram Reels. Earn from brand sponsorships, affiliate links, and platform monetization.",
+      "earning_range": { "min": 3000, "max": 30000 }
+    },
+    {
+      "title": "Home-Based Food Selling",
+      "detail": "Sell home-cooked meals, baked goods, or meal prep packages via Facebook, GrabFood, or direct delivery in your area.",
+      "earning_range": { "min": 5000, "max": 35000 }
+    },
+    {
+      "title": "Recipe Writing & Blogging",
+      "detail": "Write recipes for food blogs, content sites, or your own blog with ad revenue and affiliate links to kitchen products.",
+      "earning_range": { "min": 2000, "max": 15000 }
+    },
+    {
+      "title": "Digital Recipe Products",
+      "detail": "Create and sell recipe eBooks, meal plan PDFs, or cooking guides on Gumroad or your own site.",
+      "earning_range": { "min": 1000, "max": 10000 }
+    }
+  ],
+  "platforms": [
+    { "name": "TikTok", "url": "https://www.tiktok.com", "why": "Fastest way to build a food audience. Short recipe videos can go viral even with zero followers." },
+    { "name": "Facebook", "url": "https://www.facebook.com", "why": "Best for local food selling. Create a page, join community groups, and take orders directly via Messenger." },
+    { "name": "GrabFood", "url": "https://www.grab.com/ph/food", "why": "Expand your delivery range beyond personal contacts. Requires registration but significantly increases order volume." },
+    { "name": "Gumroad", "url": "https://gumroad.com", "why": "Sell digital recipe books and meal plans. No upfront cost. GCash-compatible via PayPal." }
+  ],
+  "tools": [
+    { "name": "CapCut", "url": "https://www.capcut.com", "is_free": true, "purpose": "Edit cooking videos for TikTok and Reels. Free, mobile-friendly, and has food-specific templates." },
+    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Create recipe cards, menu designs, and food business branding." },
+    { "name": "Google Docs", "url": "https://docs.google.com", "is_free": true, "purpose": "Write and organize recipes before turning them into content or products." },
+    { "name": "Snapseed", "url": "https://snapseed.online", "is_free": true, "purpose": "Edit food photos on your phone. Adjust brightness and contrast to make dishes look appetizing." }
+  ],
+  "faq": [
+    { "question": "Do I need a commercial kitchen to sell food online?", "answer": "For small-scale Facebook selling, most Filipinos start from their home kitchen. If you scale to GrabFood or Foodpanda, check your local LGU requirements — some require basic food safety permits." },
+    { "question": "Can I earn from cooking without showing my face?", "answer": "Yes. Many viral food TikToks show only hands and ingredients. Overhead shots of cooking are the most popular format — no face needed." },
+    { "question": "How much capital do I need to start selling food?", "answer": "For content creation: almost zero — just your phone and ingredients you already have. For food selling: ₱1,000–₱3,000 for initial ingredients and packaging materials." },
+    { "question": "What type of food content performs best?", "answer": "Budget meals ('₱50 ulam'), quick recipes (under 60 seconds), and Filipino comfort food consistently get the most views. Trendy recipes also work but have shorter viral windows." },
+    { "question": "Can I do both content creation and food selling?", "answer": "Yes, and they complement each other. Your TikTok cooking videos drive customers to your food business, and your food business gives you content to post." }
+  ]
+}
