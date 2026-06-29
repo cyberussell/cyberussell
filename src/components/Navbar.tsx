@@ -65,12 +65,6 @@ export default function Navbar() {
               {label}
             </a>
           ))}
-          <a
-            href="/#downloads"
-            className="bg-[#E8373A] text-white text-[13px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] px-[18px] py-[9px] rounded-[6px] min-h-[36px] hover:opacity-90 transition-all"
-          >
-            Download Free
-          </a>
         </nav>
 
         <button

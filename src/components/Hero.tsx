@@ -1,7 +1,6 @@
 import { getAllPosts } from "@/lib/blog";
 import {
   HERO_SUBTEXT,
-  HERO_CTA_BELOW,
 } from "@/data/content";
 import { getAllCareers } from "@/lib/careers/data";
 import SkillFinderWidget from "./SkillFinderWidget";
@@ -32,7 +31,7 @@ export default function Hero() {
             {HERO_SUBTEXT}
           </p>
 
-          <HeroCTA ctaBelow={HERO_CTA_BELOW} />
+          <HeroCTA />
 
           {/* Latest article banner */}
           {latestPost && (

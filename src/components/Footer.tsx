@@ -5,10 +5,9 @@ const linkColumns = [
   {
     heading: "On This Site",
     links: [
-      { label: "Skill Finder", href: "/#skill-finder" },
-      { label: "Free Resources", href: "/#downloads" },
       { label: "Career Blueprints", href: "/careers" },
       { label: "Discover Your Skill", href: "/discover" },
+      { label: "Free Resources", href: "/resources" },
       { label: "Find Work", href: "/platforms" },
       { label: "Blog", href: "/blog" },
     ],

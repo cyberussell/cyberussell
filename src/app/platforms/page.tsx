@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
-import Downloads from "@/components/Downloads";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -263,7 +262,6 @@ export default function PlatformsPage() {
         </div>
       </div>
     </main>
-    <Downloads />
     <Footer />
     </>
   );

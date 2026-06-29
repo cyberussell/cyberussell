@@ -206,11 +206,14 @@ export default function SkillFinderWidget({ careerSlugs = [] }: { careerSlugs?: 
 
             {/* Loading */}
             {loading && (
-              <div className="animate-pulse space-y-2 p-4 rounded-xl" style={{ background: "rgba(255,255,255,0.03)" }}>
-                <p className="text-[12px] text-white/55 font-[family-name:var(--font-inter)]">Finding your income paths...</p>
-                <div className="h-2 rounded" style={{ background: "rgba(255,255,255,0.08)", width: "75%" }} />
-                <div className="h-2 rounded" style={{ background: "rgba(255,255,255,0.08)", width: "50%" }} />
-                <div className="h-2 rounded" style={{ background: "rgba(255,255,255,0.08)", width: "65%" }} />
+              <div className="flex flex-col gap-3 py-2">
+                <div className="h-[4px] bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-[#E8373A] to-[#FFD23F] rounded-full animate-[progress_2s_ease-in-out_infinite]" style={{ width: "70%" }} />
+                </div>
+                <p className="text-[12px] text-white/45 font-[family-name:var(--font-inter)] text-center">
+                  Analyzing your skill...
+                </p>
+                <style>{`@keyframes progress { 0% { width: 10%; } 50% { width: 80%; } 100% { width: 10%; } }`}</style>
               </div>
             )}
 
