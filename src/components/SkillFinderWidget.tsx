@@ -123,9 +123,9 @@ export default function SkillFinderWidget({ careerSlugs = [] }: { careerSlugs?: 
                   <Target size={24} className="text-[#FFD23F]" strokeWidth={1.8} />
                 </div>
                 <h3 className="font-sans text-[22px] md:text-[24px] font-bold leading-tight">
-                  <span className="text-white">Discover What Your </span>
-                  <span className="text-[#FFD23F]">Skills</span>
-                  <span className="text-white"> Are Worth</span>
+                  <span className="text-white">Find the Best Way to </span>
+                  <span className="text-[#FFD23F]">Earn</span>
+                  <span className="text-white"> From Your Skill</span>
                 </h3>
               </div>
               <div className="shrink-0 bg-white/[0.06] border border-white/[0.10] rounded-xl px-3 py-2 flex flex-col items-center gap-0.5">
@@ -245,7 +245,7 @@ export default function SkillFinderWidget({ careerSlugs = [] }: { careerSlugs?: 
                   </p>
 
                   <p className="text-[10px] font-bold uppercase tracking-widest mb-2 font-[family-name:var(--font-inter)]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                    Your 4 income paths
+                    Best ways to earn with this skill
                   </p>
 
                   <div className="flex flex-col mb-3">
@@ -289,11 +289,6 @@ export default function SkillFinderWidget({ careerSlugs = [] }: { careerSlugs?: 
                   </a>
                 );
               })()}
-                  <div className="flex justify-center gap-3 mb-3">
-                    <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold font-[family-name:var(--font-inter)]" style={{ color: "rgba(255,255,255,0.4)" }}>TikTok</a>
-                    <a href="https://www.facebook.com/cyberussellofficial" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold font-[family-name:var(--font-inter)]" style={{ color: "rgba(255,255,255,0.4)" }}>Facebook</a>
-                    <a href="https://www.youtube.com/@CyberRussell" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold font-[family-name:var(--font-inter)]" style={{ color: "rgba(255,255,255,0.4)" }}>YouTube</a>
-                  </div>
                   <button
                     onClick={handleReset}
                     className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] font-medium text-white/40 hover:text-white/60 hover:border-white/[0.15] transition-colors"
