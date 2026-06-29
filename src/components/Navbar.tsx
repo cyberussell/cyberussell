@@ -82,25 +82,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Bottom row: section links (desktop only) */}
-      <div className="hidden md:flex justify-center items-center w-full h-[32px] px-6 md:px-10 max-w-7xl mx-auto border-t border-white/5">
-        <nav className="flex gap-6 items-center">
-          {sectionLinks.map(({ label, href }) => {
-            const sectionId = href.replace("/#", "");
-            const isActive = activeSection === sectionId;
-            return (
-              <a
-                key={href}
-                href={href}
-                className={`text-[10px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase transition-colors
-                  ${isActive ? "text-[#E8373A]" : "text-white/55 hover:text-white/70"}`}
-              >
-                {label}
-              </a>
-            );
-          })}
-        </nav>
-      </div>
 
       {menuOpen && (
         <div className="md:hidden bg-[#111118] border-t border-white/10 w-full">
@@ -115,22 +96,6 @@ export default function Navbar() {
                 {label}
               </a>
             ))}
-            <span className="h-px w-full bg-white/10 my-2" />
-            {sectionLinks.map(({ label, href }) => {
-              const sectionId = href.replace("/#", "");
-              const isActive = activeSection === sectionId;
-              return (
-                <a
-                  key={href}
-                  href={href}
-                  onClick={handleNavClick}
-                  className={`text-[13px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase py-3 border-b border-white/[0.06] transition-colors
-                    ${isActive ? "text-[#E8373A]" : "text-white/65"}`}
-                >
-                  {label}
-                </a>
-              );
-            })}
           </nav>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { ArrowRight, Search, Compass, BookOpen } from "lucide-react";
+import { ArrowRight, Search, Compass } from "lucide-react";
 import { getAllCareers } from "@/lib/careers/data";
 
 export default function ChoosePath() {
@@ -65,16 +65,6 @@ export default function ChoosePath() {
           </a>
         </div>
 
-        {/* Explore more */}
-        <div className="flex items-center justify-center">
-          <a
-            href="/#downloads"
-            className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/30 hover:text-white/50 transition-colors"
-          >
-            <BookOpen size={14} strokeWidth={2} />
-            Or explore free guides and tools below
-          </a>
-        </div>
       </div>
     </section>
   );
