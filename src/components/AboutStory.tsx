@@ -1,126 +1,25 @@
-import { Search, Lightbulb, BarChart2, Heart, type LucideIcon } from "lucide-react";
-
-type TimelineItem = {
-  Icon: LucideIcon;
-  iconColor: string;
-  dotBg: string;
-  dotBorder: string;
-  label: string;
-  bold: string;
-  text: string;
-};
-
-const timeline: TimelineItem[] = [
-  {
-    Icon: Search,
-    iconColor: "rgba(255,255,255,0.5)",
-    dotBg: "rgba(255,255,255,0.08)",
-    dotBorder: "rgba(255,255,255,0.12)",
-    label: "Before",
-    bold: "Looking for the right business.",
-    text: "I tried everything — job platforms, apps, tools. Failing over and over again.",
-  },
-  {
-    Icon: Lightbulb,
-    iconColor: "#FFD23F",
-    dotBg: "rgba(255,210,63,0.10)",
-    dotBorder: "rgba(255,210,63,0.20)",
-    label: "Discovery",
-    bold: "I found AI tools.",
-    text: "Not coding — learning how to use Claude and other tools to help myself and other people.",
-  },
-  {
-    Icon: BarChart2,
-    iconColor: "#E8373A",
-    dotBg: "rgba(232,55,58,0.10)",
-    dotBorder: "rgba(232,55,58,0.20)",
-    label: "Started",
-    bold: "Researched real data.",
-    text: "PSA, DOLE, and actual Filipino freelancers — not YouTube gurus — became my sources of truth.",
-  },
-  {
-    Icon: Heart,
-    iconColor: "#00C97A",
-    dotBg: "rgba(0,201,122,0.10)",
-    dotBorder: "rgba(0,201,122,0.20)",
-    label: "Today",
-    bold: "Sharing it all.",
-    text: "Cyberussell is the research, the lessons learned, and the right direction — for every Filipino who wants to stop wasting time and start earning online.",
-  },
-];
+import { ArrowRight } from "lucide-react";
 
 export default function AboutStory() {
   return (
     <section id="tungkol" className="bg-[#0F0F1A] py-12 md:py-[72px] px-6 md:px-10">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-[52px]">
-          {/* Left: Narrative */}
-          <div className="flex flex-col gap-6">
-            <span className="text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[2.5px]">
-              THE STORY
-            </span>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40">
-              Russell · Filipino · Self-taught · Building free tools since 2024
-            </p>
-            <h2 className="font-sans text-[28px] md:text-[32px] font-bold text-white leading-[1.2]">
-              &ldquo;I made mistakes for 7 years.
-              <br />
-              <span className="text-[#E8373A]">Don&apos;t repeat them.&rdquo;</span>
-            </h2>
-            <div className="flex flex-col gap-[12px] font-[family-name:var(--font-inter)] text-[17px] text-white/70 leading-[1.8]">
-              <p>
-                Cyberussell exists to help Filipinos earn online — with real
-                data, not hype. Most of what you need is here for free. I
-                built this because I could not find a resource like it — no
-                technology degree, no connections, just a desire to stop
-                scrolling and start earning.
-              </p>
-              <p>
-                Everything I learned came from trial, failure, and hundreds of
-                hours of research. This website is the resource I wished I had
-                — free, simple, and based on real data.
-              </p>
-              <p>
-                The goal is simple. If one Filipino finds the right way to earn
-                online because of something they read here — this is already a
-                success.
-              </p>
-            </div>
-          </div>
-
-          {/* Right: Timeline */}
-          <div className="flex flex-col pt-6 md:pt-0">
-            {timeline.map(({ Icon, iconColor, dotBg, dotBorder, label, bold, text }, i) => (
-              <div key={label} className="relative grid grid-cols-[44px_1fr] gap-4 pb-6">
-                {/* Connector line */}
-                {i < timeline.length - 1 && (
-                  <div
-                    className="absolute w-[2px]"
-                    style={{ left: 21, top: 44, bottom: 0, background: "rgba(255,255,255,0.08)" }}
-                  />
-                )}
-
-                {/* Dot */}
-                <div
-                  className="flex items-center justify-center shrink-0 relative z-10"
-                  style={{ width: 44, height: 44, borderRadius: "50%", backgroundColor: dotBg, border: `2px solid ${dotBorder}` }}
-                >
-                  <Icon size={20} color={iconColor} strokeWidth={2} aria-hidden="true" />
-                </div>
-
-                {/* Content */}
-                <div className="pt-[10px]">
-                  <span className="block text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-widest mb-1">
-                    {label}
-                  </span>
-                  <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
-                    <b className="text-white font-bold">{bold}</b> {text}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="max-w-4xl mx-auto text-center">
+        <span className="text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[2.5px] mb-4 block">
+          About Cyberussell
+        </span>
+        <h2 className="font-sans text-[24px] md:text-[32px] font-bold text-white leading-[1.2] mb-4">
+          Built by a Filipino, for Filipinos.
+        </h2>
+        <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-[1.8] max-w-[560px] mx-auto mb-6">
+          No tech degree. No connections. Just 7 years of trial and error, hundreds of hours of research, and a belief that every Filipino deserves a clear path to earning online. Everything here is free and based on real data.
+        </p>
+        <a
+          href="/about"
+          className="inline-flex items-center gap-2 font-[family-name:var(--font-inter)] text-[14px] font-medium text-[#FFD23F]/70 hover:text-[#FFD23F] transition-colors"
+        >
+          Read the full story
+          <ArrowRight size={15} strokeWidth={2} />
+        </a>
       </div>
     </section>
   );

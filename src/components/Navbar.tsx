@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
 const sectionLinks = [
-  { label: "The Problem", href: "/#problema" },
-  { label: "Ways to Earn", href: "/#paraan" },
   { label: "Skill Finder", href: "/#skill-finder" },
-  { label: "Free Downloads", href: "/#downloads" },
+  { label: "Free Resources", href: "/#downloads" },
+  { label: "Career Blueprints", href: "/careers" },
+  { label: "Discover Your Skill", href: "/discover" },
 ];
 
 const pageLinks = [
@@ -19,7 +19,7 @@ const pageLinks = [
   { label: "Contact Us", href: "/contact" },
 ];
 
-const sectionIds = ["hero", "problema", "paraan", "skill-finder", "downloads"];
+const sectionIds = ["hero", "skill-finder", "downloads"];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
