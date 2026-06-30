@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
+import StartHereDropdown from "@/components/StartHereDropdown";
 
 interface DropdownItem {
   label: string;
@@ -128,7 +129,13 @@ function NavItemDesktop({ item }: { item: NavItem }) {
         {item.label}
         <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
-      {open && <DropdownMenu items={item.dropdown} />}
+      {open && (
+        item.label === "START HERE" ? (
+          <StartHereDropdown />
+        ) : (
+          <DropdownMenu items={item.dropdown} />
+        )
+      )}
     </div>
   );
 }
