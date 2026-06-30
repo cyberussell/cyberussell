@@ -11,13 +11,13 @@ export const metadata: Metadata = {
 };
 
 const topics = [
-  { title: "What AI Really Is", desc: "Beyond the hype — what's actually happening under the hood.", soon: false, href: "/learn/foundations/what-ai-actually-is" },
-  { title: "AI Strengths vs Weaknesses", desc: "Know what AI does well, and where it fails badly.", soon: false },
-  { title: "AI Hallucinations", desc: "Why AI makes things up, and how to catch it.", soon: true },
-  { title: "Choosing the Right AI", desc: "ChatGPT vs Claude vs Gemini — when to use which.", soon: true },
-  { title: "Responsible AI Use", desc: "Ethics, bias, and what responsible use looks like.", soon: true },
-  { title: "AI & Privacy", desc: "What you should never share with an AI tool.", soon: true },
-  { title: "Prompt Basics", desc: "Your first framework for talking to AI effectively.", soon: true },
+  { title: "What AI Actually Is", desc: "AI doesn't think — it predicts. The one idea that changes how you use it.", soon: false, href: "/learn/foundations/what-ai-actually-is" },
+  { title: "What AI Is Good At", desc: "Five task types where AI consistently delivers useful results — and why.", soon: true },
+  { title: "Where AI Fails", desc: "AI fails predictably, not randomly. Know the three failure categories before you prompt.", soon: true },
+  { title: "Why AI Makes Things Up", desc: "Hallucination explained — and the one rule for catching it before it causes problems.", soon: true },
+  { title: "How to Choose the Right AI", desc: "ChatGPT, Claude, Gemini — a simple framework for picking the right tool for any task.", soon: true },
+  { title: "Your First Real Prompt", desc: "Four elements that make a prompt work. Write one for a task you actually need.", soon: true },
+  { title: "What Not to Share with AI", desc: "One practical rule for protecting your personal and professional information.", soon: true },
 ];
 
 export default function FoundationsPage() {
