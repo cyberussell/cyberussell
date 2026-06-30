@@ -111,7 +111,7 @@ function NavItemDesktop({ item }: { item: NavItem }) {
   }, []);
 
   const label = (
-    <span className="text-[14px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors flex items-center gap-1">
+    <span className="text-[16px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors flex items-center gap-1">
       {item.label}
       {item.dropdown && <ChevronDown size={14} className={`transition-transform ${open ? "rotate-180" : ""}`} />}
     </span>
@@ -129,7 +129,7 @@ function NavItemDesktop({ item }: { item: NavItem }) {
     <div ref={ref} className="relative flex items-center h-full">
       <a
         href={item.href}
-        className="flex items-center h-full text-[12px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors"
+        className="flex items-center h-full text-[16px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors"
       >
         {item.label}
       </a>
@@ -165,15 +165,13 @@ export default function Navbar() {
       <div className="flex justify-between items-center w-full h-[80px] px-6 md:px-10 max-w-7xl mx-auto">
         {/* Logo */}
         <a href="/" className="flex items-center" onClick={handleNavClick}>
-          <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-            <Image
-              src="/logo.png"
-              alt="Cyberussell"
-              width={80}
-              height={80}
-              className="h-20 w-20 object-cover"
-            />
-          </div>
+          <Image
+            src="/logo not text.png"
+            alt="Cyberussell"
+            width={64}
+            height={64}
+            className="h-16 w-16 object-contain"
+          />
           <span className="font-sans text-[28px] font-bold tracking-tight ml-3">
             <span className="text-white">Cyber</span>
             <span className="text-[#FFD23F]">ussell</span>

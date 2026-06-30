@@ -48,7 +48,8 @@ Return ONLY a valid JSON object. No markdown. No explanation. No extra text. Jus
       "detail": "One sentence with specific platform or peso amount."
     }
   ],
-  "first_step": "One specific action this week. Name exact platform or tool. Not vague."
+  "first_step": "One specific action this week. Name exact platform or tool. Not vague.",
+  "blueprint_slug": null
 }
 
 Rules:
@@ -56,7 +57,8 @@ Rules:
 - Always include peso amounts
 - Philippine freelance market focus
 - Simple plain English
-- JSON only — nothing else`,
+- JSON only — nothing else
+- For "blueprint_slug": if the skill closely relates to one of these existing blueprints, set it to that slug, otherwise null. Available slugs: "canva" (graphic design, Canva, visual design, logo, poster, social media graphics), "cooking" (food, baking, cooking, recipes, catering), "video-editing" (video, editing, reels, YouTube, content creation, Capcut, Premiere), "virtual-assistant" (VA, admin, data entry, email management, scheduling, customer support), "writing" (writing, copywriting, content writing, blogging, articles, proofreading)`,
         },
       ],
     });

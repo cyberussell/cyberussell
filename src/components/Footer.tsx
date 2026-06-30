@@ -1,29 +1,33 @@
 import ShareSiteButton from "@/components/ShareSiteButton";
 import SubscribeForm from "@/components/SubscribeForm";
+import { Link2 } from "lucide-react";
 
 const linkColumns = [
   {
-    heading: "Explore",
+    heading: "Resources",
     links: [
-      { label: "Career Blueprints", href: "/careers" },
-      { label: "AI Tools", href: "/tools" },
-      { label: "Ways to Earn", href: "/earn" },
-      { label: "Freelance Platforms", href: "/earn/freelance-platforms" },
       { label: "Free Resources", href: "/resources" },
       { label: "Blog", href: "/blog" },
       { label: "FAQ", href: "/faq" },
     ],
+    showShare: false,
   },
   {
-    heading: "Cyberussell",
+    heading: "Company",
     links: [
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
+    ],
+    showShare: true,
+  },
+  {
+    heading: "Legal",
+    links: [
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms of Service", href: "/terms" },
       { label: "Disclaimer", href: "/disclaimer" },
-      { label: "UTM Builder", href: "/utm" },
     ],
+    showShare: false,
   },
 ];
 
@@ -63,8 +67,8 @@ export default function Footer() {
         </div>
 
         {/* Link columns */}
-        <div className="flex gap-12 md:gap-20">
-          {linkColumns.map(({ heading, links }) => (
+        <div className="flex gap-10 md:gap-16">
+          {linkColumns.map(({ heading, links, showShare }) => (
             <div key={heading} className="flex flex-col gap-3">
               <h5 className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[0.1em]">
                 {heading}
@@ -78,7 +82,7 @@ export default function Footer() {
                   {label}
                 </a>
               ))}
-              {heading === "Cyberussell" && <ShareSiteButton />}
+              {showShare && <ShareSiteButton />}
             </div>
           ))}
         </div>
@@ -91,8 +95,12 @@ export default function Footer() {
             © 2026 Cyberussell. All rights reserved.
           </span>
 
-          {/* Social icons */}
+          {/* UTM Builder + Social icons */}
           <div className="flex items-center gap-4">
+            <a href="/utm" aria-label="UTM Builder" title="UTM Builder" className="text-white/30 hover:text-white transition-colors flex items-center gap-1.5">
+              <Link2 size={18} strokeWidth={1.8} />
+            </a>
+            <span className="text-white/15 select-none">|</span>
             <a href="https://www.tiktok.com/@cyberussell" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="text-white/30 hover:text-white transition-colors">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.75a8.27 8.27 0 004.84 1.55V6.85a4.85 4.85 0 01-1.07-.16z" />
