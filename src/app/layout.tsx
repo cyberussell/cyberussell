@@ -67,7 +67,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="tl"
+      lang="en"
       className={`${syne.variable} ${inter.variable} h-full`}
     >
       <head>

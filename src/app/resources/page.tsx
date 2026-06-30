@@ -20,14 +20,6 @@ export const metadata: Metadata = {
 
 const resources = [
   {
-    emoji: "📊",
-    title: "Philippine Labor Market Guide 2026",
-    desc: "An overview of the Philippine labor market — top in-demand skills, industries, salary ranges, and where online work fits in.",
-    type: "PDF",
-    href: "/downloads/ph-labor-market-2026.pdf",
-    cta: "Download PDF",
-  },
-  {
     emoji: "🔍",
     title: "Skill Discovery Worksheet",
     desc: "A guided worksheet to help you identify your transferable skills and match them to online earning opportunities.",

@@ -166,7 +166,7 @@ export default function Navbar() {
         {/* Logo */}
         <a href="/" className="flex items-center" onClick={handleNavClick}>
           <Image
-            src="/logo not text.png"
+            src="/logo-icon.png"
             alt="Cyberussell"
             width={64}
             height={64}

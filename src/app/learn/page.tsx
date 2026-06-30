@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BookOpen, Zap, Users, Code, TrendingUp, Lightbulb, type LucideIcon } from "lucide-react";
+import { Zap, Users, Code, TrendingUp, Lightbulb, type LucideIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -55,12 +55,6 @@ const categories: Array<{
     desc: "Remote work opportunities, legitimate platforms, and how to land positions.",
     href: "/learn/online-jobs",
   },
-  {
-    icon: BookOpen,
-    title: "Career Guides",
-    desc: "AI-generated career blueprints showing skill paths, income ranges, and first steps.",
-    href: "/careers",
-  },
 ];
 
 export default function LearnPage() {
@@ -112,38 +106,6 @@ export default function LearnPage() {
           </div>
         </section>
 
-        {/* Suggested */}
-        <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
-          <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-8 md:p-12">
-            <h2 className="font-sans text-[24px] font-bold text-white mb-6">
-              Learning for Every Level
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="font-sans text-[16px] font-bold text-[#FFD23F] mb-3">
-                  Complete Beginner?
-                </h3>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.6] mb-4">
-                  Start with our AI Tools & Prompts guide. Learn how to leverage AI to work smarter from day one.
-                </p>
-                <a href="/learn/ai" className="text-[13px] font-bold text-[#FFD23F] hover:text-white transition-colors">
-                  Get Started →
-                </a>
-              </div>
-              <div>
-                <h3 className="font-sans text-[16px] font-bold text-[#FFD23F] mb-3">
-                  Ready to Earn?
-                </h3>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.6] mb-4">
-                  Explore our Career Blueprints for AI-generated roadmaps tailored to your goals.
-                </p>
-                <a href="/careers" className="text-[13px] font-bold text-[#FFD23F] hover:text-white transition-colors">
-                  View Blueprints →
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
       <Footer />
     </>
