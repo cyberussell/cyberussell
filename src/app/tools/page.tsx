@@ -74,31 +74,21 @@ export default function ToolsPage() {
       <Navbar />
       <main className="min-h-screen bg-[#0F0F1A]">
         {/* Hero */}
-        <section className="px-6 md:px-10 pt-16 pb-12 max-w-7xl mx-auto">
-          <div className="inline-block bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-5">
+        <section className="px-6 md:px-10 pt-20 pb-12 max-w-5xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-7">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8373A] animate-pulse" />
             <span className="text-[#E8373A] text-[11px] font-bold uppercase tracking-[2px] font-[family-name:var(--font-inter)]">
               AI Tools
             </span>
           </div>
-          <h1 className="font-sans text-[32px] md:text-[48px] font-bold text-white mb-4 leading-tight max-w-3xl">
-            Free AI Tools Built for Filipinos
+          <h1 className="font-sans text-[40px] md:text-[58px] font-bold text-white mb-5 leading-tight">
+            Free AI Tools Built for{" "}
+            <span className="text-[#FFD23F]">Filipinos</span>
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/60 max-w-2xl leading-[1.8] mb-8">
+          <p className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/55 max-w-xl mx-auto leading-[1.8]">
             Use AI to detect scams, improve your prompts, build your freelancer profile, and more.
             No sign-up. No payment. Just tools that work.
           </p>
-
-          {/* Category pills */}
-          <div className="flex flex-wrap gap-2">
-            {toolCategories.map((cat) => (
-              <span
-                key={cat}
-                className="font-[family-name:var(--font-inter)] text-[12px] text-white/50 border border-white/10 rounded-full px-3 py-1 hover:border-white/30 hover:text-white/80 transition-colors cursor-default"
-              >
-                {cat}
-              </span>
-            ))}
-          </div>
         </section>
 
         {/* Featured Tools */}

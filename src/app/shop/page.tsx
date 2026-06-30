@@ -30,20 +30,26 @@ export default function ShopPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-[70vh] px-6 md:px-10 py-10 pb-24 max-w-7xl mx-auto">
-        <div className="mb-10">
-          <div className="text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold tracking-[2.5px] uppercase mb-4">
-            DIGITAL PRODUCTS
+      <main className="min-h-[70vh] bg-[#0F0F1A]">
+        <section className="px-6 md:px-10 pt-20 pb-12 max-w-5xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-7">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8373A] animate-pulse" />
+            <span className="text-[#E8373A] text-[11px] font-bold uppercase tracking-[2px] font-[family-name:var(--font-inter)]">
+              Shop
+            </span>
           </div>
-          <h1 className="font-sans text-[28px] md:text-[36px] font-bold text-white leading-tight mb-3">
-            eBooks & Templates
+          <h1 className="font-sans text-[40px] md:text-[58px] font-bold text-white mb-5 leading-tight">
+            eBooks & Templates for{" "}
+            <span className="text-[#FFD23F]">Filipinos</span>
           </h1>
-          <p className="text-white/60 text-[15px] md:text-[16px] max-w-lg leading-relaxed font-[family-name:var(--font-inter)]">
+          <p className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/55 max-w-xl mx-auto leading-[1.8]">
             Guides and templates to help you earn more online. Some are free —
             the rest are priced para accessible sa lahat.
           </p>
+        </section>
+        <div className="px-6 md:px-10 pb-24 max-w-7xl mx-auto">
+          <Shop />
         </div>
-        <Shop />
       </main>
       <Footer />
     </>

@@ -70,25 +70,24 @@ export default function EarnPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
-      <main className="min-h-screen bg-[#0F0F1A] px-6 md:px-10 py-16 max-w-5xl mx-auto">
-        <nav className="flex items-center gap-2 text-[12px] font-[family-name:var(--font-inter)] text-white/35 mb-8">
-          <a href="/" className="hover:text-white transition-colors">Home</a>
-          <span>/</span>
-          <span className="text-white/60">Earn</span>
-        </nav>
-
-        <div className="inline-block bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-5">
-          <span className="text-[#E8373A] text-[11px] font-bold uppercase tracking-[2px] font-[family-name:var(--font-inter)]">
-            💼 Earn
-          </span>
-        </div>
-        <h1 className="font-sans text-[32px] md:text-[48px] font-bold text-white mb-4 leading-tight">
-          Ways to Earn Online as a Filipino
-        </h1>
-        <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.8] mb-12 max-w-2xl">
-          Every legitimate path to earning online — researched, organized, and explained for Filipinos.
-          Pick your path and start from there.
-        </p>
+      <main className="min-h-screen bg-[#0F0F1A]">
+        <section className="px-6 md:px-10 pt-20 pb-12 max-w-5xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-7">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8373A] animate-pulse" />
+            <span className="text-[#E8373A] text-[11px] font-bold uppercase tracking-[2px] font-[family-name:var(--font-inter)]">
+              Earn
+            </span>
+          </div>
+          <h1 className="font-sans text-[40px] md:text-[58px] font-bold text-white mb-5 leading-tight">
+            Ways to Earn Online as a{" "}
+            <span className="text-[#FFD23F]">Filipino</span>
+          </h1>
+          <p className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/55 max-w-xl mx-auto leading-[1.8]">
+            Every legitimate path to earning online — researched, organized, and explained for Filipinos.
+            Pick your path and start from there.
+          </p>
+        </section>
+        <div className="px-6 md:px-10 pb-16 max-w-5xl mx-auto">
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {earnPaths.map((path) => {
@@ -164,6 +163,7 @@ export default function EarnPage() {
               </a>
             </div>
           </div>
+        </div>
         </div>
       </main>
       <Footer />

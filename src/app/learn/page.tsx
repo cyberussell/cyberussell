@@ -65,15 +65,17 @@ export default function LearnPage() {
         {/* Hero */}
         <section className="px-6 md:px-10 pt-20 pb-16 max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <div className="inline-block bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-6">
+            <div className="inline-flex items-center gap-2 bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-7">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E8373A] animate-pulse" />
               <span className="text-[#E8373A] text-[11px] font-bold uppercase tracking-[2px] font-[family-name:var(--font-inter)]">
                 Learn
               </span>
             </div>
-            <h1 className="font-sans text-[40px] md:text-[56px] font-bold text-white mb-5 leading-tight">
-              Free Guides for Earning Online
+            <h1 className="font-sans text-[40px] md:text-[58px] font-bold text-white mb-5 leading-tight">
+              Free Guides for Earning{" "}
+              <span className="text-[#FFD23F]">Online</span>
             </h1>
-            <p className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/60 max-w-2xl mx-auto leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/55 max-w-xl mx-auto leading-[1.8]">
               Learn the skills you need to succeed online. AI, freelancing, website creation, SEO, and more — all free, all for Filipinos.
             </p>
           </div>
