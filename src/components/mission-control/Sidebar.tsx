@@ -13,11 +13,13 @@ import {
   Map,
   Settings,
   LogOut,
+  GraduationCap,
 } from "lucide-react";
 
 const NAV = [
   { label: "Dashboard", href: "/mission-control", icon: LayoutDashboard, active: true },
   { label: "Career Blueprints", href: "/mission-control/blueprints", icon: BookOpen, active: true },
+  { label: "Learning System", href: "/mission-control/learning-system", icon: GraduationCap, active: true },
   { label: "Guides", href: "#", icon: FileText, active: false },
   { label: "AI Tools", href: "#", icon: Wrench, active: false },
   { label: "Blog", href: "#", icon: PenLine, active: false },
