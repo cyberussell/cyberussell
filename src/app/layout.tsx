@@ -72,6 +72,7 @@ export default function RootLayout({
     >
       <head>
         <GoogleAnalytics gaId="G-MY6KY7VPJ9" />
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8968776741366931" crossOrigin="anonymous"></script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
