@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Search, ShieldCheck, Bot, Map, type LucideIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -18,39 +19,11 @@ export const metadata: Metadata = {
   },
 };
 
-const resources = [
-  {
-    emoji: "🔍",
-    title: "Skill Discovery Worksheet",
-    desc: "A guided worksheet to help you identify your transferable skills and match them to online earning opportunities.",
-    type: "Worksheet",
-    href: "/guides/worksheet",
-    cta: "Open Worksheet",
-  },
-  {
-    emoji: "🛡️",
-    title: "How to Spot Online Scams (Guide)",
-    desc: "A practical guide to identifying fake job offers, investment scams, and online fraud targeting Filipinos.",
-    type: "Guide",
-    href: "/guides/scam-checker",
-    cta: "Read Guide",
-  },
-  {
-    emoji: "🤖",
-    title: "How to Use Claude AI (Guide)",
-    desc: "Step-by-step guide on how to use Claude AI for freelancing, business research, content creation, and more.",
-    type: "Guide",
-    href: "/guides/claude-ai",
-    cta: "Read Guide",
-  },
-  {
-    emoji: "🗺️",
-    title: "8 Ways to Earn Online as a Filipino",
-    desc: "A complete overview of the eight most accessible and legitimate ways Filipinos can earn money online.",
-    type: "Guide",
-    href: "/guides/8-ways",
-    cta: "Read Guide",
-  },
+const resources: Array<{ icon: LucideIcon; title: string; desc: string; type: string; href: string; cta: string }> = [
+  { icon: Search, title: "Skill Discovery Worksheet", desc: "A guided worksheet to help you identify your transferable skills and match them to online earning opportunities.", type: "Worksheet", href: "/guides/worksheet", cta: "Open Worksheet" },
+  { icon: ShieldCheck, title: "How to Spot Online Scams (Guide)", desc: "A practical guide to identifying fake job offers, investment scams, and online fraud targeting Filipinos.", type: "Guide", href: "/guides/scam-checker", cta: "Read Guide" },
+  { icon: Bot, title: "How to Use Claude AI (Guide)", desc: "Step-by-step guide on how to use Claude AI for freelancing, business research, content creation, and more.", type: "Guide", href: "/guides/claude-ai", cta: "Read Guide" },
+  { icon: Map, title: "8 Ways to Earn Online as a Filipino", desc: "A complete overview of the eight most accessible and legitimate ways Filipinos can earn money online.", type: "Guide", href: "/guides/8-ways", cta: "Read Guide" },
 ];
 
 const TYPE_STYLES: Record<string, string> = {
@@ -88,7 +61,9 @@ export default function ResourcesPage() {
               className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 hover:border-white/20 hover:bg-[#1e1e2a] transition-all group flex flex-col"
             >
               <div className="flex items-start justify-between mb-3">
-                <span className="text-[32px]">{r.emoji}</span>
+                <div className="w-10 h-10 rounded-lg bg-white/[0.06] flex items-center justify-center">
+                  <r.icon size={20} className="text-white/70" strokeWidth={1.8} />
+                </div>
                 <span className={`font-[family-name:var(--font-inter)] text-[10px] font-bold border px-2 py-0.5 rounded-full shrink-0 ${TYPE_STYLES[r.type] ?? TYPE_STYLES.Guide}`}>
                   {r.type}
                 </span>

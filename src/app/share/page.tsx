@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Share2, MessageCircle, MessageSquare, Link2, type LucideIcon } from "lucide-react";
 
 async function copyToClipboard(text: string, setCopied: (v: boolean) => void) {
   try {
@@ -19,10 +20,10 @@ async function copyToClipboard(text: string, setCopied: (v: boolean) => void) {
   }
 }
 
-const SHARE_CARDS = [
+const SHARE_CARDS: Array<{ platform: string; icon: LucideIcon; text: string; directLabel: string | null; directHref: string | null; directColor: string | null }> = [
   {
     platform: "Facebook",
-    emoji: "📘",
+    icon: Share2,
     text: "I found a free website that helps Filipinos earn online using their existing skills. No email needed. No payment. Real data from PSA and DOLE. Check it out: cyberussell.com",
     directLabel: "Share on Facebook →",
     directHref: "https://www.facebook.com/sharer/sharer.php?u=https://cyberussell.com",
@@ -30,7 +31,7 @@ const SHARE_CARDS = [
   },
   {
     platform: "Messenger",
-    emoji: "💬",
+    icon: MessageCircle,
     text: "Ate/Kuya — may libre na website akong nakita para sa mga gustong kumita online. Walang bayad, walang email. Tingnan mo: cyberussell.com",
     directLabel: null,
     directHref: null,
@@ -38,7 +39,7 @@ const SHARE_CARDS = [
   },
   {
     platform: "WhatsApp",
-    emoji: "🟢",
+    icon: MessageSquare,
     text: "Check this out — free website for Filipinos who want to earn online. Real data, free guides, no payment needed: cyberussell.com",
     directLabel: "Open WhatsApp and Share →",
     directHref: "https://wa.me/?text=Check%20this%20out%20%E2%80%94%20free%20website%20for%20Filipinos%20who%20want%20to%20earn%20online.%20Real%20data%2C%20free%20guides%2C%20no%20payment%20needed%3A%20cyberussell.com",
@@ -46,7 +47,7 @@ const SHARE_CARDS = [
   },
   {
     platform: "Copy Link",
-    emoji: "🔗",
+    icon: Link2,
     text: "https://cyberussell.com",
     directLabel: null,
     directHref: null,
@@ -86,7 +87,7 @@ export default function SharePage() {
                 className="bg-[#18181F] border border-white/[0.12] rounded-2xl p-6"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-[18px]">{card.emoji}</span>
+                  <card.icon size={16} className="text-white/60" strokeWidth={1.8} />
                   <h3 className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white">
                     {card.platform}
                   </h3>

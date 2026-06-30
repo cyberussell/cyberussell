@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Briefcase, TrendingUp, Tag, BookOpen, ShoppingBag, Music, Smartphone, Zap, Store, Mic, type LucideIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -27,7 +28,7 @@ type FilipinoFriendly = "Yes" | "Partial" | "No";
 
 type Platform = {
   name: string;
-  emoji: string;
+  icon: LucideIcon;
   bestFor: string;
   earning: string;
   ease: Difficulty;
@@ -39,7 +40,7 @@ type Platform = {
 const PLATFORMS: Platform[] = [
   {
     name: "OnlineJobs.ph",
-    emoji: "🇵🇭",
+    icon: Briefcase,
     bestFor: "Virtual assistants, data entry, customer service, writers",
     earning: "₱15,000–₱60,000/month",
     ease: "Easy",
@@ -49,7 +50,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "Upwork",
-    emoji: "💼",
+    icon: TrendingUp,
     bestFor: "Developers, designers, writers, marketers, VAs",
     earning: "₱20,000–₱150,000/month",
     ease: "Hard",
@@ -59,7 +60,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "Fiverr",
-    emoji: "🟢",
+    icon: Tag,
     bestFor: "Graphic designers, video editors, voice artists, writers",
     earning: "₱3,000–₱80,000/month",
     ease: "Medium",
@@ -69,7 +70,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "Preply / iTalki",
-    emoji: "📚",
+    icon: BookOpen,
     bestFor: "English teachers, tutors, language coaches",
     earning: "₱20,000–₱80,000/month",
     ease: "Medium",
@@ -79,7 +80,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "Shopee Affiliate",
-    emoji: "🛍️",
+    icon: ShoppingBag,
     bestFor: "Content creators, Facebook page owners, bloggers",
     earning: "₱2,000–₱30,000/month",
     ease: "Easy",
@@ -89,7 +90,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "TikTok Shop Affiliate",
-    emoji: "🎵",
+    icon: Music,
     bestFor: "Content creators, online sellers, product reviewers",
     earning: "₱3,000–₱50,000/month",
     ease: "Easy",
@@ -99,7 +100,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "Ecomobi",
-    emoji: "📱",
+    icon: Smartphone,
     bestFor: "Affiliate marketers, social media users",
     earning: "₱5,000–₱40,000/month",
     ease: "Easy",
@@ -109,7 +110,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "Contra",
-    emoji: "⚡",
+    icon: Zap,
     bestFor: "Designers, developers, marketers, writers",
     earning: "₱20,000–₱100,000/month",
     ease: "Medium",
@@ -119,7 +120,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "Facebook Marketplace",
-    emoji: "📘",
+    icon: Store,
     bestFor: "Resellers, ukay-ukay, homemade products, local services",
     earning: "₱5,000–₱50,000/month",
     ease: "Easy",
@@ -129,7 +130,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "Kumu",
-    emoji: "🎙️",
+    icon: Mic,
     bestFor: "Entertainers, hosts, musicians, gamers, storytellers",
     earning: "₱3,000–₱80,000/month",
     ease: "Easy",
@@ -191,7 +192,9 @@ export default function PlatformsPage() {
             >
               {/* Top row */}
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-[28px]">{p.emoji}</span>
+                <div className="w-9 h-9 rounded-lg bg-white/[0.06] flex items-center justify-center shrink-0">
+                  <p.icon size={18} className="text-white/70" strokeWidth={1.8} />
+                </div>
                 <h2 className="font-sans text-[20px] font-bold text-white">{p.name}</h2>
               </div>
 
