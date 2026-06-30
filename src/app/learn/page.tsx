@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import {
+  BookOpen,
+  Brain,
+  Users,
+  GitBranch,
+  Wrench,
+  Target,
+} from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Learn — Free Guides for Filipino Online Workers | Cyberussell",
+  title: "AI Academy — Learn to Work with AI | Cyberussell",
   description:
-    "Free guides, tutorials, and courses. Learn AI, freelancing, website creation, SEO, and more — all for Filipinos earning online.",
+    "Master practical AI skills that help you think better, solve problems faster, and prepare for real online opportunities. Every guide is designed to help you apply AI — not just learn about it.",
   alternates: { canonical: "https://www.cyberussell.com/learn" },
   openGraph: {
-    title: "Learn | Cyberussell",
+    title: "AI Academy | Cyberussell",
     description:
-      "Free guides and courses for Filipinos who want to learn skills and earn online.",
+      "Learn to work with AI as your research partner, writing assistant, programmer, designer, and business advisor.",
     url: "https://www.cyberussell.com/learn",
     siteName: "Cyberussell",
     images: [{ url: "/og-image.jpg?v=2", width: 1200, height: 630 }],
@@ -18,14 +26,55 @@ export const metadata: Metadata = {
   },
 };
 
-import { Bot, Briefcase, Globe, TrendingUp, Monitor, type LucideIcon } from "lucide-react";
-
-const categories: Array<{ icon: LucideIcon; title: string; desc: string; href: string }> = [
-  { icon: Bot, title: "AI Tools & Prompts", desc: "Learn how to use ChatGPT, Claude, and Gemini to work faster, smarter, and earn more.", href: "/learn/ai" },
-  { icon: Briefcase, title: "Freelancing", desc: "From profile setup to landing clients — everything you need to start a freelance career.", href: "/learn/freelancing" },
-  { icon: Globe, title: "Website Creation", desc: "Build and sell websites without coding. No capital, high earning potential.", href: "/learn/website-creation" },
-  { icon: TrendingUp, title: "SEO", desc: "Get organic traffic and rank on Google. Learn the fundamentals of SEO.", href: "/learn/seo" },
-  { icon: Monitor, title: "Online Jobs", desc: "Remote work opportunities, legitimate platforms, and how to land positions.", href: "/learn/online-jobs" },
+const pillars = [
+  {
+    icon: BookOpen,
+    title: "AI Foundations",
+    desc: "Understand how modern AI works and build the mindset needed to use it effectively — before you rely on it.",
+    outcome: "You understand AI before trusting it.",
+    href: "/learn/foundations",
+    color: "#4F8EF7",
+  },
+  {
+    icon: Brain,
+    title: "Think with AI",
+    desc: "Learn to collaborate — not just prompt. Break problems down, iterate, critique, and make better decisions with AI.",
+    outcome: "You stop one-shot asking and start co-thinking.",
+    href: "/learn/think",
+    color: "#A855F7",
+  },
+  {
+    icon: Users,
+    title: "Meet Your AI Team",
+    desc: "ChatGPT, Claude, Gemini — each has a role. Learn when to use which AI and why it matters for your work.",
+    outcome: "You know which AI to pick for any task.",
+    href: "/learn/ai-team",
+    color: "#22C55E",
+  },
+  {
+    icon: GitBranch,
+    title: "AI Workflows",
+    desc: "AI tools work best together. Learn multi-tool workflows for real tasks: writing, research, building, business.",
+    outcome: "You chain AI tools to get real results faster.",
+    href: "/learn/workflows",
+    color: "#F59E0B",
+  },
+  {
+    icon: Wrench,
+    title: "Build Real Skills",
+    desc: "Traditional skills — writing, design, SEO, coding, marketing — taught through the lens of AI. No fluff.",
+    outcome: "You develop sellable skills using AI as your partner.",
+    href: "/learn/skills",
+    color: "#E8373A",
+  },
+  {
+    icon: Target,
+    title: "AI Missions",
+    desc: "Replace lessons with missions. Complete a resume. Build a landing page. Write a proposal. Deliver real output.",
+    outcome: "You build a portfolio of real completed work.",
+    href: "/learn/missions",
+    color: "#FFD23F",
+  },
 ];
 
 export default function LearnPage() {
@@ -34,51 +83,115 @@ export default function LearnPage() {
       <Navbar />
       <main className="min-h-screen bg-[#0F0F1A]">
         {/* Hero */}
-        <section className="px-6 md:px-10 pt-20 pb-16 max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-7">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E8373A] animate-pulse" />
-              <span className="text-[#E8373A] text-[11px] font-bold uppercase tracking-[2px] font-[family-name:var(--font-inter)]">
-                Learn
-              </span>
-            </div>
-            <h1 className="font-sans text-[40px] md:text-[58px] font-bold text-white mb-5 leading-tight">
-              Free Guides for Earning{" "}
-              <span className="text-[#FFD23F]">Online</span>
-            </h1>
-            <p className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/55 max-w-xl mx-auto leading-[1.8]">
-              Learn the skills you need to succeed online. AI, freelancing, website creation, SEO, and more — all free, all for Filipinos.
+        <section className="px-6 md:px-10 pt-20 pb-14 max-w-5xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-7">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8373A] animate-pulse" />
+            <span className="text-[#E8373A] text-[11px] font-bold uppercase tracking-[2px] font-[family-name:var(--font-inter)]">
+              AI Academy
+            </span>
+          </div>
+          <h1 className="font-sans text-[40px] md:text-[58px] font-bold text-white mb-5 leading-tight">
+            Learn to Work{" "}
+            <span className="text-[#FFD23F]">with AI</span>
+          </h1>
+          <p className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/55 max-w-xl mx-auto leading-[1.8] mb-10">
+            Master practical AI skills that help you think better, solve problems faster, and prepare
+            for real online opportunities. Every guide is designed to help you apply AI — not just learn about it.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <a
+              href="#pillars"
+              className="bg-[#E8373A] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-7 py-3.5 rounded-xl"
+            >
+              Start Learning
+            </a>
+            <a
+              href="/tools"
+              className="bg-white/[0.07] hover:bg-white/[0.12] transition-colors border border-white/[0.1] text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-7 py-3.5 rounded-xl"
+            >
+              Explore AI Tools
+            </a>
+          </div>
+        </section>
+
+        {/* Philosophy */}
+        <section className="px-6 md:px-10 pb-16 max-w-3xl mx-auto text-center">
+          <p className="font-[family-name:var(--font-inter)] text-[15px] md:text-[16px] text-white/50 leading-[1.9]">
+            Most people try to learn ChatGPT, Claude, or Gemini one feature at a time.
+            Cyberussell teaches something different — how to work with AI as your research partner,
+            writing assistant, programmer, designer, and business advisor.
+            The goal isn't to know everything. The goal is to <span className="text-white/80">accomplish more</span>.
+          </p>
+        </section>
+
+        {/* Pillars */}
+        <section id="pillars" className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="font-sans text-[28px] md:text-[36px] font-bold text-white mb-3">
+              6 Learning Pillars
+            </h2>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/45">
+              A structured path from understanding AI to delivering real results with it.
             </p>
           </div>
-
-          {/* Categories */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {categories.map((cat) => {
-              const Icon = cat.icon;
+            {pillars.map((pillar, i) => {
+              const Icon = pillar.icon;
               return (
-              <a
-                key={cat.href}
-                href={cat.href}
-                className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 hover:border-white/20 hover:bg-[#1e1e2a] transition-all group flex flex-col"
-              >
-                <div className="w-10 h-10 rounded-lg bg-white/[0.06] flex items-center justify-center mb-4">
-                  <Icon size={20} className="text-white/70" strokeWidth={1.8} />
-                </div>
-                <h3 className="font-sans text-[17px] font-bold text-white mb-2 group-hover:text-[#FFD23F] transition-colors">
-                  {cat.title}
-                </h3>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.6] flex-1">
-                  {cat.desc}
-                </p>
-                <span className="mt-4 text-[13px] font-bold font-[family-name:var(--font-inter)] text-[#FFD23F] group-hover:text-white transition-colors">
-                  Learn More →
-                </span>
-              </a>
+                <a
+                  key={pillar.href}
+                  href={pillar.href}
+                  className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 hover:border-white/20 hover:bg-[#1e1e2a] transition-all group flex flex-col"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: `${pillar.color}18` }}
+                    >
+                      <Icon size={20} style={{ color: pillar.color }} strokeWidth={1.8} />
+                    </div>
+                    <span
+                      className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[1.5px]"
+                      style={{ color: `${pillar.color}99` }}
+                    >
+                      Pillar {i + 1}
+                    </span>
+                  </div>
+                  <h3 className="font-sans text-[17px] font-bold text-white mb-2 group-hover:text-[#FFD23F] transition-colors">
+                    {pillar.title}
+                  </h3>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.6] flex-1 mb-4">
+                    {pillar.desc}
+                  </p>
+                  <div className="border-t border-white/[0.06] pt-4">
+                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/35 mb-3">
+                      Outcome
+                    </p>
+                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/60 italic leading-[1.5]">
+                      "{pillar.outcome}"
+                    </p>
+                  </div>
+                  <span className="mt-4 text-[13px] font-bold font-[family-name:var(--font-inter)] text-[#FFD23F] group-hover:text-white transition-colors">
+                    Explore →
+                  </span>
+                </a>
               );
             })}
           </div>
         </section>
 
+        {/* Core belief banner */}
+        <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
+          <div className="bg-gradient-to-r from-[#E8373A]/10 via-[#FFD23F]/5 to-[#E8373A]/10 border border-[#FFD23F]/15 rounded-2xl p-8 md:p-12 text-center">
+            <p className="font-sans text-[20px] md:text-[26px] font-bold text-white leading-[1.5] mb-4">
+              AI won&rsquo;t replace people.
+            </p>
+            <p className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/60 max-w-2xl mx-auto leading-[1.8]">
+              People who know how to work with AI will outperform those who don&rsquo;t.
+              Cyberussell exists to teach that way of working.
+            </p>
+          </div>
+        </section>
       </main>
       <Footer />
     </>
