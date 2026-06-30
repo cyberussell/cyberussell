@@ -111,9 +111,9 @@ function NavItemDesktop({ item }: { item: NavItem }) {
   }, []);
 
   const label = (
-    <span className="text-[12px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors flex items-center gap-1">
+    <span className="text-[14px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors flex items-center gap-1">
       {item.label}
-      {item.dropdown && <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />}
+      {item.dropdown && <ChevronDown size={14} className={`transition-transform ${open ? "rotate-180" : ""}`} />}
     </span>
   );
 
@@ -165,13 +165,15 @@ export default function Navbar() {
       <div className="flex justify-between items-center w-full h-[80px] px-6 md:px-10 max-w-7xl mx-auto">
         {/* Logo */}
         <a href="/" className="flex items-center" onClick={handleNavClick}>
-          <Image
-            src="/logo.png"
-            alt="Cyberussell"
-            width={80}
-            height={80}
-            className="h-20 w-auto drop-shadow-[0_0_12px_rgba(255,255,255,0.6)] pt-2"
-          />
+          <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+            <Image
+              src="/logo.png"
+              alt="Cyberussell"
+              width={64}
+              height={64}
+              className="h-16 w-auto drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]"
+            />
+          </div>
           <span className="font-sans text-[28px] font-bold tracking-tight ml-3">
             <span className="text-white">Cyber</span>
             <span className="text-[#FFD23F]">ussell</span>
@@ -205,7 +207,7 @@ export default function Navbar() {
                   <a
                     href={item.href}
                     onClick={handleNavClick}
-                    className="flex items-center gap-2 text-[15px] font-bold font-[family-name:var(--font-inter)] tracking-[0.04em] uppercase py-3.5 text-white/70"
+                    className="flex items-center gap-2 text-[16px] font-bold font-[family-name:var(--font-inter)] tracking-[0.04em] uppercase py-3.5 text-white/70"
                   >
                     {item.label}
                   </a>
@@ -215,7 +217,7 @@ export default function Navbar() {
                       onClick={() =>
                         setMobileExpanded(mobileExpanded === item.label ? null : item.label)
                       }
-                      className="flex items-center justify-between w-full py-3.5 text-[15px] font-bold font-[family-name:var(--font-inter)] tracking-[0.04em] uppercase text-white/70"
+                      className="flex items-center justify-between w-full py-3.5 text-[16px] font-bold font-[family-name:var(--font-inter)] tracking-[0.04em] uppercase text-white/70"
                     >
                       <span className="flex items-center gap-2">
                         {item.label}
@@ -236,7 +238,7 @@ export default function Navbar() {
                               onClick={handleNavClick}
                               target={sub.href.endsWith(".pdf") ? "_blank" : undefined}
                               rel={sub.href.endsWith(".pdf") ? "noopener noreferrer" : undefined}
-                              className="flex items-center justify-between pl-6 py-2.5 text-[14px] font-[family-name:var(--font-inter)] text-white/55 hover:text-white transition-colors"
+                              className="flex items-center justify-between pl-6 py-2.5 text-[15px] font-[family-name:var(--font-inter)] text-white/55 hover:text-white transition-colors"
                             >
                               <span>{sub.label}</span>
                               {sub.badge && (
