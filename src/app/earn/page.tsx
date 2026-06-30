@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Briefcase, Users, Link2, Package, Globe, Zap, type LucideIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -19,36 +18,30 @@ export const metadata: Metadata = {
   },
 };
 
-const earnPaths: Array<{
-  icon: LucideIcon;
-  title: string;
-  desc: string;
-  href: string;
-  tag: string;
-}> = [
+const earnPaths = [
   {
-    icon: Users,
+    emoji: "🏠",
     title: "Remote Jobs",
     desc: "Full-time and part-time remote positions you can do from the Philippines — no office, no commute.",
     href: "/earn/remote-jobs",
     tag: "Stable income",
   },
   {
-    icon: Link2,
+    emoji: "🔗",
     title: "Affiliate Marketing",
     desc: "Earn commission by promoting products on Facebook, TikTok, or your blog. No capital required.",
     href: "/earn/affiliate-marketing",
     tag: "Low barrier",
   },
   {
-    icon: Package,
+    emoji: "📦",
     title: "Digital Products",
     desc: "Sell ebooks, templates, prompt packs, and courses online. Earn while you sleep.",
     href: "/earn/digital-products",
     tag: "Passive income",
   },
   {
-    icon: Globe,
+    emoji: "🌐",
     title: "Website Business",
     desc: "Build and sell websites, run a web design service, or monetize your own site.",
     href: "/earn/website-business",
@@ -90,20 +83,18 @@ export default function EarnPage() {
         <div className="px-6 md:px-10 pb-16 max-w-5xl mx-auto">
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {earnPaths.map((path) => {
-            const Icon = path.icon;
-            return (
+          {earnPaths.map((path) => (
             <a
               key={path.href}
               href={path.href}
               className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 hover:border-white/20 hover:bg-[#1e1e2a] transition-all group flex flex-col"
             >
-              <div className="w-10 h-10 rounded-lg bg-white/[0.06] flex items-center justify-center mb-3">
-                <Icon size={20} className="text-white/70" />
+              <div className="flex items-start justify-between mb-3">
+                <span className="text-[32px]">{path.emoji}</span>
+                <span className="inline-block text-[10px] font-bold font-[family-name:var(--font-inter)] tracking-[0.08em] uppercase text-[#00C97A] bg-[#00C97A]/8 border border-[#00C97A]/20 px-2.5 py-1 rounded-full">
+                  {path.tag}
+                </span>
               </div>
-              <span className="inline-block text-[10px] font-bold font-[family-name:var(--font-inter)] tracking-[0.08em] uppercase text-[#00C97A] bg-[#00C97A]/8 border border-[#00C97A]/20 px-2.5 py-1 rounded-full mb-3 w-fit">
-                {path.tag}
-              </span>
               <h2 className="text-white text-[18px] font-bold mb-2 group-hover:text-[#FFD23F] transition-colors">
                 {path.title}
               </h2>
@@ -114,8 +105,7 @@ export default function EarnPage() {
                 Explore →
               </span>
             </a>
-            );
-          })}
+          ))}
         </div>
 
         {/* Suggested sections */}

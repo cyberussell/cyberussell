@@ -16,6 +16,7 @@ export interface Tool {
   shortDescription: string;
   longDescription: string;
   icon: string; // Lucide icon name
+  emoji: string;
   category: ToolCategory;
   status: ToolStatus;
   ctaLabel: string;
@@ -37,6 +38,7 @@ export const tools: Tool[] = [
     longDescription:
       "Don't fall for fake job offers or investment scams. Paste the job post, message, or opportunity text and our AI will analyze it for red flags — unrealistic pay, vague employers, suspicious links, and common scam patterns targeting Filipinos.",
     icon: "ShieldCheck",
+    emoji: "🛡️",
     category: "Safety",
     status: "Free",
     ctaLabel: "Check Now — It's Free",
@@ -77,6 +79,7 @@ export const tools: Tool[] = [
     longDescription:
       "Most Filipinos use AI the wrong way — vague prompts get vague results. Paste your prompt and our AI scores it, explains what's missing, and rewrites it into a high-performance version for Claude, ChatGPT, or Gemini.",
     icon: "Sparkles",
+    emoji: "✨",
     category: "Productivity",
     status: "Free",
     ctaLabel: "Train Your Prompts — Free",
@@ -116,6 +119,7 @@ export const tools: Tool[] = [
     longDescription:
       "Your bio is the first thing clients read. A weak bio costs you jobs. Paste your skills, experience, and target platform — our AI writes a compelling professional bio that positions you correctly and converts browsers into clients.",
     icon: "UserCircle",
+    emoji: "👤",
     category: "Freelancing",
     status: "Free",
     ctaLabel: "Generate My Bio — Free",
