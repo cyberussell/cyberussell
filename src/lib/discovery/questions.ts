@@ -4,7 +4,7 @@ export interface Question {
   subtitle: string;
   type: "multi" | "single";
   maxSelections?: number;
-  options: { id: string; label: string; emoji?: string }[];
+  options: { id: string; label: string; icon?: string }[];
 }
 
 export const QUESTIONS: Question[] = [
@@ -15,18 +15,18 @@ export const QUESTIONS: Question[] = [
     type: "multi",
     maxSelections: 4,
     options: [
-      { id: "cooking", label: "Cooking", emoji: "🍳" },
-      { id: "facebook", label: "Facebook", emoji: "📱" },
-      { id: "youtube", label: "YouTube", emoji: "▶️" },
-      { id: "gaming", label: "Gaming", emoji: "🎮" },
-      { id: "writing", label: "Writing", emoji: "✍️" },
-      { id: "selling", label: "Selling", emoji: "🛒" },
-      { id: "photography", label: "Photography", emoji: "📸" },
-      { id: "editing", label: "Editing Videos", emoji: "🎬" },
-      { id: "drawing", label: "Drawing", emoji: "🎨" },
-      { id: "organizing", label: "Organizing", emoji: "📋" },
-      { id: "helping", label: "Helping People", emoji: "🤝" },
-      { id: "fixing", label: "Fixing Things", emoji: "🔧" },
+      { id: "cooking", label: "Cooking", icon: "UtensilsCrossed" },
+      { id: "facebook", label: "Facebook", icon: "Share2" },
+      { id: "youtube", label: "YouTube", icon: "Play" },
+      { id: "gaming", label: "Gaming", icon: "Gamepad2" },
+      { id: "writing", label: "Writing", icon: "PenLine" },
+      { id: "selling", label: "Selling", icon: "ShoppingBag" },
+      { id: "photography", label: "Photography", icon: "Camera" },
+      { id: "editing", label: "Editing Videos", icon: "Film" },
+      { id: "drawing", label: "Drawing", icon: "Palette" },
+      { id: "organizing", label: "Organizing", icon: "ClipboardList" },
+      { id: "helping", label: "Helping People", icon: "HeartHandshake" },
+      { id: "fixing", label: "Fixing Things", icon: "Wrench" },
     ],
   },
   {

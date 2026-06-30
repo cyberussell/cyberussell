@@ -1,7 +1,18 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
+import {
+  ArrowLeft, ArrowRight, Clock,
+  UtensilsCrossed, Share2, Play, Gamepad2, PenLine,
+  ShoppingBag, Camera, Film, Palette, ClipboardList,
+  HeartHandshake, Wrench, type LucideIcon,
+} from "lucide-react";
 import type { Question } from "@/lib/discovery/questions";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  UtensilsCrossed, Share2, Play, Gamepad2, PenLine,
+  ShoppingBag, Camera, Film, Palette, ClipboardList,
+  HeartHandshake, Wrench,
+};
 
 interface Props {
   question: Question;
@@ -65,9 +76,10 @@ export default function DiscoveryQuestion({ question, selected, onSelect, onNext
                     : "bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] hover:border-white/[0.12]"
                 }`}
               >
-                {option.emoji && (
-                  <span className="text-[20px] shrink-0">{option.emoji}</span>
-                )}
+                {option.icon && ICON_MAP[option.icon] && (() => {
+                  const Icon = ICON_MAP[option.icon!];
+                  return <Icon size={18} strokeWidth={1.8} className={`shrink-0 ${isSelected ? "text-[#FFD23F]" : "text-white/50"}`} />;
+                })()}
                 <span className={`font-[family-name:var(--font-inter)] text-[14px] font-medium ${isSelected ? "text-[#FFD23F]" : "text-white/70"}`}>
                   {option.label}
                 </span>
