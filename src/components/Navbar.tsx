@@ -57,7 +57,6 @@ const navItems: NavItem[] = [
       { label: "Affiliate Marketing", href: "/earn/affiliate-marketing" },
       { label: "Digital Products", href: "/earn/digital-products" },
       { label: "Website Business", href: "/earn/website-business" },
-      { label: "Success Stories", href: "/earn/success-stories" },
     ],
   },
   {

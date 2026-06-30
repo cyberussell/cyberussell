@@ -54,13 +54,6 @@ const earnPaths: Array<{
     href: "/earn/website-business",
     tag: "High ceiling",
   },
-  {
-    icon: Zap,
-    title: "Success Stories",
-    desc: "Real stories from Filipinos who earn online. Freelancers, remote workers, and entrepreneurs sharing their journey.",
-    href: "/earn/success-stories",
-    tag: "Real examples",
-  },
 ];
 
 export default function EarnPage() {
@@ -126,26 +119,50 @@ export default function EarnPage() {
           })}
         </div>
 
-        {/* Suggested */}
-        <div className="mt-12 bg-gradient-to-r from-blue-500/5 to-blue-500/5 border border-blue-500/20 rounded-2xl p-6">
-          <p className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-blue-400 uppercase tracking-[1px] mb-3">
-            Also Explore
-          </p>
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h3 className="font-sans text-[18px] font-bold text-white mb-1">
-                Where to Apply & Earn
-              </h3>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60">
-                Discover the best platforms where Filipinos find clients and earn money.
-              </p>
+        {/* Suggested sections */}
+        <div className="mt-12 flex flex-col gap-4">
+          <div className="bg-gradient-to-r from-blue-500/5 to-blue-500/5 border border-blue-500/20 rounded-2xl p-6">
+            <p className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-blue-400 uppercase tracking-[1px] mb-3">
+              Also Explore
+            </p>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h3 className="font-sans text-[18px] font-bold text-white mb-1">
+                  Where to Apply & Earn
+                </h3>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60">
+                  Discover the best platforms where Filipinos find clients and earn money.
+                </p>
+              </div>
+              <a
+                href="/earn/freelance-platforms"
+                className="inline-block bg-blue-500/20 border border-blue-500/40 text-white font-bold font-[family-name:var(--font-inter)] text-[13px] px-5 py-2.5 rounded-lg hover:bg-blue-500/30 hover:border-blue-500/60 transition-all shrink-0"
+              >
+                Explore →
+              </a>
             </div>
-            <a
-              href="/earn/freelance-platforms"
-              className="inline-block bg-blue-500/20 border border-blue-500/40 text-white font-bold font-[family-name:var(--font-inter)] text-[13px] px-5 py-2.5 rounded-lg hover:bg-blue-500/30 hover:border-blue-500/60 transition-all shrink-0"
-            >
-              Explore →
-            </a>
+          </div>
+
+          <div className="bg-gradient-to-r from-purple-500/5 to-purple-500/5 border border-purple-500/20 rounded-2xl p-6">
+            <p className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-purple-400 uppercase tracking-[1px] mb-3">
+              Get Inspired
+            </p>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h3 className="font-sans text-[18px] font-bold text-white mb-1">
+                  Success Stories
+                </h3>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60">
+                  Real stories from Filipinos who earn online. Freelancers, remote workers, and entrepreneurs sharing their journey.
+                </p>
+              </div>
+              <a
+                href="/earn/success-stories"
+                className="inline-block bg-purple-500/20 border border-purple-500/40 text-white font-bold font-[family-name:var(--font-inter)] text-[13px] px-5 py-2.5 rounded-lg hover:bg-purple-500/30 hover:border-purple-500/60 transition-all shrink-0"
+              >
+                Read →
+              </a>
+            </div>
           </div>
         </div>
       </main>
