@@ -36,6 +36,8 @@ const navItems: NavItem[] = [
       { label: "Scam Checker", href: "/tools/scam-scanner" },
       { label: "Prompt Trainer", href: "/tools/prompt-forge" },
       { label: "Bio Generator", href: "/tools/bio-generator" },
+      { label: "──────────────", href: "#", divider: true },
+      { label: "Where to Apply & Earn", href: "/earn/freelance-platforms" },
     ],
   },
   {
@@ -51,7 +53,6 @@ const navItems: NavItem[] = [
     label: "EARN",
     dropdown: [
       { label: "Ways to Earn", href: "/earn" },
-      { label: "Freelance Platforms", href: "/earn/freelance-platforms" },
       { label: "Remote Jobs", href: "/earn/remote-jobs" },
       { label: "Affiliate Marketing", href: "/earn/affiliate-marketing" },
       { label: "Digital Products", href: "/earn/digital-products" },
