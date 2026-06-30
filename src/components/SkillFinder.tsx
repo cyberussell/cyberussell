@@ -126,7 +126,7 @@ export default function SkillFinder() {
           </div>
           <div className="flex flex-col gap-2 shrink-0 w-full md:w-auto">
             <a
-              href="/#downloads"
+              href="/resources"
               className="bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] font-bold text-[15px] py-3 px-8 rounded-lg min-h-[48px] hover:opacity-90 transition-all text-center"
             >
               Get Free Guides
