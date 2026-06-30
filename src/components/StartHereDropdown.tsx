@@ -13,7 +13,7 @@ const choices = [
     dot: "🟨",
     title: "I already have skills",
     desc: "Skill Finder",
-    href: "/#skill-finder",
+    href: "/skill-finder",
   },
   {
     color: "bg-green-500/10 border-green-500/30",
