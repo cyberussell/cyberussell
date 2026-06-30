@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -104,6 +105,23 @@ export default function AboutPage() {
           <p className="text-white font-bold">
             — Cyberussell
           </p>
+
+          {/* Logo Story */}
+          <div className="mt-10 flex flex-col items-center gap-6">
+            <Image
+              src="/logo.png"
+              alt="Cyberussell logo"
+              width={240}
+              height={240}
+              className="rounded-2xl"
+            />
+            <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-6">
+              <p className="font-sans text-[18px] font-bold text-white mb-3">The Logo</p>
+              <p className="text-white/65 text-[15px] leading-[1.9]">
+                Every line represents a different journey. Some arrive with experience. Some arrive with curiosity. Some arrive with nothing but the willingness to learn. Cyberussell is where those paths weave together — connecting skills, technology, and opportunity into a future that each person can build.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Social */}

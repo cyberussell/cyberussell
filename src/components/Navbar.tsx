@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 const sectionLinks = [
@@ -45,14 +46,23 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-[#0F0F1A] border-b border-white/10">
       {/* Top row: logo + page links */}
-      <div className="flex justify-between items-center w-full h-[48px] px-6 md:px-10 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center w-full h-[80px] px-6 md:px-10 max-w-7xl mx-auto">
         <a
           href="/"
-          className="font-sans text-[20px] font-bold tracking-tight flex items-center"
+          className="flex items-center"
           onClick={handleNavClick}
         >
-          <span className="text-white">Cyber</span>
-          <span className="text-[#FFD23F]">ussell</span>
+          <Image
+            src="/logo.png"
+            alt="Cyberussell"
+            width={80}
+            height={80}
+            className="h-20 w-auto drop-shadow-[0_0_12px_rgba(255,255,255,0.6)] pt-2"
+          />
+          <span className="font-sans text-[28px] font-bold tracking-tight ml-3">
+            <span className="text-white">Cyber</span>
+            <span className="text-[#FFD23F]">ussell</span>
+          </span>
         </a>
 
         <nav className="hidden md:flex gap-6 items-center h-full">
