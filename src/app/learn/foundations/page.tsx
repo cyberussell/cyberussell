@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { BookOpen, Lock } from "lucide-react";
+import { BookOpen, Lock, Trophy, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "AI Foundations — Learn to Work with AI | Cyberussell",
@@ -82,6 +82,30 @@ export default function FoundationsPage() {
               </CardTag>
               );
             })}
+          </div>
+        </section>
+
+        {/* Final Assessment CTA */}
+        <section className="px-6 md:px-10 pb-6 max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-[#FFD23F]/10 via-[#FFD23F]/5 to-transparent border border-[#FFD23F]/25 rounded-[16px] p-8">
+            <div className="flex flex-col md:flex-row md:items-center gap-6">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Trophy size={18} className="text-[#FFD23F]" />
+                  <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[2px]">Final Assessment</span>
+                </div>
+                <h2 className="font-sans text-[22px] font-bold text-white mb-2">Ready to earn your Bida Badge?</h2>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-relaxed">
+                  Finished all 7 guides? Take the final assessment to earn your <strong className="text-white/70">AI Foundations Explorer</strong> badge and personalized certificate.
+                </p>
+              </div>
+              <a
+                href="/learn/foundations/complete"
+                className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-7 py-3.5 rounded-xl shrink-0"
+              >
+                Take Final Assessment <ArrowRight size={16} />
+              </a>
+            </div>
           </div>
         </section>
 

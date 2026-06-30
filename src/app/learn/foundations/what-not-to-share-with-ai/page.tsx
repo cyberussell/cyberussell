@@ -274,10 +274,10 @@ export default function WhatNotToShareWithAIPage() {
               You've finished all 7 guides. You understand what AI is, where it helps, where it fails, why it makes things up, how to choose a tool, how to write a real prompt, and how to protect your information.
             </p>
             <a
-              href="/learn/foundations"
+              href="/learn/foundations/complete"
               className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-6 py-3 rounded-xl"
             >
-              Back to AI Foundations <ArrowRight size={14} />
+              Take Final Assessment 🏅 <ArrowRight size={14} />
             </a>
           </div>
         </section>
