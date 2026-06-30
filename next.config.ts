@@ -9,6 +9,15 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/platforms",
+        destination: "/earn/freelance-platforms",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

@@ -3,21 +3,25 @@ import SubscribeForm from "@/components/SubscribeForm";
 
 const linkColumns = [
   {
-    heading: "On This Site",
+    heading: "Explore",
     links: [
       { label: "Career Blueprints", href: "/careers" },
-      { label: "Discover Your Skill", href: "/discover" },
-      { label: "Recommended For You", href: "/resources" },
-      { label: "Find Work", href: "/platforms" },
+      { label: "AI Tools", href: "/tools" },
+      { label: "Ways to Earn", href: "/earn" },
+      { label: "Freelance Platforms", href: "/earn/freelance-platforms" },
+      { label: "Free Resources", href: "/resources" },
       { label: "Blog", href: "/blog" },
+      { label: "FAQ", href: "/faq" },
     ],
   },
   {
     heading: "Cyberussell",
     links: [
       { label: "About", href: "/about" },
-      { label: "Privacy Policy", href: "/privacy" },
       { label: "Contact", href: "/contact" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
+      { label: "Disclaimer", href: "/disclaimer" },
       { label: "UTM Builder", href: "/utm" },
     ],
   },
