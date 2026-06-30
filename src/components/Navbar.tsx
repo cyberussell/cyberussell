@@ -121,23 +121,13 @@ function NavItemDesktop({ item }: { item: NavItem }) {
 
   return (
     <div ref={ref} className="relative flex items-center h-full">
-      {item.href ? (
-        <div className="flex items-center gap-0">
-          <a href={item.href} className="flex items-center">
-            {label}
-          </a>
-          <button
-            onClick={() => setOpen((o) => !o)}
-            className="ml-0 p-1 text-white/70 hover:text-white transition-colors"
-            aria-label={`Toggle ${item.label} menu`}
-          >
-          </button>
-        </div>
-      ) : (
-        <button onClick={() => setOpen((o) => !o)} className="flex items-center h-full">
-          {label}
-        </button>
-      )}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center h-full text-[12px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors gap-1"
+      >
+        {item.label}
+        <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
       {open && <DropdownMenu items={item.dropdown} />}
     </div>
   );
