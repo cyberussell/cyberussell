@@ -139,40 +139,6 @@ export default function ToolsPage() {
           </div>
         </section>
 
-        {/* All Tools list */}
-        <section className="px-6 md:px-10 pb-20 max-w-7xl mx-auto">
-          <h2 className="font-sans text-[20px] font-bold text-white mb-6">All Tools</h2>
-          <div className="flex flex-col gap-3">
-            {tools.map((tool) => {
-              const Icon = ICON_MAP[tool.icon];
-              return (
-                <a
-                  key={tool.slug}
-                  href={`/tools/${tool.slug}`}
-                  className="bg-[#18181F] border border-white/[0.08] rounded-[12px] px-6 py-4 hover:border-white/20 transition-all group flex items-center gap-4"
-                >
-                  <div className="w-9 h-9 rounded-lg bg-white/[0.06] flex items-center justify-center shrink-0">
-                    {Icon && <Icon size={18} className="text-white/60" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <h3 className="text-white text-[15px] font-bold group-hover:text-[#FFD23F] transition-colors">
-                        {tool.name}
-                      </h3>
-                      <span className={`font-[family-name:var(--font-inter)] text-[10px] font-bold border px-2 py-0.5 rounded-full shrink-0 ${STATUS_STYLES[tool.status]}`}>
-                        {tool.status}
-                      </span>
-                    </div>
-                    <p className="text-white/45 text-[13px] font-[family-name:var(--font-inter)] truncate">
-                      {tool.shortDescription}
-                    </p>
-                  </div>
-                  <span className="text-white/30 group-hover:text-[#FFD23F] transition-colors shrink-0">→</span>
-                </a>
-              );
-            })}
-          </div>
-        </section>
       </main>
       <Footer />
     </>
