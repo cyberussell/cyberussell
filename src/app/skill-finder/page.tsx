@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
-import SkillFinder from "@/components/SkillFinder";
+import SkillFinderWidget from "@/components/SkillFinderWidget";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -40,8 +40,8 @@ export default function SkillFinderPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
-      <main className="min-h-screen bg-[#0F0F1A] py-12">
-        <SkillFinder />
+      <main className="min-h-screen bg-[#0F0F1A]">
+        <SkillFinderWidget />
       </main>
       <Footer />
     </>
