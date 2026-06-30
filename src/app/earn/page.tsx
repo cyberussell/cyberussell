@@ -27,13 +27,6 @@ const earnPaths: Array<{
   tag: string;
 }> = [
   {
-    icon: Briefcase,
-    title: "Freelance Platforms",
-    desc: "Upwork, Fiverr, OnlineJobs.ph, Contra — honest reviews of where to find clients and how much you can make.",
-    href: "/earn/freelance-platforms",
-    tag: "Best for beginners",
-  },
-  {
     icon: Users,
     title: "Remote Jobs",
     desc: "Full-time and part-time remote positions you can do from the Philippines — no office, no commute.",
@@ -131,6 +124,29 @@ export default function EarnPage() {
             </a>
             );
           })}
+        </div>
+
+        {/* Suggested */}
+        <div className="mt-12 bg-gradient-to-r from-blue-500/5 to-blue-500/5 border border-blue-500/20 rounded-2xl p-6">
+          <p className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-blue-400 uppercase tracking-[1px] mb-3">
+            Also Explore
+          </p>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h3 className="font-sans text-[18px] font-bold text-white mb-1">
+                Where to Apply & Earn
+              </h3>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60">
+                Discover the best platforms where Filipinos find clients and earn money.
+              </p>
+            </div>
+            <a
+              href="/earn/freelance-platforms"
+              className="inline-block bg-blue-500/20 border border-blue-500/40 text-white font-bold font-[family-name:var(--font-inter)] text-[13px] px-5 py-2.5 rounded-lg hover:bg-blue-500/30 hover:border-blue-500/60 transition-all shrink-0"
+            >
+              Explore →
+            </a>
+          </div>
         </div>
       </main>
       <Footer />
