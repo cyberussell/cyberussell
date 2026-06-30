@@ -21,8 +21,9 @@ interface NavItem {
 const navItems: NavItem[] = [
   {
     label: "START HERE",
+    href: "/start-here",
     dropdown: [
-      { label: "Discover Your Best Online Skill", href: "/discover" },
+      { label: "Discover Your Best Online Skill", href: "/skill-finder" },
       { label: "8 Ways to Earn Online", href: "/guides/8-ways" },
       { label: "Philippine Labor Market Guide", href: "/downloads/ph-labor-market-2026.pdf" },
     ],
@@ -42,15 +43,19 @@ const navItems: NavItem[] = [
   },
   {
     label: "LEARN",
+    href: "/learn",
     dropdown: [
-      { label: "AI", href: "/learn/ai" },
+      { label: "AI Tools & Prompts", href: "/learn/ai" },
+      { label: "Freelancing", href: "/learn/freelancing" },
       { label: "Website Creation", href: "/learn/website-creation" },
       { label: "SEO", href: "/learn/seo" },
       { label: "Online Jobs", href: "/learn/online-jobs" },
+      { label: "Career Guides", href: "/careers" },
     ],
   },
   {
     label: "EARN",
+    href: "/earn",
     dropdown: [
       { label: "Ways to Earn", href: "/earn" },
       { label: "Remote Jobs", href: "/earn/remote-jobs" },
@@ -122,11 +127,17 @@ function NavItemDesktop({ item }: { item: NavItem }) {
 
   return (
     <div ref={ref} className="relative flex items-center h-full">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center h-full text-[12px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors gap-1"
+      <a
+        href={item.href}
+        className="flex items-center h-full text-[12px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors"
       >
         {item.label}
+      </a>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="ml-1 p-1 text-white/70 hover:text-white transition-colors flex items-center"
+        aria-label={`Toggle ${item.label} menu`}
+      >
         <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
