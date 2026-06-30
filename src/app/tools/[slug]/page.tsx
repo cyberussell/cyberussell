@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ShieldCheck, Sparkles, UserCircle, type LucideIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { tools, getToolBySlug, getRelatedTools } from "@/lib/tools-data";
+
+const ICON_MAP: Record<string, LucideIcon> = { ShieldCheck, Sparkles, UserCircle };
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -50,6 +53,7 @@ export default async function ToolPage({ params }: Props) {
   if (!tool) notFound();
 
   const related = getRelatedTools(tool.relatedTools);
+  const Icon = ICON_MAP[tool.icon];
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -94,7 +98,9 @@ export default async function ToolPage({ params }: Props) {
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-[40px]">{tool.icon}</span>
+              <div className="w-12 h-12 rounded-xl bg-white/[0.06] flex items-center justify-center">
+                {Icon && <Icon size={24} className="text-white/70" />}
+              </div>
               <span
                 className={`font-[family-name:var(--font-inter)] text-[11px] font-bold border px-2.5 py-1 rounded-full ${STATUS_STYLES[tool.status]}`}
               >
@@ -162,13 +168,17 @@ export default async function ToolPage({ params }: Props) {
                 Related AI Tools
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {related.map((rt) => (
+                {related.map((rt) => {
+                  const RelIcon = ICON_MAP[rt.icon];
+                  return (
                   <a
                     key={rt.slug}
                     href={`/tools/${rt.slug}`}
                     className="bg-[#18181F] border border-white/[0.08] rounded-[12px] p-4 hover:border-white/20 transition-all group flex items-center gap-3"
                   >
-                    <span className="text-[22px]">{rt.icon}</span>
+                    <div className="w-9 h-9 rounded-lg bg-white/[0.06] flex items-center justify-center shrink-0">
+                      {RelIcon && <RelIcon size={18} className="text-white/60" />}
+                    </div>
                     <div>
                       <p className="text-white text-[14px] font-bold group-hover:text-[#FFD23F] transition-colors">
                         {rt.name}
@@ -178,7 +188,8 @@ export default async function ToolPage({ params }: Props) {
                       </p>
                     </div>
                   </a>
-                ))}
+                  );
+                })}
               </div>
             </section>
           )}

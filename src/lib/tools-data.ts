@@ -15,7 +15,7 @@ export interface Tool {
   name: string;
   shortDescription: string;
   longDescription: string;
-  icon: string;
+  icon: string; // Lucide icon name
   category: ToolCategory;
   status: ToolStatus;
   ctaLabel: string;
@@ -36,7 +36,7 @@ export const tools: Tool[] = [
       "Paste any job posting or online opportunity. AI detects red flags and scam patterns common in the Philippines.",
     longDescription:
       "Don't fall for fake job offers or investment scams. Paste the job post, message, or opportunity text and our AI will analyze it for red flags — unrealistic pay, vague employers, suspicious links, and common scam patterns targeting Filipinos.",
-    icon: "🛡️",
+    icon: "ShieldCheck",
     category: "Safety",
     status: "Free",
     ctaLabel: "Check Now — It's Free",
@@ -76,7 +76,7 @@ export const tools: Tool[] = [
       "Score your AI prompts, see what's weak, and get upgraded versions for Claude, ChatGPT, and Gemini.",
     longDescription:
       "Most Filipinos use AI the wrong way — vague prompts get vague results. Paste your prompt and our AI scores it, explains what's missing, and rewrites it into a high-performance version for Claude, ChatGPT, or Gemini.",
-    icon: "✏️",
+    icon: "Sparkles",
     category: "Productivity",
     status: "Free",
     ctaLabel: "Train Your Prompts — Free",
@@ -115,7 +115,7 @@ export const tools: Tool[] = [
       "Paste your skills and experience. AI writes a professional freelancer bio optimized for Upwork, OJP, Fiverr, or LinkedIn.",
     longDescription:
       "Your bio is the first thing clients read. A weak bio costs you jobs. Paste your skills, experience, and target platform — our AI writes a compelling professional bio that positions you correctly and converts browsers into clients.",
-    icon: "📝",
+    icon: "UserCircle",
     category: "Freelancing",
     status: "Free",
     ctaLabel: "Generate My Bio — Free",
@@ -146,37 +146,6 @@ export const tools: Tool[] = [
       title: "Bio Generator — Free AI Freelancer Bio for Upwork, OJP & Fiverr | Cyberussell",
       description:
         "Generate a professional freelancer bio in seconds. Free AI tool optimized for Upwork, OnlineJobs.ph, Fiverr, and LinkedIn.",
-    },
-  },
-  {
-    slug: "skill-finder",
-    name: "Skill Finder",
-    shortDescription:
-      "Answer a few questions and discover the online skill that fits your background, time, and income goal.",
-    longDescription:
-      "Not sure what skill to learn? The Skill Finder asks about your background, available time, income target, and preferences — then recommends the best online skill for you with a learning path.",
-    icon: "🔍",
-    category: "Career",
-    status: "Coming Soon",
-    ctaLabel: "Coming Soon",
-    ctaUrl: "/tools/skill-finder",
-    featured: false,
-    relatedTools: ["bio-generator", "scam-scanner"],
-    relatedGuides: [
-      { label: "Discover Your Best Online Skill", href: "/discover" },
-      { label: "8 Ways to Earn Online as a Filipino", href: "/guides/8-ways" },
-    ],
-    relatedArticles: [],
-    faq: [
-      {
-        question: "When will Skill Finder be available?",
-        answer: "We are building it now. Join the newsletter to be notified when it launches.",
-      },
-    ],
-    seo: {
-      title: "Skill Finder — Discover the Best Online Skill for You | Cyberussell",
-      description:
-        "Coming soon: Answer a few questions and find the online skill that matches your background, schedule, and income goal.",
     },
   },
 ];

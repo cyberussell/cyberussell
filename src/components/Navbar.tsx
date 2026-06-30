@@ -14,14 +14,12 @@ interface DropdownItem {
 interface NavItem {
   label: string;
   href?: string;
-  emoji?: string;
   dropdown?: DropdownItem[];
 }
 
 const navItems: NavItem[] = [
   {
     label: "START HERE",
-    emoji: "⭐",
     dropdown: [
       { label: "Discover Your Best Online Skill", href: "/discover" },
       { label: "8 Ways to Earn Online", href: "/guides/8-ways" },
@@ -30,33 +28,26 @@ const navItems: NavItem[] = [
   },
   {
     label: "AI TOOLS",
-    emoji: "🤖",
     href: "/tools",
     dropdown: [
       { label: "View All AI Tools", href: "/tools" },
       { label: "──────────────", href: "#", divider: true },
       { label: "Scam Checker", href: "/tools/scam-scanner" },
-      { label: "Skill Finder", href: "/tools/skill-finder", badge: "Coming Soon" },
       { label: "Prompt Trainer", href: "/tools/prompt-forge" },
       { label: "Bio Generator", href: "/tools/bio-generator" },
-      { label: "Future AI Tools →", href: "/tools#coming-soon" },
     ],
   },
   {
     label: "LEARN",
-    emoji: "📚",
     dropdown: [
       { label: "AI", href: "/learn/ai" },
-      { label: "Freelancing", href: "/learn/freelancing" },
       { label: "Website Creation", href: "/learn/website-creation" },
       { label: "SEO", href: "/learn/seo" },
       { label: "Online Jobs", href: "/learn/online-jobs" },
-      { label: "Career Guides", href: "/learn/career-guides" },
     ],
   },
   {
     label: "EARN",
-    emoji: "💼",
     dropdown: [
       { label: "Ways to Earn", href: "/earn" },
       { label: "Freelance Platforms", href: "/earn/freelance-platforms" },
@@ -64,13 +55,11 @@ const navItems: NavItem[] = [
       { label: "Affiliate Marketing", href: "/earn/affiliate-marketing" },
       { label: "Digital Products", href: "/earn/digital-products" },
       { label: "Website Business", href: "/earn/website-business" },
-      { label: "Career Blueprints", href: "/careers" },
       { label: "Success Stories", href: "/earn/success-stories" },
     ],
   },
   {
     label: "SHOP",
-    emoji: "🛍",
     href: "/shop",
   },
 ];
@@ -117,7 +106,6 @@ function NavItemDesktop({ item }: { item: NavItem }) {
 
   const label = (
     <span className="text-[12px] font-bold font-[family-name:var(--font-inter)] tracking-[0.05em] uppercase text-white/70 hover:text-white transition-colors flex items-center gap-1">
-      {item.emoji && <span>{item.emoji}</span>}
       {item.label}
       {item.dropdown && <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />}
     </span>
@@ -211,7 +199,6 @@ export default function Navbar() {
                     onClick={handleNavClick}
                     className="flex items-center gap-2 text-[15px] font-bold font-[family-name:var(--font-inter)] tracking-[0.04em] uppercase py-3.5 text-white/70"
                   >
-                    {item.emoji && <span>{item.emoji}</span>}
                     {item.label}
                   </a>
                 ) : (
@@ -223,7 +210,6 @@ export default function Navbar() {
                       className="flex items-center justify-between w-full py-3.5 text-[15px] font-bold font-[family-name:var(--font-inter)] tracking-[0.04em] uppercase text-white/70"
                     >
                       <span className="flex items-center gap-2">
-                        {item.emoji && <span>{item.emoji}</span>}
                         {item.label}
                       </span>
                       <ChevronDown
