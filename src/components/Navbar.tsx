@@ -165,13 +165,13 @@ export default function Navbar() {
       <div className="flex justify-between items-center w-full h-[80px] px-6 md:px-10 max-w-7xl mx-auto">
         {/* Logo */}
         <a href="/" className="flex items-center" onClick={handleNavClick}>
-          <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
             <Image
               src="/logo.png"
               alt="Cyberussell"
-              width={64}
-              height={64}
-              className="h-16 w-auto drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]"
+              width={80}
+              height={80}
+              className="h-20 w-20 object-cover"
             />
           </div>
           <span className="font-sans text-[28px] font-bold tracking-tight ml-3">
