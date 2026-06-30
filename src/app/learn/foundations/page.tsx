@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const topics = [
-  { title: "What AI Really Is", desc: "Beyond the hype — what's actually happening under the hood.", soon: false },
+  { title: "What AI Really Is", desc: "Beyond the hype — what's actually happening under the hood.", soon: false, href: "/learn/foundations/what-ai-actually-is" },
   { title: "AI Strengths vs Weaknesses", desc: "Know what AI does well, and where it fails badly.", soon: false },
   { title: "AI Hallucinations", desc: "Why AI makes things up, and how to catch it.", soon: true },
   { title: "Choosing the Right AI", desc: "ChatGPT vs Claude vs Gemini — when to use which.", soon: true },
@@ -55,9 +55,12 @@ export default function FoundationsPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {topics.map((topic) => (
-              <div
+            {topics.map((topic) => {
+              const CardTag = topic.href ? "a" : "div";
+              return (
+              <CardTag
                 key={topic.title}
+                {...(topic.href ? { href: topic.href } : {})}
                 className={`bg-[#18181F] border rounded-[12px] p-5 flex items-start gap-4 ${
                   topic.soon ? "border-white/[0.06] opacity-60" : "border-white/[0.08] hover:border-white/20 transition-all cursor-pointer"
                 }`}
@@ -76,8 +79,9 @@ export default function FoundationsPage() {
                     <span className="mt-2 inline-block text-[10px] font-bold font-[family-name:var(--font-inter)] text-white/25 uppercase tracking-[1px]">Coming soon</span>
                   )}
                 </div>
-              </div>
-            ))}
+              </CardTag>
+              );
+            })}
           </div>
         </section>
 
