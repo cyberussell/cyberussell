@@ -19,6 +19,16 @@ export async function POST(req: NextRequest) {
     return res;
   }
 
+  if (action === "google_token") {
+    const { name, email, avatar } = body;
+    if (!email) return NextResponse.json({ error: "No email provided" }, { status: 400 });
+    const learner = createLearner(name || email, email, avatar || "", "google");
+    const token = createSessionToken(learner.id);
+    const res = NextResponse.json({ ok: true, learner });
+    res.cookies.set(SESSION_COOKIE, token, COOKIE_OPTS);
+    return res;
+  }
+
   if (action === "google") {
     const { credential } = body;
     if (!credential) return NextResponse.json({ error: "No credential" }, { status: 400 });

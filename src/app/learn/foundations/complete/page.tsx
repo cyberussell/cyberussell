@@ -7,7 +7,13 @@ import { Medal, ScrollText, Save, Rocket, Monitor, LayoutDashboard, Loader2, Ale
 
 declare global {
   interface Window {
-    google?: { accounts: { id: { initialize: (c: object) => void; prompt: () => void } } };
+    google?: {
+      accounts: {
+        oauth2: {
+          initTokenClient: (c: object) => { requestAccessToken: () => void };
+        };
+      };
+    };
     FB?: { init: (c: object) => void; login: (cb: (r: { authResponse?: { accessToken: string; userID: string } }) => void, opts: object) => void };
     fbAsyncInit?: () => void;
   }
@@ -34,23 +40,15 @@ export default function CompletePage() {
   const fbAppId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
 
   useEffect(() => {
-    // Check if already logged in — redirect to assessment
     fetch("/api/learner/auth").then((r) => r.json()).then((d) => {
       if (d.learner) window.location.href = "/learn/foundations/assessment";
     });
 
-    // Load Google Identity Services
+    // Load Google Identity Services (oauth2 token client — opens a real popup)
     if (googleClientId) {
       const s = document.createElement("script");
       s.src = "https://accounts.google.com/gsi/client";
-      s.onload = () => {
-        window.google?.accounts.id.initialize({
-          client_id: googleClientId,
-          callback: handleGoogleCredential,
-          ux_mode: "popup",
-        });
-        setGoogleReady(true);
-      };
+      s.onload = () => setGoogleReady(true);
       document.head.appendChild(s);
     }
 
@@ -64,31 +62,62 @@ export default function CompletePage() {
       s.src = "https://connect.facebook.net/en_US/sdk.js";
       document.head.appendChild(s);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function handleGoogleCredential(response: { credential: string }) {
-    setLoading(true); setError("");
-    const res = await fetch("/api/learner/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "google", credential: response.credential }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      window.location.href = "/learn/foundations/assessment";
-    } else {
-      setError(data.error || "Google sign-in failed");
-      setLoading(false);
-    }
-  }
-
   function signInWithGoogle() {
-    if (!googleReady || !window.google) return;
-    window.google.accounts.id.prompt();
+    if (!googleReady || !window.google || !googleClientId) {
+      setMode("signin");
+      return;
+    }
+    setLoading(true);
+    setError("");
+
+    const tokenClient = window.google.accounts.oauth2.initTokenClient({
+      client_id: googleClientId,
+      scope: "email profile",
+      callback: async (response: { access_token?: string; error?: string }) => {
+        if (response.error || !response.access_token) {
+          setError("Google sign-in was cancelled or failed.");
+          setLoading(false);
+          return;
+        }
+        try {
+          // Get user info from Google
+          const userRes = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
+            headers: { Authorization: `Bearer ${response.access_token}` },
+          });
+          const googleUser = await userRes.json();
+
+          const res = await fetch("/api/learner/auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "google_token",
+              name: googleUser.name,
+              email: googleUser.email,
+              avatar: googleUser.picture,
+            }),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            window.location.href = "/learn/foundations/assessment";
+          } else {
+            setError(data.error || "Sign-in failed. Please try again.");
+            setLoading(false);
+          }
+        } catch {
+          setError("Network error. Please try again.");
+          setLoading(false);
+        }
+      },
+    });
+
+    tokenClient.requestAccessToken();
   }
 
   function signInWithFacebook() {
-    if (!fbReady || !window.FB) return;
+    if (!fbReady || !window.FB) { setMode("signin"); return; }
     window.FB.login(
       async (response) => {
         if (!response.authResponse) { setError("Facebook sign-in cancelled"); return; }
@@ -134,7 +163,6 @@ export default function CompletePage() {
       <main className="min-h-screen bg-[#0F0F1A] flex items-center justify-center px-6 py-20">
         <div className="w-full max-w-[520px]">
 
-          {/* Celebration confetti area */}
           <div className="text-center mb-8">
             <div className="text-[56px] mb-4">🎉</div>
             <h1 className="font-sans text-[32px] md:text-[40px] font-bold text-white mb-3 leading-tight">
@@ -146,7 +174,6 @@ export default function CompletePage() {
             </p>
           </div>
 
-          {/* Benefits card */}
           <div className="bg-[#14141e] border border-white/[0.08] rounded-2xl p-6 mb-6">
             <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-relaxed mb-5 text-center">
               You&rsquo;re one step away from earning your first Cyberussell achievement.
@@ -163,7 +190,6 @@ export default function CompletePage() {
               ))}
             </div>
 
-            {/* Auth area */}
             {error && (
               <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 mb-4">
                 <AlertCircle size={14} className="text-red-400 shrink-0" />
@@ -173,19 +199,17 @@ export default function CompletePage() {
 
             {mode === "celebrate" && (
               <div className="space-y-3">
-                {/* Google */}
                 <button
-                  onClick={googleClientId ? signInWithGoogle : () => setMode("signin")}
+                  onClick={signInWithGoogle}
                   disabled={loading}
                   className="w-full flex items-center justify-center gap-3 py-3.5 px-5 rounded-xl bg-white text-[#1a1a1a] font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-white/90 transition-colors disabled:opacity-50"
                 >
-                  {loading ? <Loader2 size={16} className="animate-spin" /> : (
+                  {loading ? <Loader2 size={16} className="animate-spin text-gray-600" /> : (
                     <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z" /><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z" /><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z" /><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z" /></svg>
                   )}
                   Continue with Google
                 </button>
 
-                {/* Facebook */}
                 <button
                   onClick={fbAppId ? signInWithFacebook : () => setMode("signin")}
                   disabled={loading}
@@ -234,7 +258,12 @@ export default function CompletePage() {
                 >
                   {loading ? <><Loader2 size={15} className="animate-spin" /> Creating account...</> : "Create Free Account & Continue"}
                 </button>
-                <div className="text-center">
+                <div className="flex gap-3 justify-center pt-1">
+                  {googleClientId && (
+                    <button type="button" onClick={signInWithGoogle} disabled={loading} className="font-[family-name:var(--font-inter)] text-[12px] text-white/30 hover:text-white/50 transition-colors">
+                      Use Google instead
+                    </button>
+                  )}
                   <button type="button" onClick={() => setMode("celebrate")} className="font-[family-name:var(--font-inter)] text-[12px] text-white/30 hover:text-white/50 transition-colors">
                     ← Back
                   </button>
