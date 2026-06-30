@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Briefcase, Users, Link2, Package, Globe, Zap, type LucideIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -18,48 +19,54 @@ export const metadata: Metadata = {
   },
 };
 
-const earnPaths = [
+const earnPaths: Array<{
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  href: string;
+  tag: string;
+}> = [
   {
-    emoji: "💼",
+    icon: Briefcase,
     title: "Freelance Platforms",
     desc: "Upwork, Fiverr, OnlineJobs.ph, Contra — honest reviews of where to find clients and how much you can make.",
     href: "/earn/freelance-platforms",
     tag: "Best for beginners",
   },
   {
-    emoji: "🏢",
+    icon: Users,
     title: "Remote Jobs",
     desc: "Full-time and part-time remote positions you can do from the Philippines — no office, no commute.",
     href: "/earn/remote-jobs",
     tag: "Stable income",
   },
   {
-    emoji: "🔗",
+    icon: Link2,
     title: "Affiliate Marketing",
     desc: "Earn commission by promoting products on Facebook, TikTok, or your blog. No capital required.",
     href: "/earn/affiliate-marketing",
     tag: "Low barrier",
   },
   {
-    emoji: "📦",
+    icon: Package,
     title: "Digital Products",
     desc: "Sell ebooks, templates, prompt packs, and courses online. Earn while you sleep.",
     href: "/earn/digital-products",
     tag: "Passive income",
   },
   {
-    emoji: "🌐",
+    icon: Globe,
     title: "Website Business",
     desc: "Build and sell websites, run a web design service, or monetize your own site.",
     href: "/earn/website-business",
     tag: "High ceiling",
   },
   {
-    emoji: "🗺️",
-    title: "Career Blueprints",
-    desc: "AI-generated career roadmaps for specific roles — skill paths, income ranges, and first steps.",
-    href: "/careers",
-    tag: "Step-by-step",
+    icon: Zap,
+    title: "Success Stories",
+    desc: "Real stories from Filipinos who earn online. Freelancers, remote workers, and entrepreneurs sharing their journey.",
+    href: "/earn/success-stories",
+    tag: "Real examples",
   },
 ];
 
@@ -98,13 +105,17 @@ export default function EarnPage() {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {earnPaths.map((path) => (
+          {earnPaths.map((path) => {
+            const Icon = path.icon;
+            return (
             <a
               key={path.href}
               href={path.href}
               className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 hover:border-white/20 hover:bg-[#1e1e2a] transition-all group flex flex-col"
             >
-              <span className="text-[32px] mb-3">{path.emoji}</span>
+              <div className="w-10 h-10 rounded-lg bg-white/[0.06] flex items-center justify-center mb-3">
+                <Icon size={20} className="text-white/70" />
+              </div>
               <span className="inline-block text-[10px] font-bold font-[family-name:var(--font-inter)] tracking-[0.08em] uppercase text-[#00C97A] bg-[#00C97A]/8 border border-[#00C97A]/20 px-2.5 py-1 rounded-full mb-3 w-fit">
                 {path.tag}
               </span>
@@ -118,7 +129,8 @@ export default function EarnPage() {
                 Explore →
               </span>
             </a>
-          ))}
+            );
+          })}
         </div>
       </main>
       <Footer />
