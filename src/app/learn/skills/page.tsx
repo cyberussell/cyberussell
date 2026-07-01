@@ -84,6 +84,19 @@ export default function SkillsPage() {
         </section>
 
         <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
+          <div className="bg-[#FB923C]/[0.06] border border-[#FB923C]/20 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FB923C] uppercase tracking-[2px] mb-1">Ready to prove it?</p>
+              <h3 className="font-sans text-[18px] font-bold text-white mb-1">Take the Final Assessment</h3>
+              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45">10 questions · Pass 75% · Earn your Digital Skills Bida Badge</p>
+            </div>
+            <a
+              href="/learn/skills/assessment"
+              className="shrink-0 flex items-center gap-2 px-6 py-3 rounded-xl bg-[#FB923C] text-white font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-[#FB923C]/90 transition-colors"
+            >
+              Start Assessment →
+            </a>
+          </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <a href="/learn/workflows" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/40 hover:text-white transition-colors">
               ← AI Workflows
