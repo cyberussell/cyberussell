@@ -1,19 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import fs from "fs";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
 import Anthropic from "@anthropic-ai/sdk";
 
-const PILLARS_DIR = path.join(process.cwd(), "src/data/pillars");
 const SESSION_NAME = "mc-session";
+
+function getAdmin() {
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SECRET_KEY!);
+}
 
 async function isAuth(): Promise<boolean> {
   const jar = await cookies();
   return !!jar.get(SESSION_NAME)?.value;
 }
 
-function ensureDir() {
-  if (!fs.existsSync(PILLARS_DIR)) fs.mkdirSync(PILLARS_DIR, { recursive: true });
+async function getPillar(slug: string) {
+  const db = getAdmin();
+  const { data } = await db.from("pillars").select("data").eq("slug", slug).single();
+  return data?.data ?? null;
+}
+
+async function savePillar(slug: string, pillar: Record<string, unknown>) {
+  const db = getAdmin();
+  await db.from("pillars").upsert({ slug, data: pillar, status: (pillar._status as string) ?? "draft", updated_at: new Date().toISOString() }, { onConflict: "slug" });
+}
+
+function parseJSON(raw: string): Record<string, unknown> {
+  try { return JSON.parse(raw); } catch {
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error("AI returned invalid JSON");
+    return JSON.parse(match[0]);
+  }
 }
 
 const SYSTEM_PROMPT = `You are the official instructional designer for Cyberussell — a guided learning ecosystem that helps Filipinos build practical AI skills, digital skills, freelancing skills, business skills, and online income opportunities.
@@ -49,7 +66,6 @@ You must respond ONLY with valid JSON — no markdown, no explanation, no code f
 
 export async function POST(req: NextRequest) {
   if (!(await isAuth())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  ensureDir();
 
   const body = await req.json();
   const { name, description, difficulty, estimated_duration, target_audience, learning_outcome, type = "pillar", pillar_slug, context } = body;
@@ -58,10 +74,8 @@ export async function POST(req: NextRequest) {
 
   if (type === "pillar") {
     const slug = name.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-    const filePath = path.join(PILLARS_DIR, `${slug}.json`);
-    if (fs.existsSync(filePath)) {
-      return NextResponse.json({ error: "A pillar with this name already exists. Choose a different name." }, { status: 409 });
-    }
+    const existing = await getPillar(slug);
+    if (existing) return NextResponse.json({ error: "A pillar with this name already exists. Choose a different name." }, { status: 409 });
 
     const userPrompt = `Generate a complete learning pillar for the Cyberussell ecosystem.
 
@@ -125,35 +139,17 @@ Generate 3-5 modules. Each module should have 3-5 lessons. Make everything pract
 
     const rawText = message.content[0].type === "text" ? message.content[0].text : "";
     let generated: Record<string, unknown>;
-    try {
-      generated = JSON.parse(rawText);
-    } catch {
-      const match = rawText.match(/\{[\s\S]*\}/);
-      if (!match) return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      generated = JSON.parse(match[0]);
-    }
+    try { generated = parseJSON(rawText); }
+    catch { return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 }); }
 
-    const pillar = {
-      slug,
-      name,
-      description,
-      difficulty,
-      estimated_duration,
-      target_audience,
-      learning_outcome,
-      _status: "draft",
-      generated_at: new Date().toISOString(),
-      ...generated,
-    };
-
-    fs.writeFileSync(filePath, JSON.stringify(pillar, null, 2), "utf-8");
+    const pillar = { slug, name, description, difficulty, estimated_duration, target_audience, learning_outcome, _status: "draft", generated_at: new Date().toISOString(), ...generated };
+    await savePillar(slug, pillar);
     return NextResponse.json({ ok: true, slug, pillar });
   }
 
   if (type === "module" && pillar_slug) {
-    const filePath = path.join(PILLARS_DIR, `${pillar_slug}.json`);
-    if (!fs.existsSync(filePath)) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
-    const pillar = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    const pillar = await getPillar(pillar_slug);
+    if (!pillar) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
 
     const userPrompt = `Generate a new module for this pillar: "${pillar.name}"
 Context: ${context || "Add a new module that fits the pillar's curriculum"}
@@ -176,32 +172,20 @@ Return ONLY this JSON:
   "checklist": ["item 1", "item 2"]
 }`;
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 3000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-
+    const message = await client.messages.create({ model: "claude-sonnet-4-6", max_tokens: 3000, system: SYSTEM_PROMPT, messages: [{ role: "user", content: userPrompt }] });
     const rawText = message.content[0].type === "text" ? message.content[0].text : "";
     let newModule: Record<string, unknown>;
-    try {
-      newModule = JSON.parse(rawText);
-    } catch {
-      const match = rawText.match(/\{[\s\S]*\}/);
-      if (!match) return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      newModule = JSON.parse(match[0]);
-    }
+    try { newModule = parseJSON(rawText); }
+    catch { return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 }); }
 
-    pillar.modules = [...(pillar.modules || []), newModule];
-    fs.writeFileSync(filePath, JSON.stringify(pillar, null, 2), "utf-8");
+    pillar.modules = [...((pillar.modules as unknown[]) || []), newModule];
+    await savePillar(pillar_slug, pillar);
     return NextResponse.json({ ok: true, module: newModule });
   }
 
   if (type === "quiz" && pillar_slug) {
-    const filePath = path.join(PILLARS_DIR, `${pillar_slug}.json`);
-    if (!fs.existsSync(filePath)) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
-    const pillar = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    const pillar = await getPillar(pillar_slug);
+    if (!pillar) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
 
     const userPrompt = `Generate a complete quiz for: "${pillar.name}"
 Context: ${context || "Full pillar assessment"}
@@ -224,32 +208,20 @@ Return ONLY this JSON:
 }
 Generate 10 questions. Mix multiple choice and true/false.`;
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 4000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-
+    const message = await client.messages.create({ model: "claude-sonnet-4-6", max_tokens: 4000, system: SYSTEM_PROMPT, messages: [{ role: "user", content: userPrompt }] });
     const rawText = message.content[0].type === "text" ? message.content[0].text : "";
     let quiz: Record<string, unknown>;
-    try {
-      quiz = JSON.parse(rawText);
-    } catch {
-      const match = rawText.match(/\{[\s\S]*\}/);
-      if (!match) return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      quiz = JSON.parse(match[0]);
-    }
+    try { quiz = parseJSON(rawText); }
+    catch { return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 }); }
 
     pillar.quiz = quiz;
-    fs.writeFileSync(filePath, JSON.stringify(pillar, null, 2), "utf-8");
+    await savePillar(pillar_slug, pillar);
     return NextResponse.json({ ok: true, quiz });
   }
 
   if (type === "worksheet" && pillar_slug) {
-    const filePath = path.join(PILLARS_DIR, `${pillar_slug}.json`);
-    if (!fs.existsSync(filePath)) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
-    const pillar = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    const pillar = await getPillar(pillar_slug);
+    if (!pillar) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
 
     const userPrompt = `Generate a practical worksheet for: "${pillar.name}"
 Context: ${context || "Hands-on practice worksheet"}
@@ -272,32 +244,20 @@ Return ONLY this JSON:
 }
 Generate 3-4 sections with 2-3 exercises each.`;
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 3000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-
+    const message = await client.messages.create({ model: "claude-sonnet-4-6", max_tokens: 3000, system: SYSTEM_PROMPT, messages: [{ role: "user", content: userPrompt }] });
     const rawText = message.content[0].type === "text" ? message.content[0].text : "";
     let worksheet: Record<string, unknown>;
-    try {
-      worksheet = JSON.parse(rawText);
-    } catch {
-      const match = rawText.match(/\{[\s\S]*\}/);
-      if (!match) return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      worksheet = JSON.parse(match[0]);
-    }
+    try { worksheet = parseJSON(rawText); }
+    catch { return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 }); }
 
     pillar.worksheet = worksheet;
-    fs.writeFileSync(filePath, JSON.stringify(pillar, null, 2), "utf-8");
+    await savePillar(pillar_slug, pillar);
     return NextResponse.json({ ok: true, worksheet });
   }
 
   if (type === "cheat_sheet" && pillar_slug) {
-    const filePath = path.join(PILLARS_DIR, `${pillar_slug}.json`);
-    if (!fs.existsSync(filePath)) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
-    const pillar = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    const pillar = await getPillar(pillar_slug);
+    if (!pillar) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
 
     const userPrompt = `Generate a printable cheat sheet for: "${pillar.name}"
 Context: ${context || "Key concepts and quick reference"}
@@ -320,32 +280,20 @@ Return ONLY this JSON:
 }
 Generate 4-5 sections with 4-6 items each. Make it scannable.`;
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 3000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-
+    const message = await client.messages.create({ model: "claude-sonnet-4-6", max_tokens: 3000, system: SYSTEM_PROMPT, messages: [{ role: "user", content: userPrompt }] });
     const rawText = message.content[0].type === "text" ? message.content[0].text : "";
     let cheatSheet: Record<string, unknown>;
-    try {
-      cheatSheet = JSON.parse(rawText);
-    } catch {
-      const match = rawText.match(/\{[\s\S]*\}/);
-      if (!match) return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      cheatSheet = JSON.parse(match[0]);
-    }
+    try { cheatSheet = parseJSON(rawText); }
+    catch { return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 }); }
 
     pillar.cheat_sheet = cheatSheet;
-    fs.writeFileSync(filePath, JSON.stringify(pillar, null, 2), "utf-8");
+    await savePillar(pillar_slug, pillar);
     return NextResponse.json({ ok: true, cheat_sheet: cheatSheet });
   }
 
   if (type === "certificate" && pillar_slug) {
-    const filePath = path.join(PILLARS_DIR, `${pillar_slug}.json`);
-    if (!fs.existsSync(filePath)) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
-    const pillar = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    const pillar = await getPillar(pillar_slug);
+    if (!pillar) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
 
     const userPrompt = `Generate certificate details for completing: "${pillar.name}"
 
@@ -360,32 +308,20 @@ Return ONLY this JSON:
   "issuer": "Cyberussell Learning System"
 }`;
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-
+    const message = await client.messages.create({ model: "claude-sonnet-4-6", max_tokens: 1000, system: SYSTEM_PROMPT, messages: [{ role: "user", content: userPrompt }] });
     const rawText = message.content[0].type === "text" ? message.content[0].text : "";
     let certificate: Record<string, unknown>;
-    try {
-      certificate = JSON.parse(rawText);
-    } catch {
-      const match = rawText.match(/\{[\s\S]*\}/);
-      if (!match) return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      certificate = JSON.parse(match[0]);
-    }
+    try { certificate = parseJSON(rawText); }
+    catch { return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 }); }
 
     pillar.certificate = certificate;
-    fs.writeFileSync(filePath, JSON.stringify(pillar, null, 2), "utf-8");
+    await savePillar(pillar_slug, pillar);
     return NextResponse.json({ ok: true, certificate });
   }
 
   if (type === "bida_badge" && pillar_slug) {
-    const filePath = path.join(PILLARS_DIR, `${pillar_slug}.json`);
-    if (!fs.existsSync(filePath)) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
-    const pillar = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    const pillar = await getPillar(pillar_slug);
+    if (!pillar) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
 
     const userPrompt = `Generate a Bida Badge definition for completing: "${pillar.name}"
 "Bida" means hero/star in Filipino. This badge celebrates achievement.
@@ -401,32 +337,20 @@ Return ONLY this JSON:
   "celebration_message": "Congratulations message in Filipino/English mix"
 }`;
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-
+    const message = await client.messages.create({ model: "claude-sonnet-4-6", max_tokens: 1000, system: SYSTEM_PROMPT, messages: [{ role: "user", content: userPrompt }] });
     const rawText = message.content[0].type === "text" ? message.content[0].text : "";
     let badge: Record<string, unknown>;
-    try {
-      badge = JSON.parse(rawText);
-    } catch {
-      const match = rawText.match(/\{[\s\S]*\}/);
-      if (!match) return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      badge = JSON.parse(match[0]);
-    }
+    try { badge = parseJSON(rawText); }
+    catch { return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 }); }
 
     pillar.bida_badge = badge;
-    fs.writeFileSync(filePath, JSON.stringify(pillar, null, 2), "utf-8");
+    await savePillar(pillar_slug, pillar);
     return NextResponse.json({ ok: true, bida_badge: badge });
   }
 
   if (type === "prompt_library" && pillar_slug) {
-    const filePath = path.join(PILLARS_DIR, `${pillar_slug}.json`);
-    if (!fs.existsSync(filePath)) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
-    const pillar = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    const pillar = await getPillar(pillar_slug);
+    if (!pillar) return NextResponse.json({ error: "Pillar not found" }, { status: 404 });
 
     const userPrompt = `Generate a prompt library for learners studying: "${pillar.name}"
 
@@ -445,25 +369,14 @@ Return ONLY this JSON:
 }
 Generate 4 categories with 3-4 prompts each. Include ChatGPT, Claude, and Gemini-friendly prompts.`;
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 3000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-
+    const message = await client.messages.create({ model: "claude-sonnet-4-6", max_tokens: 3000, system: SYSTEM_PROMPT, messages: [{ role: "user", content: userPrompt }] });
     const rawText = message.content[0].type === "text" ? message.content[0].text : "";
     let library: Record<string, unknown>;
-    try {
-      library = JSON.parse(rawText);
-    } catch {
-      const match = rawText.match(/\{[\s\S]*\}/);
-      if (!match) return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      library = JSON.parse(match[0]);
-    }
+    try { library = parseJSON(rawText); }
+    catch { return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 }); }
 
     pillar.prompt_library = library;
-    fs.writeFileSync(filePath, JSON.stringify(pillar, null, 2), "utf-8");
+    await savePillar(pillar_slug, pillar);
     return NextResponse.json({ ok: true, prompt_library: library });
   }
 
