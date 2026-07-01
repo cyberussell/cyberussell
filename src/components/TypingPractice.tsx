@@ -220,15 +220,17 @@ export default function TypingPractice() {
   // ── Character renderer ───────────────────────────────────────────────────────
   function renderPassage() {
     return passage.split("").map((char, i) => {
-      let cls = "text-white/25"; // upcoming
+      let cls = "text-white/30"; // upcoming
       if (i < typed.length) {
         cls = typed[i] === char ? "text-[#34D399]" : "text-red-400 bg-red-500/20 rounded";
       } else if (i === typed.length) {
-        cls = "text-white border-b-2 border-[#FFD23F] animate-pulse";
+        cls = "text-white border-b-2 border-[#FFD23F]";
       }
+      // Render space as a non-breaking space so it doesn't collapse
+      const display = char === " " ? " " : char;
       return (
-        <span key={i} className={`font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] leading-[2] ${cls}`}>
-          {char}
+        <span key={i} className={cls} style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: "22px", lineHeight: "2.2" }}>
+          {display}
         </span>
       );
     });
@@ -287,7 +289,7 @@ export default function TypingPractice() {
       {/* ── Text passage ── */}
       {!done ? (
         <div className="bg-[#111118] border border-white/[0.07] rounded-2xl p-6 md:p-8 mb-8 cursor-text relative">
-          <div className="flex flex-wrap">
+          <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
             {renderPassage()}
           </div>
           <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/20 mt-4 text-center">
