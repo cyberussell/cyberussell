@@ -7,6 +7,7 @@ export type RecommendedTool = {
   title: string;
   logo?: React.ReactNode;
   desktopBanner?: string;
+  mobileBanner?: string;
   badges?: string[];
   body: React.ReactNode;
   faq?: { question: string; answer: string }[];
@@ -23,27 +24,33 @@ export default function RecommendedToolCard({ tool }: { tool: RecommendedTool })
 
   return (
     <div className="bg-[#111118] border border-white/[0.07] rounded-2xl overflow-hidden">
-      {/* Desktop-only banner image */}
+      {/* Mobile banner */}
+      {tool.mobileBanner && (
+        <a href={tool.ctaUrl} target="_blank" rel="noopener noreferrer sponsored" className="block md:hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={tool.mobileBanner} alt="" className="w-full object-cover" />
+        </a>
+      )}
+      {/* Desktop banner */}
       {tool.desktopBanner && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={tool.desktopBanner}
-          alt=""
-          className="hidden md:block w-full object-cover"
-        />
+        <a href={tool.ctaUrl} target="_blank" rel="noopener noreferrer sponsored" className="hidden md:block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={tool.desktopBanner} alt="" className="w-full object-cover" />
+        </a>
       )}
       <div className="flex flex-col lg:flex-row">
 
-        {/* Left — badges (logo hidden if not provided) */}
-        {(tool.logo || tool.badges) && (
-          <div className="lg:w-[200px] shrink-0 flex flex-col items-center justify-center gap-4 p-6 lg:p-8 bg-white/[0.02] border-b lg:border-b-0 lg:border-r border-white/[0.06]">
-            {tool.logo && (
-              <div className="w-20 h-20 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-4xl">
-                {tool.logo}
-              </div>
-            )}
+
+        {/* Right — content */}
+        <div className="flex-1 p-7 md:p-10 flex flex-col gap-6">
+
+          {/* Title + badges */}
+          <div className="flex flex-col gap-2">
+            <h3 className="font-sans text-[20px] md:text-[22px] font-bold text-white leading-tight">
+              {tool.title}
+            </h3>
             {tool.badges && (
-              <div className="flex flex-wrap justify-center gap-2">
+              <div className="flex flex-wrap gap-2">
                 {tool.badges.map((badge) => (
                   <span
                     key={badge}
@@ -55,15 +62,6 @@ export default function RecommendedToolCard({ tool }: { tool: RecommendedTool })
               </div>
             )}
           </div>
-        )}
-
-        {/* Right — content */}
-        <div className="flex-1 p-7 md:p-10 flex flex-col gap-6">
-
-          {/* Title */}
-          <h3 className="font-sans text-[20px] md:text-[22px] font-bold text-white leading-tight">
-            {tool.title}
-          </h3>
 
           {/* Body */}
           <div className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.85] space-y-3">

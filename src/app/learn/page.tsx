@@ -84,6 +84,7 @@ const RECOMMENDED_TOOLS: RecommendedTool[] = [
     title: "Treehouse — Where I Built My Programming Foundation",
     logo: null,
     desktopBanner: "/teamtreehouse-desktop.png",
+    mobileBanner: "/teamtreehouse-mobile.png",
     badges: ["Personally Used", "Recommended"],
     body: (
       <>
