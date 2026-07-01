@@ -176,12 +176,14 @@ function TrustCard({ item, index }: { item: typeof TRUST[0]; index: number }) {
       whileInView="show"
       viewport={{ once: true }}
       custom={index}
-      className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 flex flex-col gap-3"
+      className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-5 flex flex-col gap-2"
     >
-      <div className="w-9 h-9 rounded-xl bg-[#FFD23F]/10 flex items-center justify-center">
-        <Icon size={17} className="text-[#FFD23F]" strokeWidth={1.8} />
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 shrink-0 rounded-xl bg-[#FFD23F]/10 flex items-center justify-center">
+          <Icon size={15} className="text-[#FFD23F]" strokeWidth={1.8} />
+        </div>
+        <h3 className="font-sans text-[15px] font-bold text-white">{item.title}</h3>
       </div>
-      <h3 className="font-sans text-[16px] font-bold text-white">{item.title}</h3>
       <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">{item.desc}</p>
     </motion.div>
   );
@@ -202,12 +204,11 @@ function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: n
       className="bg-[#111118] border border-white/[0.06] rounded-[20px] overflow-hidden scroll-mt-24"
     >
       <div className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"}`}>
-        {/* Minimalist icon panel */}
+        {/* Minimalist icon panel — hidden on mobile */}
         <div
-          className="lg:w-[36%] shrink-0 relative overflow-hidden min-h-[180px] lg:min-h-[300px] flex items-center justify-center"
+          className="hidden md:flex lg:w-[36%] shrink-0 relative overflow-hidden lg:min-h-[300px] items-center justify-center"
           style={{ background: `linear-gradient(135deg, ${service.color}12 0%, ${service.color}04 100%)` }}
         >
-          {/* Dot grid */}
           <div
             className="absolute inset-0"
             style={{
@@ -215,7 +216,6 @@ function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: n
               backgroundSize: "22px 22px",
             }}
           />
-          {/* Large icon */}
           <div className="relative z-10 flex flex-col items-center gap-3">
             <div
               className="w-20 h-20 rounded-2xl flex items-center justify-center"
@@ -224,7 +224,6 @@ function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: n
               <Icon size={34} style={{ color: service.color }} strokeWidth={1.4} />
             </div>
           </div>
-          {/* Edge fade into card */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -236,12 +235,21 @@ function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: n
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-7 md:p-10 flex flex-col justify-center">
-          <h2 className="font-sans text-[22px] md:text-[26px] font-bold text-white mb-3 leading-tight">
-            {service.headline}
-          </h2>
+        <div className="flex-1 p-6 md:p-10 flex flex-col justify-center">
+          {/* Inline icon + headline for mobile */}
+          <div className="flex items-start gap-3 mb-3">
+            <div
+              className="md:hidden w-9 h-9 shrink-0 rounded-xl flex items-center justify-center mt-0.5"
+              style={{ backgroundColor: `${service.color}14`, border: `1px solid ${service.color}28` }}
+            >
+              <Icon size={18} style={{ color: service.color }} strokeWidth={1.6} />
+            </div>
+            <h2 className="font-sans text-[20px] md:text-[26px] font-bold text-white leading-tight">
+              {service.headline}
+            </h2>
+          </div>
 
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.8] mb-5">
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.8] mb-5 md:mt-0 mt-1">
             {service.intro}
           </p>
 
@@ -334,12 +342,6 @@ export default function ServicesPage() {
                 >
                   Let&apos;s Discuss Your Project <ArrowRight size={16} />
                 </a>
-                <a
-                  href="/"
-                  className="inline-flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
-                >
-                  View My Work
-                </a>
               </motion.div>
             </div>
           </div>
@@ -363,10 +365,9 @@ export default function ServicesPage() {
               </span>
             </div>
 
-            {/* Scrollable pill row */}
-            <div className="overflow-x-auto scrollbar-none pb-5 pt-1">
-              <div className="flex justify-center px-6 md:px-10">
-              <div className="flex gap-2 min-w-max">
+            {/* Pill row — wraps on mobile */}
+            <div className="pb-5 pt-1 px-6 md:px-10">
+              <div className="flex flex-wrap justify-center gap-2">
                 {SERVICES.map((s) => {
                   const Icon = s.icon;
                   return (
@@ -399,7 +400,6 @@ export default function ServicesPage() {
                     </a>
                   );
                 })}
-              </div>
               </div>
             </div>
           </motion.div>
