@@ -393,6 +393,7 @@ function WorkflowView({ pathId, onBack }: { pathId: string; onBack: () => void }
       </div>
 
       <StepForm
+        key={currentStep}
         step={steps[currentStep]}
         color={color}
         stepIndex={currentStep}
