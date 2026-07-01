@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ShieldCheck, Sparkles, UserCircle, type LucideIcon } from "lucide-react";
+import { ShieldCheck, Sparkles, UserCircle, Keyboard, type LucideIcon } from "lucide-react";
 import { tools, toolCategories } from "@/lib/tools-data";
 
-const ICON_MAP: Record<string, LucideIcon> = { ShieldCheck, Sparkles, UserCircle };
+const ICON_MAP: Record<string, LucideIcon> = { ShieldCheck, Sparkles, UserCircle, Keyboard };
 
 export const metadata: Metadata = {
   title: "AI Tools for Filipinos — Free Tools to Learn, Work & Earn Online | Cyberussell",

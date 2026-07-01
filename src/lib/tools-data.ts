@@ -8,7 +8,8 @@ export type ToolCategory =
   | "Productivity"
   | "Content Creation"
   | "Research"
-  | "Safety";
+  | "Safety"
+  | "Skills";
 
 export interface Tool {
   slug: string;
@@ -148,6 +149,43 @@ export const tools: Tool[] = [
         "Generate a professional freelancer bio in seconds. Free AI tool optimized for Upwork, OnlineJobs.ph, Fiverr, and LinkedIn.",
     },
   },
+  {
+    slug: "typing-practice",
+    name: "Typing Practice",
+    shortDescription:
+      "Practice typing with a full interactive keyboard. Keys light up as you type. Track your WPM, accuracy, and time.",
+    longDescription:
+      "Build one of the most in-demand remote work skills — fast, accurate typing. Choose your difficulty, type the passage, and watch your keyboard light up with every keystroke. Your WPM and accuracy are tracked in real time.",
+    icon: "Keyboard",
+    category: "Skills",
+    status: "Free",
+    ctaLabel: "Start Typing →",
+    ctaUrl: "/tools/typing-practice",
+    featured: true,
+    relatedTools: ["prompt-forge", "bio-generator"],
+    relatedGuides: [
+      { label: "8 Ways to Earn Online as a Filipino", href: "/guides/8-ways" },
+    ],
+    relatedArticles: [],
+    faq: [
+      {
+        question: "What is a good typing speed for online jobs?",
+        answer: "Most remote jobs require at least 40 WPM. Virtual assistants and data entry roles often require 50–60 WPM. Above 70 WPM makes you highly competitive.",
+      },
+      {
+        question: "How do I improve my typing speed?",
+        answer: "Practice daily for 10–15 minutes. Focus on accuracy first — speed follows naturally. Use the home row keys (ASDF JKL;) as your base position.",
+      },
+      {
+        question: "Is this tool free?",
+        answer: "Yes, completely free. No sign-up required.",
+      },
+    ],
+    seo: {
+      title: "Typing Practice — Free Typing Speed Test with Keyboard | Cyberussell",
+      description: "Practice typing with a full interactive keyboard. Track your WPM, accuracy, and time. Free, no sign-up required.",
+    },
+  },
 ];
 
 export function getToolBySlug(slug: string): Tool | undefined {
@@ -168,4 +206,5 @@ export const toolCategories: ToolCategory[] = [
   "Content Creation",
   "Research",
   "Safety",
+  "Skills",
 ];

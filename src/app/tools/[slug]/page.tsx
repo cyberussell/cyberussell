@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ShieldCheck, Sparkles, UserCircle, type LucideIcon } from "lucide-react";
+import { ShieldCheck, Sparkles, UserCircle, Keyboard, type LucideIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { tools, getToolBySlug, getRelatedTools } from "@/lib/tools-data";
 
-const ICON_MAP: Record<string, LucideIcon> = { ShieldCheck, Sparkles, UserCircle };
+const ICON_MAP: Record<string, LucideIcon> = { ShieldCheck, Sparkles, UserCircle, Keyboard };
 
 interface Props {
   params: Promise<{ slug: string }>;
