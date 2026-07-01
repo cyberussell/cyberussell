@@ -445,7 +445,7 @@ export default function EarnPage() {
                     <button
                       key={path.id}
                       onClick={() => setSelectedPath(path.id)}
-                      className="bg-[#18181F] border border-white/[0.08] rounded-[16px] p-6 text-left hover:border-white/20 hover:bg-[#1e1e2a] transition-all group flex flex-col"
+                      className="bg-[#18181F] border border-white/[0.08] rounded-[16px] p-6 text-left hover:border-white/20 hover:bg-[#1e1e2a] transition-all group flex flex-col overflow-visible"
                     >
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all" style={{ backgroundColor: `${path.color}15` }}>
                         <Icon size={22} style={{ color: path.color }} strokeWidth={1.8} />
