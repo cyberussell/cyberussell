@@ -41,7 +41,25 @@ export default function TypingPracticePage() {
           </p>
         </div>
 
-        <TypingPractice />
+        {/* Desktop only */}
+        <div className="hidden md:block">
+          <TypingPractice />
+        </div>
+
+        {/* Mobile notice */}
+        <div className="md:hidden flex flex-col items-center justify-center text-center px-6 py-20 gap-5">
+          <div className="text-5xl">⌨️</div>
+          <h2 className="font-sans text-[24px] font-bold text-white">Open this on a desktop</h2>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/50 max-w-xs leading-[1.8]">
+            Typing Practice requires a physical keyboard and is best experienced on a laptop or desktop computer.
+          </p>
+          <a
+            href="/tools"
+            className="inline-block mt-2 bg-[#FFD23F] text-[#0A0A14] font-[family-name:var(--font-inter)] font-bold text-[14px] px-6 py-3 rounded-xl hover:bg-[#FFD23F]/90 transition-all"
+          >
+            Browse Other Tools
+          </a>
+        </div>
       </main>
       <Footer />
     </>
