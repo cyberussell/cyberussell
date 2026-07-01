@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
       learner.certificates.push({ id: `${pillar}-cert`, name: "Cyberussell AI Foundations Certificate", earned_at: new Date().toISOString() });
     }
 
-    saveLearner(learner);
+    await saveLearner(learner);
   }
 
   return NextResponse.json({ score, passed, correct, total: FOUNDATIONS_QUIZ.length, results });
