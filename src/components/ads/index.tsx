@@ -18,11 +18,11 @@ import AdSense from "./AdSense";
 // ── Slot IDs ────────────────────────────────────────────────────────────────
 // Replace these with real slot IDs from AdSense dashboard → Ad units.
 const SLOTS = {
-  banner:     "REPLACE_BANNER_SLOT_ID",
-  rectangle:  "REPLACE_RECTANGLE_SLOT_ID",
-  responsive: "REPLACE_RESPONSIVE_SLOT_ID",
-  inArticle:  "REPLACE_IN_ARTICLE_SLOT_ID",
-  multiplex:  "REPLACE_MULTIPLEX_SLOT_ID",
+  banner:     "6867884573",
+  rectangle:  "2770903064",
+  responsive: "6867884573", // reuses banner slot (same format)
+  inArticle:  "9555803261",
+  multiplex:  "5424986561",
 } as const;
 
 // ── Leaderboard / Banner (728×90 desktop, collapses on mobile) ──────────────
