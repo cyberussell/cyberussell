@@ -299,22 +299,31 @@ export default function ServicesPage() {
 
         {/* ── Hero ── */}
         <section className="relative flex flex-col overflow-hidden">
-          {/* Background — Russell's photo; inset-0 covers the full section height */}
-          <div className="absolute inset-0 z-0 min-h-full">
+          {/* Background photo — desktop only */}
+          <div className="hidden md:block absolute inset-0 z-0 min-h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/russell-hero.jpg"
               alt="Russell Parayno — AI, Automation & Web Services"
-              className="w-full h-full object-cover object-[30%_25%] md:object-[30%_60%] [transform:scaleX(-1)]"
+              className="w-full h-full object-cover object-[30%_60%] [transform:scaleX(-1)]"
             />
-            {/* heavy left overlay so text is always legible */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A14]/95 via-[#0A0A14]/80 to-[#0A0A14]/30" />
-            {/* top + bottom fades */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A14] via-transparent to-[#0A0A14]/40" />
           </div>
 
+          {/* Mobile-only portrait block */}
+          <div className="md:hidden relative w-full h-64 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/russell-hero.jpg"
+              alt="Russell Parayno — AI, Automation & Web Services"
+              className="w-full h-full object-cover object-[30%_18%] [transform:scaleX(-1)]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A14]/40 via-transparent to-[#0A0A14]" />
+          </div>
+
           {/* Main content */}
-          <div className="relative z-10 px-6 md:px-10 max-w-5xl mx-auto w-full pt-28 pb-12">
+          <div className="relative z-10 px-6 md:px-10 max-w-5xl mx-auto w-full md:pt-28 pt-4 pb-12">
             <div className="w-full">
               <motion.div variants={fadeIn} initial="hidden" animate="show" custom={0}>
                 <span className="inline-flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-4 py-1.5 mb-8">
