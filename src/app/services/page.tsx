@@ -266,7 +266,19 @@ function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: n
           </div>
 
           <a
-            href="mailto:russell@cyberussell.com"
+            href={`/services/inquire?service=${encodeURIComponent(
+              service.id === "web-dev" ? "Web Design" :
+              service.id === "ai-automation" ? "AI Automation" :
+              service.id === "prompt-engineering" ? "Prompt Engineering" :
+              service.id === "web-app" ? "Web Apps" :
+              service.id === "bubble" ? "Bubble.io Development" :
+              service.id === "seo" ? "SEO" :
+              service.id === "content" ? "Content Creation" :
+              service.id === "documentation" ? "Business Documentation" :
+              service.id === "research" ? "Research & Analysis" :
+              service.id === "maintenance" ? "Website Maintenance" :
+              "AI Training"
+            )}`}
             className="inline-flex items-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 text-[#0A0A14] font-[family-name:var(--font-inter)] text-[14px] font-bold px-5 py-3 rounded-xl transition-all w-fit"
           >
             {service.cta} <ChevronRight size={15} />
@@ -337,7 +349,7 @@ export default function ServicesPage() {
 
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3} className="flex flex-col sm:flex-row gap-3">
                 <a
-                  href="mailto:russell@cyberussell.com"
+                  href="/services/inquire?service=General+Inquiry"
                   className="inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 transition-all text-[#0A0A14] font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
                 >
                   Let&apos;s Discuss Your Project <ArrowRight size={16} />
@@ -467,7 +479,7 @@ export default function ServicesPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
-                  href="mailto:russell@cyberussell.com"
+                  href="/services/inquire?service=General+Inquiry"
                   className="inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 transition-all text-[#0A0A14] font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
                 >
                   Request a Free Consultation <ArrowRight size={16} />
