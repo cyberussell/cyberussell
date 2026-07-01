@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Wrench, Lock, ArrowRight } from "lucide-react";
+import { Wrench, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Website Creation with AI — Build Real Skills | Cyberussell",
@@ -19,13 +19,13 @@ export const metadata: Metadata = {
 };
 
 const lessons = [
-  { title: "Why Every Business Needs a Website in 2025", desc: "The case for building your own web presence — and why AI makes it finally accessible.", soon: false, href: "#" },
-  { title: "Picking Your Stack: No-Code vs AI-Code vs Traditional", desc: "Compare your options before you commit to any platform.", soon: true },
-  { title: "Planning Your Site with AI Before You Build", desc: "Use ChatGPT to map out structure, content, and goals before touching any tool.", soon: true },
-  { title: "Writing Website Copy That Actually Converts", desc: "AI-assisted copywriting for your homepage, about page, and services.", soon: true },
-  { title: "Building a Portfolio Site with Claude", desc: "Step-by-step: prompt Claude to generate a complete portfolio in one session.", soon: true },
-  { title: "SEO Basics Built Into Your Site from Day One", desc: "The minimum SEO setup every website should have — and how AI helps you do it fast.", soon: true },
-  { title: "Launching, Testing, and Getting Feedback", desc: "How to ship your first version and use AI to iterate based on real feedback.", soon: true },
+  { title: "Why Every Business Needs a Website in 2025", desc: "The case for building your own web presence — and why AI makes it finally accessible.", href: "/learn/skills/website-creation/why-every-business-needs-a-website" },
+  { title: "Picking Your Stack: No-Code vs AI-Code vs Traditional", desc: "Compare your options before you commit to any platform.", href: "/learn/skills/website-creation/picking-your-stack" },
+  { title: "Planning Your Site with AI Before You Build", desc: "Use ChatGPT to map out structure, content, and goals before touching any tool.", href: "/learn/skills/website-creation/planning-your-site-with-ai" },
+  { title: "Writing Website Copy That Actually Converts", desc: "AI-assisted copywriting for your homepage, about page, and services.", href: "/learn/skills/website-creation/writing-website-copy-that-converts" },
+  { title: "Building a Portfolio Site with Claude", desc: "Step-by-step: prompt Claude to generate a complete portfolio in one session.", href: "/learn/skills/website-creation/building-a-portfolio-site-with-claude" },
+  { title: "SEO Basics Built Into Your Site from Day One", desc: "The minimum SEO setup every website should have — and how AI helps you do it fast.", href: "/learn/skills/website-creation/seo-basics-built-into-your-site" },
+  { title: "Launching, Testing, and Getting Feedback", desc: "How to ship your first version and use AI to iterate based on real feedback.", href: "/learn/skills/website-creation/launching-testing-and-getting-feedback" },
 ];
 
 export default function WebsiteCreationSkillPage() {
@@ -66,36 +66,22 @@ export default function WebsiteCreationSkillPage() {
 
           <div className="flex flex-col gap-3">
             {lessons.map((lesson, i) => (
-              <div
+              <a
                 key={lesson.title}
-                className={`bg-[#18181F] border rounded-[12px] p-5 flex items-start gap-4 ${
-                  lesson.soon
-                    ? "border-white/[0.06] opacity-60"
-                    : "border-white/[0.08] hover:border-[#E8373A]/30 transition-all"
-                }`}
+                href={lesson.href}
+                className="bg-[#18181F] border border-white/[0.08] rounded-[12px] p-5 flex items-start gap-4 hover:border-[#E8373A]/30 transition-all"
               >
                 <div className="w-8 h-8 rounded-lg bg-[#E8373A]/10 flex items-center justify-center shrink-0 mt-0.5">
-                  {lesson.soon ? (
-                    <Lock size={14} className="text-[#E8373A]/40" />
-                  ) : (
-                    <span className="text-[#E8373A] text-[12px] font-bold font-[family-name:var(--font-inter)]">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  )}
+                  <span className="text-[#E8373A] text-[12px] font-bold font-[family-name:var(--font-inter)]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                 </div>
                 <div className="flex-1">
                   <h3 className="font-sans text-[15px] font-bold text-white mb-1">{lesson.title}</h3>
                   <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.5]">{lesson.desc}</p>
-                  {lesson.soon && (
-                    <span className="mt-2 inline-block text-[10px] font-bold font-[family-name:var(--font-inter)] text-white/25 uppercase tracking-[1px]">Coming soon</span>
-                  )}
                 </div>
-                {!lesson.soon && lesson.href && (
-                  <a href={lesson.href} className="shrink-0 mt-1">
-                    <ArrowRight size={16} className="text-[#E8373A]/60 hover:text-[#E8373A] transition-colors" />
-                  </a>
-                )}
-              </div>
+                <ArrowRight size={16} className="text-[#E8373A]/60 shrink-0 mt-1" />
+              </a>
             ))}
           </div>
         </section>

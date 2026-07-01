@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, FileEdit, Clock, Plus, Library, ExternalLink } from "lucide-react";
+import { BookOpen, FileEdit, Clock, Plus, Library, ExternalLink, GraduationCap, Briefcase, CheckCircle2 } from "lucide-react";
 import AuthGuard from "@/components/mission-control/AuthGuard";
 import Sidebar from "@/components/mission-control/Sidebar";
 
@@ -13,17 +13,25 @@ type BlueprintSummary = {
   updated_at: string;
 };
 
+type Stats = {
+  blueprints: { total: number; published: number; draft: number };
+  learning: { total: number; published: number; draft: number };
+  services: { total: number; published: number; draft: number };
+};
+
 export default function DashboardPage() {
   const [blueprints, setBlueprints] = useState<BlueprintSummary[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
     fetch("/api/mission-control/blueprints").then((r) => r.json()).then((data) => {
       if (Array.isArray(data)) setBlueprints(data);
     });
+    fetch("/api/mission-control/analytics").then((r) => r.json()).then((data) => {
+      if (!data.error) setStats(data);
+    });
   }, []);
 
-  const published = blueprints.filter((b) => b.status === "published");
-  const drafts = blueprints.filter((b) => b.status === "draft");
   const recent = [...blueprints].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()).slice(0, 5);
 
   return (
@@ -35,29 +43,37 @@ export default function DashboardPage() {
             <h1 className="font-sans text-[28px] font-bold text-white mb-1">Dashboard</h1>
             <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-8">Welcome back, Russell.</p>
 
-            {/* Summary cards */}
+            {/* Content inventory */}
+            <h2 className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1px] mb-3">Content Inventory</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-              <div className="bg-[#14141e] border border-white/[0.06] rounded-xl p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <BookOpen size={16} className="text-[#00C97A]" strokeWidth={2} />
-                  <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/35 uppercase tracking-[1px]">Published</span>
+              {[
+                { icon: BookOpen, color: "text-[#00C97A]", label: "Career Blueprints", data: stats?.blueprints },
+                { icon: GraduationCap, color: "text-[#3B82F6]", label: "Learning Pillars", data: stats?.learning },
+                { icon: Briefcase, color: "text-[#A855F7]", label: "Services", data: stats?.services },
+              ].map(({ icon: Icon, color, label, data }) => (
+                <div key={label} className="bg-[#14141e] border border-white/[0.06] rounded-xl p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Icon size={16} className={color} strokeWidth={2} />
+                    <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/35 uppercase tracking-[1px]">{label}</span>
+                  </div>
+                  <div className="flex items-end gap-4">
+                    <div>
+                      <div className="font-sans text-[32px] font-bold text-white leading-none">{data?.total ?? "—"}</div>
+                      <div className="font-[family-name:var(--font-inter)] text-[11px] text-white/25 mt-1">total</div>
+                    </div>
+                    <div className="mb-0.5 flex flex-col gap-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <CheckCircle2 size={11} className="text-[#00C97A]" />
+                        <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/40">{data?.published ?? "—"} published</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <FileEdit size={11} className="text-[#FFD23F]" />
+                        <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/40">{data?.draft ?? "—"} draft</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <span className="font-sans text-[32px] font-bold text-white">{published.length}</span>
-              </div>
-              <div className="bg-[#14141e] border border-white/[0.06] rounded-xl p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <FileEdit size={16} className="text-[#FFD23F]" strokeWidth={2} />
-                  <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/35 uppercase tracking-[1px]">Drafts</span>
-                </div>
-                <span className="font-sans text-[32px] font-bold text-white">{drafts.length}</span>
-              </div>
-              <div className="bg-[#14141e] border border-white/[0.06] rounded-xl p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <Clock size={16} className="text-[#3B82F6]" strokeWidth={2} />
-                  <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/35 uppercase tracking-[1px]">Total</span>
-                </div>
-                <span className="font-sans text-[32px] font-bold text-white">{blueprints.length}</span>
-              </div>
+              ))}
             </div>
 
             {/* Quick actions */}

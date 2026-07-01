@@ -109,7 +109,16 @@
       "Bash(node -e \"const l = require\\('lucide-react'\\); ['Store','Smartphone','Bot','UserCircle','ShieldCheck','Sparkles','Link2','Package','Globe','Briefcase','TrendingUp','BookOpen','ShoppingBag','Zap','Map','Search'].forEach\\(k => console.log\\(k, k in l\\)\\)\")",
       "Bash(vercel --prod)",
       "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
-      "Bash(awk '{print $NF}')"
+      "Bash(awk '{print $NF}')",
+      "Bash(kill 40874)",
+      "Bash(lsof -iTCP -sTCP:LISTEN -P)",
+      "Bash(kill 68210)",
+      "Bash(mkdir -p \"/Users/russellparayno/Documents/Business/cyberussell.com/src/app/api/mission-control/pillars/[slug]\")",
+      "Bash(mkdir -p \"/Users/russellparayno/Documents/Business/cyberussell.com/src/app/mission-control/learning-system/[slug]\")",
+      "Bash(find /private/tmp/claude-501 -name \"*.jpg\" -o -name \"*.jpeg\" -o -name \"*.png\" 2>/dev/null | head -20)",
+      "Bash(kill 17829)",
+      "Bash(mkdir -p /Users/russellparayno/Documents/Business/cyberussell.com/src/app/api/mission-control/services/\\\\[id\\\\])",
+      "Bash(mkdir -p \"/Users/russellparayno/Documents/Business/cyberussell.com/src/app/mission-control/service-catalog/[id]\")"
     ]
   }
 }

@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
-  BarChart3,
   Map,
   Settings,
   LogOut,
@@ -17,7 +16,6 @@ const NAV = [
   { label: "Career Blueprints", href: "/mission-control/blueprints", icon: BookOpen },
   { label: "Learning System", href: "/mission-control/learning-system", icon: GraduationCap },
   { label: "Service Catalog", href: "/mission-control/service-catalog", icon: Briefcase },
-  { label: "Analytics", href: "/mission-control/analytics", icon: BarChart3 },
   { label: "Roadmap", href: "/mission-control/roadmap", icon: Map },
   { label: "Settings", href: "/mission-control/settings", icon: Settings },
 ];

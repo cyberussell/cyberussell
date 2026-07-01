@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Wrench, Lock, ArrowRight } from "lucide-react";
+import { Wrench, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "SEO with AI — Build Real Skills | Cyberussell",
@@ -19,13 +19,13 @@ export const metadata: Metadata = {
 };
 
 const lessons = [
-  { title: "What SEO Actually Is (and Why Most People Do It Wrong)", desc: "Forget keyword stuffing. Learn how Google really ranks pages — and where AI fits in.", soon: false, href: "#" },
-  { title: "Keyword Research with AI: Find What People Are Searching For", desc: "Use ChatGPT and Gemini to find keywords your competitors are missing.", soon: true },
-  { title: "Writing SEO Content That Ranks and Reads Well", desc: "How to use Claude to write blog posts and landing pages that satisfy both Google and humans.", soon: true },
-  { title: "On-Page SEO: Titles, Meta Descriptions, and Headers", desc: "The exact elements that affect ranking — and how to optimize them with AI.", soon: true },
-  { title: "Building Backlinks Without Spending Money", desc: "Practical link-building strategies using AI to craft outreach and find opportunities.", soon: true },
-  { title: "Technical SEO Basics: Speed, Mobile, and Crawlability", desc: "What technical SEO means and the minimum you need to get right.", soon: true },
-  { title: "Tracking Your Rankings and Iterating", desc: "How to read your SEO data and use AI to decide what to do next.", soon: true },
+  { title: "What SEO Actually Is (and Why Most People Do It Wrong)", desc: "Forget keyword stuffing. Learn how Google really ranks pages — and where AI fits in.", href: "/learn/skills/seo/what-seo-actually-is" },
+  { title: "Keyword Research with AI: Find What People Are Searching For", desc: "Use ChatGPT and Gemini to find keywords your competitors are missing.", href: "/learn/skills/seo/keyword-research-with-ai" },
+  { title: "Writing SEO Content That Ranks and Reads Well", desc: "How to use Claude to write blog posts and landing pages that satisfy both Google and humans.", href: "/learn/skills/seo/writing-seo-content-that-ranks" },
+  { title: "On-Page SEO: Titles, Meta Descriptions, and Headers", desc: "The exact elements that affect ranking — and how to optimize them with AI.", href: "/learn/skills/seo/on-page-seo" },
+  { title: "Building Backlinks Without Spending Money", desc: "Practical link-building strategies using AI to craft outreach and find opportunities.", href: "/learn/skills/seo/building-backlinks-without-spending-money" },
+  { title: "Technical SEO Basics: Speed, Mobile, and Crawlability", desc: "What technical SEO means and the minimum you need to get right.", href: "/learn/skills/seo/technical-seo-basics" },
+  { title: "Tracking Your Rankings and Iterating", desc: "How to read your SEO data and use AI to decide what to do next.", href: "/learn/skills/seo/tracking-your-rankings-and-iterating" },
 ];
 
 export default function SEOSkillPage() {
@@ -67,36 +67,22 @@ export default function SEOSkillPage() {
 
           <div className="flex flex-col gap-3">
             {lessons.map((lesson, i) => (
-              <div
+              <a
                 key={lesson.title}
-                className={`bg-[#18181F] border rounded-[12px] p-5 flex items-start gap-4 ${
-                  lesson.soon
-                    ? "border-white/[0.06] opacity-60"
-                    : "border-white/[0.08] hover:border-[#E8373A]/30 transition-all"
-                }`}
+                href={lesson.href}
+                className="bg-[#18181F] border border-white/[0.08] rounded-[12px] p-5 flex items-start gap-4 hover:border-[#E8373A]/30 transition-all"
               >
                 <div className="w-8 h-8 rounded-lg bg-[#E8373A]/10 flex items-center justify-center shrink-0 mt-0.5">
-                  {lesson.soon ? (
-                    <Lock size={14} className="text-[#E8373A]/40" />
-                  ) : (
-                    <span className="text-[#E8373A] text-[12px] font-bold font-[family-name:var(--font-inter)]">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  )}
+                  <span className="text-[#E8373A] text-[12px] font-bold font-[family-name:var(--font-inter)]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                 </div>
                 <div className="flex-1">
                   <h3 className="font-sans text-[15px] font-bold text-white mb-1">{lesson.title}</h3>
                   <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.5]">{lesson.desc}</p>
-                  {lesson.soon && (
-                    <span className="mt-2 inline-block text-[10px] font-bold font-[family-name:var(--font-inter)] text-white/25 uppercase tracking-[1px]">Coming soon</span>
-                  )}
                 </div>
-                {!lesson.soon && lesson.href && (
-                  <a href={lesson.href} className="shrink-0 mt-1">
-                    <ArrowRight size={16} className="text-[#E8373A]/60 hover:text-[#E8373A] transition-colors" />
-                  </a>
-                )}
-              </div>
+                <ArrowRight size={16} className="text-[#E8373A]/60 shrink-0 mt-1" />
+              </a>
             ))}
           </div>
         </section>
