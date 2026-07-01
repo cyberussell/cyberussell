@@ -1,2 +1,2 @@
 import { redirect } from "next/navigation";
-export default function SEORedirect() { redirect("/learn/skills"); }
+export default function SEORedirect() { redirect("/learn/skills/seo"); }

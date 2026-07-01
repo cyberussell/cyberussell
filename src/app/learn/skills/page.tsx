@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Wrench, Lock } from "lucide-react";
+import { Wrench } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Build Real Skills with AI — Writing, Design, SEO & More | Cyberussell",
@@ -11,17 +11,17 @@ export const metadata: Metadata = {
 };
 
 const skills = [
-  { title: "Website Creation", desc: "Build real websites with AI — no code required to start.", soon: false },
-  { title: "SEO", desc: "Rank on Google using AI-powered research and writing.", soon: false },
-  { title: "Graphic Design", desc: "Create professional visuals with AI design tools.", soon: true },
-  { title: "Writing & Copywriting", desc: "Write faster and better with AI as your co-author.", soon: true },
-  { title: "Content Creation", desc: "Build a content engine using AI workflows.", soon: true },
-  { title: "Video Editing", desc: "Use AI to speed up your video production process.", soon: true },
-  { title: "Marketing", desc: "Plan, write, and launch campaigns with AI assistance.", soon: true },
-  { title: "Programming", desc: "Build software with Claude and ChatGPT as your dev team.", soon: true },
-  { title: "Automation", desc: "Automate repetitive work using AI + no-code tools.", soon: true },
-  { title: "Excel & Spreadsheets", desc: "Use AI to write formulas, clean data, and build reports.", soon: true },
-  { title: "Business", desc: "Plan, pitch, and run a business with AI-powered strategy.", soon: true },
+  { title: "Website Creation", desc: "Build real websites with AI — no code required to start.", soon: false, href: "/learn/skills/website-creation" },
+  { title: "SEO", desc: "Rank on Google using AI-powered research and writing.", soon: false, href: "/learn/skills/seo" },
+  { title: "Graphic Design", desc: "Create professional visuals with AI design tools.", soon: false, href: "/learn/skills/graphic-design" },
+  { title: "Writing & Copywriting", desc: "Write faster and better with AI as your co-author.", soon: false, href: "/learn/skills/writing-copywriting" },
+  { title: "Content Creation", desc: "Build a content engine using AI workflows.", soon: false, href: "/learn/skills/content-creation" },
+  { title: "Video Editing", desc: "Use AI to speed up your video production process.", soon: false, href: "/learn/skills/video-editing" },
+  { title: "Marketing", desc: "Plan, write, and launch campaigns with AI assistance.", soon: false, href: "/learn/skills/marketing" },
+  { title: "Programming", desc: "Build software with Claude and ChatGPT as your dev team.", soon: false, href: "/learn/skills/programming" },
+  { title: "Automation", desc: "Automate repetitive work using AI + no-code tools.", soon: false, href: "/learn/skills/automation" },
+  { title: "Excel & Spreadsheets", desc: "Use AI to write formulas, clean data, and build reports.", soon: false, href: "/learn/skills/excel-spreadsheets" },
+  { title: "Business", desc: "Plan, pitch, and run a business with AI-powered strategy.", soon: false, href: "/learn/skills/business" },
 ];
 
 export default function SkillsPage() {
@@ -66,27 +66,19 @@ export default function SkillsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {skills.map((skill) => (
-              <div
+              <a
                 key={skill.title}
-                className={`bg-[#18181F] border rounded-[12px] p-5 flex items-start gap-4 ${
-                  skill.soon ? "border-white/[0.06] opacity-60" : "border-white/[0.08] hover:border-white/20 transition-all cursor-pointer"
-                }`}
+                href={skill.href}
+                className="bg-[#18181F] border border-white/[0.08] rounded-[12px] p-5 flex items-start gap-4 hover:border-[#E8373A]/30 transition-all"
               >
                 <div className="w-8 h-8 rounded-lg bg-[#E8373A]/10 flex items-center justify-center shrink-0 mt-0.5">
-                  {skill.soon ? (
-                    <Lock size={14} className="text-[#E8373A]/40" />
-                  ) : (
-                    <Wrench size={14} className="text-[#E8373A]" />
-                  )}
+                  <Wrench size={14} className="text-[#E8373A]" />
                 </div>
                 <div>
                   <h3 className="font-sans text-[15px] font-bold text-white mb-1">{skill.title}</h3>
                   <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.5]">{skill.desc}</p>
-                  {skill.soon && (
-                    <span className="mt-2 inline-block text-[10px] font-bold font-[family-name:var(--font-inter)] text-white/25 uppercase tracking-[1px]">Coming soon</span>
-                  )}
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </section>
