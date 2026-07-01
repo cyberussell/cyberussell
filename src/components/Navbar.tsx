@@ -67,6 +67,10 @@ const navItems: NavItem[] = [
     ],
   },
   {
+    label: "SERVICES",
+    href: "/services",
+  },
+  {
     label: "SHOP",
     href: "/shop",
   },
