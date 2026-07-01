@@ -4,11 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
-  FileText,
-  Wrench,
-  PenLine,
-  ShoppingBag,
-  Handshake,
   BarChart3,
   Map,
   Settings,
@@ -18,18 +13,13 @@ import {
 } from "lucide-react";
 
 const NAV = [
-  { label: "Dashboard", href: "/mission-control", icon: LayoutDashboard, active: true },
-  { label: "Career Blueprints", href: "/mission-control/blueprints", icon: BookOpen, active: true },
-  { label: "Learning System", href: "/mission-control/learning-system", icon: GraduationCap, active: true },
-  { label: "Service Catalog", href: "/mission-control/service-catalog", icon: Briefcase, active: true },
-  { label: "Guides", href: "#", icon: FileText, active: false },
-  { label: "AI Tools", href: "#", icon: Wrench, active: false },
-  { label: "Blog", href: "#", icon: PenLine, active: false },
-  { label: "Digital Products", href: "#", icon: ShoppingBag, active: false },
-  { label: "Affiliates", href: "#", icon: Handshake, active: false },
-  { label: "Analytics", href: "#", icon: BarChart3, active: false },
-  { label: "Roadmap", href: "/mission-control/roadmap", icon: Map, active: true },
-  { label: "Settings", href: "#", icon: Settings, active: false },
+  { label: "Dashboard", href: "/mission-control", icon: LayoutDashboard },
+  { label: "Career Blueprints", href: "/mission-control/blueprints", icon: BookOpen },
+  { label: "Learning System", href: "/mission-control/learning-system", icon: GraduationCap },
+  { label: "Service Catalog", href: "/mission-control/service-catalog", icon: Briefcase },
+  { label: "Analytics", href: "/mission-control/analytics", icon: BarChart3 },
+  { label: "Roadmap", href: "/mission-control/roadmap", icon: Map },
+  { label: "Settings", href: "/mission-control/settings", icon: Settings },
 ];
 
 export default function Sidebar() {
@@ -53,25 +43,20 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 py-3 px-3 overflow-y-auto">
-        {NAV.map(({ label, href, icon: Icon, active }) => {
-          const isActive = active && (href === "/mission-control" ? pathname === href : pathname.startsWith(href));
+        {NAV.map(({ label, href, icon: Icon }) => {
+          const isActive = href === "/mission-control" ? pathname === href : pathname.startsWith(href);
           return (
             <a
               key={label}
-              href={active ? href : undefined}
+              href={href}
               className={`flex items-center gap-2.5 px-3 py-2 rounded-lg mb-0.5 font-[family-name:var(--font-inter)] text-[13px] transition-colors ${
                 isActive
                   ? "bg-white/[0.08] text-white font-medium"
-                  : active
-                    ? "text-white/50 hover:text-white/70 hover:bg-white/[0.04]"
-                    : "text-white/20 cursor-default"
+                  : "text-white/50 hover:text-white/70 hover:bg-white/[0.04]"
               }`}
             >
               <Icon size={16} strokeWidth={1.8} />
               {label}
-              {!active && (
-                <span className="ml-auto font-[family-name:var(--font-inter)] text-[9px] text-white/15 uppercase tracking-wide">Soon</span>
-              )}
             </a>
           );
         })}
