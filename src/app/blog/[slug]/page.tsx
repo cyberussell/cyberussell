@@ -5,6 +5,7 @@ import ShareButtons from "@/components/ShareButtons";
 import SubscribeForm from "@/components/SubscribeForm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { AdAutoOptOut, AdInArticle, AdMultiplex } from "@/components/ads";
 
 export async function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -77,6 +78,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
+    <AdAutoOptOut />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     <Navbar />
@@ -124,6 +126,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           ))}
         </div>
 
+        {/* In-article ad — after content, before share buttons */}
+        <AdInArticle />
+
         <ShareButtons slug={slug} title={post.title} />
 
         {/* Subscribe */}
@@ -139,6 +144,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             Try the Skill Finder →
           </a>
         </div>
+
+        {/* Multiplex ad before related articles */}
+        <AdMultiplex />
 
         {/* Related articles */}
         {(() => {

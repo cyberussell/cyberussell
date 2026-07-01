@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EightWaysGuide from "@/components/EightWaysGuide";
+import { AdAutoOptOut, AdResponsive } from "@/components/ads";
 
 export const metadata: Metadata = {
   title: "8 Ways to Earn Online as a Filipino — Cyberussell",
@@ -37,6 +38,7 @@ export default function EightWaysPage() {
 
   return (
     <>
+      <AdAutoOptOut />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
       <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
@@ -53,6 +55,11 @@ export default function EightWaysPage() {
         </div>
 
         <EightWaysGuide />
+
+        {/* Ad between guide content and affiliate disclosure */}
+        <div className="max-w-4xl mx-auto mt-10">
+          <AdResponsive />
+        </div>
 
         {/* Affiliate disclosure */}
         <div className="max-w-4xl mx-auto mt-12 pt-6 border-t border-white/[0.06]">

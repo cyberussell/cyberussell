@@ -72,7 +72,6 @@ export default function RootLayout({
     >
       <head>
         <GoogleAnalytics gaId="G-MY6KY7VPJ9" />
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8968776741366931" crossOrigin="anonymous"></script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -150,6 +149,15 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[#0F0F1A] text-white antialiased overflow-x-hidden">
         {children}
         <Analytics />
+        {process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID && (
+          <Script
+            id="adsense-init"
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)

@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import {
   Globe, Zap, Brain, AppWindow, Blocks, Search,
   PenTool, FileText, BarChart2, Shield, GraduationCap,
-  CheckCircle2, ArrowRight, ChevronRight,
+  CheckCircle2, ArrowRight, ChevronRight, ChevronDown,
 } from "lucide-react";
 
 // ─── Animation helpers ────────────────────────────────────────────────────────
@@ -198,7 +198,8 @@ function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: n
       whileInView="show"
       viewport={{ once: true, margin: "-60px" }}
       custom={0}
-      className="bg-[#111118] border border-white/[0.06] rounded-[20px] overflow-hidden"
+      id={service.id}
+      className="bg-[#111118] border border-white/[0.06] rounded-[20px] overflow-hidden scroll-mt-24"
     >
       <div className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"}`}>
         {/* Image */}
@@ -263,67 +264,129 @@ export default function ServicesPage() {
       <main className="min-h-screen bg-[#0A0A14]">
 
         {/* ── Hero ── */}
-        <section className="relative min-h-[88vh] flex items-center overflow-hidden">
-          {/* Background image */}
-          <div className="absolute inset-0 z-0">
+        <section className="relative flex flex-col overflow-hidden">
+          {/* Background — Russell's photo; inset-0 covers the full section height */}
+          <div className="absolute inset-0 z-0 min-h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=85"
-              alt="Modern home office workspace with natural light"
-              className="w-full h-full object-cover"
+              src="/russell-hero.jpg"
+              alt="Russell Parayno — AI, Automation & Web Services"
+              className="w-full h-full object-cover object-[center_20%]"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A14] via-[#0A0A14]/85 to-[#0A0A14]/40" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A14] via-transparent to-[#0A0A14]/30" />
+            {/* heavy left overlay so text is always legible */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A14]/95 via-[#0A0A14]/80 to-[#0A0A14]/30" />
+            {/* top + bottom fades */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A14] via-transparent to-[#0A0A14]/40" />
           </div>
 
-          {/* Content */}
-          <div className="relative z-10 px-6 md:px-10 max-w-5xl mx-auto w-full pt-24 pb-20">
-            <motion.div variants={fadeIn} initial="hidden" animate="show" custom={0}>
-              <span className="inline-flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-4 py-1.5 mb-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] animate-pulse" />
-                <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[2px]">
-                  Services
+          {/* Main content */}
+          <div className="relative z-10 px-6 md:px-10 max-w-5xl mx-auto w-full pt-28 pb-12">
+            <div className="w-full">
+              <motion.div variants={fadeIn} initial="hidden" animate="show" custom={0}>
+                <span className="inline-flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-4 py-1.5 mb-8">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] animate-pulse" />
+                  <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[2px]">
+                    Services
+                  </span>
                 </span>
-              </span>
-            </motion.div>
+              </motion.div>
 
-            <motion.h1
-              variants={fadeUp}
-              initial="hidden"
-              animate="show"
-              custom={1}
-              className="font-sans text-[38px] md:text-[58px] lg:text-[66px] font-bold text-white mb-6 leading-[1.1] max-w-3xl"
-            >
-              Helping Businesses Grow Through{" "}
-              <span className="text-[#FFD23F]">AI, Automation</span>{" "}
-              &amp; Modern Websites
-            </motion.h1>
-
-            <motion.p
-              variants={fadeUp}
-              initial="hidden"
-              animate="show"
-              custom={2}
-              className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/55 max-w-xl leading-[1.8] mb-10"
-            >
-              Whether you&apos;re launching a new business, improving an existing website, or exploring how AI can streamline your operations, I build practical solutions that save time, attract customers, and help your business grow.
-            </motion.p>
-
-            <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3} className="flex flex-col sm:flex-row gap-3">
-              <a
-                href="mailto:russell@cyberussell.com"
-                className="inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 transition-all text-[#0A0A14] font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
+              <motion.h1
+                variants={fadeUp}
+                initial="hidden"
+                animate="show"
+                custom={1}
+                className="font-sans text-[38px] md:text-[58px] lg:text-[66px] font-bold text-white mb-6 leading-[1.1] max-w-3xl"
               >
-                Let&apos;s Discuss Your Project <ArrowRight size={16} />
-              </a>
-              <a
-                href="/"
-                className="inline-flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
+                Helping Businesses Grow Through{" "}
+                <span className="text-[#FFD23F]">AI, Automation</span>{" "}
+                &amp; Modern Websites
+              </motion.h1>
+
+              <motion.p
+                variants={fadeUp}
+                initial="hidden"
+                animate="show"
+                custom={2}
+                className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/55 max-w-xl leading-[1.8] mb-10"
               >
-                View My Work
-              </a>
-            </motion.div>
+                Whether you&apos;re launching a new business, improving an existing website, or exploring how AI can streamline your operations, I build practical solutions that save time, attract customers, and help your business grow.
+              </motion.p>
+
+              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3} className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="mailto:russell@cyberussell.com"
+                  className="inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 transition-all text-[#0A0A14] font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
+                >
+                  Let&apos;s Discuss Your Project <ArrowRight size={16} />
+                </a>
+                <a
+                  href="/"
+                  className="inline-flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
+                >
+                  View My Work
+                </a>
+              </motion.div>
+            </div>
           </div>
+
+          {/* ── Services preview strip ── */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            custom={5}
+            className="relative z-10 w-full border-t border-white/[0.08] bg-[#0A0A14]/70 backdrop-blur-md"
+          >
+            {/* "What I offer" label + scroll cue */}
+            <div className="flex items-center justify-between px-6 md:px-10 pt-4 pb-2 max-w-5xl mx-auto">
+              <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/30 uppercase tracking-[2.5px]">
+                What I offer
+              </span>
+              <span className="flex items-center gap-1.5 font-[family-name:var(--font-inter)] text-[11px] text-white/30">
+                Scroll to explore
+                <ChevronDown size={13} className="animate-bounce" />
+              </span>
+            </div>
+
+            {/* Scrollable pill row */}
+            <div className="overflow-x-auto scrollbar-none pb-5 pt-1">
+              <div className="flex gap-2 px-6 md:px-10 w-max">
+                {SERVICES.map((s) => {
+                  const Icon = s.icon;
+                  return (
+                    <a
+                      key={s.id}
+                      href={`#${s.id}`}
+                      className="flex items-center gap-2 px-3.5 py-2 rounded-full border transition-all hover:scale-105 shrink-0"
+                      style={{
+                        borderColor: `${s.color}25`,
+                        backgroundColor: `${s.color}08`,
+                      }}
+                    >
+                      <Icon size={13} style={{ color: s.color }} strokeWidth={2} />
+                      <span
+                        className="font-[family-name:var(--font-inter)] text-[12px] font-medium whitespace-nowrap"
+                        style={{ color: s.color }}
+                      >
+                        {s.id === "web-dev" ? "Web Design" :
+                         s.id === "ai-automation" ? "AI Automation" :
+                         s.id === "prompt-engineering" ? "Prompt Engineering" :
+                         s.id === "web-app" ? "Web Apps" :
+                         s.id === "bubble" ? "Bubble.io" :
+                         s.id === "seo" ? "SEO" :
+                         s.id === "content" ? "Content" :
+                         s.id === "documentation" ? "Documentation" :
+                         s.id === "research" ? "Research" :
+                         s.id === "maintenance" ? "Maintenance" :
+                         "AI Training"}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* ── Trust ── */}
