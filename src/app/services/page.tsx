@@ -365,7 +365,8 @@ export default function ServicesPage() {
 
             {/* Scrollable pill row */}
             <div className="overflow-x-auto scrollbar-none pb-5 pt-1">
-              <div className="flex gap-2 px-6 md:px-10 min-w-max mx-auto">
+              <div className="flex justify-center px-6 md:px-10">
+              <div className="flex gap-2 min-w-max">
                 {SERVICES.map((s) => {
                   const Icon = s.icon;
                   return (
@@ -398,6 +399,7 @@ export default function ServicesPage() {
                     </a>
                   );
                 })}
+              </div>
               </div>
             </div>
           </motion.div>
