@@ -217,20 +217,27 @@ export default function Navbar() {
                   </a>
                 ) : (
                   <>
-                    <button
-                      onClick={() =>
-                        setMobileExpanded(mobileExpanded === item.label ? null : item.label)
-                      }
-                      className="flex items-center justify-between w-full py-3.5 text-[16px] font-bold font-[family-name:var(--font-inter)] tracking-[0.04em] uppercase text-white/70"
-                    >
-                      <span className="flex items-center gap-2">
+                    <div className="flex items-center justify-between py-3.5">
+                      <a
+                        href={item.href}
+                        onClick={handleNavClick}
+                        className="text-[16px] font-bold font-[family-name:var(--font-inter)] tracking-[0.04em] uppercase text-white/70 flex-1"
+                      >
                         {item.label}
-                      </span>
-                      <ChevronDown
-                        size={14}
-                        className={`transition-transform ${mobileExpanded === item.label ? "rotate-180" : ""}`}
-                      />
-                    </button>
+                      </a>
+                      <button
+                        onClick={() =>
+                          setMobileExpanded(mobileExpanded === item.label ? null : item.label)
+                        }
+                        className="p-1 text-white/50 hover:text-white transition-colors"
+                        aria-label={`Toggle ${item.label} submenu`}
+                      >
+                        <ChevronDown
+                          size={16}
+                          className={`transition-transform ${mobileExpanded === item.label ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                    </div>
                     {mobileExpanded === item.label && item.dropdown && (
                       <div className="pb-2 flex flex-col gap-0">
                         {item.dropdown.map((sub, i) => {
