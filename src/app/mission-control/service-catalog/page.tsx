@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Copy, Download, Archive, Loader2, Briefcase, Search, Filter } from "lucide-react";
+import { Plus, Edit2, Copy, Download, Archive, Loader2, Briefcase, Search, Filter, Sparkles } from "lucide-react";
 import AuthGuard from "@/components/mission-control/AuthGuard";
 import Sidebar from "@/components/mission-control/Sidebar";
 
 type ServiceSummary = {
   id: string;
-  name: string;
+  service_name: string;
   category: string;
   starting_price: string;
   status: "draft" | "active" | "archived";
@@ -24,22 +24,32 @@ const STATUS_COLORS: Record<string, string> = {
 export default function ServiceCatalogPage() {
   const [services, setServices] = useState<ServiceSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [seeding, setSeeding] = useState(false);
+  const [seedMsg, setSeedMsg] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadServices();
-  }, []);
+  useEffect(() => { loadServices(); }, []);
 
   async function loadServices() {
     setLoading(true);
     const res = await fetch("/api/mission-control/services");
-    if (res.ok) {
-      const data = await res.json();
-      setServices(data);
-    }
+    if (res.ok) setServices(await res.json());
     setLoading(false);
+  }
+
+  async function handleSeed() {
+    setSeeding(true); setSeedMsg("");
+    const res = await fetch("/api/mission-control/services/seed", { method: "POST" });
+    const data = await res.json();
+    if (data.skipped) {
+      setSeedMsg("Services already exist — seed skipped.");
+    } else {
+      setSeedMsg(`Seeded ${data.results?.filter((r: string) => r.startsWith("OK")).length ?? 0} services successfully.`);
+      await loadServices();
+    }
+    setSeeding(false);
   }
 
   async function handleDuplicate(service: ServiceSummary) {
@@ -51,7 +61,7 @@ export default function ServiceCatalogPage() {
       await fetch("/api/mission-control/services", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...full, id: newId, name: `${full.name} (Copy)`, status: "draft" }),
+        body: JSON.stringify({ ...full, id: newId, name: `${full.name} (Copy)`, service_name: `${full.service_name} (Copy)`, status: "draft" }),
       });
       await loadServices();
     }
@@ -75,7 +85,7 @@ export default function ServiceCatalogPage() {
   }
 
   const filtered = services.filter((s) => {
-    const matchSearch = s.name.toLowerCase().includes(search.toLowerCase()) || s.category.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = (s.service_name ?? "").toLowerCase().includes(search.toLowerCase()) || (s.category ?? "").toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || s.status === statusFilter;
     return matchSearch && matchStatus;
   });
@@ -145,85 +155,104 @@ export default function ServiceCatalogPage() {
             ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <Briefcase size={40} className="text-white/10 mb-4" strokeWidth={1.5} />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/25 mb-2">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/25 mb-6">
                   {search || statusFilter !== "all" ? "No services match your filters." : "No services yet."}
                 </p>
-                {!search && statusFilter === "all" && (
-                  <a href="/mission-control/service-catalog/new" className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 hover:text-white/60 transition-colors mt-1">
-                    + Create your first service
-                  </a>
+
+                {/* Seed button — only show when catalog is truly empty */}
+                {!search && statusFilter === "all" && services.length === 0 && (
+                  <div className="flex flex-col items-center gap-3">
+                    <button
+                      onClick={handleSeed}
+                      disabled={seeding}
+                      className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#FFD23F] text-[#0a0a12] font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-[#FFD23F]/90 transition-colors disabled:opacity-50"
+                    >
+                      {seeding ? <><Loader2 size={15} className="animate-spin" /> Seeding...</> : <><Sparkles size={15} /> Initialize Default Services</>}
+                    </button>
+                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/25">
+                      Seeds 11 Cyberussell default services from the database
+                    </p>
+                    {seedMsg && <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#00C97A]">{seedMsg}</p>}
+                  </div>
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-3">
-                {filtered.map((service) => (
-                  <div
-                    key={service.id}
-                    className="bg-[#14141e] border border-white/[0.06] rounded-xl p-5 hover:border-white/[0.10] transition-colors"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-4 flex-1 min-w-0">
-                        <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
-                          <Briefcase size={16} className="text-white/30" strokeWidth={1.8} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <h3 className="font-sans text-[15px] font-bold text-white truncate">{service.name}</h3>
-                            {service.featured && (
-                              <span className="font-[family-name:var(--font-inter)] text-[9px] font-bold text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/20 px-2 py-0.5 rounded uppercase tracking-wide">Featured</span>
-                            )}
+              <>
+                {seedMsg && (
+                  <div className="mb-4 px-4 py-3 bg-[#00C97A]/10 border border-[#00C97A]/20 rounded-xl">
+                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#00C97A]">{seedMsg}</p>
+                  </div>
+                )}
+                <div className="grid grid-cols-1 gap-3">
+                  {filtered.map((service) => (
+                    <div
+                      key={service.id}
+                      className="bg-[#14141e] border border-white/[0.06] rounded-xl p-5 hover:border-white/[0.10] transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-4 flex-1 min-w-0">
+                          <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
+                            <Briefcase size={16} className="text-white/30" strokeWidth={1.8} />
                           </div>
-                          <div className="flex items-center gap-3 flex-wrap">
-                            <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/35 bg-white/[0.04] px-2 py-0.5 rounded">{service.category || "Uncategorized"}</span>
-                            <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/60">{service.starting_price || "—"}</span>
-                            <span className="font-[family-name:var(--font-inter)] text-[11px]" style={{ color: STATUS_COLORS[service.status] || "#fff4" }}>
-                              ● {service.status}
-                            </span>
-                            <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/20">
-                              Updated {new Date(service.updated_at).toLocaleDateString()}
-                            </span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <h3 className="font-sans text-[15px] font-bold text-white truncate">{service.service_name}</h3>
+                              {service.featured && (
+                                <span className="font-[family-name:var(--font-inter)] text-[9px] font-bold text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/20 px-2 py-0.5 rounded uppercase tracking-wide">Featured</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap">
+                              <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/35 bg-white/[0.04] px-2 py-0.5 rounded">{service.category || "Uncategorized"}</span>
+                              <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/60">{service.starting_price || "—"}</span>
+                              <span className="font-[family-name:var(--font-inter)] text-[11px]" style={{ color: STATUS_COLORS[service.status] || "#fff4" }}>
+                                ● {service.status}
+                              </span>
+                              <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/20">
+                                Updated {new Date(service.updated_at).toLocaleDateString()}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Actions */}
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <a
-                          href={`/mission-control/service-catalog/${service.id}`}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] text-white/60 hover:text-white hover:bg-white/[0.10] transition-colors"
-                        >
-                          <Edit2 size={12} /> Edit
-                        </a>
-                        <button
-                          onClick={() => handleDuplicate(service)}
-                          disabled={actionLoading === `dup-${service.id}`}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] text-white/60 hover:text-white hover:bg-white/[0.10] transition-colors disabled:opacity-40"
-                          title="Duplicate"
-                        >
-                          {actionLoading === `dup-${service.id}` ? <Loader2 size={12} className="animate-spin" /> : <Copy size={12} />}
-                        </button>
-                        <button
-                          onClick={() => handleDownloadPDF(service)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] text-white/60 hover:text-white hover:bg-white/[0.10] transition-colors"
-                          title="Download PDF / Print Proposal"
-                        >
-                          <Download size={12} />
-                        </button>
-                        {service.status !== "archived" && (
-                          <button
-                            onClick={() => handleArchive(service.id)}
-                            disabled={actionLoading === `arch-${service.id}`}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] text-white/35 hover:text-white/60 hover:bg-white/[0.10] transition-colors disabled:opacity-40"
-                            title="Archive"
+                        {/* Actions */}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <a
+                            href={`/mission-control/service-catalog/${service.id}`}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] text-white/60 hover:text-white hover:bg-white/[0.10] transition-colors"
                           >
-                            {actionLoading === `arch-${service.id}` ? <Loader2 size={12} className="animate-spin" /> : <Archive size={12} />}
+                            <Edit2 size={12} /> Edit
+                          </a>
+                          <button
+                            onClick={() => handleDuplicate(service)}
+                            disabled={actionLoading === `dup-${service.id}`}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] text-white/60 hover:text-white hover:bg-white/[0.10] transition-colors disabled:opacity-40"
+                            title="Duplicate"
+                          >
+                            {actionLoading === `dup-${service.id}` ? <Loader2 size={12} className="animate-spin" /> : <Copy size={12} />}
                           </button>
-                        )}
+                          <button
+                            onClick={() => handleDownloadPDF(service)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] text-white/60 hover:text-white hover:bg-white/[0.10] transition-colors"
+                            title="Download PDF / Print Proposal"
+                          >
+                            <Download size={12} />
+                          </button>
+                          {service.status !== "archived" && (
+                            <button
+                              onClick={() => handleArchive(service.id)}
+                              disabled={actionLoading === `arch-${service.id}`}
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] font-[family-name:var(--font-inter)] text-[12px] text-white/35 hover:text-white/60 hover:bg-white/[0.10] transition-colors disabled:opacity-40"
+                              title="Archive"
+                            >
+                              {actionLoading === `arch-${service.id}` ? <Loader2 size={12} className="animate-spin" /> : <Archive size={12} />}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </main>
