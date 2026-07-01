@@ -298,8 +298,8 @@ export default function ServicesPage() {
       <main className="min-h-screen bg-[#0A0A14]">
 
         {/* ── Hero ── */}
-        <section className="relative flex flex-col overflow-hidden">
-          {/* Background photo — desktop only */}
+        <section className="relative flex flex-col overflow-hidden min-h-[680px] md:min-h-0">
+          {/* Background photo — desktop */}
           <div className="hidden md:block absolute inset-0 z-0 min-h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -311,19 +311,21 @@ export default function ServicesPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A14] via-transparent to-[#0A0A14]/40" />
           </div>
 
-          {/* Mobile-only portrait block */}
-          <div className="md:hidden relative w-full h-64 overflow-hidden">
+          {/* Background photo — mobile (portrait, flipped so face is on right) */}
+          <div className="md:hidden absolute inset-0 z-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/russell-hero.jpg"
+              src="/russell-hero-mobile.jpg"
               alt="Russell Parayno — AI, Automation & Web Services"
-              className="w-full h-full object-cover object-[30%_18%] [transform:scaleX(-1)]"
+              className="w-full h-full object-cover object-top"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A14]/40 via-transparent to-[#0A0A14]" />
+            {/* Heavy left gradient so text is readable, face shows through on right */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A14]/95 via-[#0A0A14]/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A14] via-transparent to-transparent" />
           </div>
 
           {/* Main content */}
-          <div className="relative z-10 px-6 md:px-10 max-w-5xl mx-auto w-full md:pt-28 pt-4 pb-12">
+          <div className="relative z-10 px-6 md:px-10 max-w-5xl mx-auto w-full pt-28 pb-12">
             <div className="w-full">
               <motion.div variants={fadeIn} initial="hidden" animate="show" custom={0}>
                 <span className="inline-flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-4 py-1.5 mb-8">
@@ -339,7 +341,7 @@ export default function ServicesPage() {
                 initial="hidden"
                 animate="show"
                 custom={1}
-                className="font-sans text-[38px] md:text-[58px] lg:text-[66px] font-bold text-white mb-6 leading-[1.1] max-w-3xl"
+                className="font-sans text-[28px] md:text-[58px] lg:text-[66px] font-bold text-white mb-6 leading-[1.1] max-w-[55%] md:max-w-3xl"
               >
                 Helping Businesses Grow Through{" "}
                 <span className="text-[#FFD23F]">AI, Automation</span>{" "}
@@ -351,7 +353,7 @@ export default function ServicesPage() {
                 initial="hidden"
                 animate="show"
                 custom={2}
-                className="font-[family-name:var(--font-inter)] text-[16px] md:text-[18px] text-white/55 max-w-xl leading-[1.8] mb-10"
+                className="font-[family-name:var(--font-inter)] text-[13px] md:text-[18px] text-white/55 max-w-[52%] md:max-w-xl leading-[1.8] mb-10"
               >
                 Whether you&apos;re launching a new business, improving an existing website, or exploring how AI can streamline your operations, I build practical solutions that save time, attract customers, and help your business grow.
               </motion.p>
