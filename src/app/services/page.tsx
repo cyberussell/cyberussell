@@ -305,7 +305,7 @@ export default function ServicesPage() {
             <img
               src="/russell-hero.jpg"
               alt="Russell Parayno — AI, Automation & Web Services"
-              className="w-full h-full object-cover object-[30%_60%] [transform:scaleX(-1)]"
+              className="w-full h-full object-cover object-[30%_25%] md:object-[30%_60%] [transform:scaleX(-1)]"
             />
             {/* heavy left overlay so text is always legible */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A14]/95 via-[#0A0A14]/80 to-[#0A0A14]/30" />
