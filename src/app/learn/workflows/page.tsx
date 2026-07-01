@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { GitBranch } from "lucide-react";
+import { GitBranch, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "AI Workflows — Chain AI Tools to Get Real Results | Cyberussell",
@@ -11,16 +11,16 @@ export const metadata: Metadata = {
 };
 
 const workflows = [
-  { title: "Website Creation", tools: ["ChatGPT", "Claude", "Human review"], soon: false },
-  { title: "Business Planning", tools: ["ChatGPT", "Gemini", "Claude", "Human review"], soon: true },
-  { title: "Resume Creation", tools: ["ChatGPT", "Claude", "Human review"], soon: false },
-  { title: "Content Creation", tools: ["ChatGPT", "Claude", "Human review"], soon: true },
-  { title: "Freelancing Proposal", tools: ["Claude", "ChatGPT", "Human review"], soon: true },
-  { title: "Deep Research", tools: ["Gemini", "ChatGPT", "Claude", "Human review"], soon: true },
-  { title: "Learning New Skills", tools: ["ChatGPT", "Claude", "Human review"], soon: true },
-  { title: "Programming", tools: ["Claude", "ChatGPT", "Human review"], soon: true },
-  { title: "Marketing Strategy", tools: ["ChatGPT", "Gemini", "Claude", "Human review"], soon: true },
-  { title: "Decision Making", tools: ["ChatGPT", "Claude", "Human review"], soon: true },
+  { title: "Website Creation", tools: ["ChatGPT", "Claude", "Human review"], href: "/learn/workflows/website-creation" },
+  { title: "Business Planning", tools: ["ChatGPT", "Gemini", "Claude", "Human review"], href: "/learn/workflows/business-planning" },
+  { title: "Resume Creation", tools: ["ChatGPT", "Claude", "Human review"], href: "/learn/workflows/resume-creation" },
+  { title: "Content Creation", tools: ["ChatGPT", "Claude", "Human review"], href: "/learn/workflows/content-creation" },
+  { title: "Freelancing Proposal", tools: ["Claude", "ChatGPT", "Human review"], href: "/learn/workflows/freelancing-proposal" },
+  { title: "Deep Research", tools: ["Gemini", "ChatGPT", "Claude", "Human review"], href: "/learn/workflows/deep-research" },
+  { title: "Learning New Skills", tools: ["ChatGPT", "Claude", "Human review"], href: "/learn/workflows/learning-new-skills" },
+  { title: "Programming", tools: ["Claude", "ChatGPT", "Human review"], href: "/learn/workflows/programming" },
+  { title: "Marketing Strategy", tools: ["ChatGPT", "Gemini", "Claude", "Human review"], href: "/learn/workflows/marketing-strategy" },
+  { title: "Decision Making", tools: ["ChatGPT", "Claude", "Human review"], href: "/learn/workflows/decision-making" },
 ];
 
 export default function WorkflowsPage() {
@@ -90,17 +90,14 @@ export default function WorkflowsPage() {
           {/* Workflow grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {workflows.map((wf) => (
-              <div
+              <a
                 key={wf.title}
-                className={`bg-[#18181F] border rounded-[12px] p-5 ${
-                  wf.soon ? "border-white/[0.06] opacity-60" : "border-white/[0.08] hover:border-white/20 transition-all cursor-pointer"
-                }`}
+                href={wf.href}
+                className="bg-[#18181F] border border-white/[0.08] rounded-[12px] p-5 hover:border-[#F59E0B]/40 hover:bg-[#F59E0B]/[0.03] transition-all cursor-pointer group block"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-sans text-[15px] font-bold text-white">{wf.title}</h3>
-                  {wf.soon && (
-                    <span className="text-[10px] font-bold font-[family-name:var(--font-inter)] text-white/25 uppercase tracking-[1px]">Soon</span>
-                  )}
+                  <h3 className="font-sans text-[15px] font-bold text-white group-hover:text-[#F59E0B] transition-colors">{wf.title}</h3>
+                  <ArrowRight size={14} className="text-white/20 group-hover:text-[#F59E0B] transition-colors shrink-0" />
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
                   {wf.tools.map((tool, i) => (
@@ -112,8 +109,26 @@ export default function WorkflowsPage() {
                     </span>
                   ))}
                 </div>
-              </div>
+              </a>
             ))}
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="px-6 md:px-10 pb-10 max-w-5xl mx-auto">
+          <div className="bg-[#F59E0B]/5 border border-[#F59E0B]/20 rounded-[14px] p-8 text-center">
+            <p className="font-sans text-[20px] md:text-[24px] font-bold text-white mb-2">
+              Ready to earn your Workflow Bida Badge?
+            </p>
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mb-6">
+              Complete all 10 workflow guides, then take the final assessment.
+            </p>
+            <a
+              href="/learn/workflows/complete"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-6 py-3 rounded-xl"
+            >
+              Take the Final Assessment <ArrowRight size={15} />
+            </a>
           </div>
         </section>
 
