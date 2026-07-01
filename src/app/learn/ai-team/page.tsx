@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Users, Lock } from "lucide-react";
+import { Users, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Meet Your AI Team — ChatGPT, Claude & Gemini | Cyberussell",
@@ -10,30 +10,52 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.cyberussell.com/learn/ai-team" },
 };
 
+const chatgptGuides = [
+  { name: "Prompting", href: "/learn/ai-team/chatgpt-prompting" },
+  { name: "Memory & Projects", href: "/learn/ai-team/chatgpt-memory-and-projects" },
+  { name: "Voice Mode", href: "/learn/ai-team/chatgpt-voice-mode" },
+  { name: "Image Generation", href: "/learn/ai-team/chatgpt-image-generation" },
+  { name: "Deep Research", href: "/learn/ai-team/chatgpt-deep-research" },
+  { name: "Canvas", href: "/learn/ai-team/chatgpt-canvas" },
+];
+
+const claudeGuides = [
+  { name: "Artifacts", href: "/learn/ai-team/claude-artifacts" },
+  { name: "Projects & Memory", href: "/learn/ai-team/claude-projects-and-memory" },
+  { name: "Claude Code", href: "/learn/ai-team/claude-code" },
+  { name: "Long Context", href: "/learn/ai-team/claude-long-context" },
+  { name: "Coding Workflows", href: "/learn/ai-team/claude-coding-workflows" },
+];
+
+const geminiGuides = [
+  { name: "Gemini in Gmail", href: "/learn/ai-team/gemini-in-gmail" },
+  { name: "Gemini in Docs", href: "/learn/ai-team/gemini-in-docs" },
+  { name: "Gemini in Sheets", href: "/learn/ai-team/gemini-in-sheets" },
+  { name: "Deep Research", href: "/learn/ai-team/gemini-deep-research" },
+  { name: "Search Integration", href: "/learn/ai-team/gemini-search-integration" },
+];
+
 const aiTools = [
   {
     name: "ChatGPT",
     role: "The All-Rounder",
     bestFor: ["Brainstorming", "Learning", "Planning", "Writing", "Daily productivity"],
-    guides: ["Prompting", "Memory & Projects", "Voice Mode", "Image Generation", "Deep Research", "Canvas"],
+    guides: chatgptGuides,
     color: "#10B981",
-    soon: false,
   },
   {
     name: "Claude",
     role: "The Deep Thinker",
     bestFor: ["Programming", "Long documents", "Writing & editing", "Reasoning", "Claude Code"],
-    guides: ["Artifacts", "Projects & Memory", "Claude Code", "Long context use", "Coding workflows"],
+    guides: claudeGuides,
     color: "#F59E0B",
-    soon: true,
   },
   {
     name: "Gemini",
     role: "The Google Expert",
     bestFor: ["Google Workspace", "Research", "Gmail & Docs", "Drive & Sheets", "Deep Research"],
-    guides: ["Gemini in Gmail", "Gemini in Docs", "Gemini in Sheets", "Deep Research", "Search integration"],
+    guides: geminiGuides,
     color: "#4F8EF7",
-    soon: true,
   },
 ];
 
@@ -75,9 +97,7 @@ export default function AITeamPage() {
             {aiTools.map((ai) => (
               <div
                 key={ai.name}
-                className={`bg-[#18181F] border rounded-[14px] p-6 flex flex-col ${
-                  ai.soon ? "border-white/[0.06] opacity-60" : "border-white/[0.08]"
-                }`}
+                className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -86,9 +106,6 @@ export default function AITeamPage() {
                       {ai.role}
                     </p>
                   </div>
-                  {ai.soon && (
-                    <Lock size={14} className="text-white/25" />
-                  )}
                 </div>
 
                 <div className="mb-4">
@@ -111,16 +128,43 @@ export default function AITeamPage() {
                   </p>
                   <ul className="flex flex-col gap-1">
                     {ai.guides.map((guide) => (
-                      <li key={guide} className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/35">
-                        <span className="text-[10px]">→</span>
-                        {guide}
-                        {ai.soon && <span className="text-[9px] text-white/20 ml-auto">soon</span>}
+                      <li key={guide.name}>
+                        <a
+                          href={guide.href}
+                          className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/55 hover:text-white transition-colors group"
+                        >
+                          <span className="text-[10px]" style={{ color: ai.color }}>→</span>
+                          <span className="group-hover:underline">{guide.name}</span>
+                        </a>
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Final Assessment CTA */}
+        <section className="px-6 md:px-10 pb-12 max-w-5xl mx-auto">
+          <div className="bg-[#22C55E]/8 border border-[#22C55E]/20 rounded-[18px] p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#22C55E] uppercase tracking-[2px] mb-2">
+                Complete Pillar 3
+              </p>
+              <h2 className="font-sans text-[22px] font-bold text-white mb-1">
+                Ready to earn your AI Team Bida Badge?
+              </h2>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45">
+                Finish all 16 guides, then take the final assessment to earn your badge and certificate.
+              </p>
+            </div>
+            <a
+              href="/learn/ai-team/complete"
+              className="inline-flex items-center gap-2 bg-[#22C55E] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-6 py-3.5 rounded-xl shrink-0"
+            >
+              Take the Assessment <ArrowRight size={15} />
+            </a>
           </div>
         </section>
 
