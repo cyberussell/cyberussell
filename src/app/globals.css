@@ -81,3 +81,57 @@ body {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* Earn page AI output formatting */
+.prose-earn h1, .prose-earn h2, .prose-earn h3 {
+  color: white;
+  font-weight: 700;
+  margin-top: 1.2em;
+  margin-bottom: 0.4em;
+  font-family: var(--font-syne);
+}
+.prose-earn h1 { font-size: 1.1rem; }
+.prose-earn h2 { font-size: 1rem; }
+.prose-earn h3 { font-size: 0.9rem; }
+.prose-earn p { margin-bottom: 0.75em; }
+.prose-earn ul, .prose-earn ol {
+  padding-left: 1.25em;
+  margin-bottom: 0.75em;
+}
+.prose-earn ul { list-style-type: disc; }
+.prose-earn ol { list-style-type: decimal; }
+.prose-earn li { margin-bottom: 0.3em; }
+.prose-earn strong { color: white; font-weight: 700; }
+.prose-earn em { color: rgba(255,255,255,0.6); }
+.prose-earn table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+  font-size: 0.8rem;
+}
+.prose-earn th {
+  text-align: left;
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.prose-earn td {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  vertical-align: top;
+}
+.prose-earn blockquote {
+  border-left: 2px solid rgba(255,255,255,0.15);
+  padding-left: 1em;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 0.75em;
+}
+.prose-earn hr {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin: 1em 0;
+}

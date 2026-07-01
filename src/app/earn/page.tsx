@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Briefcase, Users, Rocket, ArrowRight, Loader2, Copy, Check, ChevronLeft, Sparkles } from "lucide-react";
+import { Briefcase, Users, Rocket, ArrowRight, Loader2, Copy, Check, ChevronLeft, Sparkles, BookOpen } from "lucide-react";
+import { remark } from "remark";
+import remarkGfm from "remark-gfm";
+import remarkHtml from "remark-html";
+
+async function renderMarkdown(text: string): Promise<string> {
+  const result = await remark().use(remarkGfm).use(remarkHtml).process(text);
+  return result.toString();
+}
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -195,9 +203,15 @@ function StepForm({
 }) {
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [output, setOutput] = useState("");
+  const [renderedHtml, setRenderedHtml] = useState("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!output) { setRenderedHtml(""); return; }
+    renderMarkdown(output).then(setRenderedHtml);
+  }, [output]);
 
   const allFilled = step.fields.every((f) => inputs[f.key]?.trim());
 
@@ -293,7 +307,10 @@ function StepForm({
                 {copied ? <><Check size={13} className="text-green-400" /> Copied</> : <><Copy size={13} /> Copy</>}
               </button>
             </div>
-            <pre className="font-[family-name:var(--font-inter)] text-[13px] text-white/75 leading-[1.8] whitespace-pre-wrap">{output}</pre>
+            <div
+              className="font-[family-name:var(--font-inter)] text-[13px] text-white/75 leading-[1.8] prose-earn"
+              dangerouslySetInnerHTML={{ __html: renderedHtml || output }}
+            />
           </div>
 
           <div className="flex gap-3">
@@ -478,6 +495,30 @@ export default function EarnPage() {
               <p className="text-center font-[family-name:var(--font-inter)] text-[13px] text-white/25 mt-8">
                 Every step is AI-assisted. You answer questions. AI builds your assets.
               </p>
+
+              {/* Suggested reading */}
+              <div className="mt-10 border-t border-white/[0.06] pt-8">
+                <p className="text-center font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/25 uppercase tracking-[2px] mb-4">
+                  Not sure which path is right for you?
+                </p>
+                <a
+                  href="/guides/8-ways"
+                  className="flex items-center gap-4 bg-[#18181F] border border-white/[0.08] rounded-2xl p-5 hover:border-[#FFD23F]/30 hover:bg-[#1e1e2a] transition-all group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-[#FFD23F]/10 flex items-center justify-center shrink-0">
+                    <BookOpen size={20} className="text-[#FFD23F]" strokeWidth={1.8} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-sans text-[15px] font-bold text-white group-hover:text-[#FFD23F] transition-colors">
+                      8 Ways to Earn Online as a Filipino
+                    </p>
+                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 mt-0.5">
+                      Real income data, exact tools, and honest reality checks for 8 proven paths.
+                    </p>
+                  </div>
+                  <ArrowRight size={16} className="text-white/25 group-hover:text-[#FFD23F] transition-colors shrink-0" />
+                </a>
+              </div>
             </section>
           </>
         ) : (
