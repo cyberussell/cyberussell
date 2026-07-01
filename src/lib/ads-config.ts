@@ -26,7 +26,7 @@ const AD_RULES: [string, AdMode][] = [
   ["/skill-finder",    "none"],
   ["/careers",         "none"],
   ["/discover",        "none"],
-  ["/tools",           "none"],
+  ["/tools",           "manual"],
   ["/utm",             "none"],
   ["/learn",           "none"],  // lesson/quiz pages – protect the learning flow
 
