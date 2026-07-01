@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Target, Lock, Clock, BarChart2 } from "lucide-react";
+import { Target, Clock, BarChart2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "AI Missions — Complete Real Projects with AI | Cyberussell",
@@ -18,6 +18,7 @@ const missions = [
     difficulty: "Beginner",
     deliverable: "A complete, polished resume",
     soon: false,
+    href: "/learn/missions/create-your-first-resume",
   },
   {
     title: "Build a Landing Page",
@@ -26,6 +27,7 @@ const missions = [
     difficulty: "Beginner",
     deliverable: "A live, published landing page",
     soon: false,
+    href: "/learn/missions/build-a-landing-page",
   },
   {
     title: "Write a Freelance Proposal",
@@ -33,7 +35,8 @@ const missions = [
     time: "30 min",
     difficulty: "Beginner",
     deliverable: "A ready-to-send proposal",
-    soon: true,
+    soon: false,
+    href: "/learn/missions/write-a-freelance-proposal",
   },
   {
     title: "Research a Business Idea",
@@ -41,7 +44,8 @@ const missions = [
     time: "1 hour",
     difficulty: "Intermediate",
     deliverable: "A 1-page business research summary",
-    soon: true,
+    soon: false,
+    href: "/learn/missions/research-a-business-idea",
   },
   {
     title: "Create a Social Media Calendar",
@@ -49,7 +53,8 @@ const missions = [
     time: "1 hour",
     difficulty: "Beginner",
     deliverable: "A 30-day content calendar",
-    soon: true,
+    soon: false,
+    href: "/learn/missions/create-a-social-media-calendar",
   },
   {
     title: "Design a Logo",
@@ -57,7 +62,8 @@ const missions = [
     time: "45 min",
     difficulty: "Beginner",
     deliverable: "3 logo variations",
-    soon: true,
+    soon: false,
+    href: "/learn/missions/design-a-logo",
   },
   {
     title: "Write a Blog Article",
@@ -65,7 +71,8 @@ const missions = [
     time: "1.5 hours",
     difficulty: "Beginner",
     deliverable: "A 1,000-word published article",
-    soon: true,
+    soon: false,
+    href: "/learn/missions/write-a-blog-article",
   },
 ];
 
@@ -112,22 +119,15 @@ export default function MissionsPage() {
 
           <div className="flex flex-col gap-3">
             {missions.map((mission) => (
-              <div
+              <a
                 key={mission.title}
-                className={`bg-[#18181F] border rounded-[14px] p-5 md:p-6 ${
-                  mission.soon
-                    ? "border-white/[0.06] opacity-60"
-                    : "border-white/[0.08] hover:border-white/20 transition-all cursor-pointer"
-                }`}
+                href={mission.href}
+                className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-5 md:p-6 hover:border-[#FFD23F]/30 transition-all"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 flex-1">
                     <div className="w-9 h-9 rounded-lg bg-[#FFD23F]/10 flex items-center justify-center shrink-0 mt-0.5">
-                      {mission.soon ? (
-                        <Lock size={14} className="text-[#FFD23F]/40" />
-                      ) : (
-                        <Target size={14} className="text-[#FFD23F]" />
-                      )}
+                      <Target size={14} className="text-[#FFD23F]" />
                     </div>
                     <div className="flex-1">
                       <h3 className="font-sans text-[16px] font-bold text-white mb-1.5">{mission.title}</h3>
@@ -150,18 +150,11 @@ export default function MissionsPage() {
                       </div>
                     </div>
                   </div>
-                  {!mission.soon && (
-                    <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#FFD23F] shrink-0 hidden sm:block">
-                      Start →
-                    </span>
-                  )}
-                  {mission.soon && (
-                    <span className="text-[10px] font-bold font-[family-name:var(--font-inter)] text-white/25 uppercase tracking-[1px] shrink-0">
-                      Soon
-                    </span>
-                  )}
+                  <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#FFD23F] shrink-0 hidden sm:block">
+                    Start →
+                  </span>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </section>
