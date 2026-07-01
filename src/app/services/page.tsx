@@ -202,26 +202,41 @@ function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: n
       className="bg-[#111118] border border-white/[0.06] rounded-[20px] overflow-hidden scroll-mt-24"
     >
       <div className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"}`}>
-        {/* Image */}
-        <div className="lg:w-[45%] shrink-0 relative overflow-hidden min-h-[240px] lg:min-h-[380px]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={service.image}
-            alt={service.imageAlt}
-            className="w-full h-full object-cover absolute inset-0"
-            loading="lazy"
+        {/* Minimalist icon panel */}
+        <div
+          className="lg:w-[36%] shrink-0 relative overflow-hidden min-h-[180px] lg:min-h-[300px] flex items-center justify-center"
+          style={{ background: `linear-gradient(135deg, ${service.color}12 0%, ${service.color}04 100%)` }}
+        >
+          {/* Dot grid */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(${service.color}30 1px, transparent 1px)`,
+              backgroundSize: "22px 22px",
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#111118]/60 via-transparent to-transparent" style={{ background: isEven ? undefined : "linear-gradient(to left, #111118 0%, transparent 60%)" }} />
+          {/* Large icon */}
+          <div className="relative z-10 flex flex-col items-center gap-3">
+            <div
+              className="w-20 h-20 rounded-2xl flex items-center justify-center"
+              style={{ backgroundColor: `${service.color}14`, border: `1px solid ${service.color}28` }}
+            >
+              <Icon size={34} style={{ color: service.color }} strokeWidth={1.4} />
+            </div>
+          </div>
+          {/* Edge fade into card */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: isEven
+                ? "linear-gradient(to right, transparent 55%, #111118)"
+                : "linear-gradient(to left, transparent 55%, #111118)",
+            }}
+          />
         </div>
 
         {/* Content */}
         <div className="flex-1 p-7 md:p-10 flex flex-col justify-center">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${service.color}15` }}>
-              <Icon size={18} style={{ color: service.color }} strokeWidth={1.8} />
-            </div>
-          </div>
-
           <h2 className="font-sans text-[22px] md:text-[26px] font-bold text-white mb-3 leading-tight">
             {service.headline}
           </h2>
@@ -244,8 +259,7 @@ function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: n
 
           <a
             href="mailto:russell@cyberussell.com"
-            className="inline-flex items-center gap-2 font-[family-name:var(--font-inter)] text-[14px] font-bold px-5 py-3 rounded-xl transition-all w-fit"
-            style={{ backgroundColor: `${service.color}18`, color: service.color, border: `1px solid ${service.color}30` }}
+            className="inline-flex items-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 text-[#0A0A14] font-[family-name:var(--font-inter)] text-[14px] font-bold px-5 py-3 rounded-xl transition-all w-fit"
           >
             {service.cta} <ChevronRight size={15} />
           </a>
@@ -351,7 +365,7 @@ export default function ServicesPage() {
 
             {/* Scrollable pill row */}
             <div className="overflow-x-auto scrollbar-none pb-5 pt-1">
-              <div className="flex gap-2 px-6 md:px-10 w-max">
+              <div className="flex gap-2 px-6 md:px-10 min-w-max mx-auto">
                 {SERVICES.map((s) => {
                   const Icon = s.icon;
                   return (
