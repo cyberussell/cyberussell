@@ -1,12 +1,14 @@
 "use client";
 
-import { Sparkles, Target, Clock, Star, ArrowRight, RotateCcw, Download, Square, CheckSquare } from "lucide-react";
+import { Sparkles, Target, Clock, Star, ArrowRight, RotateCcw, Download, Square, CheckSquare, GraduationCap } from "lucide-react";
 import { useState } from "react";
 import type { DiscoveryResult } from "@/lib/discovery/types";
+import { getLearningPath } from "@/lib/discovery/learningPaths";
 
 export default function DiscoveryResults({ result, onRestart }: { result: DiscoveryResult; onRestart: () => void }) {
   const [missionChecked, setMissionChecked] = useState<boolean[]>(result.todays_mission.map(() => false));
   const topMatch = result.career_matches[0];
+  const learningPath = topMatch ? getLearningPath(topMatch.slug) : [];
 
   function toggleMission(i: number) {
     setMissionChecked((prev) => prev.map((v, j) => (j === i ? !v : v)));
@@ -114,18 +116,48 @@ export default function DiscoveryResults({ result, onRestart }: { result: Discov
         </div>
       </section>
 
+      {/* Learn This First */}
+      {topMatch && learningPath.length > 0 && (
+        <section className="mb-10">
+          <div className="flex items-center gap-2 mb-5">
+            <GraduationCap size={18} className="text-[#4F8EF7]" strokeWidth={2} />
+            <h2 className="font-sans text-[22px] font-bold text-white">Learn This First</h2>
+          </div>
+          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mb-5 -mt-2">
+            Before the blueprint, get comfortable with the AI basics {topMatch.skill.toLowerCase()} depends on. Free, no signup.
+          </p>
+          <div className="flex flex-col gap-3">
+            {learningPath.map((step, i) => (
+              <a
+                key={step.href}
+                href={step.href}
+                className="flex items-center gap-4 bg-[#18181F] border border-white/[0.08] rounded-xl p-4 hover:border-[#4F8EF7]/40 hover:bg-[#1e1e2a] transition-all group"
+              >
+                <span className="w-8 h-8 rounded-full bg-[#4F8EF7]/10 text-[#4F8EF7] font-[family-name:var(--font-inter)] font-bold text-[13px] flex items-center justify-center shrink-0">
+                  {i + 1}
+                </span>
+                <span className="font-[family-name:var(--font-inter)] text-[14px] font-medium text-white/80 group-hover:text-white transition-colors flex-1">
+                  {step.title}
+                </span>
+                <ArrowRight size={16} className="text-white/20 group-hover:text-[#4F8EF7] transition-colors shrink-0" strokeWidth={2} />
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Recommended Next Step */}
       {topMatch && (
         <section className="mb-10">
           <div className="bg-gradient-to-br from-[#E8373A]/[0.08] to-[#FFD23F]/[0.05] border border-[#E8373A]/20 rounded-2xl p-6 md:p-8 text-center">
             <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#E8373A] uppercase tracking-[2.5px] mb-3 block">
-              Recommended Next Step
+              Your Destination
             </span>
             <h2 className="font-sans text-[24px] md:text-[28px] font-bold text-white mb-3">
-              Start your {topMatch.skill} journey today.
+              Your {topMatch.skill} blueprint is waiting.
             </h2>
             <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mb-6 max-w-[400px] mx-auto">
-              Your Career Blueprint has everything you need — a step-by-step roadmap, income paths, tools, and platforms.
+              Once you&apos;ve got the basics down, this is where it all comes together — a step-by-step roadmap, income paths, tools, and platforms.
             </p>
             <a
               href={`/careers/${topMatch.slug}`}
