@@ -371,9 +371,11 @@ export default function TypingPractice() {
   const [correctedCount, setCorrectedCount] = useState(0);
   const [finalWpm, setFinalWpm] = useState(0);
   const [finalAccuracy, setFinalAccuracy] = useState(0);
+  const [finalElapsed, setFinalElapsed] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const typedRef = useRef("");
+  const startTimeRef = useRef<number | null>(null);
 
   const passage = PASSAGES[difficulty][passageIndex];
 
@@ -440,16 +442,24 @@ export default function TypingPractice() {
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     if (done || value.length > passage.length) return;
-    if (!startTime) setStartTime(Date.now());
+    if (!startTimeRef.current) {
+      const now = Date.now();
+      startTimeRef.current = now;
+      setStartTime(now);
+    }
     typedRef.current = value;
     setTyped(value);
 
     if (value === passage) {
       if (timerRef.current) clearInterval(timerRef.current);
-      const minutes = (Date.now() - (startTime ?? Date.now())) / 60000;
+      const finishTime = Date.now();
+      const minutes = (finishTime - (startTimeRef.current ?? finishTime)) / 60000;
+      const exactElapsed = Math.floor((finishTime - (startTimeRef.current ?? finishTime)) / 1000);
       const words = value.trim().split(/\s+/).length;
       const finalW = Math.round(words / Math.max(minutes, 0.01));
       const finalA = Math.round((value.split("").filter((c, i) => c === passage[i]).length / value.length) * 100);
+      setElapsed(exactElapsed);
+      setFinalElapsed(exactElapsed);
       setFinalWpm(finalW);
       setFinalAccuracy(finalA);
       savePersonalBest(finalW);
@@ -463,6 +473,7 @@ export default function TypingPractice() {
     const d = newDiff ?? difficulty;
     const idx = (passageIndex + 1) % PASSAGES[d].length;
     setTyped(""); typedRef.current = "";
+    startTimeRef.current = null;
     setDone(false); setStartTime(null); setElapsed(0); setWpm(0);
     setActiveKey(null); setErrorKey(null); setMistakeMap({});
     setErrorCount(0); setCorrectedCount(0); setFinalWpm(0); setFinalAccuracy(0);
@@ -512,7 +523,7 @@ export default function TypingPractice() {
     return (
       <div className="w-full max-w-4xl mx-auto px-4">
         <ResultsScreen
-          wpm={finalWpm} accuracy={finalAccuracy} elapsed={elapsed}
+          wpm={finalWpm} accuracy={finalAccuracy} elapsed={finalElapsed}
           typed={typed} passage={passage}
           mistakeMap={mistakeMap} errorCount={errorCount} correctedCount={correctedCount}
           onReset={() => reset()}
@@ -565,9 +576,14 @@ export default function TypingPractice() {
         <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
           {renderPassage()}
         </div>
-        <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/20 mt-4 text-center">
-          Click here and start typing
-        </p>
+        <div className="flex items-center justify-between mt-4">
+          <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/20">
+            Click here and start typing
+          </p>
+          <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/20">
+            {typed.length}/{passage.length} · Finish to see Heatmap & Stats
+          </p>
+        </div>
       </div>
 
       {/* Live keyboard */}
