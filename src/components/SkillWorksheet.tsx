@@ -152,7 +152,7 @@ function getResults(skills: string[], situations: string[], goals: string[]): Re
         { name: "CapCut mobile", note: "Better editing than TikTok's built-in", free: true },
         { name: "Canva mobile", note: "For thumbnails", free: true },
       ],
-      setup: ["Pick a niche — beauty, food, tech, home products convert best in PH", "Post 2–3 videos daily until you hit 1,000 followers", "Apply for TikTok Shop Affiliate at 1,000 followers", "Post authentic product reviews — real content converts better", "Track which products get the most commission and double down"],
+      setup: ["Pick a niche — beauty, food, tech, home products convert best in PH", "Post 2–3 videos daily until you hit 600 followers", "Apply for TikTok Shop Affiliate at 600 followers", "Post authentic product reviews — real content converts better", "Track which products get the most commission and double down"],
       payment: ["TikTok Shop pays to your linked bank account", "Ecomobi pays via GCash", "Shopee Affiliate pays via Shopee wallet → bank/GCash"],
     },
     {
@@ -230,7 +230,7 @@ function getResults(skills: string[], situations: string[], goals: string[]): Re
         { name: "CapCut mobile", note: "Add text, music, transitions", free: true },
         { name: "Canva mobile", note: "Recipe card graphics", free: true },
       ],
-      setup: ["Pick your food niche — recipes, reviews, street food, cooking tips", "Post 1–2 cooking videos daily on TikTok", "Use trending sounds and hashtags (#LutongPinoy #TikTokFood)", "At 1,000 followers, apply for TikTok Shop Affiliate", "Promote kitchen tools and ingredients with affiliate links"],
+      setup: ["Pick your food niche — recipes, reviews, street food, cooking tips", "Post 1–2 cooking videos daily on TikTok", "Use trending sounds and hashtags (#LutongPinoy #TikTokFood)", "At 600 followers, apply for TikTok Shop Affiliate", "Promote kitchen tools and ingredients with affiliate links"],
       payment: ["TikTok Shop Affiliate pays to bank account", "Ecomobi pays via GCash", "Brand sponsorship payments via bank transfer or GCash"],
     },
     {

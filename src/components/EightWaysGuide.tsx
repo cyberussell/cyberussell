@@ -191,7 +191,7 @@ const WAYS: Way[] = [
     tools: [
       { name: "Smartphone with decent camera", note: "Required" },
       { name: "TikTok account", note: "Free", link: "https://www.tiktok.com" },
-      { name: "TikTok Shop Affiliate", note: "Needs 1,000 followers", link: "https://affiliate.tiktokshop.com" },
+      { name: "TikTok Shop Affiliate", note: "Needs 600 followers", link: "https://affiliate.tiktokshop.com" },
       { name: "Ecomobi for PH affiliates", note: "Free", link: "https://ecomobi.com" },
       { name: "Canva for thumbnails", note: "Free", link: "https://www.canva.com" },
     ],
@@ -202,8 +202,8 @@ const WAYS: Way[] = [
     ],
     steps: [
       "Pick niche — beauty, food, tech, home products convert best in PH",
-      "Post 2–3 TikTok videos daily until 1,000 followers",
-      "Apply for TikTok Shop Affiliate at 1,000 followers",
+      "Post 2–3 TikTok videos daily until 600 followers",
+      "Apply for TikTok Shop Affiliate at 600 followers",
       "Post authentic product reviews — real content converts better",
       "Track which products convert and post more of those",
     ],
