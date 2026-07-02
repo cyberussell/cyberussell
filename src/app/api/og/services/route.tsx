@@ -32,10 +32,10 @@ export async function GET() {
           }}
         />
 
-        {/* Left-to-right overlay */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(10,10,20,1.0) 0%, rgba(10,10,20,1.0) 35%, rgba(10,10,20,0.75) 58%, rgba(10,10,20,0.0) 100%)" }} />
-        {/* Top-to-bottom overlay */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,20,0.5) 0%, transparent 35%, rgba(10,10,20,0.8) 100%)" }} />
+        {/* Solid dark block behind text, fading right */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(10,10,20,1.0) 0%, rgba(10,10,20,1.0) 50%, rgba(10,10,20,0.6) 70%, rgba(10,10,20,0.0) 100%)" }} />
+        {/* Top and bottom dark fade */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,20,0.6) 0%, transparent 30%, rgba(10,10,20,0.9) 100%)" }} />
 
         {/* Top color bar */}
         <div
