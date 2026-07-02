@@ -41,7 +41,7 @@ export default function EightWaysPage() {
       <AdAutoOptOut />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
-      <main className="min-h-screen bg-[#0F0F1A] px-6 py-16 md:py-24">
+      <main className="bg-[#0F0F1A] px-6 py-16 md:py-24">
         {/* Page title */}
         <div className="max-w-4xl mx-auto mb-10">
           <div className="inline-block bg-[#E8373A]/10 border border-[#E8373A]/20 rounded-full px-4 py-1.5 mb-4">
