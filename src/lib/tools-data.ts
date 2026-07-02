@@ -224,6 +224,44 @@ export const tools: Tool[] = [
         "Test your digital literacy and get an AI-powered score, strengths, weaknesses, and career matches. Free, adaptive assessment.",
     },
   },
+  {
+    slug: "computer-skills-analyzer",
+    name: "Computer Skills Analyzer",
+    shortDescription:
+      "13 hands-on simulations — rename files, sort a spreadsheet, format text, enter data. Get your Computer Skills Score and career matches.",
+    longDescription:
+      "Not a quiz — real simulations. Rename a file, organize files into folders, spot the real download button, sort a spreadsheet, format text, and enter data accurately. Get an AI-generated report with your strengths, weaknesses, an improvement plan, and the online careers that match your practical computer skills.",
+    icon: "Keyboard",
+    category: "Skills",
+    status: "Free",
+    ctaLabel: "Test My Skills →",
+    ctaUrl: "/ai-tools/computer-skills-analyzer",
+    featured: true,
+    relatedTools: ["digital-literacy-checker", "typing-practice"],
+    relatedGuides: [
+      { label: "8 Ways to Earn Online as a Filipino", href: "/guides/8-ways" },
+    ],
+    relatedArticles: [],
+    faq: [
+      {
+        question: "How is this different from the Digital Literacy Checker?",
+        answer: "The Digital Literacy Checker tests knowledge with questions. This one tests hands-on ability — you actually rename files, sort data, and complete real mini-tasks.",
+      },
+      {
+        question: "How long does it take?",
+        answer: "About 8-12 minutes for all 13 tasks.",
+      },
+      {
+        question: "Is it free?",
+        answer: "Yes, completely free. No account required, though you can optionally save your results with an email.",
+      },
+    ],
+    seo: {
+      title: "AI Computer Skills Analyzer — Hands-On Skills Test | Cyberussell",
+      description:
+        "13 hands-on simulations that measure your real computer skills. Get an AI score, strengths, weaknesses, and career matches. Free.",
+    },
+  },
 ];
 
 export function getToolBySlug(slug: string): Tool | undefined {
