@@ -3,8 +3,54 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ShieldCheck, Sparkles, UserCircle, Keyboard, type LucideIcon } from "lucide-react";
 import { tools, toolCategories } from "@/lib/tools-data";
+import RecommendedToolCard from "@/components/RecommendedToolCard";
+import type { RecommendedTool } from "@/components/RecommendedToolCard";
 
 const ICON_MAP: Record<string, LucideIcon> = { ShieldCheck, Sparkles, UserCircle, Keyboard };
+
+const RECOMMENDED_TOOLS: RecommendedTool[] = [
+  {
+    title: "Treehouse — Where I Built My Programming Foundation",
+    logo: null,
+    desktopBanner: "/teamtreehouse-desktop.png",
+    mobileBanner: "/teamtreehouse-mobile.png",
+    badges: ["Personally Used", "Recommended"],
+    body: (
+      <>
+        <p>Sa Cyberussell, ang goal ko ay tulungan kang matuto ng practical digital skills na magagamit mo sa totoong buhay. Kaya ang mga tools na makikita mo rito ay hindi basta affiliate links—mga tools ito na personal kong nagamit at nakatulong sa career ko.</p>
+        <p>Bago pa magkaroon ng ChatGPT at Claude, kailangan mo munang maintindihan ang fundamentals ng programming. Isa sa mga platform na talagang nakatulong sa akin ay Treehouse.</p>
+        <p>Structured ang lessons nila, may coding exercises, quizzes, at project-based learning kaya hindi ka basta nanonood lang ng videos. Unti-unti mong nabubuo ang foundation mo bilang developer.</p>
+        <p>Dito ko mas naintindihan ang mga concepts sa:</p>
+        <ul className="list-disc list-inside space-y-1 text-white/55 pl-1">
+          {["HTML & CSS", "JavaScript", "PHP", "Databases", "APIs", "Web Development Fundamentals"].map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+        <p>Hanggang ngayon, dala ko pa rin ang mga natutunan ko habang gumagawa ng mga projects tulad ng Cyberussell.</p>
+      </>
+    ),
+    faq: [
+      {
+        question: "Libre naman ang YouTube. Bakit Treehouse?",
+        answer: "Maraming libre sa YouTube, at marami rin akong natutunan doon. Pero kapag beginner ka, madali kang maligaw dahil iba-iba ang teaching style, walang malinaw na learning path, at minsan hindi mo alam kung ano ang susunod mong aaralin. Sa Treehouse, nakaayos ang curriculum. Hindi mo na kailangan manghula kung ano ang next step.",
+      },
+    ],
+    whoIsItFor: [
+      "Complete beginners",
+      "Future Web Developers",
+      "Career Shifters",
+      "Freelancers",
+      "Students",
+      "Anyone who wants a solid programming foundation",
+    ],
+    recommendationBody: (
+      <p>Kung seryoso kang matuto ng web development, isa ito sa mga platform na irerekomenda ko dahil personal ko itong nagamit at naging malaking bahagi ng journey ko bilang developer. Kung mag-sign up ka gamit ang link sa ibaba, makakatulong ka rin sa Cyberussell—walang dagdag na gastos sa iyo, pero makakatulong ito para makagawa pa ako ng mas maraming libreng guides at AI-powered learning resources para sa ating community.</p>
+    ),
+    ctaText: "Start Learning with Treehouse",
+    ctaUrl: process.env.NEXT_PUBLIC_AFFILIATE_TREEHOUSE || "https://teamtreehouse.com",
+    disclaimer: "I only recommend products and services that I personally use or have used and genuinely believe can help others learn and grow.",
+  },
+];
 
 export const metadata: Metadata = {
   title: "AI Tools for Filipinos — Free Tools to Learn, Work & Earn Online | Cyberussell",
@@ -123,6 +169,28 @@ export default function ToolsPage() {
               </a>
               );
             })}
+          </div>
+        </section>
+
+        {/* Tools I Personally Recommend */}
+        <section className="px-6 md:px-10 pb-24 max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/20 rounded-full px-4 py-1.5 mb-6">
+              <span className="text-[#FFD23F] text-[11px] font-bold uppercase tracking-[2px] font-[family-name:var(--font-inter)]">
+                Personal Picks
+              </span>
+            </div>
+            <h2 className="font-sans text-[28px] md:text-[36px] font-bold text-white mb-3">
+              Tools I Personally Recommend
+            </h2>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/45 max-w-lg mx-auto leading-[1.7]">
+              Hindi ito advertisement. Mga tools ito na personal kong ginamit at nakatulong sa akin — at sa aming community.
+            </p>
+          </div>
+          <div className="flex flex-col gap-6">
+            {RECOMMENDED_TOOLS.map((tool) => (
+              <RecommendedToolCard key={tool.title} tool={tool} />
+            ))}
           </div>
         </section>
 
