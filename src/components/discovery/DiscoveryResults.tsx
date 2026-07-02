@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, Target, Clock, Star, ArrowRight, RotateCcw, Download, Square, CheckSquare, GraduationCap } from "lucide-react";
+import { Sparkles, Target, Clock, Star, ArrowRight, RotateCcw, Download, Square, CheckSquare, GraduationCap, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import type { DiscoveryResult } from "@/lib/discovery/types";
 import { getLearningPath } from "@/lib/discovery/learningPaths";
@@ -131,6 +131,8 @@ export default function DiscoveryResults({ result, onRestart }: { result: Discov
               <a
                 key={step.href}
                 href={step.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-4 bg-[#18181F] border border-white/[0.08] rounded-xl p-4 hover:border-[#4F8EF7]/40 hover:bg-[#1e1e2a] transition-all group"
               >
                 <span className="w-8 h-8 rounded-full bg-[#4F8EF7]/10 text-[#4F8EF7] font-[family-name:var(--font-inter)] font-bold text-[13px] flex items-center justify-center shrink-0">
@@ -139,7 +141,7 @@ export default function DiscoveryResults({ result, onRestart }: { result: Discov
                 <span className="font-[family-name:var(--font-inter)] text-[14px] font-medium text-white/80 group-hover:text-white transition-colors flex-1">
                   {step.title}
                 </span>
-                <ArrowRight size={16} className="text-white/20 group-hover:text-[#4F8EF7] transition-colors shrink-0" strokeWidth={2} />
+                <ExternalLink size={15} className="text-white/20 group-hover:text-[#4F8EF7] transition-colors shrink-0" strokeWidth={2} />
               </a>
             ))}
           </div>
