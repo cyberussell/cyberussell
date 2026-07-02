@@ -155,11 +155,11 @@ function HeatmapKeyboard({ mistakeMap }: { mistakeMap: Record<string, number> })
 function ResultsScreen({
   wpm, accuracy, elapsed, typed, passage,
   mistakeMap, errorCount, correctedCount,
-  onReset,
+  onReset, onRetry,
 }: {
   wpm: number; accuracy: number; elapsed: number; typed: string; passage: string;
   mistakeMap: Record<string, number>; errorCount: number; correctedCount: number;
-  onReset: () => void;
+  onReset: () => void; onRetry: () => void;
 }) {
   const pb = getPersonalBest();
   const dailyAvg = getDailyAverage();
@@ -337,16 +337,16 @@ function ResultsScreen({
       {/* ── Actions ── */}
       <div className="flex gap-3 pt-2">
         <button
-          onClick={onReset}
-          className="flex-1 inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 text-[#0A0A14] font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all"
+          onClick={onRetry}
+          className="flex-1 inline-flex items-center justify-center gap-2 bg-white/[0.06] border border-white/[0.1] hover:border-white/20 text-white/70 hover:text-white font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all"
         >
           <RotateCcw size={14} /> Try Again
         </button>
         <button
           onClick={onReset}
-          className="flex-1 py-3.5 rounded-xl border border-white/[0.08] font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/50 hover:text-white hover:border-white/20 transition-all"
+          className="flex-1 inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 text-[#0A0A14] font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all"
         >
-          New Passage
+          Next Passage →
         </button>
       </div>
     </div>
@@ -376,6 +376,8 @@ export default function TypingPractice() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const typedRef = useRef("");
   const startTimeRef = useRef<number | null>(null);
+  const errorCountRef = useRef(0);
+  const correctedCountRef = useRef(0);
 
   const passage = PASSAGES[difficulty][passageIndex];
 
@@ -411,10 +413,10 @@ export default function TypingPractice() {
     const next = passage[currentTyped.length];
 
     if (e.key === "Backspace" && currentTyped.length > 0) {
-      // Check if the char being deleted was wrong
       const prevChar = passage[currentTyped.length - 1];
       if (currentTyped[currentTyped.length - 1] !== prevChar) {
-        setCorrectedCount((c) => c + 1);
+        correctedCountRef.current++;
+        setCorrectedCount(correctedCountRef.current);
       }
       return;
     }
@@ -422,7 +424,8 @@ export default function TypingPractice() {
     if (e.key.length === 1 && next !== undefined && e.key !== next) {
       const k = e.key.toLowerCase();
       setMistakeMap((m) => ({ ...m, [k]: (m[k] ?? 0) + 1 }));
-      setErrorCount((c) => c + 1);
+      errorCountRef.current++;
+      setErrorCount(errorCountRef.current);
       setErrorKey(display);
       setTimeout(() => setErrorKey(null), 300);
     }
@@ -438,6 +441,15 @@ export default function TypingPractice() {
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, [handleKeyDown, handleKeyUp]);
+
+  // Tab = next passage (separate effect so it always has fresh reset)
+  useEffect(() => {
+    const onTab = (e: KeyboardEvent) => {
+      if (e.key === "Tab") { e.preventDefault(); reset(); }
+    };
+    window.addEventListener("keydown", onTab);
+    return () => window.removeEventListener("keydown", onTab);
+  });
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
@@ -457,7 +469,8 @@ export default function TypingPractice() {
       const exactElapsed = Math.floor((finishTime - (startTimeRef.current ?? finishTime)) / 1000);
       const words = value.trim().split(/\s+/).length;
       const finalW = Math.round(words / Math.max(minutes, 0.01));
-      const finalA = Math.round((value.split("").filter((c, i) => c === passage[i]).length / value.length) * 100);
+      const ec = errorCountRef.current;
+      const finalA = ec === 0 ? 100 : Math.round((passage.length / (passage.length + ec)) * 100);
       setElapsed(exactElapsed);
       setFinalElapsed(exactElapsed);
       setFinalWpm(finalW);
@@ -468,12 +481,19 @@ export default function TypingPractice() {
     }
   }
 
-  function reset(newDiff?: Difficulty) {
+  function reset(newDiff?: Difficulty, samePassage = false) {
     if (timerRef.current) clearInterval(timerRef.current);
     const d = newDiff ?? difficulty;
-    const idx = (passageIndex + 1) % PASSAGES[d].length;
+    let idx = passageIndex;
+    if (!samePassage) {
+      // Random passage, avoid repeating the same one
+      const pool = PASSAGES[d].length;
+      do { idx = Math.floor(Math.random() * pool); } while (pool > 1 && idx === passageIndex);
+    }
     setTyped(""); typedRef.current = "";
     startTimeRef.current = null;
+    errorCountRef.current = 0;
+    correctedCountRef.current = 0;
     setDone(false); setStartTime(null); setElapsed(0); setWpm(0);
     setActiveKey(null); setErrorKey(null); setMistakeMap({});
     setErrorCount(0); setCorrectedCount(0); setFinalWpm(0); setFinalAccuracy(0);
@@ -556,6 +576,7 @@ export default function TypingPractice() {
           typed={typed} passage={passage}
           mistakeMap={mistakeMap} errorCount={errorCount} correctedCount={correctedCount}
           onReset={() => reset()}
+          onRetry={() => reset(undefined, true)}
         />
       </div>
     );
@@ -628,10 +649,15 @@ export default function TypingPractice() {
         </div>
       </div>
 
-      <div className="flex justify-center mt-5">
+      <div className="flex items-center justify-center gap-4 mt-5">
+        <button onClick={() => reset(undefined, true)}
+          className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/40 hover:text-white transition-colors">
+          <RotateCcw size={13} /> Restart
+        </button>
+        <span className="text-white/10">·</span>
         <button onClick={() => reset()}
-          className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/30 hover:text-white transition-colors">
-          <RotateCcw size={13} /> New passage
+          className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/60 hover:text-[#FFD23F] transition-colors">
+          Next passage <span className="text-[10px] bg-white/[0.07] border border-white/[0.1] rounded px-1.5 py-0.5 text-white/30">Tab</span>
         </button>
       </div>
     </div>
