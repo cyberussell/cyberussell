@@ -116,26 +116,56 @@ function computeScore(wpm: number, accuracy: number, consistency: number) {
   return { total, grade, emoji };
 }
 
-function getJobReadiness(wpm: number, accuracy: number): { level: string; ready: boolean; recommendation: string; color: string } {
+interface JobReadiness {
+  heading: string; subheading: string; goal: string; color: string; ready: boolean;
+}
+function getJobReadiness(wpm: number, accuracy: number): JobReadiness {
   if (wpm >= 90 && accuracy >= 99)
-    return { level: "Elite", ready: true,  color: "#34D399", recommendation: "You qualify for elite data entry and transcription roles. Apply with confidence.", };
+    return { heading: "Elite Typist", subheading: "You qualify for elite typing roles.", goal: "Apply with confidence — your speed and accuracy exceed industry standards.", color: "#34D399", ready: true };
   if (wpm >= 70 && accuracy >= 98)
-    return { level: "Professional", ready: true,  color: "#60A5FA", recommendation: "You're competitive for professional VA and data entry jobs. Target clients requiring 70+ WPM.", };
+    return { heading: "Professionally Ready", subheading: "You meet the standard for most professional VA and data entry jobs.", goal: `Reach 90 WPM to unlock elite roles.`, color: "#60A5FA", ready: true };
   if (wpm >= 50 && accuracy >= 97)
-    return { level: "Transcription Ready", ready: true,  color: "#A78BFA", recommendation: "You qualify for entry-level transcription and data entry. Aim for 70 WPM to unlock higher-paying roles.", };
+    return { heading: "Transcription Ready", subheading: "You qualify for entry-level transcription and data entry roles.", goal: `Push to 70 WPM and 98% accuracy to unlock higher-paying opportunities.`, color: "#A78BFA", ready: true };
+  // Almost ready cases
+  if (wpm >= 50 && accuracy < 97)
+    return { heading: "Almost Job Ready", subheading: "Your speed is good — accuracy is holding you back.", goal: `Improve accuracy from ${accuracy}% → 97% to qualify for transcription and data entry jobs.`, color: "#FFD23F", ready: false };
   if (wpm >= 35 && accuracy >= 96)
-    return { level: "Intermediate", ready: false, color: "#FFD23F", recommendation: "You're close! Push your WPM above 50 and accuracy above 97% to qualify for transcription jobs.", };
-  if (wpm >= 20 && accuracy >= 95)
-    return { level: "Beginner", ready: false, color: "#FB923C", recommendation: "Great start. Practice daily for 10–15 minutes focusing on accuracy first. Speed will follow.", };
-  return { level: "Getting Started", ready: false, color: "#EF4444", recommendation: "Focus on accuracy over speed. Use the Easy difficulty until you reach 95%+ accuracy consistently.", };
+    return { heading: "Almost Job Ready", subheading: "Your accuracy is solid — you need more speed.", goal: `Boost WPM from ${wpm} → 50 to reach the minimum for most remote work typing jobs.`, color: "#FFD23F", ready: false };
+  if (wpm >= 35)
+    return { heading: "Getting Close", subheading: "You're making solid progress.", goal: `Target 50 WPM and 97% accuracy to become transcription-ready.`, color: "#FB923C", ready: false };
+  return { heading: "Keep Practicing", subheading: "Every session builds your foundation.", goal: `Focus on accuracy first. Use Easy difficulty until you consistently hit 95%+ before pushing speed.`, color: "#EF4444", ready: false };
 }
 
-function getKeyboardBadge(wpm: number, accuracy: number): { name: string; emoji: string } | null {
-  if (wpm >= 100 && accuracy >= 99) return { name: "Cyberussell Typing Master", emoji: "👑" };
-  if (wpm >= 90) return { name: "Diamond Typist", emoji: "💎" };
-  if (wpm >= 70) return { name: "Gold Typist", emoji: "🥇" };
-  if (wpm >= 50) return { name: "Silver Typist", emoji: "🥈" };
-  if (wpm >= 30) return { name: "Bronze Typist", emoji: "🥉" };
+interface BadgeInfo {
+  name: string; emoji: string; percentile: string;
+  careers: string[]; nextName: string | null; nextEmoji: string | null; nextWpm: number | null; nextAcc: number | null;
+}
+function getKeyboardBadge(wpm: number, accuracy: number): BadgeInfo | null {
+  if (wpm >= 100 && accuracy >= 99) return {
+    name: "Cyberussell Typing Master", emoji: "👑", percentile: "top 1% of all typists",
+    careers: ["Elite Transcription", "Court Reporting", "Speed Captioning"],
+    nextName: null, nextEmoji: null, nextWpm: null, nextAcc: null,
+  };
+  if (wpm >= 90) return {
+    name: "Diamond Typist", emoji: "💎", percentile: "faster than ~90% of learners",
+    careers: ["Senior Virtual Assistant", "Medical Transcription", "Project Management Support"],
+    nextName: "Cyberussell Typing Master", nextEmoji: "👑", nextWpm: 100, nextAcc: 99,
+  };
+  if (wpm >= 70) return {
+    name: "Gold Typist", emoji: "🥇", percentile: "faster than ~75% of learners",
+    careers: ["Professional VA", "Content Writing", "Transcription"],
+    nextName: "Diamond Typist", nextEmoji: "💎", nextWpm: 90, nextAcc: null,
+  };
+  if (wpm >= 50) return {
+    name: "Silver Typist", emoji: "🥈", percentile: "faster than ~55% of learners",
+    careers: ["Data Entry", "Virtual Assistant", "Chat Support"],
+    nextName: "Gold Typist", nextEmoji: "🥇", nextWpm: 70, nextAcc: null,
+  };
+  if (wpm >= 30) return {
+    name: "Bronze Typist", emoji: "🥉", percentile: "faster than ~25% of learners",
+    careers: ["Entry-Level Data Entry", "Chat Support"],
+    nextName: "Silver Typist", nextEmoji: "🥈", nextWpm: 50, nextAcc: null,
+  };
   return null;
 }
 
@@ -207,7 +237,8 @@ function ResultsScreen({
   onReset: () => void; onRetry: () => void;
 }) {
   const pb = getPersonalBest();
-  const isNewPB = wpm >= pb && wpm > 0;
+  const isNewPB = wpm > pb && wpm > 0;
+  const displayPB = Math.max(pb, wpm);
 
   const { total, grade, emoji } = computeScore(wpm, accuracy, consistency);
   const readiness = getJobReadiness(wpm, accuracy);
@@ -227,72 +258,140 @@ function ResultsScreen({
   const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
   const scoreBreakdown = [
-    { label: "WPM",         weight: "40%", value: Math.round(Math.min(100, wpm) * 0.4), max: 40,  color: "#FFD23F", display: `${wpm} WPM` },
-    { label: "Accuracy",    weight: "40%", value: Math.round(accuracy * 0.4),            max: 40,  color: "#34D399", display: `${accuracy}%` },
-    { label: "Consistency", weight: "10%", value: Math.round(consistency * 0.1),         max: 10,  color: "#A78BFA", display: `${consistency}%` },
-    { label: "Completion",  weight: "10%", value: 10,                                    max: 10,  color: "#60A5FA", display: "100%" },
+    { label: "WPM",         weight: "40%", value: Math.round(Math.min(100, wpm) * 0.4), max: 40, color: "#FFD23F", display: `${wpm} WPM` },
+    { label: "Accuracy",    weight: "40%", value: Math.round(accuracy * 0.4),            max: 40, color: "#34D399", display: `${accuracy}%` },
+    { label: "Consistency", weight: "10%", value: Math.round(consistency * 0.1),         max: 10, color: "#A78BFA", display: `${consistency}%` },
+    { label: "Completion",  weight: "10%", value: 10,                                    max: 10, color: "#60A5FA", display: "100%" },
   ];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
 
-      {/* ── Score Hero ── */}
-      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-6 text-center">
-        <div className="flex items-center justify-center gap-4 mb-3">
-          {/* Score circle */}
-          <div className="relative w-24 h-24 flex items-center justify-center">
-            <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 96 96">
-              <circle cx="48" cy="48" r="42" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
-              <circle cx="48" cy="48" r="42" fill="none" stroke="#FFD23F" strokeWidth="6"
-                strokeDasharray={`${2 * Math.PI * 42}`}
-                strokeDashoffset={`${2 * Math.PI * 42 * (1 - total / 100)}`}
-                strokeLinecap="round" />
-            </svg>
-            <div className="text-center">
-              <p className="font-sans text-[28px] font-bold text-white leading-none">{total}</p>
-              <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/30 uppercase tracking-[1px]">/ 100</p>
+      {/* ── Hero: Badge + Score + Key metrics + Recommendation ── */}
+      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-6">
+
+        {/* Badge pill */}
+        {badge ? (
+          <div className="flex items-center gap-2 mb-5">
+            <span className="text-2xl">{badge.emoji}</span>
+            <div>
+              <p className="font-sans text-[17px] font-bold text-white leading-tight">{badge.name}</p>
+              <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/35">{badge.percentile}</p>
             </div>
-          </div>
-          {/* Grade */}
-          <div className="text-left">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-4xl">{emoji}</span>
-              <span className="font-sans text-[36px] font-bold text-white leading-none">{grade}</span>
-            </div>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40">Overall Score</p>
             {isNewPB && (
-              <span className="inline-block mt-1 font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-2 py-0.5">
-                ⭐ New Personal Best
+              <span className="ml-auto font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-2.5 py-1 shrink-0">
+                ⭐ New PB
               </span>
             )}
           </div>
-        </div>
-
-        {/* Badge */}
-        {badge && (
-          <div className="inline-flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-4 py-1.5 mt-2">
-            <span className="text-lg">{badge.emoji}</span>
-            <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-[#FFD23F]">{badge.name}</span>
+        ) : (
+          <div className="flex items-center justify-between mb-5">
+            <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/30">No badge yet — reach 30 WPM to earn Bronze</p>
+            {isNewPB && (
+              <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-2.5 py-1">
+                ⭐ New PB
+              </span>
+            )}
           </div>
         )}
-      </div>
 
-      {/* ── Job Readiness ── */}
-      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
-        <div className="flex items-start gap-3">
-          <span className="text-2xl mt-0.5">{readiness.ready ? "✅" : "⏳"}</span>
+        {/* Score row */}
+        <div className="flex items-center gap-5 mb-5">
+          <div className="relative w-20 h-20 shrink-0 flex items-center justify-center">
+            <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+              <circle cx="40" cy="40" r="34" fill="none" stroke="#FFD23F" strokeWidth="5"
+                strokeDasharray={`${2 * Math.PI * 34}`}
+                strokeDashoffset={`${2 * Math.PI * 34 * (1 - total / 100)}`}
+                strokeLinecap="round" />
+            </svg>
+            <div className="text-center">
+              <p className="font-sans text-[22px] font-bold text-white leading-none">{total}</p>
+              <p className="font-[family-name:var(--font-inter)] text-[9px] text-white/30">/ 100</p>
+            </div>
+          </div>
           <div className="flex-1">
+            <div className="flex items-baseline gap-2 mb-0.5">
+              <span className="font-sans text-[32px] font-bold text-white leading-none">{grade}</span>
+              <span className="text-2xl">{emoji}</span>
+              <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/30 ml-1">Overall Score</span>
+            </div>
+            <div className="flex gap-4 mt-2">
+              <div>
+                <p className="font-sans text-[22px] font-bold text-[#FFD23F] leading-none">{wpm}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/30 uppercase tracking-[1px]">WPM</p>
+              </div>
+              <div className="w-px bg-white/10" />
+              <div>
+                <p className="font-sans text-[22px] font-bold text-[#34D399] leading-none">{accuracy}%</p>
+                <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/30 uppercase tracking-[1px]">Accuracy</p>
+              </div>
+              <div className="w-px bg-white/10" />
+              <div>
+                <p className="font-sans text-[22px] font-bold text-white/70 leading-none">{formatTime(elapsed)}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/30 uppercase tracking-[1px]">Time</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-white/[0.06] mb-4" />
+
+        {/* Readiness recommendation */}
+        <div className="flex items-start gap-3">
+          <span className="text-xl mt-0.5">{readiness.ready ? "✅" : "🎯"}</span>
+          <div>
             <div className="flex items-center gap-2 mb-1">
-              <p className="font-sans text-[16px] font-bold text-white">{readiness.level}</p>
+              <p className="font-sans text-[15px] font-bold text-white">{readiness.heading}</p>
               <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[1.5px] px-2 py-0.5 rounded-full border"
                 style={{ color: readiness.color, borderColor: `${readiness.color}40`, backgroundColor: `${readiness.color}12` }}>
                 {readiness.ready ? "Job Ready" : "In Progress"}
               </span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.6]">{readiness.recommendation}</p>
+            <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 leading-[1.6] mb-1">{readiness.subheading}</p>
+            <p className="font-[family-name:var(--font-inter)] text-[13px] font-bold leading-[1.6]" style={{ color: readiness.color }}>{readiness.goal}</p>
           </div>
         </div>
       </div>
+
+      {/* ── Badge Card: careers + next milestone ── */}
+      {badge && (
+        <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
+          <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-3">What {badge.name} Means</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/35 mb-2 uppercase tracking-[1px]">Recommended Careers</p>
+              <div className="flex flex-col gap-1.5">
+                {badge.careers.map((c) => (
+                  <div key={c} className="flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-[#FFD23F] shrink-0" />
+                    <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/70">{c}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {badge.nextName && (
+              <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3">
+                <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/35 mb-2 uppercase tracking-[1px]">Next Milestone</p>
+                <p className="font-sans text-[15px] font-bold text-white mb-2">{badge.nextEmoji} {badge.nextName}</p>
+                <div className="flex flex-col gap-1">
+                  {badge.nextWpm && (
+                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">
+                      <span className="text-[#FFD23F] font-bold">{badge.nextWpm} WPM</span> required
+                    </p>
+                  )}
+                  {badge.nextAcc && (
+                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">
+                      <span className="text-[#34D399] font-bold">{badge.nextAcc}% accuracy</span> required
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ── Score Breakdown ── */}
       <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
@@ -311,35 +410,22 @@ function ResultsScreen({
                 </div>
               </div>
               <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                <div className="h-full rounded-full transition-all" style={{ width: `${(value / max) * 100}%`, backgroundColor: color }} />
+                <div className="h-full rounded-full" style={{ width: `${(value / max) * 100}%`, backgroundColor: color }} />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ── Quick Stats ── */}
+      {/* ── Key Stats: WPM · Accuracy · Consistency · Time · Errors · Corrections · PB ── */}
       <div className="flex flex-wrap gap-2 justify-center">
-        <Stat icon={Zap}    label="WPM"     value={wpm}             color="#FFD23F" />
-        <Stat icon={Target} label="Accuracy" value={`${accuracy}%`} color="#34D399" />
-        <Stat icon={Zap}    label="Consistency" value={`${consistency}%`} color="#A78BFA" />
-        <Stat icon={Clock}  label="Time"    value={formatTime(elapsed)} color="#60A5FA" />
-        <Stat icon={Trophy} label="Best"    value={`${Math.max(pb, wpm)} wpm`} color="#F472B6" />
-      </div>
-
-      {/* ── Session Details ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {[
-          { label: "Characters", value: typed.length },
-          { label: "Errors",     value: errorCount },
-          { label: "Corrections",value: correctedCount },
-          { label: "Words",      value: typed.trim().split(/\s+/).length },
-        ].map(({ label, value }) => (
-          <div key={label} className="bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3 text-center">
-            <p className="font-sans text-[18px] font-bold text-white">{value}</p>
-            <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/30 mt-0.5">{label}</p>
-          </div>
-        ))}
+        <Stat icon={Zap}    label="WPM"         value={wpm}               color="#FFD23F" />
+        <Stat icon={Target} label="Accuracy"     value={`${accuracy}%`}   color="#34D399" />
+        <Stat icon={Zap}    label="Consistency"  value={`${consistency}%`} color="#A78BFA" />
+        <Stat icon={Clock}  label="Time"         value={formatTime(elapsed)} color="#60A5FA" />
+        <Stat icon={Target} label="Errors"       value={errorCount}        color="#EF4444" />
+        <Stat icon={RotateCcw} label="Fixes"     value={correctedCount}    color="#FB923C" />
+        <Stat icon={Trophy} label="Personal Best" value={`${displayPB}`}   color="#F472B6" />
       </div>
 
       {/* ── Typing Heatmap ── */}
@@ -356,7 +442,7 @@ function ResultsScreen({
                 <span className="font-sans text-[16px] font-bold" style={{ color }}>{value}%</span>
               </div>
               <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                <div className="h-full rounded-full transition-all" style={{ width: `${value}%`, backgroundColor: color }} />
+                <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: color }} />
               </div>
             </div>
           ))}
@@ -364,12 +450,7 @@ function ResultsScreen({
         <div className="bg-[#111118] border border-white/[0.06] rounded-2xl p-4">
           <HeatmapKeyboard mistakeMap={mistakeMap} />
           <div className="flex items-center justify-center gap-4 mt-3">
-            {[
-              { color: "#34D399", label: "Clean" },
-              { color: "#FBB724", label: "Some errors" },
-              { color: "#F97316", label: "Trouble" },
-              { color: "#EF4444", label: "Weak key" },
-            ].map(({ color, label }) => (
+            {[{ color: "#34D399", label: "Clean" },{ color: "#FBB724", label: "Some errors" },{ color: "#F97316", label: "Trouble" },{ color: "#EF4444", label: "Weak key" }].map(({ color, label }) => (
               <div key={label} className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: color }} />
                 <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/35">{label}</span>
