@@ -525,16 +525,16 @@ function ProposalPrint({ service }: { service: Service }) {
       <div className="proposal">
         {/* Cover */}
         <div className="cover">
-          <div className="logo-mark">Cyberussell</div>
+          <div className="logo-mark">Payjobs.work Manpower Services</div>
           <h1>{service.name || "Service Proposal"}</h1>
           <p className="meta">Service Proposal · Prepared by Russell Parayno</p>
           <p className="meta">Date: {date}</p>
-          <p className="meta">cyberussell.com · russell.a.parayno@gmail.com</p>
+          <p className="meta">Luna, Roxas, Isabela · 09176260112</p>
         </div>
 
         {/* About */}
-        <h2>About Cyberussell</h2>
-        <p>Cyberussell is a Filipino digital agency specializing in AI-powered web design, automation, and digital skill training. We help businesses and professionals grow online using modern tools and AI-assisted workflows.</p>
+        <h2>About Payjobs.work Manpower Services</h2>
+        <p>Payjobs.work Manpower Services is a Filipino manpower agency based in Luna, Roxas, Isabela, connecting businesses with qualified workers and helping professionals find meaningful employment opportunities.</p>
 
         {/* Service Overview */}
         <h2>Service Overview</h2>
@@ -639,7 +639,7 @@ function ProposalPrint({ service }: { service: Service }) {
           <p>2. The client agrees to provide all required materials within 3 business days of project start.</p>
           <p>3. Revisions are limited to those covered in the scope. Additional revisions are billed separately.</p>
           <p>4. Timeline begins upon receipt of downpayment and all required client materials.</p>
-          <p>5. Cyberussell retains the right to showcase the completed work in its portfolio unless otherwise agreed.</p>
+          <p>5. Payjobs.work Manpower Services retains the right to showcase the completed work in its portfolio unless otherwise agreed.</p>
         </div>
 
         {/* Acceptance / Signature */}
@@ -653,14 +653,14 @@ function ProposalPrint({ service }: { service: Service }) {
           </div>
           <div>
             <div className="sig-line">Prepared By: Russell Parayno</div>
-            <p className="meta">Cyberussell</p>
+            <p className="meta">Payjobs.work Manpower Services</p>
             <p className="meta">Date: {date}</p>
           </div>
         </div>
 
         {/* Footer */}
         <div className="footer">
-          <span>Cyberussell · cyberussell.com · russell.a.parayno@gmail.com</span>
+          <span>Payjobs.work Manpower Services · Luna, Roxas, Isabela · 09176260112</span>
           <span>Confidential · Generated {date}</span>
         </div>
       </div>
