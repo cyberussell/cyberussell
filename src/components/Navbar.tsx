@@ -39,6 +39,7 @@ const navItems: NavItem[] = [
       { label: "Bio Generator", href: "/tools/bio-generator" },
       { label: "Digital Literacy Checker", href: "/ai-tools/digital-literacy-checker" },
       { label: "Computer Skills Analyzer", href: "/ai-tools/computer-skills-analyzer" },
+      { label: "AI Confidence Analyzer", href: "/ai-tools/ai-confidence-analyzer" },
       { label: "──────────────", href: "#", divider: true },
       { label: "Where to Apply & Earn", href: "/earn/freelance-platforms" },
     ],

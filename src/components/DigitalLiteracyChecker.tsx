@@ -82,8 +82,6 @@ const levelColors: Record<string, { color: string; bg: string; border: string }>
 
 export default function DigitalLiteracyChecker() {
   const [stage, setStage] = useState<Stage>("intro");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
 
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [catPos, setCatPos] = useState(0);
@@ -142,8 +140,6 @@ export default function DigitalLiteracyChecker() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             sessionId: getSessionId(),
-            name: name.trim() || undefined,
-            email: email.trim() || undefined,
             answers: finalAnswers.map((a) => ({ id: a.id, selectedIndex: a.selectedIndex })),
           }),
         });
@@ -177,7 +173,7 @@ export default function DigitalLiteracyChecker() {
         setStage("error");
       }
     },
-    [name, email]
+    []
   );
 
   const handleContinue = useCallback(() => {
@@ -238,23 +234,6 @@ export default function DigitalLiteracyChecker() {
                 {c}
               </span>
             ))}
-          </div>
-
-          <div className="space-y-3 mb-5">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name (optional)"
-              className="w-full bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] text-white font-[family-name:var(--font-inter)] text-[14px] p-3.5 placeholder:text-white/20 focus:outline-none focus:border-[#4F8EF7]/40 transition-colors"
-            />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email (optional — to save your results)"
-              className="w-full bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] text-white font-[family-name:var(--font-inter)] text-[14px] p-3.5 placeholder:text-white/20 focus:outline-none focus:border-[#4F8EF7]/40 transition-colors"
-            />
           </div>
 
           {error && (

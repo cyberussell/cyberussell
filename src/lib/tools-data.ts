@@ -262,6 +262,44 @@ export const tools: Tool[] = [
         "13 hands-on simulations that measure your real computer skills. Get an AI score, strengths, weaknesses, and career matches. Free.",
     },
   },
+  {
+    slug: "ai-confidence-analyzer",
+    name: "AI Confidence Analyzer",
+    shortDescription:
+      "Write real prompts graded by AI, spot a hallucination, compare AI responses. Get your AI Confidence Score and career matches.",
+    longDescription:
+      "Not trivia — real tasks. Write the exact prompts you'd send an AI assistant (graded by AI right after), spot a hallucination in an AI-generated answer, compare two AI responses for reliability, and navigate real scenarios around responsible AI use. Get an AI-generated report with your strengths, weaknesses, learning recommendations, and the online careers that match your practical AI skills.",
+    icon: "Sparkles",
+    category: "Skills",
+    status: "Free",
+    ctaLabel: "Test My AI Skills →",
+    ctaUrl: "/ai-tools/ai-confidence-analyzer",
+    featured: true,
+    relatedTools: ["prompt-forge", "digital-literacy-checker"],
+    relatedGuides: [
+      { label: "Guide: How to Use Claude AI", href: "/guides/claude-ai" },
+    ],
+    relatedArticles: [],
+    faq: [
+      {
+        question: "How is this different from the Prompt Trainer?",
+        answer: "The Prompt Trainer scores one prompt you paste in. This is a full assessment — 11 tasks covering prompt writing, fact-checking, research, and responsible AI use, with a career match report at the end.",
+      },
+      {
+        question: "How long does it take?",
+        answer: "About 8-12 minutes for all 11 tasks.",
+      },
+      {
+        question: "Is it free?",
+        answer: "Yes, completely free. No account required, though you can optionally save your results with an email.",
+      },
+    ],
+    seo: {
+      title: "AI Confidence Analyzer — Real AI Skills Test | Cyberussell",
+      description:
+        "Write real prompts graded by AI, spot a hallucination, compare AI responses. Get your AI Confidence Score, strengths, weaknesses, and career matches. Free.",
+    },
+  },
 ];
 
 export function getToolBySlug(slug: string): Tool | undefined {
