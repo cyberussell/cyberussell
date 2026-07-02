@@ -378,10 +378,21 @@ export default function TypingPractice() {
   const startTimeRef = useRef<number | null>(null);
   const errorCountRef = useRef(0);
   const correctedCountRef = useRef(0);
+  const cursorRef = useRef<HTMLSpanElement>(null);
+  const [scrollY, setScrollY] = useState(0);
+  const LINE_H = 25 * 1.8; // 45px — matches font-size × line-height
 
   const passage = PASSAGES[difficulty][passageIndex];
 
   useEffect(() => { inputRef.current?.focus(); }, []);
+
+  // Scroll passage so cursor stays on the 2nd visible line
+  useEffect(() => {
+    if (cursorRef.current) {
+      const top = cursorRef.current.offsetTop;
+      setScrollY(Math.max(0, top - LINE_H));
+    }
+  }, [typed, LINE_H]);
 
   useEffect(() => {
     if (startTime && !done) {
@@ -494,7 +505,7 @@ export default function TypingPractice() {
     startTimeRef.current = null;
     errorCountRef.current = 0;
     correctedCountRef.current = 0;
-    setDone(false); setStartTime(null); setElapsed(0); setWpm(0);
+    setDone(false); setStartTime(null); setElapsed(0); setWpm(0); setScrollY(0);
     setActiveKey(null); setErrorKey(null); setMistakeMap({});
     setErrorCount(0); setCorrectedCount(0); setFinalWpm(0); setFinalAccuracy(0);
     setDifficulty(d); setPassageIndex(idx);
@@ -559,6 +570,7 @@ export default function TypingPractice() {
       return (
         <span
           key={i}
+          ref={isCurrent ? cursorRef : undefined}
           className={isCurrent ? "typing-cursor" : undefined}
           style={{ ...charStyle, color, backgroundColor: bg }}
         >
@@ -623,16 +635,33 @@ export default function TypingPractice() {
 
       {/* Text passage */}
       <div className="max-w-[820px] mx-auto w-full mb-8">
-        <div className="bg-[#FAFAFA] border border-gray-200 rounded-2xl p-6 md:p-10 cursor-text">
-          <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-            {renderPassage()}
+        <div className="bg-[#FAFAFA] border border-gray-200 rounded-2xl px-8 md:px-12 pt-8 pb-6 cursor-text">
+          {/* Scrolling window — shows 3 lines */}
+          <div style={{ height: `${LINE_H * 3}px`, overflow: "hidden", position: "relative" }}>
+            <div style={{
+              whiteSpace: "pre-wrap", wordBreak: "break-word",
+              transform: `translateY(-${scrollY}px)`,
+              transition: "transform 0.15s ease",
+              paddingBottom: `${LINE_H * 2}px`,
+            }}>
+              {renderPassage()}
+            </div>
+            {/* Fade mask at bottom */}
+            <div style={{
+              position: "absolute", bottom: 0, left: 0, right: 0,
+              height: `${LINE_H}px`,
+              background: "linear-gradient(to bottom, transparent, #FAFAFA)",
+              pointerEvents: "none",
+            }} />
           </div>
-          <div className="flex items-center justify-between mt-5">
+
+          {/* Footer */}
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
             <p className="font-[family-name:var(--font-inter)] text-[11px] text-gray-400">
-              Click here and start typing
+              {typed.length === 0 ? "Start typing" : `${passage.length - typed.length} chars left`}
             </p>
             <p className="font-[family-name:var(--font-inter)] text-[11px] text-gray-400">
-              {typed.length}/{passage.length} · Finish to see Heatmap & Stats
+              Tab → next passage · Finish to see Heatmap & Stats
             </p>
           </div>
         </div>
