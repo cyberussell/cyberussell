@@ -12,6 +12,16 @@ const PASSAGES = {
     "A good skill can open many doors and help you earn more money online.",
     "Practice every day and you will see your speed improve very quickly.",
     "Filipinos who learn to type well can find more jobs and earn higher pay.",
+    "Every keystroke you master today becomes a habit that pays you back later.",
+    "Set a timer for ten minutes and type without stopping to fix mistakes.",
+    "Good posture and relaxed hands make typing faster and much less tiring.",
+    "Clients pay more for workers who can type clean copy without typos.",
+    "Start slow, stay accurate, and your speed will naturally catch up.",
+    "A virtual assistant with fast typing can finish tasks before lunch.",
+    "Keep your eyes on the screen, not on your fingers, while you type.",
+    "Small daily gains in typing speed add up to a huge skill by year end.",
+    "Data entry jobs often pay based on how fast and accurate you type.",
+    "The home row keys are where every great typist begins their journey.",
   ],
   medium: [
     "Typing speed is one of the most valuable skills for any remote worker or virtual assistant working online today.",
@@ -19,6 +29,16 @@ const PASSAGES = {
     "Many online jobs in the Philippines require a typing speed of at least 40 words per minute to qualify.",
     "Consistent daily practice is the fastest way to improve your typing speed and reduce the number of errors you make.",
     "Virtual assistants, data entry specialists, and content writers all benefit greatly from having fast and accurate typing skills.",
+    "Employers in the freelance market often test typing speed before hiring, so building this skill early gives you a real advantage.",
+    "Transcription work pays well for typists who can listen and type accurately at the same time without falling behind the audio.",
+    "A steady typing rhythm reduces fatigue during long shifts and helps you maintain focus on the actual content of your work.",
+    "Online English teachers, customer support agents, and chat moderators all rely on quick typing to respond to clients in real time.",
+    "Improving your typing speed by even ten words per minute can significantly increase how much work you complete in an eight hour shift.",
+    "Most typing tests measure both speed and accuracy, because a fast typist who makes many errors is not actually more productive.",
+    "Building muscle memory for common words and phrases allows experienced typists to type in bursts without conscious thought.",
+    "Freelance platforms often display your typing speed on your profile, which can influence whether a client decides to hire you.",
+    "Practicing with real work documents, not just random sentences, helps you build the specific vocabulary you will use on the job.",
+    "A comfortable keyboard, good lighting, and a distraction free workspace all contribute to consistent typing performance over time.",
   ],
   hard: [
     "Developing exceptional typing proficiency requires disciplined practice, attention to proper finger placement, and a commitment to accuracy over raw speed.",
@@ -26,6 +46,16 @@ const PASSAGES = {
     "Touch typing, the technique of typing without looking at the keyboard, allows skilled typists to maintain eye contact with their screen and work more efficiently.",
     "Keyboard shortcuts, combined with fast typing speed, can dramatically increase productivity for professionals working in data entry, transcription, or content creation fields.",
     "Filipino freelancers who achieve a typing speed above 60 words per minute with 95 percent accuracy are considered highly competitive in the global remote work marketplace.",
+    "Ergonomic keyboard placement, wrist alignment, and periodic stretching breaks are essential for typists who spend several hours per day at a keyboard.",
+    "Advanced typists develop the ability to preview upcoming words while their fingers are still executing the current word, a skill known as chunking.",
+    "Employers evaluating remote candidates frequently combine typing speed tests with accuracy benchmarks to simulate real world data entry conditions.",
+    "Consistent typing rhythm, rather than sporadic bursts of speed, is generally considered a more reliable indicator of long term professional readiness.",
+    "Specialized transcription software often requires typists to type verbatim, including filler words and false starts, which demands exceptional focus.",
+    "Bilingual typists who can switch fluidly between English and Filipino keyboard layouts often find additional opportunities in localization work.",
+    "Reducing unnecessary finger movement and minimizing reliance on the backspace key are two of the most effective ways to increase sustainable typing speed.",
+    "Professional typists routinely track their words per minute and error rate over time to identify plateaus and adjust their practice accordingly.",
+    "The transition from hunting and pecking to touch typing typically requires several weeks of deliberate, uncomfortable practice before it feels natural.",
+    "Remote administrative roles increasingly require candidates to demonstrate proficiency in both typing speed and structured data entry accuracy simultaneously.",
   ],
 };
 
@@ -72,6 +102,47 @@ function getPersonalBest(): number {
 function savePersonalBest(wpm: number) {
   const pb = getPersonalBest();
   if (wpm > pb) localStorage.setItem("typing-pb", String(wpm));
+}
+
+// Shuffled per-difficulty queues so every passage in the pool is shown once
+// before any of them repeat — keeps the test feeling fresh across sessions
+// instead of relying on plain chance, which can repeat the same passage soon.
+type RotationState = Partial<Record<Difficulty, { queue: number[]; last: number | null }>>;
+
+function shuffledIndices(count: number): number[] {
+  const indices = Array.from({ length: count }, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  return indices;
+}
+
+function nextRotatedPassageIndex(difficulty: Difficulty): number {
+  if (typeof window === "undefined") return 0;
+  let state: RotationState = {};
+  try {
+    state = JSON.parse(localStorage.getItem("typing-rotation") || "{}");
+  } catch {
+    state = {};
+  }
+
+  const entry = state[difficulty] ?? { queue: [], last: null };
+  if (entry.queue.length === 0) {
+    const pool = PASSAGES[difficulty].length;
+    const fresh = shuffledIndices(pool);
+    // Avoid the new shuffle starting with the same passage that just ended.
+    if (entry.last !== null && fresh[0] === entry.last && fresh.length > 1) {
+      [fresh[0], fresh[1]] = [fresh[1], fresh[0]];
+    }
+    entry.queue = fresh;
+  }
+
+  const idx = entry.queue.shift()!;
+  entry.last = idx;
+  state[difficulty] = entry;
+  localStorage.setItem("typing-rotation", JSON.stringify(state));
+  return idx;
 }
 
 function saveDailySession(wpm: number, accuracy: number) {
@@ -552,6 +623,10 @@ export default function TypingPractice() {
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
+  // Pick the first passage from the rotation on mount (client-only, avoids SSR mismatch)
+  // instead of always starting on the same hardcoded passage.
+  useEffect(() => { setPassageIndex(nextRotatedPassageIndex(difficulty)); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Scroll passage so cursor stays on the 2nd visible line
   useEffect(() => {
     if (cursorRef.current) {
@@ -684,9 +759,8 @@ export default function TypingPractice() {
     const d = newDiff ?? difficulty;
     let idx = passageIndex;
     if (!samePassage) {
-      // Random passage, avoid repeating the same one
-      const pool = PASSAGES[d].length;
-      do { idx = Math.floor(Math.random() * pool); } while (pool > 1 && idx === passageIndex);
+      // Rotate through the full pool before any passage repeats, instead of plain chance.
+      idx = nextRotatedPassageIndex(d);
     }
     setTyped(""); typedRef.current = "";
     startTimeRef.current = null;
