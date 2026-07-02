@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     siteName: "Cyberussell",
     images: [
       {
-        url: "/api/og/services",
+        url: "/og/og-services.png",
         width: 1200,
         height: 630,
         alt: "Cyberussell Services — Built to earn.",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Your website. Your brand. Built to earn. — Cyberussell",
     description: "Web design, AI automation, and digital strategy — at rates that make sense for growing businesses.",
-    images: ["/api/og/services"],
+    images: ["/og/og-services.png"],
   },
 };
 
