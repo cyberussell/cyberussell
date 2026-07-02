@@ -146,25 +146,25 @@ function getKeyboardBadge(wpm: number, accuracy: number): BadgeInfo | null {
     careers: ["Elite Transcription", "Court Reporting", "Speed Captioning"],
     nextName: null, nextEmoji: null, nextWpm: null, nextAcc: null,
   };
-  if (wpm >= 90) return {
+  if (wpm >= 90 && accuracy >= 98) return {
     name: "Diamond Typist", emoji: "💎", percentile: "faster than ~90% of learners",
     careers: ["Senior Virtual Assistant", "Medical Transcription", "Project Management Support"],
     nextName: "Cyberussell Typing Master", nextEmoji: "👑", nextWpm: 100, nextAcc: 99,
   };
-  if (wpm >= 70) return {
+  if (wpm >= 70 && accuracy >= 97) return {
     name: "Gold Typist", emoji: "🥇", percentile: "faster than ~75% of learners",
     careers: ["Professional VA", "Content Writing", "Transcription"],
-    nextName: "Diamond Typist", nextEmoji: "💎", nextWpm: 90, nextAcc: null,
+    nextName: "Diamond Typist", nextEmoji: "💎", nextWpm: 90, nextAcc: 98,
   };
-  if (wpm >= 50) return {
+  if (wpm >= 50 && accuracy >= 95) return {
     name: "Silver Typist", emoji: "🥈", percentile: "faster than ~55% of learners",
     careers: ["Data Entry", "Virtual Assistant", "Chat Support"],
-    nextName: "Gold Typist", nextEmoji: "🥇", nextWpm: 70, nextAcc: null,
+    nextName: "Gold Typist", nextEmoji: "🥇", nextWpm: 70, nextAcc: 97,
   };
-  if (wpm >= 30) return {
+  if (wpm >= 30 && accuracy >= 90) return {
     name: "Bronze Typist", emoji: "🥉", percentile: "faster than ~25% of learners",
     careers: ["Entry-Level Data Entry", "Chat Support"],
-    nextName: "Silver Typist", nextEmoji: "🥈", nextWpm: 50, nextAcc: null,
+    nextName: "Silver Typist", nextEmoji: "🥈", nextWpm: 50, nextAcc: 95,
   };
   return null;
 }
@@ -267,6 +267,9 @@ function ResultsScreen({
   return (
     <div className="space-y-4">
 
+      {/* ── Hero + Badge Card side by side ── */}
+      <div className={badge ? "grid grid-cols-2 gap-4 items-stretch" : ""}>
+
       {/* ── Hero: Badge + Score + Key metrics + Recommendation ── */}
       <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-6">
 
@@ -335,30 +338,57 @@ function ResultsScreen({
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="h-px bg-white/[0.06] mb-4" />
+      </div>
 
-        {/* Readiness recommendation */}
-        <div className="flex items-start gap-3">
-          <span className="text-xl mt-0.5">{readiness.ready ? "✅" : "🎯"}</span>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <p className="font-sans text-[15px] font-bold text-white">{readiness.heading}</p>
-              <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[1.5px] px-2 py-0.5 rounded-full border"
-                style={{ color: readiness.color, borderColor: `${readiness.color}40`, backgroundColor: `${readiness.color}12` }}>
-                {readiness.ready ? "Job Ready" : "In Progress"}
-              </span>
+      {/* ── Score Breakdown ── */}
+      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
+        <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-4">Score Breakdown</p>
+        <div className="space-y-3">
+          {scoreBreakdown.map(({ label, weight, value, max, color, display }) => (
+            <div key={label}>
+              <div className="flex justify-between items-center mb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white">{label}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/25">{weight}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">{display}</span>
+                  <span className="font-sans text-[14px] font-bold" style={{ color }}>{value}/{max}</span>
+                </div>
+              </div>
+              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${(value / max) * 100}%`, backgroundColor: color }} />
+              </div>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 leading-[1.6] mb-1">{readiness.subheading}</p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] font-bold leading-[1.6]" style={{ color: readiness.color }}>{readiness.goal}</p>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* ── Badge Card: careers + next milestone ── */}
+      </div>{/* ── end Hero + Score Breakdown grid ── */}
+
+      {/* ── Badge Card: readiness + careers + next milestone ── */}
       {badge && (
         <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
           <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-3">What {badge.name} Means</p>
+
+          {/* Readiness */}
+          <div className="flex items-start gap-3 mb-4">
+            <span className="text-xl mt-0.5">{readiness.ready ? "✅" : "🎯"}</span>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <p className="font-sans text-[15px] font-bold text-white">{readiness.heading}</p>
+                <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[1.5px] px-2 py-0.5 rounded-full border"
+                  style={{ color: readiness.color, borderColor: `${readiness.color}40`, backgroundColor: `${readiness.color}12` }}>
+                  {readiness.ready ? "Job Ready" : "In Progress"}
+                </span>
+              </div>
+              <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 leading-[1.6] mb-1">{readiness.subheading}</p>
+              <p className="font-[family-name:var(--font-inter)] text-[13px] font-bold leading-[1.6]" style={{ color: readiness.color }}>{readiness.goal}</p>
+            </div>
+          </div>
+
+          <div className="h-px bg-white/[0.06] mb-4" />
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/35 mb-2 uppercase tracking-[1px]">Recommended Careers</p>
@@ -393,61 +423,26 @@ function ResultsScreen({
         </div>
       )}
 
-      {/* ── Score Breakdown ── */}
-      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
-        <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-4">Score Breakdown</p>
-        <div className="space-y-3">
-          {scoreBreakdown.map(({ label, weight, value, max, color, display }) => (
-            <div key={label}>
-              <div className="flex justify-between items-center mb-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white">{label}</span>
-                  <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/25">{weight}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">{display}</span>
-                  <span className="font-sans text-[14px] font-bold" style={{ color }}>{value}/{max}</span>
-                </div>
-              </div>
-              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${(value / max) * 100}%`, backgroundColor: color }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Key Stats: WPM · Accuracy · Consistency · Time · Errors · Corrections · PB ── */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        <Stat icon={Zap}    label="WPM"         value={wpm}               color="#FFD23F" />
-        <Stat icon={Target} label="Accuracy"     value={`${accuracy}%`}   color="#34D399" />
-        <Stat icon={Zap}    label="Consistency"  value={`${consistency}%`} color="#A78BFA" />
-        <Stat icon={Clock}  label="Time"         value={formatTime(elapsed)} color="#60A5FA" />
-        <Stat icon={Target} label="Errors"       value={errorCount}        color="#EF4444" />
-        <Stat icon={RotateCcw} label="Fixes"     value={correctedCount}    color="#FB923C" />
-        <Stat icon={Trophy} label="Personal Best" value={`${displayPB}`}   color="#F472B6" />
-      </div>
-
       {/* ── Typing Heatmap ── */}
       <div>
         <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-3">Typing Heatmap</p>
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          {[
-            { label: "Left Hand", value: leftAcc, color: "#60A5FA" },
-            { label: "Right Hand", value: rightAcc, color: "#34D399" },
-          ].map(({ label, value, color }) => (
-            <div key={label} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">{label}</span>
-                <span className="font-sans text-[16px] font-bold" style={{ color }}>{value}%</span>
-              </div>
-              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: color }} />
-              </div>
-            </div>
-          ))}
-        </div>
         <div className="bg-[#111118] border border-white/[0.06] rounded-2xl p-4">
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {[
+              { label: "Left Hand", value: leftAcc, color: "#60A5FA" },
+              { label: "Right Hand", value: rightAcc, color: "#34D399" },
+            ].map(({ label, value, color }) => (
+              <div key={label} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">{label}</span>
+                  <span className="font-sans text-[16px] font-bold" style={{ color }}>{value}%</span>
+                </div>
+                <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: color }} />
+                </div>
+              </div>
+            ))}
+          </div>
           <HeatmapKeyboard mistakeMap={mistakeMap} />
           <div className="flex items-center justify-center gap-4 mt-3">
             {[{ color: "#34D399", label: "Clean" },{ color: "#FBB724", label: "Some errors" },{ color: "#F97316", label: "Trouble" },{ color: "#EF4444", label: "Weak key" }].map(({ color, label }) => (
@@ -468,6 +463,18 @@ function ResultsScreen({
             </div>
           </div>
         )}
+      </div>
+
+      {/* ── Actions ── */}
+      <div className="flex gap-3 pt-2">
+        <button onClick={onRetry}
+          className="flex-1 inline-flex items-center justify-center gap-2 bg-white/[0.06] border border-white/[0.1] hover:border-white/20 text-white/70 hover:text-white font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all">
+          <RotateCcw size={14} /> Try Again
+        </button>
+        <button onClick={onReset}
+          className="flex-1 inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 text-[#0A0A14] font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all">
+          Next Passage →
+        </button>
       </div>
 
       {/* ── AI Mistake Analysis — Coming Soon ── */}
@@ -498,18 +505,6 @@ function ResultsScreen({
             ))}
           </div>
         </div>
-      </div>
-
-      {/* ── Actions ── */}
-      <div className="flex gap-3 pt-2">
-        <button onClick={onRetry}
-          className="flex-1 inline-flex items-center justify-center gap-2 bg-white/[0.06] border border-white/[0.1] hover:border-white/20 text-white/70 hover:text-white font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all">
-          <RotateCcw size={14} /> Try Again
-        </button>
-        <button onClick={onReset}
-          className="flex-1 inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 text-[#0A0A14] font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all">
-          Next Passage →
-        </button>
       </div>
     </div>
   );
