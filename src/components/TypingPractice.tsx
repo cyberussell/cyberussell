@@ -94,6 +94,51 @@ function getDailyAverage(): number {
   return Math.round(todays.reduce((sum, s) => sum + s.wpm, 0) / todays.length);
 }
 
+// ─── Scoring Utilities ────────────────────────────────────────────────────────
+
+const GRADES = [
+  { min: 98, grade: "S+", emoji: "🏆" },
+  { min: 95, grade: "S",  emoji: "🌟" },
+  { min: 90, grade: "A",  emoji: "🥇" },
+  { min: 80, grade: "B",  emoji: "🥈" },
+  { min: 70, grade: "C",  emoji: "🥉" },
+  { min: 60, grade: "D",  emoji: "📘" },
+  { min: 0,  grade: "F",  emoji: "🔄" },
+];
+
+function computeScore(wpm: number, accuracy: number, consistency: number) {
+  const wpmScore   = Math.min(100, wpm) * 0.4;
+  const accScore   = accuracy * 0.4;
+  const consScore  = consistency * 0.1;
+  const completion = 10;
+  const total = Math.round(wpmScore + accScore + consScore + completion);
+  const { grade, emoji } = GRADES.find((g) => total >= g.min)!;
+  return { total, grade, emoji };
+}
+
+function getJobReadiness(wpm: number, accuracy: number): { level: string; ready: boolean; recommendation: string; color: string } {
+  if (wpm >= 90 && accuracy >= 99)
+    return { level: "Elite", ready: true,  color: "#34D399", recommendation: "You qualify for elite data entry and transcription roles. Apply with confidence.", };
+  if (wpm >= 70 && accuracy >= 98)
+    return { level: "Professional", ready: true,  color: "#60A5FA", recommendation: "You're competitive for professional VA and data entry jobs. Target clients requiring 70+ WPM.", };
+  if (wpm >= 50 && accuracy >= 97)
+    return { level: "Transcription Ready", ready: true,  color: "#A78BFA", recommendation: "You qualify for entry-level transcription and data entry. Aim for 70 WPM to unlock higher-paying roles.", };
+  if (wpm >= 35 && accuracy >= 96)
+    return { level: "Intermediate", ready: false, color: "#FFD23F", recommendation: "You're close! Push your WPM above 50 and accuracy above 97% to qualify for transcription jobs.", };
+  if (wpm >= 20 && accuracy >= 95)
+    return { level: "Beginner", ready: false, color: "#FB923C", recommendation: "Great start. Practice daily for 10–15 minutes focusing on accuracy first. Speed will follow.", };
+  return { level: "Getting Started", ready: false, color: "#EF4444", recommendation: "Focus on accuracy over speed. Use the Easy difficulty until you reach 95%+ accuracy consistently.", };
+}
+
+function getKeyboardBadge(wpm: number, accuracy: number): { name: string; emoji: string } | null {
+  if (wpm >= 100 && accuracy >= 99) return { name: "Cyberussell Typing Master", emoji: "👑" };
+  if (wpm >= 90) return { name: "Diamond Typist", emoji: "💎" };
+  if (wpm >= 70) return { name: "Gold Typist", emoji: "🥇" };
+  if (wpm >= 50) return { name: "Silver Typist", emoji: "🥈" };
+  if (wpm >= 30) return { name: "Bronze Typist", emoji: "🥉" };
+  return null;
+}
+
 // ─── Stat Card ─────────────────────────────────────────────────────────────────
 
 function Stat({ icon: Icon, label, value, color, sub }: {
@@ -153,99 +198,153 @@ function HeatmapKeyboard({ mistakeMap }: { mistakeMap: Record<string, number> })
 // ─── Results Screen ───────────────────────────────────────────────────────────
 
 function ResultsScreen({
-  wpm, accuracy, elapsed, typed, passage,
+  wpm, accuracy, consistency, elapsed, typed, passage,
   mistakeMap, errorCount, correctedCount,
   onReset, onRetry,
 }: {
-  wpm: number; accuracy: number; elapsed: number; typed: string; passage: string;
+  wpm: number; accuracy: number; consistency: number; elapsed: number; typed: string; passage: string;
   mistakeMap: Record<string, number>; errorCount: number; correctedCount: number;
   onReset: () => void; onRetry: () => void;
 }) {
   const pb = getPersonalBest();
-  const dailyAvg = getDailyAverage();
   const isNewPB = wpm >= pb && wpm > 0;
 
-  // Punctuation accuracy
-  const punctChars = passage.split("").map((c, i) => ({ c, i })).filter(({ c }) => PUNCT_CHARS.has(c));
-  const punctCorrect = punctChars.filter(({ c, i }) => typed[i] === c).length;
-  const punctAccuracy = punctChars.length > 0 ? Math.round((punctCorrect / punctChars.length) * 100) : 100;
+  const { total, grade, emoji } = computeScore(wpm, accuracy, consistency);
+  const readiness = getJobReadiness(wpm, accuracy);
+  const badge = getKeyboardBadge(wpm, accuracy);
 
   // Hand accuracy
   let leftAttempted = 0, leftCorrect = 0, rightAttempted = 0, rightCorrect = 0;
   passage.split("").forEach((char, i) => {
     const k = char.toLowerCase();
-    if (LEFT_KEYS.has(k)) {
-      leftAttempted++;
-      if (typed[i] === char) leftCorrect++;
-    } else if (RIGHT_KEYS.has(k)) {
-      rightAttempted++;
-      if (typed[i] === char) rightCorrect++;
-    }
+    if (LEFT_KEYS.has(k)) { leftAttempted++; if (typed[i] === char) leftCorrect++; }
+    else if (RIGHT_KEYS.has(k)) { rightAttempted++; if (typed[i] === char) rightCorrect++; }
   });
-  const leftAcc = leftAttempted > 0 ? Math.round((leftCorrect / leftAttempted) * 100) : 100;
+  const leftAcc  = leftAttempted  > 0 ? Math.round((leftCorrect  / leftAttempted)  * 100) : 100;
   const rightAcc = rightAttempted > 0 ? Math.round((rightCorrect / rightAttempted) * 100) : 100;
 
-  // Weak keys — top 5 most missed
-  const weakKeys = Object.entries(mistakeMap)
-    .filter(([, v]) => v > 0)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 6)
-    .map(([k]) => k.toUpperCase());
-
+  const weakKeys = Object.entries(mistakeMap).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([k]) => k.toUpperCase());
   const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
-  return (
-    <div className="space-y-6">
+  const scoreBreakdown = [
+    { label: "WPM",         weight: "40%", value: Math.round(Math.min(100, wpm) * 0.4), max: 40,  color: "#FFD23F", display: `${wpm} WPM` },
+    { label: "Accuracy",    weight: "40%", value: Math.round(accuracy * 0.4),            max: 40,  color: "#34D399", display: `${accuracy}%` },
+    { label: "Consistency", weight: "10%", value: Math.round(consistency * 0.1),         max: 10,  color: "#A78BFA", display: `${consistency}%` },
+    { label: "Completion",  weight: "10%", value: 10,                                    max: 10,  color: "#60A5FA", display: "100%" },
+  ];
 
-      {/* ── Header ── */}
-      <div className="text-center">
-        <div className="text-4xl mb-2">{wpm >= 60 ? "🏆" : wpm >= 40 ? "🎯" : "💪"}</div>
-        <h3 className="font-sans text-[24px] font-bold text-white">
-          {isNewPB ? "New Personal Best!" : wpm >= 60 ? "Excellent!" : wpm >= 40 ? "Great job!" : "Keep going!"}
-        </h3>
-        {isNewPB && (
-          <span className="inline-block mt-1 font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-3 py-1">
-            ⭐ New Personal Best
-          </span>
+  return (
+    <div className="space-y-5">
+
+      {/* ── Score Hero ── */}
+      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-6 text-center">
+        <div className="flex items-center justify-center gap-4 mb-3">
+          {/* Score circle */}
+          <div className="relative w-24 h-24 flex items-center justify-center">
+            <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 96 96">
+              <circle cx="48" cy="48" r="42" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
+              <circle cx="48" cy="48" r="42" fill="none" stroke="#FFD23F" strokeWidth="6"
+                strokeDasharray={`${2 * Math.PI * 42}`}
+                strokeDashoffset={`${2 * Math.PI * 42 * (1 - total / 100)}`}
+                strokeLinecap="round" />
+            </svg>
+            <div className="text-center">
+              <p className="font-sans text-[28px] font-bold text-white leading-none">{total}</p>
+              <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/30 uppercase tracking-[1px]">/ 100</p>
+            </div>
+          </div>
+          {/* Grade */}
+          <div className="text-left">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-4xl">{emoji}</span>
+              <span className="font-sans text-[36px] font-bold text-white leading-none">{grade}</span>
+            </div>
+            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40">Overall Score</p>
+            {isNewPB && (
+              <span className="inline-block mt-1 font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-2 py-0.5">
+                ⭐ New Personal Best
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Badge */}
+        {badge && (
+          <div className="inline-flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-4 py-1.5 mt-2">
+            <span className="text-lg">{badge.emoji}</span>
+            <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-[#FFD23F]">{badge.name}</span>
+          </div>
         )}
       </div>
 
-      {/* ── Speed & Core Stats ── */}
-      <div>
-        <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-3">Speed & Accuracy</p>
-        <div className="flex flex-wrap gap-2 justify-center">
-          <Stat icon={Zap}    label="WPM"         value={wpm}             color="#FFD23F" />
-          <Stat icon={Target} label="Accuracy"     value={`${accuracy}%`} color="#34D399" />
-          <Stat icon={Target} label="Punctuation"  value={`${punctAccuracy}%`} color="#60A5FA" />
-          <Stat icon={Clock}  label="Time"         value={formatTime(elapsed)} color="#A78BFA" />
-          <Stat icon={Trophy} label="Personal Best" value={`${Math.max(pb, wpm)} wpm`} color="#F472B6" />
-          <Stat icon={Zap}    label="Daily Avg"    value={`${dailyAvg || wpm} wpm`} color="#FB923C" />
+      {/* ── Job Readiness ── */}
+      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl mt-0.5">{readiness.ready ? "✅" : "⏳"}</span>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <p className="font-sans text-[16px] font-bold text-white">{readiness.level}</p>
+              <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[1.5px] px-2 py-0.5 rounded-full border"
+                style={{ color: readiness.color, borderColor: `${readiness.color}40`, backgroundColor: `${readiness.color}12` }}>
+                {readiness.ready ? "Job Ready" : "In Progress"}
+              </span>
+            </div>
+            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.6]">{readiness.recommendation}</p>
+          </div>
         </div>
       </div>
 
-      {/* ── Detailed Stats ── */}
-      <div>
-        <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-3">Session Details</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {[
-            { label: "Characters typed", value: typed.length },
-            { label: "Errors made",      value: errorCount },
-            { label: "Corrections",      value: correctedCount },
-            { label: "Words",            value: typed.trim().split(/\s+/).length },
-          ].map(({ label, value }) => (
-            <div key={label} className="bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3 text-center">
-              <p className="font-sans text-[18px] font-bold text-white">{value}</p>
-              <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/30 mt-0.5">{label}</p>
+      {/* ── Score Breakdown ── */}
+      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
+        <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-4">Score Breakdown</p>
+        <div className="space-y-3">
+          {scoreBreakdown.map(({ label, weight, value, max, color, display }) => (
+            <div key={label}>
+              <div className="flex justify-between items-center mb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white">{label}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/25">{weight}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">{display}</span>
+                  <span className="font-sans text-[14px] font-bold" style={{ color }}>{value}/{max}</span>
+                </div>
+              </div>
+              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className="h-full rounded-full transition-all" style={{ width: `${(value / max) * 100}%`, backgroundColor: color }} />
+              </div>
             </div>
           ))}
         </div>
       </div>
 
+      {/* ── Quick Stats ── */}
+      <div className="flex flex-wrap gap-2 justify-center">
+        <Stat icon={Zap}    label="WPM"     value={wpm}             color="#FFD23F" />
+        <Stat icon={Target} label="Accuracy" value={`${accuracy}%`} color="#34D399" />
+        <Stat icon={Zap}    label="Consistency" value={`${consistency}%`} color="#A78BFA" />
+        <Stat icon={Clock}  label="Time"    value={formatTime(elapsed)} color="#60A5FA" />
+        <Stat icon={Trophy} label="Best"    value={`${Math.max(pb, wpm)} wpm`} color="#F472B6" />
+      </div>
+
+      {/* ── Session Details ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {[
+          { label: "Characters", value: typed.length },
+          { label: "Errors",     value: errorCount },
+          { label: "Corrections",value: correctedCount },
+          { label: "Words",      value: typed.trim().split(/\s+/).length },
+        ].map(({ label, value }) => (
+          <div key={label} className="bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3 text-center">
+            <p className="font-sans text-[18px] font-bold text-white">{value}</p>
+            <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/30 mt-0.5">{label}</p>
+          </div>
+        ))}
+      </div>
+
       {/* ── Typing Heatmap ── */}
       <div>
         <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-3">Typing Heatmap</p>
-
-        {/* Hand accuracy */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           {[
             { label: "Left Hand", value: leftAcc, color: "#60A5FA" },
@@ -262,8 +361,6 @@ function ResultsScreen({
             </div>
           ))}
         </div>
-
-        {/* Keyboard heatmap */}
         <div className="bg-[#111118] border border-white/[0.06] rounded-2xl p-4">
           <HeatmapKeyboard mistakeMap={mistakeMap} />
           <div className="flex items-center justify-center gap-4 mt-3">
@@ -280,16 +377,12 @@ function ResultsScreen({
             ))}
           </div>
         </div>
-
-        {/* Weak keys */}
         {weakKeys.length > 0 && (
           <div className="mt-3">
             <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/30 mb-2">Weak keys to practice:</p>
             <div className="flex flex-wrap gap-2">
               {weakKeys.map((k) => (
-                <span key={k} className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-1.5">
-                  {k}
-                </span>
+                <span key={k} className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-1.5">{k}</span>
               ))}
             </div>
           </div>
@@ -298,7 +391,6 @@ function ResultsScreen({
 
       {/* ── AI Mistake Analysis — Coming Soon ── */}
       <div className="relative rounded-2xl border border-white/[0.08] overflow-hidden">
-        {/* Blur overlay */}
         <div className="absolute inset-0 backdrop-blur-[2px] bg-[#0F0F1A]/60 z-10 flex flex-col items-center justify-center gap-3 px-6">
           <div className="flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-4 py-1.5">
             <Lock size={12} className="text-[#FFD23F]" />
@@ -308,8 +400,6 @@ function ResultsScreen({
             AI-powered mistake analysis with personalized drill exercises. Launching soon for premium members.
           </p>
         </div>
-
-        {/* Preview content (blurred behind) */}
         <div className="p-5 select-none pointer-events-none">
           <div className="flex items-center gap-2 mb-4">
             <Sparkles size={15} className="text-[#FFD23F]" />
@@ -319,12 +409,7 @@ function ResultsScreen({
             </div>
           </div>
           <div className="space-y-2">
-            {[
-              "You frequently miss punctuation keys — try daily comma and period drills.",
-              "Your right pinky is weak — practice ; and ' key exercises.",
-              "You slow down on long words — focus on rhythm, not speed.",
-              "Suggested drill: type the alphabet 3× daily focusing on home row.",
-            ].map((line, i) => (
+            {["You frequently miss punctuation keys — try daily comma and period drills.","Your right pinky is weak — practice ; and ' key exercises.","You slow down on long words — focus on rhythm, not speed.","Suggested drill: type the alphabet 3× daily focusing on home row."].map((line, i) => (
               <div key={i} className="flex items-start gap-2">
                 <span className="text-[#FFD23F] text-[14px] mt-0.5">→</span>
                 <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40">{line}</p>
@@ -336,16 +421,12 @@ function ResultsScreen({
 
       {/* ── Actions ── */}
       <div className="flex gap-3 pt-2">
-        <button
-          onClick={onRetry}
-          className="flex-1 inline-flex items-center justify-center gap-2 bg-white/[0.06] border border-white/[0.1] hover:border-white/20 text-white/70 hover:text-white font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all"
-        >
+        <button onClick={onRetry}
+          className="flex-1 inline-flex items-center justify-center gap-2 bg-white/[0.06] border border-white/[0.1] hover:border-white/20 text-white/70 hover:text-white font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all">
           <RotateCcw size={14} /> Try Again
         </button>
-        <button
-          onClick={onReset}
-          className="flex-1 inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 text-[#0A0A14] font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all"
-        >
+        <button onClick={onReset}
+          className="flex-1 inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 text-[#0A0A14] font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all">
           Next Passage →
         </button>
       </div>
@@ -371,6 +452,7 @@ export default function TypingPractice() {
   const [correctedCount, setCorrectedCount] = useState(0);
   const [finalWpm, setFinalWpm] = useState(0);
   const [finalAccuracy, setFinalAccuracy] = useState(0);
+  const [finalConsistency, setFinalConsistency] = useState(100);
   const [finalElapsed, setFinalElapsed] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -379,6 +461,7 @@ export default function TypingPractice() {
   const errorCountRef = useRef(0);
   const correctedCountRef = useRef(0);
   const cursorRef = useRef<HTMLSpanElement>(null);
+  const keystrokeTimesRef = useRef<number[]>([]);
   const [scrollY, setScrollY] = useState(0);
   const LINE_H = 25 * 1.8; // 45px — matches font-size × line-height
 
@@ -465,10 +548,14 @@ export default function TypingPractice() {
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     if (done || value.length > passage.length) return;
+    const now = Date.now();
     if (!startTimeRef.current) {
-      const now = Date.now();
       startTimeRef.current = now;
       setStartTime(now);
+    }
+    // Track keystroke timestamps for consistency (only when adding chars, not backspace)
+    if (value.length > typedRef.current.length) {
+      keystrokeTimesRef.current.push(now);
     }
     typedRef.current = value;
     setTyped(value);
@@ -482,10 +569,27 @@ export default function TypingPractice() {
       const finalW = Math.round(words / Math.max(minutes, 0.01));
       const ec = errorCountRef.current;
       const finalA = ec === 0 ? 100 : Math.round((passage.length / (passage.length + ec)) * 100);
+      // Compute consistency from inter-keystroke timestamps
+      const times = keystrokeTimesRef.current;
+      let finalC = 100;
+      if (times.length > 3) {
+        const intervals: number[] = [];
+        for (let j = 1; j < times.length; j++) {
+          const d = times[j] - times[j - 1];
+          if (d < 3000) intervals.push(d); // ignore pauses > 3s
+        }
+        if (intervals.length > 2) {
+          const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+          const stdDev = Math.sqrt(intervals.reduce((s, v) => s + (v - mean) ** 2, 0) / intervals.length);
+          const cov = stdDev / mean;
+          finalC = Math.max(0, Math.min(100, Math.round(100 - cov * 100)));
+        }
+      }
       setElapsed(exactElapsed);
       setFinalElapsed(exactElapsed);
       setFinalWpm(finalW);
       setFinalAccuracy(finalA);
+      setFinalConsistency(finalC);
       savePersonalBest(finalW);
       saveDailySession(finalW, finalA);
       setDone(true);
@@ -505,9 +609,10 @@ export default function TypingPractice() {
     startTimeRef.current = null;
     errorCountRef.current = 0;
     correctedCountRef.current = 0;
+    keystrokeTimesRef.current = [];
     setDone(false); setStartTime(null); setElapsed(0); setWpm(0); setScrollY(0);
     setActiveKey(null); setErrorKey(null); setMistakeMap({});
-    setErrorCount(0); setCorrectedCount(0); setFinalWpm(0); setFinalAccuracy(0);
+    setErrorCount(0); setCorrectedCount(0); setFinalWpm(0); setFinalAccuracy(0); setFinalConsistency(100);
     setDifficulty(d); setPassageIndex(idx);
     setTimeout(() => inputRef.current?.focus(), 50);
   }
@@ -584,7 +689,7 @@ export default function TypingPractice() {
     return (
       <div className="w-full max-w-4xl mx-auto px-4">
         <ResultsScreen
-          wpm={finalWpm} accuracy={finalAccuracy} elapsed={finalElapsed}
+          wpm={finalWpm} accuracy={finalAccuracy} consistency={finalConsistency} elapsed={finalElapsed}
           typed={typed} passage={passage}
           mistakeMap={mistakeMap} errorCount={errorCount} correctedCount={correctedCount}
           onReset={() => reset()}
