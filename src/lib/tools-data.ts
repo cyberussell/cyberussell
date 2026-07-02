@@ -186,6 +186,44 @@ export const tools: Tool[] = [
       description: "Practice typing with a full interactive keyboard. Track your WPM, accuracy, and time. Free, no sign-up required.",
     },
   },
+  {
+    slug: "digital-literacy-checker",
+    name: "Digital Literacy Checker",
+    shortDescription:
+      "Adaptive AI assessment across 9 skill areas. Get your Digital Literacy Score, a personalized breakdown, and matching online careers.",
+    longDescription:
+      "Find out how ready you are for online work. Answer questions on internet browsing, search, email, cloud files, video calls, password security, and more — difficulty adapts as you go. Get an AI-generated report with your strengths, weaknesses, learning recommendations, and the online careers that best match your current skills.",
+    icon: "ShieldCheck",
+    category: "Skills",
+    status: "Free",
+    ctaLabel: "Check My Skills →",
+    ctaUrl: "/ai-tools/digital-literacy-checker",
+    featured: true,
+    relatedTools: ["typing-practice", "prompt-forge"],
+    relatedGuides: [
+      { label: "8 Ways to Earn Online as a Filipino", href: "/guides/8-ways" },
+    ],
+    relatedArticles: [],
+    faq: [
+      {
+        question: "How long does the assessment take?",
+        answer: "About 5-10 minutes. Questions adapt to your skill level, so it's shorter if you're just starting out.",
+      },
+      {
+        question: "Is it free?",
+        answer: "Yes, completely free. No account required, though you can optionally save your results with an email.",
+      },
+      {
+        question: "What careers does it match me to?",
+        answer: "Virtual Assistant, Data Entry Specialist, Customer Support Representative, Administrative Assistant, Online Researcher, Social Media Assistant, and Email Support Representative — based on your actual scores.",
+      },
+    ],
+    seo: {
+      title: "AI Digital Literacy Checker — Free Skills Assessment | Cyberussell",
+      description:
+        "Test your digital literacy and get an AI-powered score, strengths, weaknesses, and career matches. Free, adaptive assessment.",
+    },
+  },
 ];
 
 export function getToolBySlug(slug: string): Tool | undefined {

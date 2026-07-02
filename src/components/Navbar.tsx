@@ -37,6 +37,7 @@ const navItems: NavItem[] = [
       { label: "Scam Checker", href: "/tools/scam-scanner" },
       { label: "Prompt Trainer", href: "/tools/prompt-forge" },
       { label: "Bio Generator", href: "/tools/bio-generator" },
+      { label: "Digital Literacy Checker", href: "/ai-tools/digital-literacy-checker" },
       { label: "──────────────", href: "#", divider: true },
       { label: "Where to Apply & Earn", href: "/earn/freelance-platforms" },
     ],
