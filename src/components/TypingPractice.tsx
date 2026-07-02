@@ -476,6 +476,13 @@ function ResultsScreen({
           Next Passage →
         </button>
       </div>
+      <p className="text-center font-[family-name:var(--font-inter)] text-[11px] text-white/25">
+        or press{" "}
+        <kbd className="px-1.5 py-0.5 rounded-md bg-white/[0.06] border border-white/[0.12] text-white/50 font-sans text-[10px]">
+          Tab
+        </kbd>{" "}
+        on your keyboard
+      </p>
 
       {/* ── AI Mistake Analysis — Coming Soon ── */}
       <div className="relative rounded-2xl border border-white/[0.08] overflow-hidden">
