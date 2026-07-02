@@ -24,6 +24,9 @@ export const metadata: Metadata = {
 export default function TypingPracticePage() {
   return (
     <>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet" />
       <Navbar />
       <main className="min-h-screen bg-[#0F0F1A] px-4 py-16 md:py-24">
         <div className="max-w-4xl mx-auto mb-10 text-center">

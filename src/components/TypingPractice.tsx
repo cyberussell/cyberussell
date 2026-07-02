@@ -503,17 +503,46 @@ export default function TypingPractice() {
   }
 
   function renderPassage() {
+    const cursorPos = typed.length;
+
+    // Find current word boundaries
+    let wordStart = cursorPos;
+    while (wordStart > 0 && passage[wordStart - 1] !== " ") wordStart--;
+    let wordEnd = wordStart;
+    while (wordEnd < passage.length && passage[wordEnd] !== " ") wordEnd++;
+
+    const charStyle = {
+      fontFamily: "'Roboto Mono', monospace",
+      fontSize: "25px",
+      lineHeight: "1.8",
+      letterSpacing: "0.02em",
+      fontWeight: 500,
+    };
+
     return passage.split("").map((char, i) => {
-      let cls = "text-white/30";
-      if (i < typed.length) {
-        cls = typed[i] === char ? "text-[#34D399]" : "text-red-400 bg-red-500/20 rounded";
-      } else if (i === typed.length) {
-        cls = "text-white border-b-2 border-[#FFD23F]";
+      const isTyped = i < cursorPos;
+      const isCurrent = i === cursorPos;
+      const inCurrentWord = i >= wordStart && i < wordEnd;
+
+      let color: string;
+      let bg: string | undefined;
+
+      if (isTyped) {
+        color = typed[i] === char ? "#16A34A" : "#DC2626";
+      } else if (inCurrentWord) {
+        color = "#111827";
+        bg = "#FFE082";
+      } else {
+        color = "#9CA3AF";
       }
-      const display = char === " " ? " " : char;
+
       return (
-        <span key={i} className={cls} style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: "22px", lineHeight: "2.4" }}>
-          {display}
+        <span
+          key={i}
+          className={isCurrent ? "typing-cursor" : undefined}
+          style={{ ...charStyle, color, backgroundColor: bg }}
+        >
+          {char === " " ? " " : char}
         </span>
       );
     });
@@ -572,17 +601,19 @@ export default function TypingPractice() {
       </div>
 
       {/* Text passage */}
-      <div className="bg-[#111118] border border-white/[0.07] rounded-2xl p-6 md:p-8 mb-8 cursor-text">
-        <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-          {renderPassage()}
-        </div>
-        <div className="flex items-center justify-between mt-4">
-          <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/20">
-            Click here and start typing
-          </p>
-          <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/20">
-            {typed.length}/{passage.length} · Finish to see Heatmap & Stats
-          </p>
+      <div className="max-w-[820px] mx-auto w-full mb-8">
+        <div className="bg-[#FAFAFA] border border-gray-200 rounded-2xl p-6 md:p-10 cursor-text">
+          <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+            {renderPassage()}
+          </div>
+          <div className="flex items-center justify-between mt-5">
+            <p className="font-[family-name:var(--font-inter)] text-[11px] text-gray-400">
+              Click here and start typing
+            </p>
+            <p className="font-[family-name:var(--font-inter)] text-[11px] text-gray-400">
+              {typed.length}/{passage.length} · Finish to see Heatmap & Stats
+            </p>
+          </div>
         </div>
       </div>
 

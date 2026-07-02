@@ -74,6 +74,17 @@ body {
   #worksheet-results div[class*="bg-[#0F0F1A]"] { background: #f0f0f0 !important; }
 }
 
+/* Typing Practice caret */
+@keyframes typing-blink {
+  0%, 100% { border-color: #374151; }
+  50% { border-color: transparent; }
+}
+.typing-cursor {
+  border-left: 3px solid #374151;
+  margin-left: -2px;
+  animation: typing-blink 1s step-end infinite;
+}
+
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
