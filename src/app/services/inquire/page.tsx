@@ -14,9 +14,11 @@ function InquireForm() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     subject: `Inquiry: ${serviceLabel}`,
     message: defaultMessage,
   });
+  const [phoneError, setPhoneError] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -24,18 +26,25 @@ function InquireForm() {
     setForm({
       name: "",
       email: "",
+      phone: "",
       subject: `Inquiry: ${serviceLabel}`,
       message: `Hi Russell,\n\nI'm interested in your ${serviceLabel} service and would love to discuss how you can help my business.\n\nPlease let me know your availability.\n\nThank you!`,
     });
   }, [serviceLabel]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    if (name === "phone") {
+      if (value && !/^[+\d\s\-()]*$/.test(value)) return; // only allow digits + formatting chars
+      setPhoneError(value && !/^\+?[\d\s\-()]{7,20}$/.test(value) ? "Enter a valid phone number (digits only)." : "");
+    }
+    setForm((prev) => ({ ...prev, [name]: value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (honeypot) return;
+    if (phoneError) return;
     setStatus("loading");
     try {
       const res = await fetch("/api/contact", {
@@ -141,6 +150,23 @@ function InquireForm() {
 
             <div className="flex flex-col gap-1.5">
               <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="+63 912 345 6789"
+                className={`bg-[#18181F] border rounded-lg px-4 py-3 text-white text-[14px] placeholder-white/25 focus:outline-none transition-colors font-[family-name:var(--font-inter)] ${phoneError ? "border-[#E8373A] focus:border-[#E8373A]" : "border-white/10 focus:border-[#FFD23F]"}`}
+              />
+              {phoneError && (
+                <p className="font-[family-name:var(--font-inter)] text-[12px] text-[#E8373A]">{phoneError}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/65 uppercase tracking-[1px]">
                 Subject
               </label>
               <input
@@ -166,9 +192,14 @@ function InquireForm() {
               />
             </div>
 
+            {/* Disclaimer */}
+            <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/35 leading-[1.7] border border-white/[0.06] rounded-xl px-4 py-3 bg-white/[0.02]">
+              🌏 While Cyberussell is primarily built for Filipinos in the Philippines, we warmly welcome inquiries from anywhere in the world. Feel free to reach out regardless of your location.
+            </p>
+
             <button
               type="submit"
-              disabled={status === "loading"}
+              disabled={status === "loading" || !!phoneError}
               className="bg-[#FFD23F] text-[#0A0A14] font-[family-name:var(--font-inter)] font-bold text-[15px] py-4 px-8 rounded-xl hover:bg-[#FFD23F]/90 transition-all disabled:opacity-60 min-h-[52px] flex items-center justify-center gap-2"
             >
               {status === "loading" ? (
