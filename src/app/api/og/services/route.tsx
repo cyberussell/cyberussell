@@ -32,10 +32,12 @@ export async function GET() {
           }}
         />
 
-        {/* Solid dark block behind text, fading right */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(10,10,20,1.0) 0%, rgba(10,10,20,1.0) 50%, rgba(10,10,20,0.6) 70%, rgba(10,10,20,0.0) 100%)" }} />
-        {/* Top and bottom dark fade */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,20,0.6) 0%, transparent 30%, rgba(10,10,20,0.9) 100%)" }} />
+        {/* Solid dark block covering left 55% */}
+        <div style={{ position: "absolute", top: 0, left: 0, width: "55%", height: "100%", background: "#0A0A14" }} />
+        {/* Fade strip from solid to transparent */}
+        <div style={{ position: "absolute", top: 0, left: "45%", width: "35%", height: "100%", background: "linear-gradient(to right, #0A0A14, rgba(10,10,20,0))" }} />
+        {/* Bottom fade */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "200px", background: "linear-gradient(to top, #0A0A14, rgba(10,10,20,0))" }} />
 
         {/* Top color bar */}
         <div
