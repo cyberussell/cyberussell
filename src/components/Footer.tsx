@@ -56,7 +56,7 @@ export default function Footer() {
         </div>
 
         {/* Subscribe */}
-        <div className="flex flex-col gap-3 max-w-[260px]">
+        <div id="subscribe" className="flex flex-col gap-3 max-w-[260px]">
           <h5 className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[0.1em]">
             Stay Updated
           </h5>
