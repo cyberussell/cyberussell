@@ -453,13 +453,13 @@ export default function TypingPractice() {
     };
   }, [handleKeyDown, handleKeyUp]);
 
-  // Tab = next passage (separate effect so it always has fresh reset)
+  // Tab = next passage — capture phase so we intercept before browser moves focus
   useEffect(() => {
     const onTab = (e: KeyboardEvent) => {
-      if (e.key === "Tab") { e.preventDefault(); reset(); }
+      if (e.key === "Tab") { e.preventDefault(); e.stopPropagation(); reset(); }
     };
-    window.addEventListener("keydown", onTab);
-    return () => window.removeEventListener("keydown", onTab);
+    window.addEventListener("keydown", onTab, { capture: true });
+    return () => window.removeEventListener("keydown", onTab, { capture: true });
   });
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
@@ -473,12 +473,12 @@ export default function TypingPractice() {
     typedRef.current = value;
     setTyped(value);
 
-    if (value === passage) {
+    if (value.length === passage.length) {
       if (timerRef.current) clearInterval(timerRef.current);
       const finishTime = Date.now();
       const minutes = (finishTime - (startTimeRef.current ?? finishTime)) / 60000;
       const exactElapsed = Math.floor((finishTime - (startTimeRef.current ?? finishTime)) / 1000);
-      const words = value.trim().split(/\s+/).length;
+      const words = passage.trim().split(/\s+/).length;
       const finalW = Math.round(words / Math.max(minutes, 0.01));
       const ec = errorCountRef.current;
       const finalA = ec === 0 ? 100 : Math.round((passage.length / (passage.length + ec)) * 100);
