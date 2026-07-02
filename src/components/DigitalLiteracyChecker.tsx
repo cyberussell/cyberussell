@@ -85,8 +85,8 @@ export default function DigitalLiteracyChecker() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  const [categoryIndex, setCategoryIndex] = useState(0);
-  const [tierIndex, setTierIndex] = useState(0);
+  const [phaseIndex, setPhaseIndex] = useState(0);
+  const [catPos, setCatPos] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -98,22 +98,35 @@ export default function DigitalLiteracyChecker() {
   }, []);
 
   const currentQuestion: DLQuestion | null = useMemo(() => {
-    if (stage !== "quiz" || categoryIndex >= categories.length) return null;
-    const cat = categories[categoryIndex];
-    const tier = tierOrder[tierIndex];
+    if (stage !== "quiz" || phaseIndex >= tierOrder.length) return null;
+    const cat = categories[catPos];
+    const tier = tierOrder[phaseIndex];
     return getQuestionsByCategory(cat).find((q) => q.difficulty === tier) || null;
-  }, [stage, categoryIndex, tierIndex]);
+  }, [stage, phaseIndex, catPos]);
+
+  // Shuffle option display order per question, while keeping `selected`/scoring tied to the canonical index.
+  const shuffledOptionOrder = useMemo(() => {
+    if (!currentQuestion) return [];
+    const order = currentQuestion.options.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    return order;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentQuestion?.id]);
 
   const totalAnswered = answers.length;
-  const categoriesCompleted = categoryIndex;
+  const totalQuestions = categories.length * tierOrder.length;
+  const overallProgress = phaseIndex * categories.length + catPos;
 
   const startQuiz = useCallback(() => {
     if (remaining <= 0) {
       setError("Daily limit reached. Come back tomorrow for 10 more free checks.");
       return;
     }
-    setCategoryIndex(0);
-    setTierIndex(0);
+    setPhaseIndex(0);
+    setCatPos(0);
     setAnswers([]);
     setSelected(null);
     setError("");
@@ -178,29 +191,29 @@ export default function DigitalLiteracyChecker() {
     setAnswers(newAnswers);
     setSelected(null);
 
-    const canGoHarder = correct && tierIndex < tierOrder.length - 1;
-    const isLastCategory = categoryIndex >= categories.length - 1;
+    const isLastCategoryInPhase = catPos >= categories.length - 1;
+    const isLastPhase = phaseIndex >= tierOrder.length - 1;
 
-    if (canGoHarder) {
-      setTierIndex((t) => t + 1);
-      return;
-    }
-
-    if (isLastCategory) {
+    if (isLastCategoryInPhase && isLastPhase) {
       submitReport(newAnswers);
       return;
     }
 
-    setCategoryIndex((c) => c + 1);
-    setTierIndex(0);
-  }, [selected, currentQuestion, answers, tierIndex, categoryIndex, submitReport]);
+    if (isLastCategoryInPhase) {
+      setPhaseIndex((p) => p + 1);
+      setCatPos(0);
+      return;
+    }
+
+    setCatPos((c) => c + 1);
+  }, [selected, currentQuestion, answers, catPos, phaseIndex, submitReport]);
 
   const restart = () => {
     setStage("intro");
     setReport(null);
     setAnswers([]);
-    setCategoryIndex(0);
-    setTierIndex(0);
+    setPhaseIndex(0);
+    setCatPos(0);
     setSelected(null);
     setError("");
   };
@@ -213,7 +226,7 @@ export default function DigitalLiteracyChecker() {
           <h3 className="font-sans text-[20px] font-bold text-white mb-2">Check your digital literacy</h3>
           <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7] mb-5">
             Answer questions across 9 real-world skill areas — internet, email, cloud files, video calls,
-            security, and more. Questions get harder as you answer correctly. Takes 5–10 minutes.
+            security, and more. Questions are grouped into Easy, Medium, and Hard sections. Takes 5–10 minutes.
           </p>
 
           <div className="flex flex-wrap gap-2 mb-6">
@@ -266,22 +279,23 @@ export default function DigitalLiteracyChecker() {
 
   // ---------- Quiz ----------
   if (stage === "quiz" && currentQuestion) {
-    const progressPct = Math.round((categoriesCompleted / categories.length) * 100);
+    const overallPct = Math.round((overallProgress / totalQuestions) * 100);
+    const phaseLabel = currentQuestion.difficulty.toUpperCase();
     return (
       <div className="max-w-[640px] mx-auto">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">
-              {currentQuestion.category} · {categoriesCompleted + 1} of {categories.length}
+              {currentQuestion.category} · Question {catPos + 1} of {categories.length}
             </span>
-            <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[1px] text-white/30">
-              {currentQuestion.difficulty}
+            <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[1px] text-[#4F8EF7]">
+              {phaseLabel} section
             </span>
           </div>
           <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
             <div
               className="h-full bg-[#4F8EF7] rounded-full transition-all duration-300"
-              style={{ width: `${progressPct}%` }}
+              style={{ width: `${overallPct}%` }}
             />
           </div>
         </div>
@@ -291,7 +305,8 @@ export default function DigitalLiteracyChecker() {
             {currentQuestion.question}
           </p>
           <div className="space-y-2.5">
-            {currentQuestion.options.map((opt, oi) => {
+            {shuffledOptionOrder.map((oi) => {
+              const opt = currentQuestion.options[oi];
               const isSelected = selected === oi;
               return (
                 <button
