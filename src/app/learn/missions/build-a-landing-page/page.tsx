@@ -176,8 +176,8 @@ export default function BuildALandingPagePage() {
             <a href="/learn/missions/create-your-first-resume" className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white/40 hover:text-white transition-colors">
               ← Mission 01: Create Your Resume
             </a>
-            <a href="/learn/missions" className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-[#FFD23F] hover:text-white transition-colors">
-              Back to All Missions →
+            <a href="/learn/missions/write-a-freelance-proposal" className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-[#FFD23F] hover:text-white transition-colors">
+              Next Mission: Write a Freelance Proposal →
             </a>
           </div>
         </section>
