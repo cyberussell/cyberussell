@@ -292,11 +292,12 @@ export default function ClientIntakeEditorPage({ params }: { params: Promise<{ i
                                   {item.item}
                                 </p>
                               )}
-                              <input
+                              <textarea
                                 value={item.note}
                                 onChange={(e) => updateChecklistItem(index, { note: e.target.value })}
                                 placeholder="Notes (e.g. sent via email, still pending...)"
-                                className={INPUT_CLS}
+                                rows={2}
+                                className={`${INPUT_CLS} resize-y`}
                               />
                             </div>
                             <button onClick={() => removeChecklistItem(index)} className="text-white/20 hover:text-red-400 transition-colors mt-1">
@@ -363,7 +364,7 @@ function IntakePrint({ intake }: { intake: Intake }) {
         .item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; padding: 8px 10px; background: #f9f9f9; border-radius: 6px; }
         .box { width: 14px; height: 14px; border: 2px solid #111; border-radius: 3px; flex-shrink: 0; margin-top: 2px; }
         .box.checked { background: #111; }
-        .item-note { font-size: 12px; color: #777; margin-top: 2px; }
+        .item-note { font-size: 12px; color: #777; margin-top: 2px; white-space: pre-wrap; }
         .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #ddd; display: flex; justify-content: space-between; font-size: 11px; color: #999; }
       `}</style>
 
