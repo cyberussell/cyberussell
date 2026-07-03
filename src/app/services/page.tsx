@@ -3,11 +3,10 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import {
-  Globe, Zap, Brain, AppWindow, Blocks, Search,
-  PenTool, FileText, BarChart2, Shield, GraduationCap,
-  CheckCircle2, ArrowRight, ChevronRight, ChevronDown,
-} from "lucide-react";
+import { CheckCircle2, ArrowRight, ChevronRight, ChevronDown } from "lucide-react";
+import { getAllServices } from "@/lib/services/data";
+import { getServiceIcon } from "@/components/services/icons";
+import type { Service } from "@/lib/services/types";
 
 // ─── Animation helpers ────────────────────────────────────────────────────────
 
@@ -28,141 +27,6 @@ const TRUST = [
   { icon: CheckCircle2, title: "Modern Technology", desc: "Fast, secure, and scalable websites and applications built with current best practices." },
   { icon: CheckCircle2, title: "Business-Focused", desc: "Every solution is designed to save time, improve efficiency, or increase customer engagement." },
   { icon: CheckCircle2, title: "End-to-End Delivery", desc: "From planning and design to launch and ongoing support — I see projects through to completion." },
-];
-
-const SERVICES = [
-  {
-    id: "web-dev",
-    icon: Globe,
-    color: "#60A5FA",
-    headline: "Get a Website That Builds Trust and Wins More Customers",
-    intro: "Your website is often the first impression customers have of your business. If it looks outdated, loads slowly, or doesn't clearly explain what you offer, potential customers leave before contacting you.",
-    body: "I build modern, mobile-friendly websites designed to showcase your business, build credibility, and encourage visitors to take action.",
-    benefits: ["Professional online presence", "Mobile-friendly design", "Fast loading pages", "SEO-ready", "Easy to update", "Designed to generate enquiries"],
-    cta: "Let's Build Your Website",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80",
-    imageAlt: "Developer working on a modern website at a clean desk with morning light",
-  },
-  {
-    id: "ai-automation",
-    icon: Zap,
-    color: "#34D399",
-    headline: "Save Hours Every Week by Automating Repetitive Work",
-    intro: "Stop spending valuable time on repetitive tasks. I design AI-powered workflows that automate everyday business processes, allowing you and your team to focus on higher-value work.",
-    body: "",
-    benefits: ["AI assistants", "Business automation", "Faster workflows", "Better productivity", "Reduced manual work"],
-    cta: "Automate My Business",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
-    imageAlt: "Clean workspace with multiple monitors showing workflow dashboards",
-  },
-  {
-    id: "prompt-engineering",
-    icon: Brain,
-    color: "#A78BFA",
-    headline: "Make AI Work Like Your Best Employee",
-    intro: "AI is only as effective as the instructions it receives. I'll build custom prompts, reusable workflows, and AI systems that consistently deliver high-quality results for your business.",
-    body: "",
-    benefits: ["Custom prompt libraries", "AI knowledge systems", "Team productivity", "Consistent AI output"],
-    cta: "Build My AI System",
-    image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80",
-    imageAlt: "Person typing on a laptop in a bright home office with coffee and notebooks",
-  },
-  {
-    id: "web-app",
-    icon: AppWindow,
-    color: "#F472B6",
-    headline: "Replace Manual Processes with Custom Business Software",
-    intro: "If spreadsheets and disconnected tools are slowing your business down, I can build a custom web application designed around your workflow.",
-    body: "",
-    benefits: ["Client portals", "Dashboards", "Booking systems", "CRM", "Business tools"],
-    cta: "Build My System",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
-    imageAlt: "Business dashboard on a large monitor in a modern office environment",
-  },
-  {
-    id: "bubble",
-    icon: Blocks,
-    color: "#FB923C",
-    headline: "Launch Your Business Idea Faster",
-    intro: "Whether you're building an MVP or improving an existing Bubble application, I can help you move from idea to launch without the long timelines of traditional software development.",
-    body: "",
-    benefits: ["MVPs", "SaaS", "Workflow optimization", "Bug fixes", "New features"],
-    cta: "Start My Project",
-    image: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&q=80",
-    imageAlt: "Entrepreneur reviewing wireframes and app designs on tablet and laptop",
-  },
-  {
-    id: "seo",
-    icon: Search,
-    color: "#2DD4BF",
-    headline: "Help Customers Find Your Business on Google",
-    intro: "Having a beautiful website isn't enough. Your customers need to find you first. I optimize websites to improve search visibility and attract more qualified visitors.",
-    body: "",
-    benefits: ["Technical SEO", "Keyword research", "On-page optimization", "Google Search Console", "SEO audits"],
-    cta: "Improve My Rankings",
-    image: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=800&q=80",
-    imageAlt: "Analytics dashboard showing growth in search traffic on a laptop screen",
-  },
-  {
-    id: "content",
-    icon: PenTool,
-    color: "#F59E0B",
-    headline: "Create More Content in Less Time",
-    intro: "Stay active online without spending countless hours creating content. I use AI responsibly to help businesses produce high-quality content that builds trust and attracts customers.",
-    body: "",
-    benefits: ["Blog articles", "Website copy", "Educational content", "AI-assisted writing"],
-    cta: "Create My Content",
-    image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80",
-    imageAlt: "Writer working on content at a bright wooden desk with plants and natural light",
-  },
-  {
-    id: "documentation",
-    icon: FileText,
-    color: "#818CF8",
-    headline: "Organize Your Business for Growth",
-    intro: "Well-documented businesses are easier to manage, train, and scale. I'll create professional documentation that helps your team work consistently.",
-    body: "",
-    benefits: ["SOPs", "User manuals", "Documentation", "Knowledge bases"],
-    cta: "Document My Business",
-    image: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=800&q=80",
-    imageAlt: "Organized workspace with notebooks, documents, and a clean monitor setup",
-  },
-  {
-    id: "research",
-    icon: BarChart2,
-    color: "#E879F9",
-    headline: "Make Better Business Decisions",
-    intro: "Need reliable information before making an important decision? I provide structured research and analysis that helps reduce guesswork.",
-    body: "",
-    benefits: ["Market research", "Competitor analysis", "Industry reports", "AI-assisted research"],
-    cta: "Start My Research",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
-    imageAlt: "Research and data analysis on laptop with charts and reports visible",
-  },
-  {
-    id: "maintenance",
-    icon: Shield,
-    color: "#4ADE80",
-    headline: "Keep Your Website Secure and Performing at Its Best",
-    intro: "A successful website requires ongoing maintenance. I'll keep your website updated, optimized, and running smoothly.",
-    body: "",
-    benefits: ["Updates", "Bug fixes", "Performance improvements", "SEO maintenance"],
-    cta: "Maintain My Website",
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
-    imageAlt: "Developer maintaining and monitoring a website on dual monitors",
-  },
-  {
-    id: "training",
-    icon: GraduationCap,
-    color: "#FCD34D",
-    headline: "Equip Your Team with Practical AI Skills",
-    intro: "Help your team work smarter by learning how to use AI effectively in their everyday tasks through practical, hands-on workshops.",
-    body: "",
-    benefits: ["ChatGPT", "Claude", "Prompt Engineering", "AI Productivity"],
-    cta: "Train My Team",
-    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80",
-    imageAlt: "Professional workshop session with team members learning on laptops",
-  },
 ];
 
 // ─── Components ───────────────────────────────────────────────────────────────
@@ -189,109 +53,50 @@ function TrustCard({ item, index }: { item: typeof TRUST[0]; index: number }) {
   );
 }
 
-function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: number }) {
-  const Icon = service.icon;
-  const isEven = index % 2 === 0;
+function ServiceCard({ service, index }: { service: Service; index: number }) {
+  const Icon = getServiceIcon(service.icon);
 
   return (
-    <motion.div
+    <motion.a
+      href={`/services/${service.slug}`}
       variants={fadeUp}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: "-60px" }}
-      custom={0}
-      id={service.id}
-      className="bg-[#111118] border border-white/[0.06] rounded-[20px] overflow-hidden scroll-mt-24"
+      viewport={{ once: true, margin: "-40px" }}
+      custom={index}
+      className="group bg-[#111118] border border-white/[0.06] hover:border-white/[0.14] rounded-[20px] p-7 flex flex-col gap-4 transition-all duration-200 hover:-translate-y-[2px]"
     >
-      <div className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"}`}>
-        {/* Minimalist icon panel — hidden on mobile */}
-        <div
-          className="hidden md:flex lg:w-[36%] shrink-0 relative overflow-hidden lg:min-h-[300px] items-center justify-center"
-          style={{ background: `linear-gradient(135deg, ${service.color}12 0%, ${service.color}04 100%)` }}
-        >
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(${service.color}30 1px, transparent 1px)`,
-              backgroundSize: "22px 22px",
-            }}
-          />
-          <div className="relative z-10 flex flex-col items-center gap-3">
-            <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center"
-              style={{ backgroundColor: `${service.color}14`, border: `1px solid ${service.color}28` }}
-            >
-              <Icon size={34} style={{ color: service.color }} strokeWidth={1.4} />
-            </div>
-          </div>
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: isEven
-                ? "linear-gradient(to right, transparent 55%, #111118)"
-                : "linear-gradient(to left, transparent 55%, #111118)",
-            }}
-          />
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 p-6 md:p-10 flex flex-col justify-center">
-          {/* Inline icon + headline for mobile */}
-          <div className="flex items-start gap-3 mb-3">
-            <div
-              className="md:hidden w-9 h-9 shrink-0 rounded-xl flex items-center justify-center mt-0.5"
-              style={{ backgroundColor: `${service.color}14`, border: `1px solid ${service.color}28` }}
-            >
-              <Icon size={18} style={{ color: service.color }} strokeWidth={1.6} />
-            </div>
-            <h2 className="font-sans text-[20px] md:text-[26px] font-bold text-white leading-tight">
-              {service.headline}
-            </h2>
-          </div>
-
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.8] mb-5 md:mt-0 mt-1">
-            {service.intro}
-          </p>
-
-          <div className="flex flex-wrap gap-2 mb-6">
-            {service.benefits.map((b) => (
-              <span
-                key={b}
-                className="font-[family-name:var(--font-inter)] text-[12px] font-medium px-3 py-1 rounded-full border"
-                style={{ color: service.color, borderColor: `${service.color}30`, backgroundColor: `${service.color}08` }}
-              >
-                {b}
-              </span>
-            ))}
-          </div>
-
-          <a
-            href={`/services/inquire?service=${encodeURIComponent(
-              service.id === "web-dev" ? "Web Design" :
-              service.id === "ai-automation" ? "AI Automation" :
-              service.id === "prompt-engineering" ? "Prompt Engineering" :
-              service.id === "web-app" ? "Web Apps" :
-              service.id === "bubble" ? "Bubble.io Development" :
-              service.id === "seo" ? "SEO" :
-              service.id === "content" ? "Content Creation" :
-              service.id === "documentation" ? "Business Documentation" :
-              service.id === "research" ? "Research & Analysis" :
-              service.id === "maintenance" ? "Website Maintenance" :
-              "AI Training"
-            )}`}
-            className="inline-flex items-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 text-[#0A0A14] font-[family-name:var(--font-inter)] text-[14px] font-bold px-5 py-3 rounded-xl transition-all w-fit"
-          >
-            {service.cta} <ChevronRight size={15} />
-          </a>
-        </div>
+      <div
+        className="w-12 h-12 rounded-2xl flex items-center justify-center"
+        style={{ backgroundColor: `${service.color}14`, border: `1px solid ${service.color}28` }}
+      >
+        <Icon size={22} style={{ color: service.color }} strokeWidth={1.5} />
       </div>
-    </motion.div>
+
+      <div className="flex-1">
+        <h2 className="font-sans text-[18px] font-bold text-white mb-2 group-hover:text-[#FFD23F] transition-colors">
+          {service.name}
+        </h2>
+        <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">
+          {service.tagline}
+        </p>
+      </div>
+
+      <span
+        className="inline-flex items-center gap-1.5 font-[family-name:var(--font-inter)] text-[13px] font-bold"
+        style={{ color: service.color }}
+      >
+        View Details <ChevronRight size={14} />
+      </span>
+    </motion.a>
   );
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ServicesPage() {
+  const services = getAllServices();
+
   return (
     <>
       <Navbar />
@@ -391,12 +196,12 @@ export default function ServicesPage() {
             {/* Pill row — wraps on mobile */}
             <div className="pb-5 pt-1 px-6 md:px-10">
               <div className="flex flex-wrap justify-center gap-2">
-                {SERVICES.map((s) => {
-                  const Icon = s.icon;
+                {services.map((s) => {
+                  const Icon = getServiceIcon(s.icon);
                   return (
                     <a
-                      key={s.id}
-                      href={`#${s.id}`}
+                      key={s.slug}
+                      href={`/services/${s.slug}`}
                       className="flex items-center gap-2 px-3.5 py-2 rounded-full border transition-all hover:scale-105 shrink-0"
                       style={{
                         borderColor: `${s.color}25`,
@@ -408,17 +213,7 @@ export default function ServicesPage() {
                         className="font-[family-name:var(--font-inter)] text-[12px] font-medium whitespace-nowrap"
                         style={{ color: s.color }}
                       >
-                        {s.id === "web-dev" ? "Web Design" :
-                         s.id === "ai-automation" ? "AI Automation" :
-                         s.id === "prompt-engineering" ? "Prompt Engineering" :
-                         s.id === "web-app" ? "Web Apps" :
-                         s.id === "bubble" ? "Bubble.io" :
-                         s.id === "seo" ? "SEO" :
-                         s.id === "content" ? "Content" :
-                         s.id === "documentation" ? "Documentation" :
-                         s.id === "research" ? "Research" :
-                         s.id === "maintenance" ? "Maintenance" :
-                         "AI Training"}
+                        {s.shortLabel}
                       </span>
                     </a>
                   );
@@ -448,13 +243,13 @@ export default function ServicesPage() {
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-14">
             <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[3px]">What I Offer</span>
             <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-white mt-2">
-              Services Designed to Grow Your Business
+              Six Ways I Help Businesses Grow
             </h2>
           </motion.div>
 
-          <div className="flex flex-col gap-6">
-            {SERVICES.map((service, i) => (
-              <ServiceCard key={service.id} service={service} index={i} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {services.map((service, i) => (
+              <ServiceCard key={service.slug} service={service} index={i} />
             ))}
           </div>
         </section>
@@ -486,7 +281,7 @@ export default function ServicesPage() {
                 Let&apos;s Build Something Great Together
               </h2>
               <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 max-w-lg leading-[1.8] mb-8">
-                Whether you need a website, AI automation, SEO, or a custom business solution, I&apos;d love to hear about your project. Let&apos;s talk about what you need.
+                Whether you need a website, a mobile app, AI automation, or a custom business solution, I&apos;d love to hear about your project. Let&apos;s talk about what you need.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a

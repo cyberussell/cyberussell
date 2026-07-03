@@ -1,0 +1,52 @@
+{
+  "slug": "custom-web-applications",
+  "name": "Custom Web Applications",
+  "shortLabel": "Custom Web Apps",
+  "icon": "AppWindow",
+  "color": "#F472B6",
+  "tagline": "Tailor-made software for your exact workflow — CRMs, booking systems, dashboards, portals, and fast MVPs.",
+  "hero": {
+    "headline": "Replace Manual Processes with Custom Business Software",
+    "subhead": "From full custom-built platforms to fast no-code MVPs — software built around how your business actually works."
+  },
+  "description": "Off-the-shelf software rarely fits perfectly. I build web-based applications for your specific workflow — CRMs, booking systems, inventory tools, client portals, admin panels, and internal dashboards — using modern, scalable technology (Next.js, Supabase). For faster MVPs and SaaS products, I also build on Bubble.io, letting you validate an idea and launch in weeks instead of months.",
+  "problems": [
+    "Spreadsheets and disconnected tools are slowing your business down",
+    "You need a booking system, CRM, or inventory tracker that fits your exact process",
+    "You have a software idea but don't want to spend months (or a fortune) building it",
+    "Your team needs one internal tool instead of five different apps"
+  ],
+  "deliverables": [
+    "Live web application on your domain or subdomain",
+    "CRM, booking system, dashboard, inventory tracker, client portal, or admin panel — scoped to your workflow",
+    "User authentication and role-based access (admin, staff, customer)",
+    "Database architecture and schema documentation",
+    "Source code (GitHub repository) and admin credentials",
+    "Mobile-responsive interface",
+    "User manual and a training session",
+    "Bubble.io builds: full ownership transfer to your own account"
+  ],
+  "features": [
+    "Full-stack custom development for complex, long-term systems",
+    "Bubble.io no-code builds for fast MVPs and SaaS validation",
+    "Learning management systems and membership portals",
+    "Data migration from spreadsheets or legacy systems",
+    "Scalable architecture that grows as your business does"
+  ],
+  "process": [
+    { "step": "Requirements & Scoping", "detail": "A detailed session to map your workflow, user roles, and must-have features — in writing before work starts." },
+    { "step": "System Design", "detail": "Database architecture and screen flows planned before any code is written." },
+    { "step": "Build", "detail": "Full-stack development (or a Bubble.io build for faster MVPs) with regular check-ins." },
+    { "step": "Testing & QA", "detail": "Real-world scenario testing and bug fixes before launch." },
+    { "step": "Deployment & Training", "detail": "Live deployment, admin handover, and a training session for your team." }
+  ],
+  "techStack": ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL", "Bubble.io", "Vercel"],
+  "idealClients": ["Startups", "Clinics", "Schools", "Real Estate", "E-commerce", "Small Businesses", "Restaurants"],
+  "faqs": [
+    { "question": "How is this different from buying off-the-shelf software?", "answer": "Generic tools like Shopify or generic CRMs have features you don't need and lack ones specific to your business. Custom software fits your exact workflow, reducing friction and training time." },
+    { "question": "Should I go custom-built or Bubble.io?", "answer": "If you need to validate an idea fast or launch an MVP in weeks, Bubble.io is usually the smarter path. For long-term, highly custom, or high-scale systems, full custom development is the better investment." },
+    { "question": "Can I add features later?", "answer": "Yes. Systems are built with scalability in mind — additional features are scoped and priced after the initial build." },
+    { "question": "Is my data secure?", "answer": "Yes. Custom builds use Supabase/PostgreSQL with row-level security and proper authentication. Bubble builds run on Bubble's production-grade infrastructure." }
+  ],
+  "cta": { "label": "Build My System", "inquireLabel": "Custom Web Applications" }
+}

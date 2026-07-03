@@ -1,0 +1,52 @@
+{
+  "slug": "mobile-app-development",
+  "name": "Mobile App Development",
+  "shortLabel": "Mobile Apps",
+  "icon": "Smartphone",
+  "color": "#FB923C",
+  "tagline": "Installable, mobile-first apps for your business — progressive web apps and cross-platform builds, without native app-store overhead.",
+  "hero": {
+    "headline": "Launch Your Business on Mobile, Without the Native App Timeline",
+    "subhead": "Progressive web apps and cross-platform mobile apps that work on iOS and Android from a single codebase."
+  },
+  "description": "You don't need two separate native apps to get a real mobile presence. I build Progressive Web Apps (installable, offline-capable, and app-store-free) and cross-platform apps with React Native/Expo that run on both iOS and Android from one codebase — ideal for ordering apps, booking apps, and internal staff tools that need to feel native without native-app timelines or cost.",
+  "problems": [
+    "Your customers want to book, order, or check in from their phone, not a browser tab",
+    "You need an app but can't justify building separate iOS and Android apps",
+    "Your team needs a mobile tool for fieldwork, deliveries, or inventory checks",
+    "You want to test a mobile product idea before committing to a full native build"
+  ],
+  "deliverables": [
+    "Live installable Progressive Web App (add-to-home-screen, offline-capable, push notifications) or a React Native/Expo cross-platform build",
+    "Mobile UI/UX design and wireframes",
+    "App icon, splash screen, and branding assets",
+    "Integration with your existing backend or a new one built alongside it",
+    "App Store / Play Store submission support for cross-platform builds",
+    "Source code and admin/analytics dashboard access",
+    "Testing across real devices and screen sizes",
+    "2 weeks of post-launch support"
+  ],
+  "features": [
+    "One codebase for both iOS and Android via React Native/Expo",
+    "PWAs for zero app-store approval delay and instant updates",
+    "Push notifications and offline support",
+    "Business mobile apps: ordering, booking, staff and field tools",
+    "Same AI-assisted, brand-matched approach used across all Cyberussell builds"
+  ],
+  "process": [
+    { "step": "Scoping", "detail": "Decide between a PWA (fastest, no app store) or a cross-platform app, based on your goals." },
+    { "step": "Design", "detail": "Mobile-first UI/UX design and wireframes for every core screen." },
+    { "step": "Build", "detail": "Development on React Native/Expo or as a PWA, connected to your backend." },
+    { "step": "Testing", "detail": "Real-device testing across screen sizes and OS versions." },
+    { "step": "Launch", "detail": "Deployment as an installable PWA, or submission support for the App Store / Play Store." }
+  ],
+  "techStack": ["React Native", "Expo", "Next.js (PWA)", "Supabase", "Vercel"],
+  "idealClients": ["Startups", "Restaurants", "Clinics", "E-commerce", "Small Businesses"],
+  "faqs": [
+    { "question": "Should I build a PWA or a native-feeling app?", "answer": "If you want speed, no app-store approval wait, and instant updates, a PWA is usually the better first step. If you need deep device features or app-store presence, a React Native/Expo build is the way to go." },
+    { "question": "Do you handle App Store and Play Store submission?", "answer": "Yes, for cross-platform builds I support the submission process. Developer account fees (Apple/Google) are paid directly by you." },
+    { "question": "Will it work offline?", "answer": "PWAs support offline caching for core screens. Full offline data sync for cross-platform apps can be scoped as part of the build." },
+    { "question": "Can this connect to my existing website or system?", "answer": "Yes — the app can connect to your existing backend, or I can build a lightweight backend alongside it if you don't have one yet." }
+  ],
+  "cta": { "label": "Start My App", "inquireLabel": "Mobile App Development" }
+}

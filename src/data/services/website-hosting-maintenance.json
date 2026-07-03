@@ -1,0 +1,52 @@
+{
+  "slug": "website-hosting-maintenance",
+  "name": "Website Hosting & Maintenance",
+  "shortLabel": "Hosting & Maintenance",
+  "icon": "Shield",
+  "color": "#4ADE80",
+  "tagline": "Monthly website care — updates, backups, monitoring, and security — so your site stays fast, secure, and online.",
+  "hero": {
+    "headline": "Keep Your Website Secure and Performing at Its Best",
+    "subhead": "Ongoing hosting setup, monitoring, backups, and content updates so your website never becomes an afterthought."
+  },
+  "description": "A website isn't a one-time project — it's a living asset that needs regular care. I handle domain and hosting setup, monthly content updates, automated backups, uptime monitoring, and security checks so problems get caught before they become emergencies. Whether I built your site or not, I can take over ongoing care for it.",
+  "problems": [
+    "Your website has gone stale — no one's updating content, checking uptime, or watching for issues",
+    "You're not sure if your site is backed up, secure, or even monitored",
+    "Small content changes (a new price, a new photo) shouldn't need a developer, but you don't want to touch the code yourself",
+    "You built your site elsewhere and need someone to maintain it"
+  ],
+  "deliverables": [
+    "Domain and hosting setup guidance",
+    "Monthly content updates (up to 3 changes)",
+    "Automated daily backups",
+    "24/7 uptime monitoring",
+    "SSL and security scans",
+    "Monthly performance and maintenance report",
+    "Plugin and dependency updates, plus broken-link checks",
+    "Priority support response within 24 hours"
+  ],
+  "features": [
+    "Performance optimization for page speed and Core Web Vitals",
+    "Works on sites I built or existing sites on Next.js, WordPress, Webflow, or Wix",
+    "Emergency same-day response available as an add-on",
+    "SEO monitoring add-on for ongoing ranking checks",
+    "Month-to-month — cancel anytime with 30 days notice"
+  ],
+  "process": [
+    { "step": "Site Audit", "detail": "Initial review of hosting, backups, security, and performance — especially for sites I didn't build." },
+    { "step": "Setup", "detail": "Hosting and domain configuration, backup automation, and monitoring put in place." },
+    { "step": "Monthly Care", "detail": "Content updates, plugin updates, and security scans on a regular cadence." },
+    { "step": "Monitoring", "detail": "24/7 uptime monitoring with alerts the moment something goes down." },
+    { "step": "Reporting", "detail": "A monthly report summarizing changes, backups, and performance." }
+  ],
+  "techStack": ["Next.js", "Vercel", "Google Analytics", "Google Search Console"],
+  "idealClients": ["Small Businesses", "Restaurants", "Clinics", "Professionals", "Schools", "Real Estate"],
+  "faqs": [
+    { "question": "What counts as a 'content update'?", "answer": "Changing text, swapping an image, updating a price, adding a phone number, changing business hours — any edit that doesn't require building a new page or section." },
+    { "question": "What happens if my site goes down?", "answer": "Uptime monitoring alerts me immediately. I investigate and fix the issue within the agreed response time — same-day with the Emergency Support add-on." },
+    { "question": "Do you maintain sites you didn't build?", "answer": "Yes, for sites built on Next.js, WordPress, Webflow, or Wix. I'll do an initial audit first to assess the site's condition." },
+    { "question": "Can I cancel anytime?", "answer": "Yes — this is a month-to-month service. Cancel anytime with 30 days notice." }
+  ],
+  "cta": { "label": "Maintain My Website", "inquireLabel": "Website Hosting & Maintenance" }
+}

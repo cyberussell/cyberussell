@@ -1,0 +1,52 @@
+{
+  "slug": "website-design-development",
+  "name": "Website Design & Development",
+  "shortLabel": "Website Design & Dev",
+  "icon": "Globe",
+  "color": "#60A5FA",
+  "tagline": "Professional, mobile-friendly websites built to win customers — and optimized to actually get found on Google.",
+  "hero": {
+    "headline": "Get a Website That Builds Trust, Loads Fast, and Wins More Customers",
+    "subhead": "A modern, SEO-ready website designed and built around your business — from a first landing page to a full redesign."
+  },
+  "description": "Your website is often the first impression customers have of your business. I design and build fast, mobile-friendly websites — landing pages, business sites, portfolios, blogs, and e-commerce — then optimize them so people can actually find you on Google. Everything is handled end-to-end: design, AI-assisted copywriting, on-page SEO, and deployment.",
+  "problems": [
+    "An outdated or slow website is turning visitors away before they contact you",
+    "You don't have a website yet and are relying entirely on social media or word of mouth",
+    "Your site looks fine but doesn't rank on Google, so nobody finds it",
+    "You need a redesign but don't know where to start"
+  ],
+  "deliverables": [
+    "Live website on your own domain",
+    "Landing pages, business sites, portfolios, blogs, or e-commerce — built to your goal",
+    "Mobile-responsive design across all devices",
+    "On-page SEO: meta tags, headings, sitemap, Search Console setup",
+    "Source code (GitHub repository) and admin access",
+    "Basic SEO audit report and keyword research",
+    "Contact forms, Google Maps integration, social links",
+    "Training video for making your own content updates"
+  ],
+  "features": [
+    "AI-assisted copywriting for every page",
+    "Website redesigns and migrations from existing platforms",
+    "Fast, modern stack built for strong Core Web Vitals",
+    "Competitor analysis and keyword research baked into the build",
+    "Membership and e-commerce functionality when needed"
+  ],
+  "process": [
+    { "step": "Discovery & Planning", "detail": "A short session to map your pages, goals, and content needs." },
+    { "step": "Design & Copy", "detail": "Mobile-first design paired with AI-assisted, brand-matched copywriting." },
+    { "step": "Build & On-Page SEO", "detail": "Development on a fast, modern stack with SEO fundamentals built in from day one." },
+    { "step": "Review & Revisions", "detail": "One round of revisions to fine-tune before launch." },
+    { "step": "Launch & Handover", "detail": "Deployment to your domain, plus a training video so you can make basic updates yourself." }
+  ],
+  "techStack": ["Next.js", "React", "Tailwind CSS", "TypeScript", "Vercel", "Claude", "Google Search Console"],
+  "idealClients": ["Small Businesses", "Restaurants", "Clinics", "Professionals", "Freelancers", "Real Estate", "Schools", "E-commerce"],
+  "faqs": [
+    { "question": "Do I need to know how to code?", "answer": "Not at all. I handle everything technical — you provide content and feedback, and I deliver a ready-to-use, SEO-ready website." },
+    { "question": "How long does a website take?", "answer": "Most business websites launch in 5–7 business days after I receive your content. Larger e-commerce or membership sites take longer, scoped upfront." },
+    { "question": "Can you redesign or improve my existing website?", "answer": "Yes — I can redesign an existing site, migrate it to a faster platform, or run an SEO pass on it to improve rankings without a full rebuild." },
+    { "question": "Will my site actually rank on Google?", "answer": "I build in on-page SEO (meta tags, sitemap, Search Console) from the start and can run keyword research and a competitor audit. No agency can guarantee first-page rankings, but the foundation is done right." }
+  ],
+  "cta": { "label": "Let's Build Your Website", "inquireLabel": "Website Design & Development" }
+}

@@ -1,0 +1,51 @@
+{
+  "slug": "ai-technology-consulting",
+  "name": "AI & Technology Consulting",
+  "shortLabel": "AI & Tech Consulting",
+  "icon": "Brain",
+  "color": "#A78BFA",
+  "tagline": "AI training, market research, and business documentation — the strategy and groundwork before, or alongside, any build.",
+  "hero": {
+    "headline": "Make Confident Decisions Before You Build",
+    "subhead": "Hands-on AI training, market research, and business documentation to give your team direction and your operations structure."
+  },
+  "description": "Not every engagement starts with a build. Sometimes what you need first is clarity — practical AI training for your team, real market and competitor research, or professional documentation that formalizes how your business runs. I combine AI-powered research and drafting with hands-on, practical delivery so you walk away with something you can actually use immediately.",
+  "problems": [
+    "Your team knows AI is important but doesn't know where to start using it",
+    "You're making a business decision without real market or competitor data",
+    "Your business runs on tribal knowledge instead of documented processes",
+    "You're preparing for investment, hiring, or scaling and need to look like a serious operation"
+  ],
+  "deliverables": [
+    "Half-day hands-on AI training session with a custom plan for your industry and role",
+    "AI Prompt Library (30+ tested prompts) and an AI Tools reference guide",
+    "Market research report with competitor analysis, audience profile, and SWOT",
+    "Up to 3 professional business documents (SOPs, handbooks, agreements, business plans)",
+    "Recording of every training session plus a follow-up Q&A",
+    "Delivered in Word (.docx) and PDF formats",
+    "Certificate of completion for training participants"
+  ],
+  "features": [
+    "AI training tailored to your team's actual daily tasks, not generic theory",
+    "Competitor and market research delivered as a clean, actionable report",
+    "SOPs, employee handbooks, service agreements, and business plans",
+    "Technology roadmaps and AI adoption planning for the next stage of growth",
+    "Available online (Zoom/Meet) or in-person in Metro Manila and select areas"
+  ],
+  "process": [
+    { "step": "Needs Assessment", "detail": "A short call or written brief to understand your goals — training, research, or documentation." },
+    { "step": "Custom Plan", "detail": "A plan built around your industry, team, and specific business challenges." },
+    { "step": "Delivery", "detail": "Live training session, research report, or document drafts — with AI-assisted drafting and human refinement." },
+    { "step": "Review", "detail": "One round of revisions or a follow-up Q&A to make sure it's actually usable." },
+    { "step": "Handover", "detail": "Final files delivered in editable and print-ready formats, plus recordings where applicable." }
+  ],
+  "techStack": ["Claude", "ChatGPT", "Gemini"],
+  "idealClients": ["Small Businesses", "Professionals", "Schools", "Clinics", "NGOs", "Startups", "Freelancers"],
+  "faqs": [
+    { "question": "Do participants need prior AI experience for training?", "answer": "No. Training starts from the basics and progresses to practical business applications within the same session." },
+    { "question": "How accurate is AI-powered market research?", "answer": "Highly effective for publicly available information — market trends, competitor positioning, and consumer behavior. Key data points are verified and clearly marked as estimated vs. confirmed." },
+    { "question": "Are the business documents legally binding?", "answer": "They follow standard professional formats, but for legally sensitive agreements I recommend having a licensed attorney review before use." },
+    { "question": "Can training be done online?", "answer": "Yes — via Zoom or Google Meet. In-person is available in Metro Manila and selected areas in the Philippines." }
+  ],
+  "cta": { "label": "Start My Consultation", "inquireLabel": "AI & Technology Consulting" }
+}

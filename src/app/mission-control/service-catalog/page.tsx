@@ -170,7 +170,7 @@ export default function ServiceCatalogPage() {
                       {seeding ? <><Loader2 size={15} className="animate-spin" /> Seeding...</> : <><Sparkles size={15} /> Initialize Default Services</>}
                     </button>
                     <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/25">
-                      Seeds 11 Cyberussell default services from the database
+                      Seeds 6 Cyberussell default services from the database
                     </p>
                     {seedMsg && <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#00C97A]">{seedMsg}</p>}
                   </div>

@@ -48,7 +48,14 @@ const STACK_SUGGESTIONS: Record<string, string[]> = {
   Analytics: ["Google Analytics", "Search Console"],
 };
 
-const CATEGORIES = ["Website Design", "Web App", "AI Automation", "SEO", "Social Media", "Branding", "Consultation", "Content", "Other"];
+const CATEGORIES = [
+  "Website Design & Development",
+  "Custom Web Applications",
+  "AI Automation Solutions",
+  "Mobile App Development",
+  "Website Hosting & Maintenance",
+  "AI & Technology Consulting",
+];
 const STATUSES = ["draft", "active", "archived"] as const;
 
 function emptyService(id: string): Service {

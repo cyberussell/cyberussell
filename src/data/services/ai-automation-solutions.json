@@ -1,0 +1,51 @@
+{
+  "slug": "ai-automation-solutions",
+  "name": "AI Automation Solutions",
+  "shortLabel": "AI Automation",
+  "icon": "Zap",
+  "color": "#34D399",
+  "tagline": "AI chatbots, workflow automation, and AI-powered content — so your business runs without you doing the repetitive work.",
+  "hero": {
+    "headline": "Save Hours Every Week with AI Automation That Actually Works",
+    "subhead": "From automated workflows to custom AI assistants and AI-produced content — built around your real business processes."
+  },
+  "description": "Repetitive tasks are the biggest time drain in any business. I build AI-powered workflows and assistants that replace manual data entry, follow-ups, reporting, and customer questions — plus AI-assisted content production so you're never starting from a blank page. Every system is trained on your business context, not a generic template.",
+  "problems": [
+    "You're spending hours a week on repetitive tasks like data entry, follow-ups, or reporting",
+    "Customers ask the same questions over and over and there's no one to answer after hours",
+    "You want an AI assistant but don't know how to make it actually know your business",
+    "Creating consistent social media and blog content is eating your week"
+  ],
+  "deliverables": [
+    "Up to 3 live automation workflows connecting the tools you already use",
+    "AI chatbot or assistant deployed on your website, Facebook, or WhatsApp",
+    "Knowledge base built from your business info, FAQs, and policies",
+    "Custom prompt library and system instructions for consistent AI output",
+    "A month of AI-assisted content: social posts, blog outlines, and email newsletters",
+    "Workflow documentation and n8n exports",
+    "1-hour training session and 30-day post-launch support"
+  ],
+  "features": [
+    "Integration with Gmail, Google Sheets, WhatsApp, Facebook, and most tools with an API",
+    "Custom AI agents that qualify leads or process documents",
+    "Fallback handling so the AI escalates to a human when it doesn't know the answer",
+    "AI-assisted copywriting refined to match your brand voice",
+    "Business process audits to find the highest-impact automations first"
+  ],
+  "process": [
+    { "step": "Process Audit", "detail": "Identify which manual tasks are costing you the most time." },
+    { "step": "System Design", "detail": "Map the automation or AI assistant to your actual tools and workflows." },
+    { "step": "Build & Train", "detail": "Build the workflows or AI system and train it on your business knowledge." },
+    { "step": "Testing", "detail": "Run real-world scenarios to catch edge cases before launch." },
+    { "step": "Launch & Support", "detail": "Deploy, train your team, and provide 30 days of post-launch support." }
+  ],
+  "techStack": ["n8n", "Google Apps Script", "Make", "Claude", "OpenAI API", "Anthropic API", "Supabase"],
+  "idealClients": ["Small Businesses", "E-commerce", "Clinics", "Startups", "Freelancers", "Content Creators", "Real Estate"],
+  "faqs": [
+    { "question": "What kinds of tasks can be automated?", "answer": "Common examples: follow-up messages to leads, weekly reports from Google Sheets, auto-posting to social media, processing inquiry forms, and scheduling reminders." },
+    { "question": "What's the difference between a chatbot and an AI system?", "answer": "A chatbot follows fixed scripts. An AI system understands natural language, handles unexpected questions, and gives answers based on your specific business knowledge." },
+    { "question": "Will the AI-written content sound robotic?", "answer": "No — AI drafts and structures the content, then it's refined to match your brand voice before delivery." },
+    { "question": "What happens when the AI doesn't know the answer?", "answer": "Fallback responses gracefully escalate to a human or collect the customer's contact info for follow-up." }
+  ],
+  "cta": { "label": "Automate My Business", "inquireLabel": "AI Automation Solutions" }
+}
