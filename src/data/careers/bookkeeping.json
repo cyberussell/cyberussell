@@ -1,0 +1,210 @@
+{
+  "slug": "bookkeeping",
+  "skill": "Bookkeeping",
+  "tagline": "Manage business finances using QuickBooks or Xero for overseas clients — no accounting degree required.",
+  "category": "finance",
+  "difficulty": "intermediate",
+  "earning_range": { "min": 30000, "max": 100000 },
+  "time_to_first_income": "1–3 months",
+  "prerequisites": ["Laptop or desktop computer", "Comfort with numbers and spreadsheets", "Basic understanding of income vs. expenses"],
+  "todays_mission": {
+    "tasks": [
+      "Watch a free QuickBooks Online basics tutorial and take notes",
+      "Create a free QuickBooks or Xero trial account and explore the dashboard",
+      "List every business or family finance task you've already handled informally"
+    ],
+    "estimated_time": "2 hours"
+  },
+  "summary": {
+    "description": "Overseas small business owners — especially in the US, Australia, and UK — outsource their bookkeeping to Filipinos who can categorize transactions, reconcile bank statements, and keep their books accurate using QuickBooks or Xero. You don't need to be a licensed accountant. You need to be detail-oriented, honest about what you don't know yet, and willing to get certified in the software clients actually use.",
+    "who_is_this_for": [
+      "People who are naturally organized and comfortable working with numbers",
+      "Anyone who has managed household or small business finances informally",
+      "Accounting or business students and graduates looking for remote work",
+      "Detail-oriented people who catch small errors others miss"
+    ],
+    "reality_check": {
+      "honest_assessment": "Beginner bookkeepers doing basic transaction categorization earn ₱25,000–₱40,000/month with 1–2 clients. Certified bookkeepers managing full-cycle books for multiple clients earn ₱60,000–₱100,000/month. The first month is the slowest part — most clients want to see a certificate or a completed practice set before trusting you with real money.",
+      "what_beginners_underestimate": "How much clients care about accuracy over speed. A single miscategorized transaction can throw off a client's tax filing. Also, QuickBooks and Xero each have their own learning curve — knowing one doesn't mean you know the other.",
+      "why_people_fail": "They apply for bookkeeping jobs without any certification or practice, get overwhelmed by real client books, and make errors that get them let go. Or they take on more clients than they can accurately manage and start missing deadlines.",
+      "how_to_avoid_failure": "Get certified in at least one platform (QuickBooks ProAdvisor is free) before applying. Start with one client and reconcile every account monthly without fail. Never guess a categorization — ask the client or research it first."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Get Certified",
+      "why": "Clients trusting you with their finances want proof you know the software, not just that you're good with numbers. Certification is the fastest way to earn that trust with zero experience.",
+      "duration": "Month 1",
+      "steps": [
+        {
+          "action": "Complete the free QuickBooks Online ProAdvisor certification",
+          "detail": "Intuit offers this certification free. It covers the core skills clients expect: chart of accounts, bank reconciliation, and reporting.",
+          "estimated_time": "10–15 hours over 1–2 weeks",
+          "difficulty": "moderate",
+          "outcome": "You have an official certificate to show clients, proving software competency without prior job experience.",
+          "action_url": "https://quickbooks.intuit.com/accountants/training-certification",
+          "action_label": "Start QuickBooks certification"
+        },
+        {
+          "action": "Practice on a free sample company file",
+          "detail": "QuickBooks and Xero both offer sample/demo companies. Categorize 50+ transactions and reconcile a mock bank statement to build muscle memory.",
+          "estimated_time": "3–4 hours",
+          "difficulty": "moderate",
+          "outcome": "You've handled realistic bookkeeping tasks before ever touching a real client's books."
+        },
+        {
+          "action": "Learn the difference between cash and accrual accounting",
+          "detail": "Watch 2–3 beginner videos explaining both methods. Clients will ask which one they use, and you need to understand the answer.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You avoid the most common beginner mistake — mixing up when income and expenses should be recorded.",
+          "resources": ["Search 'cash vs accrual accounting explained' on YouTube"]
+        }
+      ],
+      "milestone": "QuickBooks certification completed and practice set finished"
+    },
+    {
+      "phase": 2,
+      "title": "Find Your First Client",
+      "why": "Bookkeeping clients want reliability above all else. Your first client is proof of concept — treat it like it's worth more than the pay.",
+      "duration": "Month 1–2",
+      "steps": [
+        {
+          "action": "Apply to bookkeeping roles on OnlineJobsPH and Upwork",
+          "detail": "Search 'bookkeeper,' 'QuickBooks,' or 'Xero.' Highlight your certification prominently in your headline and cover letter.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're applying to roles that specifically value the certification you just earned.",
+          "action_url": "https://www.onlinejobs.ph",
+          "action_label": "Find bookkeeping jobs"
+        },
+        {
+          "action": "Offer to clean up one month of books as a trial",
+          "detail": "For a hesitant prospect, offer to reconcile and categorize one month of their transactions for a small flat fee. This lowers their risk and shows your accuracy.",
+          "estimated_time": "3–5 hours",
+          "difficulty": "moderate",
+          "outcome": "You convert a hesitant lead into a paying, ongoing client with proof of your work quality."
+        },
+        {
+          "action": "Set up a clear monthly workflow with your first client",
+          "detail": "Agree on deadlines: books closed by the 5th of each month, statements requested by the 1st. Clear structure builds trust fast.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "You avoid confusion and missed deadlines that damage trust in month one."
+        }
+      ],
+      "milestone": "First paying bookkeeping client onboarded"
+    },
+    {
+      "phase": 3,
+      "title": "Master the Monthly Cycle",
+      "why": "Bookkeeping income depends entirely on accuracy and consistency. A reliable monthly process is what keeps clients for years instead of months.",
+      "duration": "Month 2–3",
+      "steps": [
+        {
+          "action": "Build a monthly close checklist",
+          "detail": "Create a repeatable checklist: import transactions, categorize, reconcile bank/credit card accounts, review reports, send summary to client.",
+          "estimated_time": "1 hour to build, then reused monthly",
+          "difficulty": "moderate",
+          "outcome": "You never miss a step, and every client gets a consistent, professional process."
+        },
+        {
+          "action": "Reconcile every account without exception",
+          "detail": "Bank and credit card balances in QuickBooks must match the actual statement every month. Unreconciled accounts are the #1 sign of sloppy bookkeeping.",
+          "estimated_time": "1–2 hours/client/month",
+          "difficulty": "moderate",
+          "outcome": "Your client's books are always audit-ready, which is what separates you from unreliable bookkeepers."
+        },
+        {
+          "action": "Send a simple monthly financial summary",
+          "detail": "Beyond just doing the books, send a short summary: revenue, expenses, and profit trend. Clients who understand their numbers renew longer.",
+          "estimated_time": "30 minutes/month",
+          "difficulty": "moderate",
+          "outcome": "The client sees the value of your work clearly instead of just paying for invisible data entry."
+        }
+      ],
+      "milestone": "First full month closed cleanly and reconciled"
+    },
+    {
+      "phase": 4,
+      "title": "Scale Your Client Load",
+      "why": "One client caps your income around ₱25,000–₱35,000/month. A repeatable system lets you take on multiple clients without sacrificing accuracy.",
+      "duration": "Month 4+",
+      "steps": [
+        {
+          "action": "Add a second and third client",
+          "detail": "Once your first client's monthly cycle takes less than 8 hours, you have room for another client. Stagger close dates to avoid overload weeks.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "You increase your income without proportionally increasing your hours."
+        },
+        {
+          "action": "Get certified in Xero as well",
+          "detail": "Xero is common with Australian and UK clients. A second certification opens a wider pool of clients beyond QuickBooks users.",
+          "estimated_time": "8–10 hours",
+          "difficulty": "moderate",
+          "outcome": "You qualify for a broader range of job postings and can charge more for dual-platform expertise.",
+          "action_url": "https://www.xero.com/uk/partner-programs/certification/",
+          "action_label": "Start Xero certification"
+        },
+        {
+          "action": "Raise your rates for new clients",
+          "detail": "With 3+ months of proven, reconciled books to reference, charge new clients ₱15,000–₱25,000/month per client instead of your starting rate.",
+          "estimated_time": "Ongoing",
+          "difficulty": "challenging",
+          "outcome": "You reach ₱60,000–₱100,000/month by managing 4–5 well-paying clients instead of many underpriced ones."
+        }
+      ],
+      "milestone": "Managing 3+ clients, earning ₱60,000+/month"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Part-Time Bookkeeper for Small Businesses",
+      "detail": "Handle monthly categorization and reconciliation for 1–2 small business clients on QuickBooks or Xero.",
+      "earning_range": { "min": 30000, "max": 50000 },
+      "best_for": "Beginners who are certified but still building confidence with real client books",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Guessing a transaction category instead of asking the client — wrong categorization compounds into bigger errors at tax time",
+      "time_to_first_income": "4–8 weeks"
+    },
+    {
+      "title": "Full-Cycle Bookkeeper",
+      "detail": "Manage the complete monthly close for multiple clients — categorization, reconciliation, reporting, and payroll support.",
+      "earning_range": { "min": 50000, "max": 80000 },
+      "best_for": "Bookkeepers with 3+ months of experience and a reliable monthly system across multiple clients",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Taking on too many clients before systemizing the process, leading to late or inaccurate monthly closes",
+      "time_to_first_income": "2–4 months"
+    },
+    {
+      "title": "Bookkeeping Agency Contractor",
+      "detail": "Work under a US-based bookkeeping agency that manages multiple end clients, giving you steady work without direct client sourcing.",
+      "earning_range": { "min": 40000, "max": 100000 },
+      "best_for": "Certified bookkeepers who prefer steady contract work over finding and managing their own clients",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Applying without any certification — agencies filter out uncertified applicants almost immediately",
+      "time_to_first_income": "2–3 months"
+    }
+  ],
+  "platforms": [
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Common source of long-term, direct bookkeeping roles with small US and Australian businesses.", "best_for": "Best for fastest first client" },
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "International clients post bookkeeping contracts hourly or fixed-price, especially for QuickBooks cleanups.", "best_for": "Best for finding cleanup projects" },
+    { "name": "Bark", "url": "https://www.bark.com", "why": "Small business owners actively request bookkeeping quotes — good for building a direct client base.", "best_for": "Best for building your own client list" },
+    { "name": "Bookkeeping agencies (e.g. Bench, Bookkeeper360 job boards)", "url": "https://www.bench.co/careers", "why": "US-based bookkeeping agencies hire remote contractors, offering steady work without you having to find clients yourself.", "best_for": "Best for steady contract income" }
+  ],
+  "tools": [
+    { "name": "QuickBooks Online", "url": "https://quickbooks.intuit.com", "is_free": false, "purpose": "The most widely used cloud accounting software among small US businesses.", "why_it_matters": "Most bookkeeping job posts specifically require QuickBooks experience. Certification here is your strongest credential.", "required": true, "when_to_start": "Day 1 — start the free certification immediately" },
+    { "name": "Xero", "url": "https://www.xero.com", "is_free": false, "purpose": "Cloud accounting software common with Australian, UK, and NZ businesses.", "why_it_matters": "Xero-certified bookkeepers access a wider client pool, especially outside the US market.", "required": false, "when_to_start": "Month 3–4 — after QuickBooks certification" },
+    { "name": "Google Sheets", "url": "https://sheets.google.com", "is_free": true, "purpose": "Track client deadlines, reconciliation status, and monthly close checklists.", "why_it_matters": "Managing multiple clients without a tracking system is how deadlines get missed and clients get lost.", "required": true, "when_to_start": "Day 1" },
+    { "name": "Hubdoc", "url": "https://www.hubdoc.com", "is_free": true, "purpose": "Collects and organizes client receipts and bills automatically for bookkeeping records.", "why_it_matters": "Chasing clients for receipts wastes hours. Hubdoc automates document collection so you can focus on the books.", "required": false, "when_to_start": "Once you have 2+ clients" }
+  ],
+  "faq": [
+    { "question": "Do I need to be a Certified Public Accountant (CPA)?", "answer": "No. Bookkeeping and accounting are different roles. Clients hiring bookkeepers want accurate transaction management, not tax filing or audits — those require a CPA." },
+    { "question": "Is the QuickBooks certification really free?", "answer": "Yes, through the QuickBooks ProAdvisor program. It takes 10–15 hours but requires no payment and is recognized by clients worldwide." },
+    { "question": "How many clients can one bookkeeper handle?", "answer": "Most solo bookkeepers manage 3–5 clients comfortably once their monthly process is systemized. Beyond that, most people either specialize or hire help." },
+    { "question": "What if I make a mistake in a client's books?", "answer": "Tell the client immediately and correct it. Bookkeepers who hide errors get fired when discovered; bookkeepers who catch and fix their own mistakes build long-term trust." },
+    { "question": "Can I do bookkeeping part-time with another job?", "answer": "Yes, with 1–2 clients. The monthly close is time-bound rather than daily, so it fits around a day job if you manage deadlines carefully." }
+  ]
+}

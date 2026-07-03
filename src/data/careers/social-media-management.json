@@ -1,0 +1,210 @@
+{
+  "slug": "social-media-management",
+  "skill": "Social Media Management",
+  "tagline": "Manage Facebook, Instagram, TikTok, and LinkedIn pages for businesses that don't have time to post.",
+  "category": "marketing",
+  "difficulty": "beginner",
+  "earning_range": { "min": 20000, "max": 80000 },
+  "time_to_first_income": "2–6 weeks",
+  "prerequisites": ["Smartphone or laptop", "Active social media accounts you already use well", "Basic photo/video editing skills"],
+  "todays_mission": {
+    "tasks": [
+      "Audit 3 local business Facebook or Instagram pages and note what's missing",
+      "Create a simple one-page social media management offer using Canva",
+      "Message 5 small businesses offering a free content audit"
+    ],
+    "estimated_time": "2 hours"
+  },
+  "summary": {
+    "description": "Every small business needs social media, and almost none of them have time to do it well. Social media management means planning, creating, and posting content for a business's Facebook, Instagram, TikTok, or LinkedIn pages, then reporting on what's working. You don't need to be a professional designer — you need to understand what makes people stop scrolling and be consistent about posting it.",
+    "who_is_this_for": [
+      "People who already spend hours a day on social media and understand what performs",
+      "Anyone comfortable using Canva, CapCut, or a phone camera",
+      "Organized people who can plan a week of content in advance",
+      "People who enjoy following trends and adapting them for a brand"
+    ],
+    "reality_check": {
+      "honest_assessment": "Managing one small business page part-time realistically pays ₱5,000–₱12,000/month. Managing 3–5 clients or one mid-sized brand full-time can reach ₱40,000–₱80,000. The work is not just posting — it's planning, replying to comments, tracking what content performs, and reporting results monthly.",
+      "what_beginners_underestimate": "How much time client communication and content planning takes compared to actually posting. Most beginners think it's '30 minutes a day' but forget research, editing, scheduling, and reporting.",
+      "why_people_fail": "They post inconsistently, disappear for a week, then wonder why the client's engagement dropped. Or they never track what's working, so every month is a guess instead of an improvement.",
+      "how_to_avoid_failure": "Build a content calendar every week without exception, even if it's just a Google Sheet. Track which posts get the most engagement and do more of that. Send a short weekly update to every client — silence is what gets social media managers fired."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Build Proof",
+      "why": "Clients hire based on what they can see, not promises. A small portfolio, even from free or discounted work, is worth more than a resume with no examples.",
+      "duration": "Week 1",
+      "steps": [
+        {
+          "action": "Audit 3 local business pages",
+          "detail": "Pick 3 small businesses near you with weak social media presence. Note what's missing: inconsistent posting, no captions, low-quality photos, no calls to action.",
+          "estimated_time": "1 hour",
+          "difficulty": "easy",
+          "outcome": "You have concrete examples of problems you can solve, which becomes your pitch."
+        },
+        {
+          "action": "Create sample content for one business, even unpaid",
+          "detail": "Design 3–5 sample posts using Canva for a real or hypothetical local business. This becomes your portfolio piece.",
+          "estimated_time": "2 hours",
+          "difficulty": "moderate",
+          "outcome": "You have visual proof of your work to show potential clients instead of just describing it.",
+          "action_url": "https://www.canva.com",
+          "action_label": "Open Canva"
+        },
+        {
+          "action": "Set up a simple offer document",
+          "detail": "Write one page: what you offer (e.g. 12 posts/month, story planning, comment replies), pricing tiers, and your sample work.",
+          "estimated_time": "1 hour",
+          "difficulty": "easy",
+          "outcome": "You have something professional to send when a business asks 'what do you actually do?'"
+        }
+      ],
+      "milestone": "Portfolio and offer document ready"
+    },
+    {
+      "phase": 2,
+      "title": "Land Your First Client",
+      "why": "Your first client is almost always local or through a warm connection. Cold strangers rarely hire someone with zero track record.",
+      "duration": "Week 2–4",
+      "steps": [
+        {
+          "action": "Message 10 small businesses with a free audit offer",
+          "detail": "Send a short message: 'I noticed your page hasn't posted in 2 weeks — I put together 3 quick ideas that could help, want me to send them?' This gets replies far more than a generic pitch.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You open real conversations instead of being ignored like a cold sales message."
+        },
+        {
+          "action": "Offer a discounted first month",
+          "detail": "Charge ₱3,000–₱5,000 for your first client's first month instead of your full rate. This lowers their risk and gets you a real case study.",
+          "estimated_time": "30 minutes to negotiate",
+          "difficulty": "moderate",
+          "outcome": "You land your first paying client and a real result to show future prospects.",
+          "action_url": "https://www.facebook.com/groups",
+          "action_label": "Find local business groups"
+        },
+        {
+          "action": "Set clear expectations before starting",
+          "detail": "Agree in writing on posting frequency, who approves content, response time for comments, and what a monthly report looks like.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "You avoid the #1 cause of client disputes — mismatched expectations."
+        }
+      ],
+      "milestone": "First paying client onboarded"
+    },
+    {
+      "phase": 3,
+      "title": "Build a Reliable System",
+      "why": "Social media management lives or dies on consistency. A repeatable weekly system is what separates managers who keep clients from those who burn out or forget.",
+      "duration": "Month 2",
+      "steps": [
+        {
+          "action": "Build a weekly content calendar",
+          "detail": "Every Sunday or Monday, plan the week's posts in a Google Sheet or Notion: topic, caption, image, and posting time.",
+          "estimated_time": "1–2 hours/week",
+          "difficulty": "moderate",
+          "outcome": "You never scramble for content ideas last minute, and posting stays consistent."
+        },
+        {
+          "action": "Use a scheduling tool instead of posting manually",
+          "detail": "Tools like Meta Business Suite or Later let you schedule a week of posts in one sitting instead of logging in daily.",
+          "estimated_time": "1 hour to set up",
+          "difficulty": "easy",
+          "outcome": "You save hours weekly and never miss a posting day, even on busy days.",
+          "action_url": "https://business.facebook.com",
+          "action_label": "Open Meta Business Suite"
+        },
+        {
+          "action": "Send a simple monthly report",
+          "detail": "Screenshot follower growth, top 3 posts, and one insight ('videos outperform photos 3x — let's do more'). Clients renew when they see progress.",
+          "estimated_time": "1 hour/month",
+          "difficulty": "moderate",
+          "outcome": "Your client sees clear value in what they're paying for, which makes renewal automatic."
+        }
+      ],
+      "milestone": "First monthly report delivered, client renewed"
+    },
+    {
+      "phase": 4,
+      "title": "Scale to Multiple Clients",
+      "why": "One client caps your income. Managing 3–5 clients with a repeatable system is how social media managers reach ₱40,000–₱80,000/month.",
+      "duration": "Month 3+",
+      "steps": [
+        {
+          "action": "Raise your rate for new clients",
+          "detail": "Once you have a real result to show, charge ₱6,000–₱10,000/month for new clients instead of your discounted starting rate.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "Each new client earns you more than the last, without more effort per client."
+        },
+        {
+          "action": "Batch content creation across clients",
+          "detail": "Instead of switching contexts constantly, dedicate one day a week to shoot and design content for all clients at once.",
+          "estimated_time": "1 full day/week",
+          "difficulty": "moderate",
+          "outcome": "You manage more clients in the same number of hours instead of working longer days."
+        },
+        {
+          "action": "Add a paid ads add-on service",
+          "detail": "Once comfortable with organic posting, offer basic Facebook/Instagram ad boosting as a paid add-on. This significantly increases what you can charge.",
+          "estimated_time": "1–2 weeks to learn",
+          "difficulty": "challenging",
+          "outcome": "You add a high-margin service that most beginner social media managers don't offer.",
+          "resources": ["Meta Blueprint free courses", "Facebook Ads Manager basics tutorial"]
+        }
+      ],
+      "milestone": "Managing 3+ clients, earning ₱40,000+/month"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Small Business Page Management",
+      "detail": "Manage Facebook and Instagram for local businesses like restaurants, salons, or shops. Steady, low-pressure entry point.",
+      "earning_range": { "min": 20000, "max": 40000 },
+      "best_for": "People who want to start locally with businesses they already know or can reach easily",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Charging too little because it's your first client — undercharging makes it hard to raise rates with the same client later",
+      "time_to_first_income": "2–4 weeks"
+    },
+    {
+      "title": "TikTok / Short-Form Content Management",
+      "detail": "Create and post short-form video content for brands aiming to grow on TikTok, Reels, or YouTube Shorts.",
+      "earning_range": { "min": 25000, "max": 60000 },
+      "best_for": "People who understand trends, sounds, and short-form editing, not just static graphics",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Reposting trends without adapting them to the brand's voice — copied content rarely performs as well as adapted content",
+      "time_to_first_income": "2–6 weeks"
+    },
+    {
+      "title": "Multi-Platform Retainer Management",
+      "detail": "Manage Facebook, Instagram, TikTok, and LinkedIn simultaneously for one mid-sized business on a monthly retainer.",
+      "earning_range": { "min": 40000, "max": 80000 },
+      "best_for": "Experienced social media managers with 3+ months of proven client results and a real portfolio",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Taking on all platforms at once before mastering one — quality drops across all of them instead of excelling at one",
+      "time_to_first_income": "6–10 weeks"
+    }
+  ],
+  "platforms": [
+    { "name": "Meta Business Suite", "url": "https://business.facebook.com", "why": "Free tool to schedule, post, and track Facebook and Instagram content for clients from one dashboard.", "best_for": "Best for daily posting and analytics" },
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "International businesses hire social media managers hourly or on retainer, often with clearer scopes than local clients.", "best_for": "Best for finding paying clients fast" },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search 'small business owners PH' or local business groups — many owners ask for social media help directly.", "best_for": "Best for local, warm-lead clients" },
+    { "name": "LinkedIn", "url": "https://www.linkedin.com", "why": "Post your own case studies and results here — business owners actively search LinkedIn for marketing help.", "best_for": "Best for attracting higher-paying clients" }
+  ],
+  "tools": [
+    { "name": "Canva", "url": "https://www.canva.com", "is_free": true, "purpose": "Design posts, stories, and carousels quickly using ready-made templates.", "why_it_matters": "Clients expect clean, branded visuals. Canva gets you there without any design background.", "required": true, "when_to_start": "Day 1" },
+    { "name": "CapCut", "url": "https://www.capcut.com", "is_free": true, "purpose": "Edit short-form videos for Reels, TikTok, and Shorts with trending templates and captions.", "why_it_matters": "Short-form video consistently outperforms static posts. Not knowing basic video editing limits what you can offer.", "required": true, "when_to_start": "Week 1" },
+    { "name": "Later", "url": "https://later.com", "is_free": true, "purpose": "Schedule and plan posts across multiple platforms and clients in one calendar view.", "why_it_matters": "Managing multiple clients manually leads to missed posts. A scheduler is what makes scaling past one client possible.", "required": false, "when_to_start": "Month 2 — once you have 2+ clients" },
+    { "name": "Google Sheets", "url": "https://sheets.google.com", "is_free": true, "purpose": "Build content calendars and track performance metrics for reporting.", "why_it_matters": "Clients renew based on visible results. A simple tracked sheet turns your work into proof.", "required": true, "when_to_start": "Day 1" }
+  ],
+  "faq": [
+    { "question": "Do I need to be good at graphic design?", "answer": "No. Canva templates handle most of the design work. What matters more is understanding what content style fits the client's brand and audience." },
+    { "question": "How many clients can one person realistically manage?", "answer": "Most beginners can handle 2–3 clients well. Once you build templates and a system, 4–6 clients part-time is realistic without burning out." },
+    { "question": "Should I run paid ads too?", "answer": "Not at first. Master organic content and reporting before adding paid ads as a service — it's a different skill and mistakes cost the client real money." },
+    { "question": "What if the client doesn't like my content style?", "answer": "Ask for their brand guidelines and 3 examples of pages they admire before you start. Aligning early prevents rounds of unpaid revisions." },
+    { "question": "Can I do this part-time alongside a full-time job?", "answer": "Yes, especially with 1–2 clients using scheduled posting. Just be upfront with clients about your response time windows." }
+  ]
+}

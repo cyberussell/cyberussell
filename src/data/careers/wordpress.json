@@ -1,0 +1,212 @@
+{
+  "slug": "wordpress",
+  "skill": "WordPress",
+  "tagline": "Build and maintain WordPress websites for businesses worldwide — no full coding background needed.",
+  "category": "tech",
+  "difficulty": "intermediate",
+  "earning_range": { "min": 35000, "max": 120000 },
+  "time_to_first_income": "1–2 months",
+  "prerequisites": ["Laptop or desktop computer", "Comfort learning new software through trial and error", "Basic understanding of how websites work"],
+  "todays_mission": {
+    "tasks": [
+      "Install a free WordPress site on a local tool like LocalWP or a free hosting trial",
+      "Watch a beginner WordPress tutorial and build one test page",
+      "Browse 5 WordPress developer gigs on Upwork to see what clients actually ask for"
+    ],
+    "estimated_time": "2 hours"
+  },
+  "summary": {
+    "description": "WordPress powers over 40% of all websites, and small businesses worldwide need someone to build, customize, and maintain their site on it. You don't need to be a full-stack developer — page builders like Elementor let you build professional sites visually. What you need is patience to learn the platform properly, an eye for clean design, and the ability to troubleshoot when something breaks.",
+    "who_is_this_for": [
+      "People who enjoy figuring out how software works through hands-on practice",
+      "Anyone with a design eye who wants a more technical, higher-paying skill",
+      "Detail-oriented people comfortable following documentation and tutorials",
+      "People willing to learn basic troubleshooting instead of giving up when something breaks"
+    ],
+    "reality_check": {
+      "honest_assessment": "Beginners building simple 5-page business websites using page builders earn ₱20,000–₱35,000 per project or ₱25,000–₱40,000/month on retainer for maintenance. Developers who can customize themes, fix plugin conflicts, and handle e-commerce sites earn ₱60,000–₱120,000/month. WordPress looks easy on the surface but troubleshooting broken sites is where the real skill — and the real pay — comes from.",
+      "what_beginners_underestimate": "How often plugins conflict with each other and break a site. Also, clients often want ongoing maintenance (updates, backups, security) after the build — this recurring revenue is often more valuable than the one-time build fee.",
+      "why_people_fail": "They build a site using 15+ plugins without understanding what each does, and when something breaks, they can't figure out which plugin caused it. Or they never test the site on mobile before delivering it, and it looks broken on half of all visitors' devices.",
+      "how_to_avoid_failure": "Keep plugin use minimal and intentional — know what each one does and why it's there. Always test every page on both desktop and mobile before calling a project done. Keep a backup before making any major change."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Learn the Platform",
+      "why": "WordPress has real depth beneath its simple interface. A structured first month of learning prevents the common beginner trap of copying tutorials without understanding why things work.",
+      "duration": "Month 1",
+      "steps": [
+        {
+          "action": "Install WordPress locally and explore the dashboard",
+          "detail": "Use a free tool like LocalWP to install WordPress on your own computer without needing hosting yet. Explore Pages, Posts, Plugins, and Appearance.",
+          "estimated_time": "1 hour",
+          "difficulty": "easy",
+          "outcome": "You understand the core WordPress dashboard without any risk of breaking a live site.",
+          "action_url": "https://localwp.com",
+          "action_label": "Download LocalWP"
+        },
+        {
+          "action": "Learn a page builder like Elementor",
+          "detail": "Elementor lets you build pages visually with drag-and-drop, no coding required. Complete their free beginner tutorial and rebuild one real website's homepage as practice.",
+          "estimated_time": "6–8 hours",
+          "difficulty": "moderate",
+          "outcome": "You can build a clean, professional-looking page from scratch using the tool most WordPress clients expect.",
+          "action_url": "https://elementor.com/academy",
+          "action_label": "Learn Elementor"
+        },
+        {
+          "action": "Understand hosting, domains, and how they connect to WordPress",
+          "detail": "Learn the basics: what a domain is, what hosting does, and how to point a domain to a hosting provider like Hostinger or SiteGround.",
+          "estimated_time": "1–2 hours",
+          "difficulty": "moderate",
+          "outcome": "You can explain the full website setup process to a client instead of only knowing the design part.",
+          "resources": ["Search 'how domain and hosting work' on YouTube"]
+        }
+      ],
+      "milestone": "First practice website built locally, hosting basics understood"
+    },
+    {
+      "phase": 2,
+      "title": "Build a Portfolio Site",
+      "why": "WordPress clients want to see a real, live example before hiring. A polished portfolio piece is worth more than any certificate.",
+      "duration": "Month 1–2",
+      "steps": [
+        {
+          "action": "Buy a cheap domain and hosting plan",
+          "detail": "Budget ₱1,500–₱3,000/year for a basic hosting plan and domain. This becomes your own live portfolio site and testing ground.",
+          "estimated_time": "1 hour",
+          "difficulty": "easy",
+          "outcome": "You have a real, live website under your control — not just a local practice file.",
+          "action_url": "https://www.hostinger.com",
+          "action_label": "Compare hosting plans"
+        },
+        {
+          "action": "Build a 5-page business website as a sample project",
+          "detail": "Create a realistic sample: Home, About, Services, Contact, and Blog for a fictional or volunteer business. Make it mobile-responsive and fast-loading.",
+          "estimated_time": "8–10 hours",
+          "difficulty": "moderate",
+          "outcome": "You have a real, browsable portfolio piece to show every future client."
+        },
+        {
+          "action": "Test the site's speed and mobile responsiveness",
+          "detail": "Run it through PageSpeed Insights and check it on your phone. Fix any obviously slow-loading images or broken mobile layouts.",
+          "estimated_time": "1–2 hours",
+          "difficulty": "moderate",
+          "outcome": "Your portfolio piece looks professional on every device, which is often the first thing a client checks."
+        }
+      ],
+      "milestone": "First live portfolio website completed"
+    },
+    {
+      "phase": 3,
+      "title": "Land Your First Client Project",
+      "why": "WordPress clients are often nervous about being overcharged or left with a broken site. Clear communication and a fixed scope build the trust needed to get hired.",
+      "duration": "Month 2",
+      "steps": [
+        {
+          "action": "Apply to WordPress gigs on Upwork and OnlineJobsPH",
+          "detail": "Search 'WordPress developer,' 'Elementor,' or 'website build.' Link directly to your portfolio site in every proposal.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're applying with visible proof instead of just describing your skills in text.",
+          "action_url": "https://www.upwork.com",
+          "action_label": "Find WordPress jobs"
+        },
+        {
+          "action": "Offer a fixed-price package for your first project",
+          "detail": "Instead of an hourly rate, offer '5-page business website for ₱15,000–₱20,000, delivered in 2 weeks.' A clear price and scope reduces client hesitation.",
+          "estimated_time": "30 minutes to define",
+          "difficulty": "moderate",
+          "outcome": "You land your first paying project with expectations that are clear on both sides."
+        },
+        {
+          "action": "Set up a simple revision policy before starting",
+          "detail": "Agree upfront: '2 rounds of revisions included.' Without this, some clients ask for endless small changes that eat your profit margin.",
+          "estimated_time": "10 minutes",
+          "difficulty": "easy",
+          "outcome": "You protect your time and income from scope creep on your very first project."
+        }
+      ],
+      "milestone": "First paid WordPress project delivered"
+    },
+    {
+      "phase": 4,
+      "title": "Add Maintenance Retainers and Scale",
+      "why": "One-time builds are inconsistent income. Monthly maintenance retainers — updates, backups, and security — turn WordPress work into predictable recurring revenue.",
+      "duration": "Month 3+",
+      "steps": [
+        {
+          "action": "Pitch every build client a maintenance retainer",
+          "detail": "After delivering a site, offer: 'I can keep your site updated, backed up, and secure for ₱2,000–₱5,000/month.' Most clients say yes because they don't want to manage it themselves.",
+          "estimated_time": "10 minutes per pitch",
+          "difficulty": "moderate",
+          "outcome": "You build a base of recurring monthly income on top of one-time project fees."
+        },
+        {
+          "action": "Learn basic troubleshooting for common plugin conflicts",
+          "detail": "Practice diagnosing a broken site by disabling plugins one at a time to isolate the issue. This single skill separates real WordPress developers from template-only builders.",
+          "estimated_time": "2–3 hours of practice",
+          "difficulty": "challenging",
+          "outcome": "You can confidently fix broken client sites, which justifies premium pricing over beginners."
+        },
+        {
+          "action": "Add WooCommerce e-commerce builds as a service",
+          "detail": "Once comfortable with standard sites, learn WooCommerce to build online stores. E-commerce builds pay significantly more than basic brochure sites.",
+          "estimated_time": "1–2 weeks to learn",
+          "difficulty": "challenging",
+          "outcome": "You unlock a higher-paying project category, often ₱40,000–₱80,000 per e-commerce build."
+        }
+      ],
+      "milestone": "5+ maintenance retainers, earning ₱60,000+/month"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Business Website Builder",
+      "detail": "Build 3–7 page brochure-style websites for small businesses using Elementor or a similar page builder.",
+      "earning_range": { "min": 35000, "max": 60000 },
+      "best_for": "Beginners with a design eye who are comfortable using visual page builders rather than writing code",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Delivering a site without testing on mobile — a large share of visitors browse on phones and a broken mobile layout costs the client customers",
+      "time_to_first_income": "4–8 weeks"
+    },
+    {
+      "title": "WordPress Maintenance Specialist",
+      "detail": "Manage ongoing updates, backups, security, and small edits for multiple existing WordPress sites on a monthly retainer.",
+      "earning_range": { "min": 30000, "max": 60000 },
+      "best_for": "People who prefer steady recurring work over one-off projects and are comfortable following a maintenance checklist",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Skipping backups before making updates — a failed plugin update without a backup can take a client's entire site offline",
+      "time_to_first_income": "3–6 weeks"
+    },
+    {
+      "title": "WooCommerce / E-commerce Developer",
+      "detail": "Build and configure online stores using WooCommerce, including products, payment gateways, and shipping settings.",
+      "earning_range": { "min": 50000, "max": 120000 },
+      "best_for": "Experienced WordPress builders ready to learn a more technical, higher-paying specialization",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Misconfiguring payment gateway settings without testing a real transaction first — this directly costs the client real sales",
+      "time_to_first_income": "2–3 months"
+    }
+  ],
+  "platforms": [
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "The most active platform for WordPress build and maintenance contracts from international clients.", "best_for": "Best for finding your first paid project" },
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Agencies and businesses hire WordPress developers remotely, often for ongoing part-time or full-time roles.", "best_for": "Best for stable, long-term roles" },
+    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Good for packaged offers like 'I will build you a 5-page WordPress website' with clear, fixed pricing.", "best_for": "Best for beginners without a network yet" },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search 'WordPress developers Philippines' or local business groups where owners ask for website help directly.", "best_for": "Best for finding local, direct clients" }
+  ],
+  "tools": [
+    { "name": "Elementor", "url": "https://elementor.com", "is_free": true, "purpose": "The most widely used visual page builder for WordPress, letting you design pages without code.", "why_it_matters": "Most WordPress client gigs specifically request Elementor experience — it's the industry standard page builder.", "required": true, "when_to_start": "Day 1" },
+    { "name": "LocalWP", "url": "https://localwp.com", "is_free": true, "purpose": "Lets you run and test a full WordPress site on your own computer without needing hosting.", "why_it_matters": "Practicing and testing changes locally before touching a live client site prevents costly mistakes.", "required": true, "when_to_start": "Day 1" },
+    { "name": "Hostinger / SiteGround", "url": "https://www.hostinger.com", "is_free": false, "purpose": "Web hosting providers where WordPress sites actually live on the internet.", "why_it_matters": "You need your own hosting account for your portfolio site, and clients will expect you to understand hosting setup.", "required": true, "when_to_start": "Month 1 — for your portfolio site" },
+    { "name": "UpdraftPlus", "url": "https://updraftplus.com", "is_free": true, "purpose": "Backs up a WordPress site automatically so it can be restored if something breaks.", "why_it_matters": "Making changes without a backup is the single biggest risk in WordPress work — this tool prevents disasters.", "required": true, "when_to_start": "Before touching any live client site" }
+  ],
+  "faq": [
+    { "question": "Do I need to know how to code to build WordPress sites?", "answer": "No, not for most beginner and intermediate work. Page builders like Elementor handle the visual design without code. Coding helps for advanced custom work, but it's not a starting requirement." },
+    { "question": "What's the difference between WordPress.com and WordPress.org?", "answer": "WordPress.org is the self-hosted, fully customizable version most freelance clients use — this is what you should learn. WordPress.com is a simplified, hosted version with more limitations." },
+    { "question": "How much should I charge for my first website build?", "answer": "₱10,000–₱20,000 for a basic 5-page business site is a fair starting range in the Philippine freelance market. Raise this once you have a track record of completed projects." },
+    { "question": "What happens if I break a client's site while working on it?", "answer": "Always take a backup before major changes. If something breaks, restore the backup immediately and investigate calmly — this is a normal part of the learning curve, not a career-ending mistake." },
+    { "question": "Is WordPress still relevant, or should I learn something else?", "answer": "WordPress still powers over 40% of the internet and remains the most requested platform for small business website work — it's a stable, in-demand skill for the foreseeable future." }
+  ]
+}

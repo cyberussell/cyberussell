@@ -1,0 +1,210 @@
+{
+  "slug": "graphic-design",
+  "skill": "Graphic Design",
+  "tagline": "Design logos, branding, marketing materials, and digital assets for businesses worldwide.",
+  "category": "creative",
+  "difficulty": "intermediate",
+  "earning_range": { "min": 30000, "max": 100000 },
+  "time_to_first_income": "1–2 months",
+  "prerequisites": ["Laptop or desktop computer", "An eye for color, layout, and visual balance", "Willingness to give and receive feedback on your work"],
+  "todays_mission": {
+    "tasks": [
+      "Study 5 logos from brands you admire and note what makes them work",
+      "Create one sample logo concept for a made-up business using Canva or a free design tool",
+      "Set up a free Behance or Dribbble profile to start building a portfolio"
+    ],
+    "estimated_time": "2 hours"
+  },
+  "summary": {
+    "description": "Graphic design covers logos, brand identity, social media graphics, print materials, and digital assets — the visual layer every business needs to look credible. Beyond Canva templates, real graphic design work involves understanding color theory, typography, and layout principles well enough to build a consistent brand, not just a pretty single image. It's a skill with a real learning curve, but also one of the highest-paying creative freelance skills available to beginners.",
+    "who_is_this_for": [
+      "People who've always had a natural eye for what looks good and what doesn't",
+      "Anyone who enjoys tools like Canva and wants to go deeper into real design software",
+      "People who can take feedback on their work without taking it personally",
+      "Patient learners willing to study design principles, not just copy templates"
+    ],
+    "reality_check": {
+      "honest_assessment": "Beginners doing simple social media graphics and basic logo work earn ₱20,000–₱35,000/month with a few small clients. Designers who master brand identity — logos, color palettes, brand guidelines — and can handle print-ready work earn ₱50,000–₱100,000/month. The biggest jump in pay comes from moving beyond Canva templates into original, strategic design thinking.",
+      "what_beginners_underestimate": "How much revision back-and-forth is normal, especially on logo work. Also, template-based design has a low pay ceiling — clients pay significantly more for original, well-thought-out branding than for a customized template.",
+      "why_people_fail": "They rely entirely on templates and never develop an eye for original layout, capping their income at low-value gig work. Or they take criticism of their design personally and get defensive instead of iterating, which loses clients fast.",
+      "how_to_avoid_failure": "Study real design principles — color theory, typography, hierarchy — not just software shortcuts. Treat every round of feedback as information, not an attack, and always ask 'what specifically isn't working for you?' instead of guessing."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Learn Design Fundamentals",
+      "why": "Software skill without design principles produces mediocre, template-locked work. Understanding why designs work is what separates a ₱2,000 gig from a ₱20,000 branding project.",
+      "duration": "Month 1",
+      "steps": [
+        {
+          "action": "Study color theory and typography basics",
+          "detail": "Learn how color combinations create mood, and how font pairing affects readability and brand feel. Take notes on 5 brands whose design you admire and why it works.",
+          "estimated_time": "3–4 hours",
+          "difficulty": "moderate",
+          "outcome": "You start noticing design decisions everywhere, not just copying what looks nice.",
+          "resources": ["Search 'color theory for beginners' and 'typography basics' on YouTube"]
+        },
+        {
+          "action": "Learn Canva Pro's advanced features first, then Adobe Express or Illustrator basics",
+          "detail": "Master Canva's brand kit, layering, and custom fonts before moving to more powerful tools like Adobe Illustrator, if you want to go further.",
+          "estimated_time": "6–8 hours",
+          "difficulty": "moderate",
+          "outcome": "You can produce clean, professional visuals efficiently and understand the tools clients expect familiarity with.",
+          "action_url": "https://www.canva.com",
+          "action_label": "Explore Canva Pro features"
+        },
+        {
+          "action": "Recreate 3 designs you admire from scratch",
+          "detail": "Pick 3 logos or social posts you like and rebuild them yourself, not copying exactly, but practicing the layout and color choices that make them work.",
+          "estimated_time": "3–4 hours",
+          "difficulty": "moderate",
+          "outcome": "You build real design muscle memory instead of only ever starting from a blank template."
+        }
+      ],
+      "milestone": "Design fundamentals understood, first practice recreations completed"
+    },
+    {
+      "phase": 2,
+      "title": "Build a Portfolio",
+      "why": "Design clients hire almost entirely based on visible work. Without a portfolio, even a skilled designer looks unproven to a potential client.",
+      "duration": "Month 1–2",
+      "steps": [
+        {
+          "action": "Create 3–5 concept projects for made-up or volunteer businesses",
+          "detail": "Design a full mini-brand for a fictional business: logo, color palette, and 2–3 social media post templates. Pick niches you'd enjoy designing for.",
+          "estimated_time": "8–10 hours",
+          "difficulty": "moderate",
+          "outcome": "You have real, cohesive work to show instead of a scattered collection of unrelated pieces."
+        },
+        {
+          "action": "Set up a Behance or Dribbble portfolio",
+          "detail": "Upload your best concept projects with a short case study for each — the problem, your approach, and the final result.",
+          "estimated_time": "2 hours",
+          "difficulty": "easy",
+          "outcome": "You have a shareable, professional portfolio link ready for every application and pitch.",
+          "action_url": "https://www.behance.net",
+          "action_label": "Create a Behance portfolio"
+        },
+        {
+          "action": "Ask 2–3 friends or local businesses for feedback on your concepts",
+          "detail": "Show your practice work to real people and ask honestly what stands out and what doesn't. Outside perspective catches blind spots.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You refine your portfolio pieces before a paying client ever sees them."
+        }
+      ],
+      "milestone": "Portfolio with 3–5 strong concept projects live"
+    },
+    {
+      "phase": 3,
+      "title": "Land Your First Paying Clients",
+      "why": "Your first few clients are often small and local. Treating them seriously builds the reviews and case studies needed to attract bigger, better-paying clients.",
+      "duration": "Month 2–3",
+      "steps": [
+        {
+          "action": "Apply to 5–10 design gigs daily on Upwork and Fiverr",
+          "detail": "Search 'logo design,' 'social media graphics,' or 'brand identity.' Always link your portfolio and reference the specific job's needs in your pitch.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're consistently in the running for new projects instead of relying on a single application.",
+          "action_url": "https://www.upwork.com",
+          "action_label": "Find design jobs"
+        },
+        {
+          "action": "Offer a small, clearly scoped first package",
+          "detail": "Instead of vague 'design services,' offer something specific: 'Logo design — 3 concepts, 2 revisions, final files — ₱3,500.' Clear scope reduces client hesitation.",
+          "estimated_time": "30 minutes to define",
+          "difficulty": "moderate",
+          "outcome": "You land your first paying client faster with a clear, low-risk offer."
+        },
+        {
+          "action": "Deliver ahead of the agreed deadline on your first project",
+          "detail": "Under-promise and over-deliver on timing for your first few clients — this creates strong first impressions that lead to reviews and referrals.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "You build a reputation for reliability, which matters as much as talent in getting repeat work."
+        }
+      ],
+      "milestone": "First paying design client, first 5-star review or testimonial"
+    },
+    {
+      "phase": 4,
+      "title": "Specialize and Raise Your Rates",
+      "why": "Generalist designers compete on price. Designers who specialize in brand identity or a specific industry become the person clients seek out and pay premium rates for.",
+      "duration": "Month 4+",
+      "steps": [
+        {
+          "action": "Specialize in one high-value area",
+          "detail": "Pick brand identity, packaging design, or presentation/pitch deck design. Specialists earn significantly more per project than generalist 'I design anything' freelancers.",
+          "estimated_time": "2–4 weeks of focused practice",
+          "difficulty": "moderate",
+          "outcome": "You can market yourself with a clear specialty, which attracts higher-paying, more serious clients."
+        },
+        {
+          "action": "Build 2–3 real case studies from paid client work",
+          "detail": "With permission, document a real project: the client's problem, your process, and the final result with metrics if available (e.g. 'new logo used across 3 platforms').",
+          "estimated_time": "2 hours per case study",
+          "difficulty": "moderate",
+          "outcome": "Real case studies are far more persuasive to new clients than concept projects alone."
+        },
+        {
+          "action": "Raise your rates for every new client",
+          "detail": "With a stronger portfolio and testimonials, increase your pricing by 20–30% for new inquiries. Existing clients can be grandfathered in or renegotiated separately.",
+          "estimated_time": "Ongoing",
+          "difficulty": "challenging",
+          "outcome": "You reach ₱60,000–₱100,000/month by taking on fewer, better-paying projects instead of many low-priced ones."
+        }
+      ],
+      "milestone": "Specialized portfolio and testimonials, earning ₱60,000+/month"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Social Media Graphics Designer",
+      "detail": "Create templated and custom graphics for businesses' Instagram, Facebook, and LinkedIn content.",
+      "earning_range": { "min": 20000, "max": 35000 },
+      "best_for": "Beginners comfortable with Canva who want fast, repeatable design work to start earning quickly",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Using the exact same template repeatedly without adapting it to the brand's specific colors and voice — content starts to feel generic",
+      "time_to_first_income": "2–4 weeks"
+    },
+    {
+      "title": "Logo & Brand Identity Designer",
+      "detail": "Design logos, color palettes, and basic brand guidelines for new or rebranding businesses.",
+      "earning_range": { "min": 35000, "max": 60000 },
+      "best_for": "Designers who've studied color theory and typography and can defend their design choices with reasoning",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Presenting only one logo concept — clients expect to see 2–3 distinct directions before narrowing down to a final choice",
+      "time_to_first_income": "4–8 weeks"
+    },
+    {
+      "title": "Full Brand & Marketing Materials Designer",
+      "detail": "Handle complete brand systems — logo, guidelines, packaging, pitch decks, and print materials — for established businesses.",
+      "earning_range": { "min": 50000, "max": 100000 },
+      "best_for": "Experienced designers with a strong portfolio of real client work and print-ready design knowledge",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Delivering files not properly set up for print (wrong color mode or resolution) — this causes expensive reprints and damages trust",
+      "time_to_first_income": "2–3 months"
+    }
+  ],
+  "platforms": [
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "International businesses hire designers for both one-off projects and ongoing retainer work.", "best_for": "Best for finding higher-paying, serious clients" },
+    { "name": "Fiverr", "url": "https://www.fiverr.com", "why": "Good for packaged, fixed-price offers like 'I will design your logo' — strong for beginners without a network yet.", "best_for": "Best for beginners starting from zero" },
+    { "name": "Behance", "url": "https://www.behance.net", "why": "A portfolio platform where design agencies and brands actively browse for freelance talent.", "best_for": "Best for building visibility and inbound inquiries" },
+    { "name": "99designs", "url": "https://99designs.com", "why": "Runs design contests where you submit concepts and get paid if selected — good for building a portfolio fast.", "best_for": "Best for beginners wanting quick portfolio pieces" }
+  ],
+  "tools": [
+    { "name": "Canva Pro", "url": "https://www.canva.com", "is_free": false, "purpose": "Fast, template-assisted design tool for social graphics, presentations, and simple branding.", "why_it_matters": "Most beginner and mid-level design gigs can be fully delivered using Canva Pro's brand kit and layering tools.", "required": true, "when_to_start": "Day 1" },
+    { "name": "Adobe Illustrator", "url": "https://www.adobe.com/products/illustrator.html", "is_free": false, "purpose": "Industry-standard vector design software used for logos and print-ready artwork.", "why_it_matters": "Serious branding and print clients expect vector, editable logo files, which only professional software can produce properly.", "required": false, "when_to_start": "Month 2–3 — once you're taking on logo and print work" },
+    { "name": "Adobe Photoshop", "url": "https://www.adobe.com/products/photoshop.html", "is_free": false, "purpose": "Photo editing and raster-based design work for marketing materials and digital assets.", "why_it_matters": "Many client projects require photo retouching or raster-based composition that Canva alone can't handle well.", "required": false, "when_to_start": "Month 3+ — as your projects get more advanced" },
+    { "name": "Coolors", "url": "https://coolors.co", "is_free": true, "purpose": "Generates and tests color palette combinations quickly.", "why_it_matters": "Choosing a cohesive color palette is one of the fastest ways to make a design look professional instead of random.", "required": false, "when_to_start": "Week 1" }
+  ],
+  "faq": [
+    { "question": "Can I start with just Canva, or do I need Adobe software?", "answer": "You can start and earn a real income using only Canva Pro. Adobe Illustrator and Photoshop become valuable once you take on logo, print, or more advanced branding work." },
+    { "question": "How many logo concepts should I show a client?", "answer": "Industry standard is 2–3 distinct directions for the client to choose from, followed by 2 rounds of revisions on the chosen concept. Set this expectation clearly upfront." },
+    { "question": "What if a client keeps asking for unlimited revisions?", "answer": "Define a specific number of revision rounds in your offer before starting. If a client wants more, that's a paid add-on, not a free extension of the original scope." },
+    { "question": "Do I need a design degree to get hired?", "answer": "No. A strong portfolio matters far more than formal education for freelance design work. Clients judge your work, not your credentials." },
+    { "question": "How do I price my first design projects?", "answer": "Start with fixed-price packages rather than hourly rates — for example ₱3,000–₱5,000 for a logo package as a beginner. Raise prices as your portfolio and testimonials grow." }
+  ]
+}

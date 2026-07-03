@@ -1,0 +1,211 @@
+{
+  "slug": "lead-generation",
+  "skill": "Lead Generation",
+  "tagline": "Find qualified business leads and prospects for sales teams and agencies around the world.",
+  "category": "sales",
+  "difficulty": "beginner",
+  "earning_range": { "min": 25000, "max": 70000 },
+  "time_to_first_income": "2–4 weeks",
+  "prerequisites": ["Laptop or desktop computer", "Comfort using spreadsheets and web research", "Basic written English"],
+  "todays_mission": {
+    "tasks": [
+      "Create a free LinkedIn Sales Navigator trial account and explore its search filters",
+      "Build a sample lead list of 20 prospects for a made-up niche using free tools",
+      "Apply to 5 lead generation job posts on OnlineJobsPH or Upwork"
+    ],
+    "estimated_time": "2 hours"
+  },
+  "summary": {
+    "description": "Lead generation means finding people or companies who are likely to buy a client's product or service, then gathering their contact details in an organized list. Sales teams and agencies worldwide pay for this because it's repetitive research work that eats into their selling time. You don't need sales experience — you need patience, comfort with spreadsheets, and the ability to follow a specific search criteria without cutting corners.",
+    "who_is_this_for": [
+      "People who enjoy research and don't mind repetitive, detail-focused tasks",
+      "Anyone comfortable navigating LinkedIn, Google, and spreadsheets",
+      "People who are naturally organized and thorough",
+      "Beginners looking for a low-barrier entry into the sales and marketing world"
+    ],
+    "reality_check": {
+      "honest_assessment": "Entry-level lead generation work pays ₱15,000–₱25,000/month part-time doing manual list-building for one client. Experienced lead gen specialists who understand tools like Apollo or Sales Navigator and can handle multiple campaigns earn ₱40,000–₱70,000/month. The work is genuinely repetitive — hundreds of profiles a week — and requires accuracy over speed.",
+      "what_beginners_underestimate": "How strict the qualifying criteria can be. A client asking for 'marketing managers at SaaS companies with 50–200 employees in the US' means every single lead must match all of that — not close enough.",
+      "why_people_fail": "They pad lists with leads that don't actually match the criteria just to hit a number, and clients catch this fast once they start reaching out to bad leads. Or they submit lists with outdated or wrong emails without verifying them.",
+      "how_to_avoid_failure": "Always verify emails before submitting a list — a bounced email makes the client's entire outreach campaign look unprofessional. When in doubt about whether a lead qualifies, ask the client rather than guessing."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Learn the Core Tools",
+      "why": "Lead generation clients expect you to already know the standard tools. Practicing on a sample project before applying saves you from learning on the job and making costly mistakes.",
+      "duration": "Week 1",
+      "steps": [
+        {
+          "action": "Explore LinkedIn's free search and Sales Navigator trial",
+          "detail": "Practice searching by job title, industry, company size, and location. This is the core skill behind almost every lead gen request.",
+          "estimated_time": "1 hour",
+          "difficulty": "easy",
+          "outcome": "You understand how to filter and find specific types of prospects on demand.",
+          "action_url": "https://www.linkedin.com/sales/solutions/sales-navigator",
+          "action_label": "Try LinkedIn Sales Navigator"
+        },
+        {
+          "action": "Learn a free email-finding tool",
+          "detail": "Tools like Hunter.io or Snov.io find and verify business email addresses from a name and company domain. Practice with 10 sample profiles.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You can turn a prospect's name into a verified, usable contact detail.",
+          "action_url": "https://hunter.io",
+          "action_label": "Try Hunter.io"
+        },
+        {
+          "action": "Build a sample lead list for a made-up niche",
+          "detail": "Pick a niche like 'HR managers at 50-person companies in Texas' and build a 20-row spreadsheet with name, title, company, LinkedIn URL, and verified email.",
+          "estimated_time": "2 hours",
+          "difficulty": "moderate",
+          "outcome": "You have a portfolio sample proving you can execute a real lead gen brief."
+        }
+      ],
+      "milestone": "Sample lead list completed and saved as a portfolio piece"
+    },
+    {
+      "phase": 2,
+      "title": "Land Your First Project",
+      "why": "Lead generation clients hire based on accuracy shown in a test task more than a resume. A strong sample and a clean test batch beat experience claims.",
+      "duration": "Week 2–3",
+      "steps": [
+        {
+          "action": "Apply to 5–10 lead gen jobs daily on Upwork and OnlineJobsPH",
+          "detail": "Search 'lead generation,' 'list building,' or 'prospecting.' Attach your sample lead list from Phase 1 to every application.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're applying with visible proof of skill instead of just claims.",
+          "action_url": "https://www.upwork.com",
+          "action_label": "Find lead generation jobs"
+        },
+        {
+          "action": "Complete a paid test batch carefully",
+          "detail": "Many clients start with a small paid test list, e.g. 25 leads. Treat this like the real job — double-check every email and every qualifying criterion.",
+          "estimated_time": "2–3 hours",
+          "difficulty": "moderate",
+          "outcome": "A high-accuracy test batch is what converts a trial into an ongoing contract."
+        },
+        {
+          "action": "Ask clarifying questions before starting a project",
+          "detail": "If criteria are vague ('find marketing people'), ask for specifics: exact titles, industries, company size, and geography. Guessing wastes hours.",
+          "estimated_time": "10–15 minutes",
+          "difficulty": "easy",
+          "outcome": "You avoid delivering a list that misses the mark and needs to be redone for free."
+        }
+      ],
+      "milestone": "First paid lead generation project completed"
+    },
+    {
+      "phase": 3,
+      "title": "Build a Repeatable Process",
+      "why": "Clients that see a consistent, accurate process become repeat clients. A documented workflow is what turns one-off gigs into steady monthly income.",
+      "duration": "Month 2",
+      "steps": [
+        {
+          "action": "Create a standard lead-sourcing checklist",
+          "detail": "Document your process step by step: search criteria, sourcing platform, email verification, quality check. Reuse it on every project.",
+          "estimated_time": "1 hour to build",
+          "difficulty": "moderate",
+          "outcome": "Every project follows the same accurate process, and onboarding new clients becomes faster."
+        },
+        {
+          "action": "Learn a lead gen automation tool",
+          "detail": "Tools like Apollo.io combine search, verified emails, and CRM export in one platform, speeding up list-building significantly.",
+          "estimated_time": "2–3 hours",
+          "difficulty": "moderate",
+          "outcome": "You cut list-building time in half, letting you take on more projects without more hours.",
+          "action_url": "https://www.apollo.io",
+          "action_label": "Try Apollo.io"
+        },
+        {
+          "action": "Ask satisfied clients for repeat work or referrals",
+          "detail": "After delivering a solid list, ask: 'Do you need another batch next month, or know anyone else who might?' Most repeat business comes from simply asking.",
+          "estimated_time": "10 minutes",
+          "difficulty": "easy",
+          "outcome": "You build a pipeline of recurring monthly work instead of one-off projects."
+        }
+      ],
+      "milestone": "First repeat client or referral secured"
+    },
+    {
+      "phase": 4,
+      "title": "Specialize and Scale",
+      "why": "Generic list builders are common and easy to replace. Specializing in a niche or offering full outreach (not just lists) is how lead gen specialists reach ₱50,000–₱70,000/month.",
+      "duration": "Month 3+",
+      "steps": [
+        {
+          "action": "Specialize in one industry or lead type",
+          "detail": "Pick a niche like SaaS, real estate, or e-commerce leads. Specialists who understand an industry's terminology find better leads faster and charge more.",
+          "estimated_time": "2–3 weeks of focused practice",
+          "difficulty": "moderate",
+          "outcome": "You become the go-to lead gen person for a specific type of client instead of a generalist competing on price."
+        },
+        {
+          "action": "Add cold outreach as a service",
+          "detail": "Beyond just building lists, offer to send the initial outreach emails or LinkedIn messages using tools like Instantly or LinkedIn automation (within platform limits).",
+          "estimated_time": "1–2 weeks to learn",
+          "difficulty": "challenging",
+          "outcome": "You move from a data-gathering role to a revenue-generating role, which commands significantly higher pay."
+        },
+        {
+          "action": "Take on 2–3 retainer clients instead of one-off projects",
+          "detail": "Pitch existing clients on a monthly retainer for ongoing lead lists instead of one-time batches. Predictable, recurring income beats one-off gigs.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "You reach stable ₱50,000+/month income instead of unpredictable project-based earnings."
+        }
+      ],
+      "milestone": "2+ retainer clients, earning ₱50,000+/month"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Manual List Building",
+      "detail": "Research and compile lists of qualified prospects using LinkedIn, Google, and company websites based on a client's criteria.",
+      "earning_range": { "min": 25000, "max": 40000 },
+      "best_for": "Beginners who are thorough, patient, and comfortable with repetitive research work",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Including leads that only partly match the criteria to hit a quota — clients notice immediately once they start outreach",
+      "time_to_first_income": "2–3 weeks"
+    },
+    {
+      "title": "Lead Gen with Email Verification",
+      "detail": "Combine list building with email verification tools to deliver ready-to-use, accurate contact lists for outreach campaigns.",
+      "earning_range": { "min": 30000, "max": 50000 },
+      "best_for": "People comfortable learning tools like Hunter.io or Apollo who want to offer a more complete service",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Skipping verification to save time — a high bounce rate can get a client's email domain flagged as spam",
+      "time_to_first_income": "3–4 weeks"
+    },
+    {
+      "title": "Lead Gen + Outreach Specialist",
+      "detail": "Build lists and also send the initial cold outreach on the client's behalf, tracking replies and booked calls.",
+      "earning_range": { "min": 45000, "max": 70000 },
+      "best_for": "Experienced lead gen freelancers comfortable with written persuasion and campaign tracking",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Sending generic, unpersonalized outreach messages at scale — response rates collapse and the client loses trust in the campaign",
+      "time_to_first_income": "4–8 weeks"
+    }
+  ],
+  "platforms": [
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "The most common platform for lead generation contracts, from one-off list projects to ongoing retainers.", "best_for": "Best for finding paid test projects" },
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Employers hire lead gen specialists as part-time or full-time remote roles, often long-term.", "best_for": "Best for stable, ongoing roles" },
+    { "name": "LinkedIn Sales Navigator", "url": "https://www.linkedin.com/sales/solutions/sales-navigator", "why": "The core sourcing tool for finding decision-makers by title, industry, and company size.", "best_for": "Best for sourcing quality B2B leads" },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search 'lead generation Philippines' or 'sales freelancers PH' — many agencies recruit directly in these groups.", "best_for": "Best for finding agency contract work" }
+  ],
+  "tools": [
+    { "name": "LinkedIn Sales Navigator", "url": "https://www.linkedin.com/sales/solutions/sales-navigator", "is_free": false, "purpose": "Advanced search filters to find decision-makers by role, industry, and company size.", "why_it_matters": "Most B2B lead gen briefs are impossible to fulfill accurately without Sales Navigator's filtering power.", "required": true, "when_to_start": "Week 1 — use the free trial to practice" },
+    { "name": "Hunter.io", "url": "https://hunter.io", "is_free": true, "purpose": "Finds and verifies business email addresses from a name and company domain.", "why_it_matters": "A list of names without verified emails is not usable for outreach — this is often the deliverable clients actually pay for.", "required": true, "when_to_start": "Week 1" },
+    { "name": "Apollo.io", "url": "https://www.apollo.io", "is_free": true, "purpose": "Combines prospect search, verified contact data, and CRM export in a single tool.", "why_it_matters": "Speeds up list-building significantly once you're handling multiple client projects at once.", "required": false, "when_to_start": "Month 2 — once you understand the manual process first" },
+    { "name": "Google Sheets", "url": "https://sheets.google.com", "is_free": true, "purpose": "Organize and deliver lead lists in the format clients expect, with columns for name, title, company, and email.", "why_it_matters": "A clean, organized spreadsheet is often the entire deliverable clients are paying for.", "required": true, "when_to_start": "Day 1" }
+  ],
+  "faq": [
+    { "question": "Do I need sales experience to do lead generation?", "answer": "No. You're finding and organizing prospects, not selling to them. Research skills and attention to detail matter far more than a sales background." },
+    { "question": "How many leads should I be able to find per hour?", "answer": "Beginners typically manage 5–10 fully verified leads per hour. With practice and tools like Apollo, experienced lead gen specialists reach 15–20 per hour." },
+    { "question": "What's the difference between lead generation and appointment setting?", "answer": "Lead generation finds and lists qualified prospects. Appointment setting goes a step further and books meetings with those prospects — it's a natural next skill to learn." },
+    { "question": "Do I need to pay for tools like Sales Navigator or Apollo?", "answer": "Not to start. Free trials and free tiers of Hunter.io, Apollo, and LinkedIn's basic search are enough to land your first few clients before investing in paid plans." },
+    { "question": "What happens if I deliver a list with bad leads?", "answer": "Own the mistake, ask for specific feedback on which leads didn't qualify, and redo them for free if it was your error. Most clients give one chance before ending the contract." }
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "slug": "ai-automation",
+  "skill": "AI Automation",
+  "tagline": "Build AI-powered workflows using ChatGPT, Claude, Make, Zapier, and n8n for businesses that want to save time.",
+  "category": "ai",
+  "difficulty": "advanced",
+  "earning_range": { "min": 40000, "max": 150000 },
+  "time_to_first_income": "1–3 months",
+  "prerequisites": ["Laptop or desktop computer", "Comfort with AI chat tools like ChatGPT or Claude", "Logical, step-by-step problem-solving mindset"],
+  "todays_mission": {
+    "tasks": [
+      "Create a free Make.com or Zapier account and explore pre-built templates",
+      "Build one simple automation, like auto-saving Gmail attachments to Google Drive",
+      "List 5 repetitive tasks in your own life or a business you know that could be automated"
+    ],
+    "estimated_time": "2 hours"
+  },
+  "summary": {
+    "description": "AI automation means connecting tools like ChatGPT, Claude, Gmail, spreadsheets, and CRMs together so repetitive tasks happen without a human doing them manually. Businesses pay well for this because a single automation can replace hours of weekly manual work. This is one of the newest, highest-paying skills available to Filipinos right now — the market is early, demand is growing fast, and few people have real hands-on experience yet.",
+    "who_is_this_for": [
+      "People who enjoy solving logical puzzles and mapping out step-by-step processes",
+      "Anyone already comfortable using ChatGPT or Claude regularly",
+      "Former VAs, marketers, or admins who understand what repetitive tasks actually look like inside a business",
+      "People willing to learn continuously, since the tools and best practices change monthly"
+    ],
+    "reality_check": {
+      "honest_assessment": "This is a genuinely technical skill disguised as a no-code one — the tools don't require programming, but the thinking does. Beginners building simple, single-step automations earn ₱30,000–₱50,000/month. Specialists who can design multi-step AI agent workflows for real business processes earn ₱80,000–₱150,000+/month. The demand is real, but so is the learning curve — expect your first month to be mostly learning, not earning.",
+      "what_beginners_underestimate": "How much of the job is understanding a client's actual business process before touching any tool. A technically perfect automation that automates the wrong thing wastes everyone's time. Also, AI outputs are not always reliable — automations need error-handling built in, not just a happy-path flow.",
+      "why_people_fail": "They build automations that look impressive in a demo but break the first time a client's real data doesn't match the expected format. Or they oversell what AI can reliably do, then a client's automation fails publicly and trust collapses.",
+      "how_to_avoid_failure": "Always map out the client's actual process on paper before opening any automation tool. Build in error notifications so you know immediately when something breaks, instead of the client finding out first. Under-promise on reliability and be upfront that AI-based steps need occasional human review."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Learn the Core Tools",
+      "why": "AI automation sits at the intersection of no-code platforms and AI tools. You need working fluency in both before you can build anything a client would actually pay for.",
+      "duration": "Month 1",
+      "steps": [
+        {
+          "action": "Learn Zapier or Make.com fundamentals",
+          "detail": "Complete their free beginner tutorials. Understand triggers, actions, and filters — the basic building blocks of every automation.",
+          "estimated_time": "6–8 hours",
+          "difficulty": "moderate",
+          "outcome": "You understand how two apps 'talk' to each other automatically, the foundation of all automation work.",
+          "action_url": "https://www.make.com",
+          "action_label": "Start learning Make.com"
+        },
+        {
+          "action": "Learn how to connect AI models (ChatGPT/Claude) into a workflow",
+          "detail": "Practice using an AI step inside Make or Zapier — for example, having ChatGPT summarize an incoming email before it's logged to a spreadsheet.",
+          "estimated_time": "4–6 hours",
+          "difficulty": "challenging",
+          "outcome": "You can combine traditional automation with AI reasoning, which is what separates AI automation from basic no-code work."
+        },
+        {
+          "action": "Build 3 simple automations for your own use",
+          "detail": "Automate something real in your own life: saving email attachments, summarizing daily news into a Notion doc, or auto-replying to common inquiries.",
+          "estimated_time": "4–6 hours",
+          "difficulty": "moderate",
+          "outcome": "You have working, testable proof of your skills instead of just tutorial knowledge."
+        }
+      ],
+      "milestone": "3 working personal automations built and tested"
+    },
+    {
+      "phase": 2,
+      "title": "Build a Portfolio Around Real Business Problems",
+      "why": "Clients don't hire based on knowing tools — they hire based on solving specific, recognizable business problems. A portfolio framed around outcomes gets hired faster than one framed around software.",
+      "duration": "Month 1–2",
+      "steps": [
+        {
+          "action": "Identify 3 common business automation use cases",
+          "detail": "Research common needs: auto-qualifying leads from a form, summarizing customer support tickets, or generating social media captions from a content calendar.",
+          "estimated_time": "2 hours",
+          "difficulty": "moderate",
+          "outcome": "You understand what businesses actually want automated, not just what's technically possible."
+        },
+        {
+          "action": "Build one complete demo workflow for each use case",
+          "detail": "Create a working, documented example for each of your 3 use cases, including a short explanation of the business problem it solves and the time it saves.",
+          "estimated_time": "8–10 hours",
+          "difficulty": "challenging",
+          "outcome": "You have 3 concrete, demonstrable portfolio pieces framed around business value."
+        },
+        {
+          "action": "Record a short video walkthrough of each automation",
+          "detail": "Use Loom to record a 2–3 minute explanation of the problem, the workflow, and the result for each demo. This becomes your pitch material.",
+          "estimated_time": "2 hours",
+          "difficulty": "moderate",
+          "outcome": "You have shareable proof of skill that's far more persuasive than a written description alone.",
+          "action_url": "https://www.loom.com",
+          "action_label": "Record with Loom"
+        }
+      ],
+      "milestone": "3 documented demo workflows with video walkthroughs"
+    },
+    {
+      "phase": 3,
+      "title": "Land Your First Client Project",
+      "why": "AI automation is new enough that most business owners don't know exactly what to ask for. Leading with a specific, understood problem beats a vague 'I do AI automation' pitch.",
+      "duration": "Month 2–3",
+      "steps": [
+        {
+          "action": "Apply to AI automation and no-code gigs on Upwork",
+          "detail": "Search 'Zapier expert,' 'Make.com automation,' or 'AI workflow.' Attach your demo videos directly in every proposal.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're applying with visible, working proof instead of just claims.",
+          "action_url": "https://www.upwork.com",
+          "action_label": "Find automation gigs"
+        },
+        {
+          "action": "Pitch small business owners directly with a specific problem",
+          "detail": "Message local or online business owners: 'I noticed you probably manually copy leads into a spreadsheet — I can automate that in a week.' Specificity gets replies.",
+          "estimated_time": "1–2 hours",
+          "difficulty": "moderate",
+          "outcome": "You open direct conversations with prospects who aren't actively browsing job boards."
+        },
+        {
+          "action": "Scope your first project tightly with a fixed deliverable",
+          "detail": "Define exactly what the automation will do, what triggers it, and what happens if a step fails. Avoid vague scopes like 'automate my business.'",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You avoid scope creep and deliver a clear, testable result on your first paid project."
+        }
+      ],
+      "milestone": "First paid automation project delivered and working reliably"
+    },
+    {
+      "phase": 4,
+      "title": "Specialize and Scale to Retainers",
+      "why": "One-off automation projects are inconsistent income. Businesses whose automations you maintain, monitor, and expand become long-term, high-value retainer clients.",
+      "duration": "Month 4+",
+      "steps": [
+        {
+          "action": "Offer ongoing monitoring and maintenance as a retainer",
+          "detail": "Automations break when connected apps change their systems. Pitch clients a monthly retainer (₱10,000–₱20,000) to monitor, fix, and improve their workflows.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "You convert one-time projects into predictable, recurring monthly income."
+        },
+        {
+          "action": "Learn AI agent frameworks and more advanced tools",
+          "detail": "Go beyond simple triggers into multi-step AI agents using tools like n8n, Claude's API, or custom GPTs that can make decisions across a workflow.",
+          "estimated_time": "3–4 weeks of focused learning",
+          "difficulty": "challenging",
+          "outcome": "You can build significantly more sophisticated systems, which commands premium project pricing.",
+          "resources": ["n8n official documentation and academy", "Anthropic's Claude API documentation"]
+        },
+        {
+          "action": "Specialize in one industry vertical",
+          "detail": "Pick a niche like real estate lead automation, e-commerce customer support, or content agency workflows. Specialists command higher rates than generalists.",
+          "estimated_time": "Ongoing",
+          "difficulty": "challenging",
+          "outcome": "You become the go-to automation specialist for a specific type of business, reaching ₱80,000–₱150,000+/month."
+        }
+      ],
+      "milestone": "3+ retainer clients and specialized niche, earning ₱80,000+/month"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Simple Workflow Automation",
+      "detail": "Build single-purpose automations connecting 2–3 apps, like auto-saving form responses to a spreadsheet or CRM.",
+      "earning_range": { "min": 40000, "max": 60000 },
+      "best_for": "Beginners comfortable with Zapier or Make.com's basic triggers and actions",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Not testing edge cases — an automation that works with perfect sample data often breaks on real, messy client data",
+      "time_to_first_income": "4–8 weeks"
+    },
+    {
+      "title": "AI-Powered Content & Support Workflows",
+      "detail": "Build workflows that use AI models to summarize, draft, or classify content — like auto-drafting customer support replies or social captions from a calendar.",
+      "earning_range": { "min": 60000, "max": 100000 },
+      "best_for": "People comfortable prompting AI models precisely and validating AI output for accuracy",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Trusting AI output without a human review step — unchecked AI errors sent directly to customers damage the client's brand",
+      "time_to_first_income": "2–3 months"
+    },
+    {
+      "title": "AI Agent & Full-Process Automation Specialist",
+      "detail": "Design multi-step AI agent systems that handle entire business processes, like lead qualification through to CRM update and follow-up scheduling.",
+      "earning_range": { "min": 90000, "max": 150000 },
+      "best_for": "Experienced automation builders comfortable with APIs, error handling, and mapping complex business logic",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Building an impressive but overly complex system the client's team can't understand or maintain without you",
+      "time_to_first_income": "2–4 months"
+    }
+  ],
+  "platforms": [
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "Growing demand for 'Zapier expert,' 'Make.com,' and 'AI automation' project-based work from international clients.", "best_for": "Best for finding your first paid project" },
+    { "name": "Make.com", "url": "https://www.make.com", "why": "A powerful, visual automation platform popular with agencies and technical businesses, often more flexible than Zapier.", "best_for": "Best for building more complex, multi-step workflows" },
+    { "name": "Zapier", "url": "https://zapier.com", "why": "The most widely recognized automation platform, with the largest library of app integrations and beginner-friendly templates.", "best_for": "Best for learning fundamentals and quick client wins" },
+    { "name": "LinkedIn", "url": "https://www.linkedin.com", "why": "Share your automation demo videos here — business owners and operations managers actively search for AI automation help.", "best_for": "Best for attracting higher-paying retainer clients" }
+  ],
+  "tools": [
+    { "name": "Make.com", "url": "https://www.make.com", "is_free": true, "purpose": "Visual automation builder for connecting apps and AI models into multi-step workflows.", "why_it_matters": "Its visual, flexible builder handles more complex logic than most competitors, which clients increasingly expect.", "required": true, "when_to_start": "Day 1" },
+    { "name": "Zapier", "url": "https://zapier.com", "is_free": true, "purpose": "The most widely used automation platform with the largest app integration library.", "why_it_matters": "Many clients already use Zapier, so fluency here is often a job requirement, not optional.", "required": true, "when_to_start": "Day 1" },
+    { "name": "n8n", "url": "https://n8n.io", "is_free": true, "purpose": "An open-source, more technical automation tool popular for complex or self-hosted AI agent workflows.", "why_it_matters": "As you specialize, n8n's flexibility lets you build systems Zapier and Make can't handle, unlocking premium projects.", "required": false, "when_to_start": "Month 3–4 — once comfortable with the basics" },
+    { "name": "Claude / ChatGPT API", "url": "https://www.anthropic.com/api", "is_free": false, "purpose": "Connects AI reasoning directly into automated workflows for tasks like summarizing, classifying, or drafting content.", "why_it_matters": "This is what turns a basic automation into an 'AI automation' — the AI step is usually the core value clients are paying for.", "required": true, "when_to_start": "Month 1 — once you're comfortable with basic automation logic" }
+  ],
+  "faq": [
+    { "question": "Do I need to know how to code for AI automation?", "answer": "Not to start. Tools like Zapier and Make.com are no-code. Some advanced work with APIs and n8n benefits from basic logical thinking similar to coding, but you don't need a programming background." },
+    { "question": "Is AI automation just prompt engineering?", "answer": "No. Prompting is one piece of it. AI automation also requires understanding business processes, connecting multiple apps, and building reliable error handling around the AI steps." },
+    { "question": "How reliable are AI-powered automations really?", "answer": "AI steps can occasionally produce unexpected output, so good automations include validation steps or human review for anything customer-facing. Being upfront about this with clients builds more trust than overselling perfection." },
+    { "question": "Is this too early or risky to try to earn from?", "answer": "The market is genuinely early, which means less competition than more established freelance skills, but also fewer standardized job postings — you'll pitch and educate clients more than apply to obvious job listings." },
+    { "question": "What's a realistic first project to build for a client?", "answer": "Something small and clearly bounded, like automating lead capture from a form into a CRM with an AI-drafted follow-up email. Avoid trying to automate an entire business process on your first project." }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "slug": "shopify",
+  "skill": "Shopify",
+  "tagline": "Manage Shopify stores — products, orders, and customer support — for online sellers worldwide.",
+  "category": "ecommerce",
+  "difficulty": "beginner",
+  "earning_range": { "min": 25000, "max": 80000 },
+  "time_to_first_income": "2–6 weeks",
+  "prerequisites": ["Laptop or desktop computer", "Comfort learning new software", "Basic attention to detail with product data"],
+  "todays_mission": {
+    "tasks": [
+      "Sign up for a free Shopify trial and explore the admin dashboard",
+      "Watch a beginner tutorial on adding products and processing orders",
+      "Apply to 5 Shopify VA or store manager job posts on OnlineJobsPH or Upwork"
+    ],
+    "estimated_time": "1.5 hours"
+  },
+  "summary": {
+    "description": "Shopify powers millions of online stores, and store owners constantly need help managing products, processing orders, handling customer questions, and keeping the store running smoothly. This role blends virtual assistant work with e-commerce know-how. You don't need to build stores from scratch to start — most beginner roles focus on daily store operations, which you can learn in days, not months.",
+    "who_is_this_for": [
+      "People who are organized and comfortable with repetitive, detail-focused tasks",
+      "Anyone who has shopped online enough to understand the customer's perspective",
+      "People interested in e-commerce who want to learn it from the inside while getting paid",
+      "Virtual assistants looking to specialize in a higher-paying niche"
+    ],
+    "reality_check": {
+      "honest_assessment": "Entry-level Shopify VA work managing orders and customer inquiries pays ₱20,000–₱30,000/month part-time. Store managers who handle full daily operations — inventory, fulfillment, customer support, and basic reporting — earn ₱40,000–₱60,000/month. Specialists who also handle store setup, apps, and page building reach ₱60,000–₱80,000/month.",
+      "what_beginners_underestimate": "How much of the job is customer service, not just backend admin. Angry customers about shipping delays or wrong orders are a daily reality, especially for dropshipping stores.",
+      "why_people_fail": "They make pricing or inventory errors that cost the store real money, like accidentally setting a product price to zero. Or they respond slowly to customer messages, hurting the store's reviews and reputation.",
+      "how_to_avoid_failure": "Double-check any pricing or inventory change before saving it — these mistakes are the fastest way to lose a client's trust. Set a target response time for customer messages (e.g. under 2 hours) and stick to it."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Learn the Shopify Basics",
+      "why": "Shopify's interface is beginner-friendly, but clients expect you to already know the core workflows — adding products, managing orders, and processing refunds — before you start.",
+      "duration": "Week 1",
+      "steps": [
+        {
+          "action": "Start a free Shopify trial and explore the dashboard",
+          "detail": "Click through every section: Products, Orders, Customers, Analytics, and Settings. Add 3 sample products to get comfortable with the product editor.",
+          "estimated_time": "1.5 hours",
+          "difficulty": "easy",
+          "outcome": "You understand the layout and core sections clients will expect you to navigate confidently.",
+          "action_url": "https://www.shopify.com",
+          "action_label": "Start Shopify free trial"
+        },
+        {
+          "action": "Practice the full order lifecycle",
+          "detail": "Simulate placing a test order, then practice fulfilling it, printing a shipping label, and issuing a partial refund in the test environment.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You know the exact steps for the most common daily task Shopify VAs handle.",
+          "resources": ["Search 'Shopify order fulfillment tutorial' on YouTube"]
+        },
+        {
+          "action": "Learn how customer support tickets are handled",
+          "detail": "Explore Shopify Inbox and understand how customer messages, order status questions, and refund requests typically flow.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You're prepared to handle the customer-facing side of the role, not just the backend admin."
+        }
+      ],
+      "milestone": "Comfortable navigating Shopify admin and handling a full test order"
+    },
+    {
+      "phase": 2,
+      "title": "Land Your First Store Management Role",
+      "why": "Shopify store owners are often overwhelmed and want someone who can start contributing immediately, even in an entry-level role.",
+      "duration": "Week 2–4",
+      "steps": [
+        {
+          "action": "Apply to 5–10 Shopify VA or store manager roles daily",
+          "detail": "Search 'Shopify VA,' 'Shopify assistant,' or 'e-commerce assistant' on OnlineJobsPH and Upwork. Mention your practice with the order lifecycle explicitly.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're in the running for multiple roles instead of waiting on one application.",
+          "action_url": "https://www.onlinejobs.ph",
+          "action_label": "Find Shopify jobs"
+        },
+        {
+          "action": "Highlight any customer service or admin experience",
+          "detail": "Even non-Shopify experience — retail, VA work, or managing a Facebook shop — is relevant. Frame it around organization and customer communication.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "Your application stands out even without direct Shopify job history."
+        },
+        {
+          "action": "Ask about the store's tools and apps before starting",
+          "detail": "Find out which apps the store uses for shipping, reviews, or email marketing so you're not learning everything on day one under pressure.",
+          "estimated_time": "15 minutes",
+          "difficulty": "easy",
+          "outcome": "You start the role with a clear picture of the store's actual setup instead of guessing."
+        }
+      ],
+      "milestone": "First Shopify store management role secured"
+    },
+    {
+      "phase": 3,
+      "title": "Master Daily Store Operations",
+      "why": "Store owners judge you almost entirely on reliability during the first month — orders processed accurately and customers responded to quickly.",
+      "duration": "Month 1",
+      "steps": [
+        {
+          "action": "Process orders daily without backlog",
+          "detail": "Check and fulfill new orders at least once, ideally twice, a day. A growing backlog of unprocessed orders is the fastest way to lose a client's trust.",
+          "estimated_time": "30–60 minutes/day",
+          "difficulty": "moderate",
+          "outcome": "Orders ship on time, keeping customer reviews and the store's reputation healthy."
+        },
+        {
+          "action": "Respond to customer messages within a set time window",
+          "detail": "Aim to respond to every customer inquiry within 2–4 hours during business hours. Use saved replies for common questions like shipping times or returns.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "Customer satisfaction stays high, which directly protects the store's ratings and repeat business."
+        },
+        {
+          "action": "Track and flag low inventory before it runs out",
+          "detail": "Check stock levels weekly and alert the owner before a popular product sells out completely, which causes lost sales and refund requests.",
+          "estimated_time": "20 minutes/week",
+          "difficulty": "easy",
+          "outcome": "You prevent lost sales and show the owner you're thinking proactively about their business."
+        }
+      ],
+      "milestone": "First full month of order processing and customer support with zero major errors"
+    },
+    {
+      "phase": 4,
+      "title": "Grow Into Store Strategy and Scale",
+      "why": "VAs who only follow instructions stay at entry-level pay. Those who suggest improvements and take on more responsibility become indispensable and earn more.",
+      "duration": "Month 2+",
+      "steps": [
+        {
+          "action": "Learn basic product page optimization",
+          "detail": "Understand what makes a product page convert: clear photos, benefit-driven descriptions, and customer reviews. Suggest improvements to underperforming pages.",
+          "estimated_time": "2–3 hours to learn",
+          "difficulty": "moderate",
+          "outcome": "You add value beyond daily admin tasks, which justifies asking for a raise."
+        },
+        {
+          "action": "Learn a few key Shopify apps",
+          "detail": "Get familiar with common apps for reviews (Judge.me), email marketing (Klaviyo), or upsells (ReConvert) that most stores use.",
+          "estimated_time": "1–2 weeks of gradual learning",
+          "difficulty": "moderate",
+          "outcome": "You can manage more of the store's operations independently, increasing your value to the client.",
+          "resources": ["Judge.me setup guide", "Klaviyo for beginners tutorial"]
+        },
+        {
+          "action": "Take on a second store or ask for a raise",
+          "detail": "Once your first store's daily tasks take under 3 hours, either take on a second client or ask your current one for a rate increase based on your track record.",
+          "estimated_time": "Ongoing",
+          "difficulty": "challenging",
+          "outcome": "You reach ₱50,000–₱80,000/month by managing multiple stores or a higher-paying specialized role."
+        }
+      ],
+      "milestone": "Managing store strategy tasks or 2+ stores, earning ₱50,000+/month"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Order Processing & Customer Support VA",
+      "detail": "Handle daily order fulfillment, refunds, and customer messages for one or more Shopify stores.",
+      "earning_range": { "min": 25000, "max": 40000 },
+      "best_for": "Beginners comfortable with repetitive, detail-focused daily tasks and customer communication",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Letting orders pile up during busy periods instead of processing them daily — delayed shipping directly hurts customer trust",
+      "time_to_first_income": "2–3 weeks"
+    },
+    {
+      "title": "Shopify Store Manager",
+      "detail": "Oversee full daily operations — inventory, fulfillment, customer support, and basic reporting — for one store, acting as the owner's right hand.",
+      "earning_range": { "min": 40000, "max": 60000 },
+      "best_for": "Experienced Shopify VAs who've proven reliability and want more ownership over a single store",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Making pricing or inventory changes without double-checking — a misplaced zero in a price field can cost the store real revenue in minutes",
+      "time_to_first_income": "4–8 weeks"
+    },
+    {
+      "title": "Shopify Setup & App Specialist",
+      "detail": "Build new stores from scratch or configure themes, apps, and product pages for stores launching or rebranding.",
+      "earning_range": { "min": 45000, "max": 80000 },
+      "best_for": "People comfortable learning Shopify's theme editor and multiple third-party apps in depth",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Installing too many apps at once without testing conflicts — this can slow the store down and hurt conversion rates",
+      "time_to_first_income": "6–10 weeks"
+    }
+  ],
+  "platforms": [
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Common source of long-term, part-time and full-time Shopify VA and store manager roles.", "best_for": "Best for fastest first client" },
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "International Shopify store owners hire hourly VAs and specialists, especially for growing dropshipping or DTC brands.", "best_for": "Best for finding specialized project work" },
+    { "name": "Shopify Partner Directory", "url": "https://www.shopify.com/partners", "why": "Connects freelancers with Shopify merchants actively looking for help with their stores.", "best_for": "Best for building direct Shopify client relationships" },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search 'Shopify VA Philippines' or 'e-commerce assistants PH' — store owners recruit directly here.", "best_for": "Best for beginners without a resume yet" }
+  ],
+  "tools": [
+    { "name": "Shopify Admin", "url": "https://www.shopify.com", "is_free": false, "purpose": "The core dashboard for managing products, orders, customers, and store settings.", "why_it_matters": "Every task in this role happens inside Shopify's admin — fluency here is the entire job.", "required": true, "when_to_start": "Day 1 — practice with a free trial" },
+    { "name": "Shopify Inbox", "url": "https://www.shopify.com/inbox", "is_free": true, "purpose": "Handles live chat and customer messages directly connected to store and order data.", "why_it_matters": "Fast, informed customer responses are one of the biggest drivers of good store reviews.", "required": true, "when_to_start": "Week 1" },
+    { "name": "Klaviyo", "url": "https://www.klaviyo.com", "is_free": true, "purpose": "Email marketing platform many Shopify stores use for abandoned cart emails and promotions.", "why_it_matters": "Stores that use Klaviyo expect you to at least monitor or send campaigns as part of store management.", "required": false, "when_to_start": "Month 2 — once comfortable with core operations" },
+    { "name": "Google Sheets", "url": "https://sheets.google.com", "is_free": true, "purpose": "Track inventory levels, recurring issues, and daily task checklists.", "why_it_matters": "A simple tracked sheet prevents stockouts and missed tasks that directly cost the store money.", "required": true, "when_to_start": "Day 1" }
+  ],
+  "faq": [
+    { "question": "Do I need to know how to build a Shopify store from scratch?", "answer": "Not for most entry-level roles. Most Shopify VA and store manager jobs focus on daily operations — orders, inventory, and customer support — not building the store itself." },
+    { "question": "What if I make a mistake with pricing or inventory?", "answer": "Tell the owner immediately and fix it. Most owners understand mistakes happen; what damages trust is hiding an error or letting it sit unresolved." },
+    { "question": "Do Shopify stores pay for experience with dropshipping specifically?", "answer": "It helps but isn't required. Many stores are dropshipping-based, so understanding supplier delays and tracking issues is useful, but the core skills — order processing and customer service — transfer to any store type." },
+    { "question": "How is this different from general virtual assistant work?", "answer": "It's a specialization within VA work focused specifically on e-commerce operations. It typically pays more than general VA work because it requires platform-specific knowledge." },
+    { "question": "Can I manage more than one Shopify store at a time?", "answer": "Yes, once your process for one store takes under 2–3 hours a day. Many experienced Shopify VAs manage 2–3 smaller stores simultaneously for higher combined income." }
+  ]
+}

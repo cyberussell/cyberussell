@@ -17,6 +17,12 @@ const CATEGORY_LABEL: Record<string, string> = {
   content: "Content",
   trades: "Trades",
   admin: "Admin",
+  marketing: "Marketing",
+  finance: "Finance",
+  sales: "Sales",
+  tech: "Tech",
+  ecommerce: "Ecommerce",
+  ai: "AI",
 };
 
 export default function CareersIndex() {

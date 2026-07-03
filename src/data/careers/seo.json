@@ -1,0 +1,209 @@
+{
+  "slug": "seo",
+  "skill": "SEO",
+  "tagline": "Help websites rank higher on Google through content, technical fixes, and link building.",
+  "category": "marketing",
+  "difficulty": "intermediate",
+  "earning_range": { "min": 30000, "max": 100000 },
+  "time_to_first_income": "1–3 months",
+  "prerequisites": ["Laptop or desktop computer", "Comfort learning new software and reading data", "Basic understanding of how Google search works"],
+  "todays_mission": {
+    "tasks": [
+      "Watch a beginner 'what is SEO' video and write down 5 terms you didn't know",
+      "Create a free Google Search Console account for a personal or practice website",
+      "Run a free SEO audit on 2 small business websites using Ubersuggest or a similar free tool"
+    ],
+    "estimated_time": "2 hours"
+  },
+  "summary": {
+    "description": "SEO (Search Engine Optimization) means improving a website so it ranks higher on Google for the terms its customers search for. Businesses pay for this because higher rankings mean free, ongoing traffic instead of paying for every click through ads. SEO combines research, writing, and technical checklist work — you don't need to be a programmer, but you do need patience, since results take months, not days.",
+    "who_is_this_for": [
+      "People who enjoy research, data, and figuring out patterns",
+      "Writers who want to add a technical, higher-paying skill to their toolkit",
+      "Detail-oriented people comfortable following checklists and tracking metrics",
+      "Anyone patient enough to work toward results that take months to show"
+    ],
+    "reality_check": {
+      "honest_assessment": "SEO is one of the higher-paying beginner-accessible skills, but it's also one of the slowest to show results — expect 3–6 months before a client sees meaningful ranking improvements. Beginners doing keyword research and content optimization earn ₱25,000–₱40,000/month. Specialists who understand technical SEO and can show ranking results earn ₱60,000–₱100,000/month.",
+      "what_beginners_underestimate": "How much SEO is about patience and iteration, not a one-time fix. Clients often expect results in weeks and get frustrated — managing that expectation is as important as the actual SEO work.",
+      "why_people_fail": "They chase outdated tactics like keyword stuffing or buying spammy backlinks, which can actually get a client's site penalized by Google. Or they can't explain their work in simple terms, so clients don't understand what they're paying for and cancel.",
+      "how_to_avoid_failure": "Focus on the fundamentals that never go out of style: helpful content, fast page speed, and legitimate backlinks. Set expectations upfront — tell clients SEO is a 3–6 month investment, not a quick fix, before they sign up."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Learn SEO Fundamentals",
+      "why": "SEO has a real learning curve. Understanding how Google actually ranks pages prevents you from wasting time on outdated or harmful tactics beginners often fall for.",
+      "duration": "Month 1",
+      "steps": [
+        {
+          "action": "Complete a free foundational SEO course",
+          "detail": "Google's own SEO Starter Guide and free courses from Ahrefs or Semrush Academy cover the fundamentals: keywords, on-page SEO, and technical basics.",
+          "estimated_time": "6–8 hours",
+          "difficulty": "moderate",
+          "outcome": "You understand the core mechanics of how Google decides what to rank, not just isolated tactics.",
+          "action_url": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide",
+          "action_label": "Read Google's SEO Starter Guide"
+        },
+        {
+          "action": "Set up Google Search Console and Google Analytics on a practice site",
+          "detail": "Use a personal blog, a friend's small business site, or a free WordPress.com site to practice connecting and reading these free Google tools.",
+          "estimated_time": "1–2 hours",
+          "difficulty": "moderate",
+          "outcome": "You're comfortable navigating the exact dashboards clients will expect you to report from.",
+          "action_url": "https://search.google.com/search-console",
+          "action_label": "Set up Search Console"
+        },
+        {
+          "action": "Practice keyword research for a made-up business",
+          "detail": "Pick a niche (e.g. 'home bakery in Cebu') and use a free tool to find 10 realistic keywords people would actually search for.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You understand how to find what real customers search for, not just guess at keywords."
+        }
+      ],
+      "milestone": "SEO fundamentals course completed, practice tools set up"
+    },
+    {
+      "phase": 2,
+      "title": "Build a Proof-of-Work Project",
+      "why": "SEO results take months, so clients want to see any evidence of real skill before hiring — even a small before/after on your own or a friend's site.",
+      "duration": "Month 1–2",
+      "steps": [
+        {
+          "action": "Run a full SEO audit on one real small business site",
+          "detail": "Offer a free audit to a local business. Check page speed, missing meta titles, broken links, and mobile-friendliness. Document everything in a simple report.",
+          "estimated_time": "3–4 hours",
+          "difficulty": "moderate",
+          "outcome": "You have a real audit report to show as a work sample, plus a potential first client."
+        },
+        {
+          "action": "Optimize 3–5 existing pages or blog posts",
+          "detail": "Using your keyword research, rewrite titles, headers, and meta descriptions on a practice or volunteer site to target specific search terms.",
+          "estimated_time": "3–4 hours",
+          "difficulty": "moderate",
+          "outcome": "You have hands-on optimization experience and before/after screenshots for your portfolio."
+        },
+        {
+          "action": "Create a simple SEO audit template",
+          "detail": "Turn your audit process into a reusable checklist or slide template you can send to future prospects as a lead magnet.",
+          "estimated_time": "1 hour",
+          "difficulty": "easy",
+          "outcome": "You have a repeatable, professional-looking deliverable ready before you even pitch your first paying client."
+        }
+      ],
+      "milestone": "First real audit and optimization project completed"
+    },
+    {
+      "phase": 3,
+      "title": "Land Your First Client",
+      "why": "SEO clients are often skeptical because of past experience with scammy 'guaranteed #1 ranking' agencies. Honesty about the timeline builds more trust than big promises.",
+      "duration": "Month 2–3",
+      "steps": [
+        {
+          "action": "Apply to SEO roles and offer audits directly to local businesses",
+          "detail": "Search 'SEO specialist' or 'SEO content writer' on Upwork and OnlineJobsPH. In parallel, offer free audits directly to small businesses with weak Google presence.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're building two paths to your first client instead of relying on one.",
+          "action_url": "https://www.upwork.com",
+          "action_label": "Find SEO jobs"
+        },
+        {
+          "action": "Set realistic expectations before signing a client",
+          "detail": "Explain clearly: 'SEO usually shows meaningful results in 3–6 months, not weeks. I'll track and report progress monthly.' This filters out clients expecting instant magic.",
+          "estimated_time": "20 minutes",
+          "difficulty": "moderate",
+          "outcome": "You avoid clients who will churn angrily in month one when rankings haven't moved yet."
+        },
+        {
+          "action": "Deliver your first monthly SEO report",
+          "detail": "Track keyword positions, organic traffic, and completed tasks. Even small early wins (fixed broken links, faster load time) build client confidence.",
+          "estimated_time": "1–2 hours",
+          "difficulty": "moderate",
+          "outcome": "The client sees concrete progress and understands what they're paying for."
+        }
+      ],
+      "milestone": "First paying SEO client onboarded and first report delivered"
+    },
+    {
+      "phase": 4,
+      "title": "Specialize and Scale",
+      "why": "Generalist SEO freelancers compete on price. Specialists in technical SEO, local SEO, or a specific industry become the go-to expert clients seek out and pay premium rates for.",
+      "duration": "Month 4+",
+      "steps": [
+        {
+          "action": "Specialize in local SEO or technical SEO",
+          "detail": "Local SEO (Google Business Profile optimization) is in high demand from small businesses. Technical SEO (site speed, structured data) pays more but requires deeper learning.",
+          "estimated_time": "2–4 weeks of focused study",
+          "difficulty": "challenging",
+          "outcome": "You differentiate yourself from generic 'SEO writers' and can charge specialist rates."
+        },
+        {
+          "action": "Build a simple case study from your first client's results",
+          "detail": "Once you have 3+ months of ranking improvements, turn it into a one-page case study: starting point, actions taken, results.",
+          "estimated_time": "2 hours",
+          "difficulty": "moderate",
+          "outcome": "You have real proof of results, which is the single strongest sales tool in SEO."
+        },
+        {
+          "action": "Take on 2–3 retainer clients on a monthly SEO package",
+          "detail": "SEO is naturally recurring work. Pitch new clients a monthly retainer (₱15,000–₱30,000/client) instead of one-time projects.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "You build stable, recurring monthly income instead of chasing one-off gigs."
+        }
+      ],
+      "milestone": "2+ retainer clients, earning ₱60,000+/month"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "SEO Content Writer",
+      "detail": "Write blog posts and web pages optimized around specific keywords to help a site rank and attract organic traffic.",
+      "earning_range": { "min": 25000, "max": 45000 },
+      "best_for": "Writers who want to add a higher-paying, in-demand skill on top of existing writing ability",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Stuffing keywords unnaturally into content — modern SEO rewards genuinely helpful writing, not keyword density",
+      "time_to_first_income": "3–6 weeks"
+    },
+    {
+      "title": "On-Page & Local SEO Specialist",
+      "detail": "Optimize existing website pages, meta tags, and Google Business Profiles to improve local search visibility for small businesses.",
+      "earning_range": { "min": 30000, "max": 55000 },
+      "best_for": "Detail-oriented people who enjoy checklist-driven work and want fast, visible small business results",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Ignoring Google Business Profile optimization — for local businesses, this often matters more than the website itself",
+      "time_to_first_income": "4–8 weeks"
+    },
+    {
+      "title": "Technical SEO & Full-Service Specialist",
+      "detail": "Handle site speed, structured data, crawlability, and full strategy for mid-sized businesses, often on a monthly retainer.",
+      "earning_range": { "min": 50000, "max": 100000 },
+      "best_for": "Experienced SEO practitioners comfortable with more technical concepts and reading analytics data deeply",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Recommending technical changes without testing their impact first — a bad technical change can hurt rankings instead of helping",
+      "time_to_first_income": "2–4 months"
+    }
+  ],
+  "platforms": [
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "The most common platform for SEO freelance contracts, from content writing to full audits.", "best_for": "Best for finding your first paid project" },
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Agencies and businesses hire in-house SEO specialists remotely, often long-term and full-time.", "best_for": "Best for stable, salaried roles" },
+    { "name": "Google Search Console", "url": "https://search.google.com/search-console", "why": "Free tool showing exactly how a site performs in Google search — the core data source for every SEO decision.", "best_for": "Best for tracking and reporting real results" },
+    { "name": "LinkedIn", "url": "https://www.linkedin.com", "why": "Share your audits and case studies here — business owners and marketing managers actively search for SEO help.", "best_for": "Best for attracting higher-paying retainer clients" }
+  ],
+  "tools": [
+    { "name": "Google Search Console", "url": "https://search.google.com/search-console", "is_free": true, "purpose": "Shows exactly which keywords a site ranks for, click-through rates, and technical errors Google finds.", "why_it_matters": "This is the single most important free tool in SEO — it's the direct source of truth from Google itself.", "required": true, "when_to_start": "Day 1" },
+    { "name": "Ubersuggest", "url": "https://neilpatel.com/ubersuggest", "is_free": true, "purpose": "Free keyword research and basic site audit tool for beginners.", "why_it_matters": "Paid tools like Ahrefs and Semrush are powerful but expensive. Ubersuggest gets you started without upfront cost.", "required": true, "when_to_start": "Week 1" },
+    { "name": "Ahrefs / Semrush", "url": "https://ahrefs.com", "is_free": false, "purpose": "Industry-standard tools for deep keyword research, competitor analysis, and backlink tracking.", "why_it_matters": "Most agencies and serious clients expect familiarity with at least one of these — free trials are enough to learn the interface.", "required": false, "when_to_start": "Month 2 — once you have a paying client to justify the cost" },
+    { "name": "PageSpeed Insights", "url": "https://pagespeed.web.dev", "is_free": true, "purpose": "Tests how fast a website loads and flags specific technical issues slowing it down.", "why_it_matters": "Page speed is a confirmed Google ranking factor and one of the easiest wins to show a client early on.", "required": true, "when_to_start": "Week 1" }
+  ],
+  "faq": [
+    { "question": "How long does SEO actually take to show results?", "answer": "Realistically 3–6 months for meaningful ranking improvements, sometimes longer for competitive keywords. Anyone promising results in days or weeks is likely using tactics that could get a site penalized." },
+    { "question": "Do I need to know how to code?", "answer": "No, not for most SEO roles. Basic HTML understanding helps with technical SEO, but content-focused and local SEO roles need no coding at all." },
+    { "question": "What's the difference between SEO and paid ads?", "answer": "SEO earns free, ongoing traffic over time by improving a site's ranking. Ads buy immediate visibility but stop working the moment you stop paying. Businesses often want both, but SEO is the lower-cost, longer-term skill to learn first." },
+    { "question": "Can I specialize in SEO without being a writer?", "answer": "Yes. Technical SEO and local SEO focus more on data, tools, and checklists than writing. Content SEO is just one path among several." },
+    { "question": "How do I prove SEO results to a skeptical client?", "answer": "Track and screenshot keyword rankings and organic traffic in Google Search Console monthly. Concrete before/after numbers are far more convincing than explanations." }
+  ]
+}

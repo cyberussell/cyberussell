@@ -1,0 +1,207 @@
+{
+  "slug": "appointment-setting",
+  "skill": "Appointment Setting",
+  "tagline": "Schedule qualified meetings for businesses and sales professionals who need their calendars filled.",
+  "category": "sales",
+  "difficulty": "beginner",
+  "earning_range": { "min": 25000, "max": 80000 },
+  "time_to_first_income": "2–4 weeks",
+  "prerequisites": ["Laptop or desktop computer", "Confident spoken or written English", "Comfort reaching out to strangers"],
+  "todays_mission": {
+    "tasks": [
+      "Write and practice a 30-second cold outreach script out loud 5 times",
+      "Set up a free Calendly account and connect it to a test calendar",
+      "Apply to 5 appointment setter job posts on OnlineJobsPH or Upwork"
+    ],
+    "estimated_time": "1.5 hours"
+  },
+  "summary": {
+    "description": "Appointment setters reach out to potential customers — by phone, email, or LinkedIn — and book them onto a sales call with the actual salesperson. It's one of the highest-paying entry-level remote roles because it directly drives revenue for a business. You don't need to close deals, just get the right person on a calendar. What matters most is persistence, a thick skin for rejection, and clear communication.",
+    "who_is_this_for": [
+      "People who aren't afraid of rejection and can move on quickly after a 'no'",
+      "Confident communicators, whether by phone, chat, or LinkedIn message",
+      "People who enjoy talking to strangers and building quick rapport",
+      "Anyone who wants a role directly tied to commissions and performance pay"
+    ],
+    "reality_check": {
+      "honest_assessment": "Base pay for appointment setters is ₱20,000–₱30,000/month, often with commission of ₱300–₱1,000 per qualified appointment booked. Top performers who consistently book 15–20 quality appointments a month earn ₱50,000–₱80,000. Expect a high rejection rate — even skilled setters hear 'no' or get ignored 80–90% of the time.",
+      "what_beginners_underestimate": "How emotionally draining constant rejection can be in the first few weeks. Also, 'qualified' appointments matter more than volume — booking meetings with people who aren't a real fit gets you fired faster than low numbers.",
+      "why_people_fail": "They take rejection personally and lose confidence after a bad week. Or they book any appointment just to hit a number, flooding the sales team's calendar with unqualified leads who never show up or buy.",
+      "how_to_avoid_failure": "Track your numbers daily — calls made, replies, appointments booked — and treat rejection as data, not a verdict on you. Always confirm a prospect actually fits the client's ideal customer profile before booking them."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Build Your Script and Setup",
+      "why": "Appointment setting lives and dies on the first 10 seconds of an outreach message or call. A tested script beats improvising every time, especially for beginners.",
+      "duration": "Week 1",
+      "steps": [
+        {
+          "action": "Write and rehearse a cold outreach script",
+          "detail": "Draft a 30-second phone script or 3-sentence message covering: who you are, why you're reaching out, and a specific ask ('Are you open to a 15-minute call next week?'). Say it out loud until it sounds natural, not scripted.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You have a tested opener that doesn't sound robotic when you're actually on a call or typing a message."
+        },
+        {
+          "action": "Set up a free Calendly account",
+          "detail": "Connect it to a test calendar and create a sample 'Discovery Call' booking link. This is the tool you'll use to let prospects pick a time instantly.",
+          "estimated_time": "20 minutes",
+          "difficulty": "easy",
+          "outcome": "You're ready to send a booking link the moment a prospect says yes, instead of the back-and-forth of manual scheduling.",
+          "action_url": "https://calendly.com",
+          "action_label": "Set up Calendly"
+        },
+        {
+          "action": "Practice handling 3 common objections",
+          "detail": "Write responses to 'I'm not interested,' 'Send me an email instead,' and 'What's this about?' Practice saying them confidently without sounding pushy.",
+          "estimated_time": "45 minutes",
+          "difficulty": "moderate",
+          "outcome": "You don't freeze or lose the conversation the first time a prospect pushes back."
+        }
+      ],
+      "milestone": "Script tested, Calendly set up, objections practiced"
+    },
+    {
+      "phase": 2,
+      "title": "Land Your First Role",
+      "why": "Appointment setting jobs move fast — companies need setters who can start immediately and prove themselves within the first week.",
+      "duration": "Week 2–3",
+      "steps": [
+        {
+          "action": "Apply to 5–10 appointment setter roles daily",
+          "detail": "Search 'appointment setter,' 'sales development representative,' or 'SDR' on Upwork and OnlineJobsPH. Mention your practiced script in your application.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're in the running for multiple roles instead of waiting on one response.",
+          "action_url": "https://www.onlinejobs.ph",
+          "action_label": "Find appointment setter jobs"
+        },
+        {
+          "action": "Prepare for a role-play interview",
+          "detail": "Many appointment setting interviews include a live role-play — the interviewer pretends to be a skeptical prospect. Practice this scenario beforehand.",
+          "estimated_time": "30 minutes",
+          "difficulty": "moderate",
+          "outcome": "You perform confidently in the interview instead of being caught off guard by the format."
+        },
+        {
+          "action": "Ask the client for their ideal customer profile before starting",
+          "detail": "Get specifics: job title, company size, industry, and pain points of who counts as a 'qualified' lead. This prevents wasted outreach later.",
+          "estimated_time": "15 minutes",
+          "difficulty": "easy",
+          "outcome": "You know exactly who to target from day one instead of guessing and booking the wrong people."
+        }
+      ],
+      "milestone": "First appointment setting role secured"
+    },
+    {
+      "phase": 3,
+      "title": "Book Your First Real Appointments",
+      "why": "Your first two weeks on the job determine whether the client keeps you. Consistent activity and quality bookings, not just volume, build that trust.",
+      "duration": "Month 1",
+      "steps": [
+        {
+          "action": "Set a daily outreach quota and hit it every day",
+          "detail": "Agree on a number with your client — for example, 30 calls or 50 messages a day. Consistency matters more than any single day's results.",
+          "estimated_time": "3–4 hours/day",
+          "difficulty": "moderate",
+          "outcome": "You build the volume needed to hit your first bookings within your first 1–2 weeks."
+        },
+        {
+          "action": "Follow up at least 3 times before giving up on a lead",
+          "detail": "Most bookings come from the 3rd–5th touchpoint, not the first message. Space follow-ups 2–3 days apart with a slightly different angle each time.",
+          "estimated_time": "Ongoing",
+          "difficulty": "moderate",
+          "outcome": "You capture appointments that a one-and-done setter would have missed entirely."
+        },
+        {
+          "action": "Confirm every appointment 24 hours before it happens",
+          "detail": "Send a reminder message the day before each booked call. No-shows make you look bad even when the booking itself was good.",
+          "estimated_time": "10 minutes/appointment",
+          "difficulty": "easy",
+          "outcome": "Your show-up rate stays high, which is one of the top metrics clients judge you on."
+        }
+      ],
+      "milestone": "5+ qualified appointments booked and attended"
+    },
+    {
+      "phase": 4,
+      "title": "Increase Your Booking Rate and Pay",
+      "why": "Appointment setters who consistently improve their conversion rate are the ones who get raises, bonuses, and referred to other clients.",
+      "duration": "Month 2+",
+      "steps": [
+        {
+          "action": "Track your funnel numbers weekly",
+          "detail": "Log outreach sent, replies, and appointments booked. If your reply rate is low, the script needs work. If replies are high but bookings are low, your ask needs work.",
+          "estimated_time": "20 minutes/week",
+          "difficulty": "moderate",
+          "outcome": "You know exactly which part of your process to improve instead of guessing."
+        },
+        {
+          "action": "Negotiate a performance-based pay structure",
+          "detail": "Once you've proven consistent bookings, ask for a bonus or commission per qualified appointment on top of your base pay.",
+          "estimated_time": "15 minutes",
+          "difficulty": "challenging",
+          "outcome": "Your income scales with your performance instead of staying capped at a flat monthly rate."
+        },
+        {
+          "action": "Take on a second client if working part-time",
+          "detail": "Once your process is efficient, a second client's outreach can often be layered into the same daily block of time.",
+          "estimated_time": "1–2 weeks to onboard",
+          "difficulty": "moderate",
+          "outcome": "You increase your monthly income by adding a second income stream using the same skillset."
+        }
+      ],
+      "milestone": "Earning ₱50,000+/month with commission-based bonuses"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Cold Calling Appointment Setter",
+      "detail": "Call prospects directly to book them onto a discovery or sales call for the client's team.",
+      "earning_range": { "min": 25000, "max": 45000 },
+      "best_for": "People confident on the phone who can handle a high volume of rejection without losing motivation",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Rushing the pitch instead of listening — prospects can tell when you're just reading a script at them",
+      "time_to_first_income": "2–4 weeks"
+    },
+    {
+      "title": "LinkedIn / Email Appointment Setter",
+      "detail": "Reach prospects through written outreach on LinkedIn or email instead of cold calls, booking them through a scheduling link.",
+      "earning_range": { "min": 25000, "max": 50000 },
+      "best_for": "People who write clearly and prefer async outreach over live phone conversations",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Sending the same generic template to everyone — personalized first lines significantly increase reply rates",
+      "time_to_first_income": "2–4 weeks"
+    },
+    {
+      "title": "Commission-Based Setter",
+      "detail": "Work on a lower base salary with per-appointment or per-show commission, common with sales agencies and high-ticket coaches.",
+      "earning_range": { "min": 30000, "max": 80000 },
+      "best_for": "Experienced setters confident in their ability to consistently book qualified, high-show-rate appointments",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Booking unqualified leads just to earn commission — this destroys trust with the client fast once the sales team notices",
+      "time_to_first_income": "4–8 weeks"
+    }
+  ],
+  "platforms": [
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "International sales teams and agencies frequently hire appointment setters hourly or with commission structures.", "best_for": "Best for finding commission-based roles" },
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "Common source of full-time appointment setter and SDR roles hired directly by overseas businesses.", "best_for": "Best for stable, salaried roles" },
+    { "name": "LinkedIn", "url": "https://www.linkedin.com", "why": "Both the sourcing ground for prospects and a place to find agencies hiring setters directly.", "best_for": "Best for LinkedIn-based outreach roles" },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search 'appointment setters PH' or 'sales freelancers Philippines' — agencies actively recruit here.", "best_for": "Best for finding agency-based commission work" }
+  ],
+  "tools": [
+    { "name": "Calendly", "url": "https://calendly.com", "is_free": true, "purpose": "Lets prospects instantly book a call on the salesperson's calendar without back-and-forth messaging.", "why_it_matters": "A booking link removes friction at the exact moment a prospect says yes — delays lose bookings.", "required": true, "when_to_start": "Day 1" },
+    { "name": "Google Voice / Aircall", "url": "https://voice.google.com", "is_free": true, "purpose": "Makes calls to international numbers without needing a local SIM for every country you contact.", "why_it_matters": "Clients expect you to call US, UK, or Australian numbers reliably — a proper calling tool is essential.", "required": true, "when_to_start": "Week 1 — before your first calling role" },
+    { "name": "LinkedIn Sales Navigator", "url": "https://www.linkedin.com/sales/solutions/sales-navigator", "is_free": false, "purpose": "Finds and filters the exact type of prospect a client wants you to reach out to.", "why_it_matters": "Reaching the wrong person wastes both your time and the client's trust in your targeting.", "required": false, "when_to_start": "Month 1 — once you're doing LinkedIn-based outreach" },
+    { "name": "Google Sheets", "url": "https://sheets.google.com", "is_free": true, "purpose": "Track outreach attempts, replies, and booked appointments in an organized log.", "why_it_matters": "Clients ask for weekly numbers — a tracked sheet is proof of your activity and results.", "required": true, "when_to_start": "Day 1" }
+  ],
+  "faq": [
+    { "question": "Is appointment setting the same as telemarketing?", "answer": "Not quite. Telemarketing usually tries to sell directly on the call. Appointment setting only aims to book a follow-up meeting with a decision-maker — the actual selling happens later." },
+    { "question": "How do I handle constant rejection without burning out?", "answer": "Track your numbers instead of your feelings. If you know 1 in 10 calls leads somewhere, a 'no' just means you're one call closer to a 'yes' — not a reflection of your worth." },
+    { "question": "Do I need a landline or local number to call internationally?", "answer": "No. Tools like Google Voice or Aircall let you call US and international numbers over the internet, and many clients provide a dialer themselves." },
+    { "question": "What counts as a 'qualified' appointment?", "answer": "It varies by client, but generally means the prospect matches the ideal customer profile (right role, company size, budget) and genuinely agreed to the call, not just avoided saying no." },
+    { "question": "Can I do this job by chatting or emailing only, without calling?", "answer": "Yes. Many clients specifically hire LinkedIn or email-based setters if they don't want cold calling. Just clarify the channel expectations before accepting a role." }
+  ]
+}

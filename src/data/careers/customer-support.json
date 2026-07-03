@@ -1,0 +1,219 @@
+{
+  "slug": "customer-support",
+  "skill": "Customer Support",
+  "tagline": "Get paid to help customers online — chat, email, or phone support for international companies.",
+  "category": "admin",
+  "difficulty": "beginner",
+  "earning_range": { "min": 20000, "max": 60000 },
+  "time_to_first_income": "1–3 weeks",
+  "prerequisites": ["Laptop or desktop computer", "Stable internet connection", "Clear written and spoken English"],
+  "todays_mission": {
+    "tasks": [
+      "Create your OnlineJobsPH profile highlighting any customer-facing experience",
+      "Take a free typing speed test and note your words per minute",
+      "Apply to 5 customer support job posts on OnlineJobsPH or Indeed"
+    ],
+    "estimated_time": "1.5 hours"
+  },
+  "summary": {
+    "description": "Customer support is one of the fastest ways for Filipinos to start earning online. International companies — SaaS startups, e-commerce brands, and BPOs — hire remote agents to answer chats, emails, and calls. You don't need a call center background. You need patience, clear communication, and the willingness to follow a script until you don't need one anymore.",
+    "who_is_this_for": [
+      "People who are patient and don't take rude customers personally",
+      "Clear English communicators, written or spoken",
+      "Anyone who has worked retail, sales, or a call center before",
+      "Night owls who can handle US or Australian shift schedules"
+    ],
+    "reality_check": {
+      "honest_assessment": "Entry-level chat and email support pays ₱18,000–₱25,000/month full-time. Voice support with strong spoken English pays more, ₱25,000–₱40,000. The work is repetitive — you'll answer the same 10 questions hundreds of times. People who last treat that repetition as something to get faster at, not a punishment.",
+      "what_beginners_underestimate": "How draining angry customers can be, especially on voice support. Also, most roles require night shift to match US or UK hours — your sleep schedule becomes the job's biggest hidden cost.",
+      "why_people_fail": "They panic on a difficult call and freeze instead of following the escalation process. Or they take customer anger personally and burn out within a month. Or they show up late to shifts, which gets you removed from accounts fast.",
+      "how_to_avoid_failure": "Practice the 'acknowledge, apologize, act' script before you start: acknowledge the issue, apologize for the inconvenience without admitting fault, then act by offering the next step. It's about the problem, not you."
+    }
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Get Ready",
+      "why": "Companies filter out unprepared applicants in seconds. A tested typing speed, a clear profile, and a quiet workspace put you ahead of most first-time applicants.",
+      "duration": "Week 1",
+      "steps": [
+        {
+          "action": "Test your typing speed and English fluency",
+          "detail": "Take a free typing test and aim for 40+ WPM. Record yourself answering 'Tell me about a time you helped someone' in English, then listen back for clarity.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "You know your baseline and exactly what to improve before applying.",
+          "action_url": "https://www.typingtest.com",
+          "action_label": "Take a typing test"
+        },
+        {
+          "action": "Create your OnlineJobsPH and Indeed profiles",
+          "detail": "List any experience where you talked to customers — retail, sari-sari store, group admin, freelance selling. Use a clear headline: 'Customer Support Specialist — Chat & Email.'",
+          "estimated_time": "45 minutes",
+          "difficulty": "easy",
+          "outcome": "Your profile is visible to companies actively hiring remote support agents.",
+          "action_url": "https://www.onlinejobs.ph",
+          "action_label": "Create OnlineJobsPH profile"
+        },
+        {
+          "action": "Set up a quiet, well-lit workspace",
+          "detail": "Background noise and bad lighting cost you interviews. A corner with a plain wall behind you and stable internet is enough — you don't need a studio.",
+          "estimated_time": "30 minutes",
+          "difficulty": "easy",
+          "outcome": "You look and sound professional on video interviews and voice calls."
+        }
+      ],
+      "milestone": "Profiles complete and workspace ready"
+    },
+    {
+      "phase": 2,
+      "title": "Apply and Practice",
+      "why": "Getting hired is a numbers game combined with preparation. Applicants who practice real scenarios before interviews consistently beat applicants who wing it.",
+      "duration": "Week 2",
+      "steps": [
+        {
+          "action": "Apply to 5–10 support jobs per day",
+          "detail": "Search 'customer support,' 'chat support,' or 'customer service representative' on OnlineJobsPH and Indeed. Prioritize listings that mention training provided.",
+          "estimated_time": "1 hour/day",
+          "difficulty": "moderate",
+          "outcome": "You're in the pipeline for multiple roles instead of waiting on a single application.",
+          "action_url": "https://www.onlinejobs.ph",
+          "action_label": "Find support jobs"
+        },
+        {
+          "action": "Practice common support scenarios",
+          "detail": "Write out responses to an angry customer, a refund request, and a confused first-time user. Use the acknowledge-apologize-act structure for each.",
+          "estimated_time": "1 hour",
+          "difficulty": "moderate",
+          "outcome": "You walk into interviews and first shifts with ready-made responses instead of improvising under pressure.",
+          "resources": ["Search 'customer service scripts' on YouTube", "Zendesk's free customer service templates"]
+        },
+        {
+          "action": "Do 2 mock interviews with a friend or on camera",
+          "detail": "Practice answering 'How do you handle an angry customer?' and 'Why do you want this job?' out loud, not just in your head.",
+          "estimated_time": "45 minutes",
+          "difficulty": "moderate",
+          "outcome": "You sound confident and prepared instead of hesitant during the real interview."
+        }
+      ],
+      "milestone": "First interview scheduled"
+    },
+    {
+      "phase": 3,
+      "title": "Pass Training and Your First Shifts",
+      "why": "The first weeks decide whether you're kept long-term. Companies watch how seriously you take training and how quickly you handle live tickets accurately.",
+      "duration": "Month 1",
+      "steps": [
+        {
+          "action": "Take every training seriously, even unpaid onboarding",
+          "detail": "Many companies run 3–5 days of low-paid or unpaid training before you go live. Show up on time, take notes, and ask questions instead of guessing.",
+          "estimated_time": "3–5 days",
+          "difficulty": "moderate",
+          "outcome": "You pass certification and go live with real confidence in the product and process."
+        },
+        {
+          "action": "Use canned responses but personalize them",
+          "detail": "Most helpdesk tools like Zendesk, Intercom, and Freshdesk have saved replies. Use them as a base, then add the customer's name and specific detail so it doesn't sound robotic.",
+          "estimated_time": "Ongoing",
+          "difficulty": "easy",
+          "outcome": "You respond faster without sounding like a bot, which keeps your resolution ratings high."
+        },
+        {
+          "action": "Track your metrics from day one",
+          "detail": "Note your response time, resolution rate, and customer satisfaction score if visible. These numbers are what get you a raise or promotion.",
+          "estimated_time": "10 minutes/day",
+          "difficulty": "easy",
+          "outcome": "You have proof of your performance ready when it's time to ask for more pay."
+        }
+      ],
+      "milestone": "Passed training, handling live tickets or calls independently"
+    },
+    {
+      "phase": 4,
+      "title": "Specialize and Earn More",
+      "why": "General support agents are easy to replace. Specializing in a harder skill — voice, technical, or billing — is how you break past the entry-level pay ceiling.",
+      "duration": "Month 2+",
+      "steps": [
+        {
+          "action": "Move from chat/email to voice support if comfortable",
+          "detail": "Voice roles pay ₱5,000–₱10,000/month more than chat-only. If your spoken English is strong, apply for voice or hybrid roles.",
+          "estimated_time": "1–2 weeks to transition",
+          "difficulty": "moderate",
+          "outcome": "You unlock a higher pay tier using the same core skills you already built."
+        },
+        {
+          "action": "Specialize in technical or billing support",
+          "detail": "Agents who can troubleshoot software issues or resolve billing disputes are harder to replace and paid more than general agents.",
+          "estimated_time": "2–4 weeks of learning the product deeply",
+          "difficulty": "challenging",
+          "outcome": "You become the agent escalations go to, which leads to raises or team lead roles."
+        },
+        {
+          "action": "Apply to premium remote-first companies directly",
+          "detail": "SaaS startups and e-commerce brands often hire remote support agents directly at higher pay than traditional BPOs. Check their careers pages.",
+          "estimated_time": "2–3 hours",
+          "difficulty": "challenging",
+          "outcome": "You access ₱35,000–₱60,000/month roles without BPO-style graveyard shift requirements."
+        }
+      ],
+      "milestone": "Earning ₱30,000+/month in a support specialization"
+    }
+  ],
+  "income_paths": [
+    {
+      "title": "Chat & Email Support",
+      "detail": "Answer customer questions through live chat and email tools like Zendesk or Intercom. The most common entry point into remote support work.",
+      "earning_range": { "min": 20000, "max": 35000 },
+      "best_for": "People who type fast and communicate clearly in writing, and prefer not to be on live calls",
+      "first_client_difficulty": "easy",
+      "typical_beginner_mistake": "Copy-pasting the same canned response without reading the full customer message — customers notice and get angrier",
+      "time_to_first_income": "1–3 weeks"
+    },
+    {
+      "title": "Voice / Phone Support",
+      "detail": "Handle live phone calls for billing, technical issues, or general inquiries. Requires a stable connection and a quiet room.",
+      "earning_range": { "min": 25000, "max": 45000 },
+      "best_for": "People with clear spoken English who can stay calm on live calls",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Sounding scripted or robotic — customers respond better to a natural, conversational tone even when following a script",
+      "time_to_first_income": "2–4 weeks"
+    },
+    {
+      "title": "Technical Support Specialist",
+      "detail": "Troubleshoot software or product issues for SaaS companies. Requires learning the product deeply but pays well above general support.",
+      "earning_range": { "min": 30000, "max": 55000 },
+      "best_for": "People who enjoy troubleshooting and don't mind learning a software product in depth",
+      "first_client_difficulty": "moderate",
+      "typical_beginner_mistake": "Guessing an answer instead of saying 'let me check that for you' — wrong technical answers destroy customer trust fast",
+      "time_to_first_income": "3–6 weeks"
+    },
+    {
+      "title": "Freelance Support Agent",
+      "detail": "Take on hourly support contracts for e-commerce and SaaS brands through Upwork or direct outreach, managing multiple small clients.",
+      "earning_range": { "min": 20000, "max": 60000 },
+      "best_for": "People who want flexible hours and are comfortable managing several small clients instead of one employer",
+      "first_client_difficulty": "hard",
+      "typical_beginner_mistake": "Underpricing your hourly rate to win the first gig — it's hard to raise rates later with the same client",
+      "time_to_first_income": "3–8 weeks"
+    }
+  ],
+  "platforms": [
+    { "name": "OnlineJobsPH", "url": "https://www.onlinejobs.ph", "why": "The most common source of full-time remote support roles for Filipinos. Employers here often provide training.", "best_for": "Best for fastest first client" },
+    { "name": "Indeed Philippines", "url": "https://ph.indeed.com", "why": "Local and international companies post support roles directly, including remote-friendly BPOs.", "best_for": "Best for structured, established companies" },
+    { "name": "Upwork", "url": "https://www.upwork.com", "why": "International clients hire freelance support agents hourly, especially e-commerce and SaaS brands.", "best_for": "Best for flexible freelance work" },
+    { "name": "Facebook Groups", "url": "https://www.facebook.com/groups", "why": "Search 'Work From Home Philippines' or 'Pinoy Virtual Assistants' — employers post openings directly, often hiring faster than job boards.", "best_for": "Best for beginners without a resume yet" }
+  ],
+  "tools": [
+    { "name": "Zendesk", "url": "https://www.zendesk.com", "is_free": false, "purpose": "Industry-standard helpdesk software used to manage chats, emails, and support tickets.", "why_it_matters": "Most employers assume you already know how a helpdesk works. A free trial account lets you practice before you're hired.", "required": true, "when_to_start": "Week 1 — before your first interview" },
+    { "name": "Google Workspace", "url": "https://workspace.google.com", "is_free": true, "purpose": "Email and document tools you'll use daily for internal notes and communication.", "why_it_matters": "Clients expect fluency in Gmail, Docs, and Sheets from day one on the job.", "required": true, "when_to_start": "Day 1" },
+    { "name": "Grammarly", "url": "https://www.grammarly.com", "is_free": true, "purpose": "Checks grammar and tone in real time while you type responses.", "why_it_matters": "One typo in a customer email looks careless. Grammarly catches mistakes before you hit send.", "required": false, "when_to_start": "Week 1 — install before applying" },
+    { "name": "Loom", "url": "https://www.loom.com", "is_free": true, "purpose": "Record short video walkthroughs for async communication or interview follow-ups.", "why_it_matters": "Some employers ask for a video introduction. Loom makes this quick and professional.", "required": false, "when_to_start": "When applying — for video-based applications" }
+  ],
+  "faq": [
+    { "question": "Do I need call center experience to get hired?", "answer": "No. Many companies train from scratch, especially for chat and email roles. Clear communication and reliability matter more than a BPO background." },
+    { "question": "What if my English isn't perfect?", "answer": "Written English matters more than accent for chat/email roles. For voice roles, clarity matters more than a 'neutral' accent — most international clients just need to understand you." },
+    { "question": "Will I need to work night shift?", "answer": "Often yes, if your client is US-based. Australian and UK clients sometimes allow PH daytime hours. Always confirm shift hours before accepting a job." },
+    { "question": "Can I do this on a phone instead of a laptop?", "answer": "Not realistically. You'll often switch between a helpdesk tool, internal chat, and sometimes a CRM at the same time — that requires a laptop or desktop." },
+    { "question": "How do I move up from entry-level pay?", "answer": "Track your metrics, ask for specialized training in billing or technical support, and apply for team lead roles after 6+ months. Specialization is the fastest way to a raise." }
+  ]
+}

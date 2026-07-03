@@ -3,7 +3,23 @@ import { NextRequest, NextResponse } from "next/server";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const AVAILABLE_BLUEPRINTS = ["writing", "canva", "cooking", "video-editing", "virtual-assistant"];
+const AVAILABLE_BLUEPRINTS = [
+  "writing",
+  "canva",
+  "cooking",
+  "video-editing",
+  "virtual-assistant",
+  "customer-support",
+  "social-media-management",
+  "bookkeeping",
+  "lead-generation",
+  "appointment-setting",
+  "seo",
+  "wordpress",
+  "shopify",
+  "graphic-design",
+  "ai-automation",
+];
 
 export async function POST(req: NextRequest) {
   try {
