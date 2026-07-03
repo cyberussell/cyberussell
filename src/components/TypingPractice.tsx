@@ -240,34 +240,70 @@ function getKeyboardBadge(wpm: number, accuracy: number): BadgeInfo | null {
   return null;
 }
 
+// ─── Theme tokens ──────────────────────────────────────────────────────────────
+
+function tt(isDark: boolean) {
+  return {
+    card: isDark ? "bg-[#18181F] border-white/[0.08]" : "bg-white border-gray-200",
+    cardAlt: isDark ? "bg-[#111118] border-white/[0.06]" : "bg-gray-50 border-gray-200",
+    subtle: isDark ? "bg-white/[0.03] border-white/[0.07]" : "bg-gray-50 border-gray-200",
+    subtle2: isDark ? "bg-white/[0.02] border-white/[0.06]" : "bg-white border-gray-200",
+    divider: isDark ? "bg-white/[0.06]" : "bg-gray-200",
+    divider2: isDark ? "bg-white/10" : "bg-gray-200",
+    ringTrack: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)",
+    text: isDark ? "text-white" : "text-gray-900",
+    dim1: isDark ? "text-white/70" : "text-gray-600",
+    dim2: isDark ? "text-white/50" : "text-gray-500",
+    dim3: isDark ? "text-white/45" : "text-gray-500",
+    dim4: isDark ? "text-white/40" : "text-gray-500",
+    dim5: isDark ? "text-white/35" : "text-gray-400",
+    dim6: isDark ? "text-white/30" : "text-gray-400",
+    dim7: isDark ? "text-white/25" : "text-gray-400",
+    dim8: isDark ? "text-white/20" : "text-gray-300",
+    keyDefault: isDark ? "bg-white/[0.04] border-white/[0.08] text-white/50" : "bg-gray-100 border-gray-300 text-gray-500",
+    ghostBtn: isDark ? "bg-white/[0.06] border-white/[0.1] text-white/70 hover:text-white" : "bg-gray-100 border-gray-300 text-gray-600 hover:text-gray-900",
+    kbd: isDark ? "bg-white/[0.06] border-white/[0.12] text-white/50" : "bg-gray-100 border-gray-300 text-gray-500",
+    dropdownBtn: isDark ? "bg-white/[0.04] border-white/[0.08] text-white/60 hover:text-white" : "bg-gray-100 border-gray-300 text-gray-600 hover:text-gray-900",
+    dropdownPanel: isDark ? "bg-[#18181F] border-white/[0.1]" : "bg-white border-gray-200",
+    dropdownOption: isDark ? "text-white/50 hover:text-white hover:bg-white/[0.04]" : "text-gray-500 hover:text-gray-900 hover:bg-gray-50",
+    weakKeyPill: isDark ? "text-red-400 bg-red-500/10 border-red-500/20" : "text-red-600 bg-red-50 border-red-200",
+    aiOverlay: isDark ? "bg-[#0F0F1A]/60" : "bg-white/70",
+    passage: isDark ? "bg-[#18181F] border-white/[0.08]" : "bg-[#FAFAFA] border-gray-200",
+    passageFadeFrom: isDark ? "#18181F" : "#FAFAFA",
+    keyboardCard: isDark ? "bg-[#111118] border-white/[0.06]" : "bg-gray-50 border-gray-200",
+  };
+}
+
 // ─── Stat Card ─────────────────────────────────────────────────────────────────
 
-function Stat({ icon: Icon, label, value, color, sub }: {
-  icon: React.ElementType; label: string; value: string | number; color: string; sub?: string;
+function Stat({ icon: Icon, label, value, color, sub, isDark }: {
+  icon: React.ElementType; label: string; value: string | number; color: string; sub?: string; isDark: boolean;
 }) {
+  const t = tt(isDark);
   return (
-    <div className="flex flex-col items-center gap-1 bg-white/[0.03] border border-white/[0.07] rounded-2xl px-4 py-3 min-w-[76px]">
+    <div className={`flex flex-col items-center gap-1 border rounded-2xl px-4 py-3 min-w-[76px] ${t.subtle}`}>
       <Icon size={14} style={{ color }} strokeWidth={1.8} />
-      <span className="font-sans text-[20px] font-bold text-white leading-none">{value}</span>
-      <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/30 uppercase tracking-[1.5px] text-center">{label}</span>
-      {sub && <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/20">{sub}</span>}
+      <span className={`font-sans text-[20px] font-bold leading-none ${t.text}`}>{value}</span>
+      <span className={`font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-[1.5px] text-center ${t.dim6}`}>{label}</span>
+      {sub && <span className={`font-[family-name:var(--font-inter)] text-[10px] ${t.dim8}`}>{sub}</span>}
     </div>
   );
 }
 
 // ─── Heatmap Keyboard ─────────────────────────────────────────────────────────
 
-function HeatmapKeyboard({ mistakeMap }: { mistakeMap: Record<string, number> }) {
+function HeatmapKeyboard({ mistakeMap, isDark }: { mistakeMap: Record<string, number>; isDark: boolean }) {
   const max = Math.max(...Object.values(mistakeMap), 1);
+  const a = isDark ? [0.12, 0.3, 0.12, 0.3, 0.12, 0.3, 0.18, 0.45] : [0.14, 0.4, 0.16, 0.4, 0.18, 0.45, 0.22, 0.6];
 
   function keyColor(key: string): { bg: string; border: string; text: string } {
     const k = key.toLowerCase();
     const count = mistakeMap[k] ?? 0;
-    if (count === 0) return { bg: "rgba(52,211,153,0.12)", border: "rgba(52,211,153,0.3)", text: "#34D399" };
+    if (count === 0) return { bg: `rgba(52,211,153,${a[0]})`, border: `rgba(52,211,153,${a[1]})`, text: isDark ? "#34D399" : "#22A876" };
     const ratio = count / max;
-    if (ratio < 0.35) return { bg: "rgba(251,191,36,0.12)", border: "rgba(251,191,36,0.3)", text: "#FBB724" };
-    if (ratio < 0.65) return { bg: "rgba(249,115,22,0.12)", border: "rgba(249,115,22,0.3)", text: "#F97316" };
-    return { bg: "rgba(239,68,68,0.18)", border: "rgba(239,68,68,0.45)", text: "#EF4444" };
+    if (ratio < 0.35) return { bg: `rgba(251,191,36,${a[2]})`, border: `rgba(251,191,36,${a[3]})`, text: isDark ? "#FBB724" : "#B8860B" };
+    if (ratio < 0.65) return { bg: `rgba(249,115,22,${a[4]})`, border: `rgba(249,115,22,${a[5]})`, text: isDark ? "#F97316" : "#C2500F" };
+    return { bg: `rgba(239,68,68,${a[6]})`, border: `rgba(239,68,68,${a[7]})`, text: isDark ? "#EF4444" : "#DC2626" };
   }
 
   return (
@@ -301,12 +337,13 @@ function HeatmapKeyboard({ mistakeMap }: { mistakeMap: Record<string, number> })
 function ResultsScreen({
   wpm, accuracy, consistency, elapsed, typed, passage,
   mistakeMap, errorCount, correctedCount,
-  onReset, onRetry,
+  onReset, onRetry, isDark,
 }: {
   wpm: number; accuracy: number; consistency: number; elapsed: number; typed: string; passage: string;
   mistakeMap: Record<string, number>; errorCount: number; correctedCount: number;
-  onReset: () => void; onRetry: () => void;
+  onReset: () => void; onRetry: () => void; isDark: boolean;
 }) {
+  const t = tt(isDark);
   const pb = getPersonalBest();
   const isNewPB = wpm > pb && wpm > 0;
   const displayPB = Math.max(pb, wpm);
@@ -342,15 +379,15 @@ function ResultsScreen({
       <div className={badge ? "grid grid-cols-2 gap-4 items-stretch" : ""}>
 
       {/* ── Hero: Badge + Score + Key metrics + Recommendation ── */}
-      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-6">
+      <div className={`border rounded-2xl p-6 ${t.card}`}>
 
         {/* Badge pill */}
         {badge ? (
           <div className="flex items-center gap-2 mb-5">
             <span className="text-2xl">{badge.emoji}</span>
             <div>
-              <p className="font-sans text-[17px] font-bold text-white leading-tight">{badge.name}</p>
-              <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/35">{badge.percentile}</p>
+              <p className={`font-sans text-[17px] font-bold leading-tight ${t.text}`}>{badge.name}</p>
+              <p className={`font-[family-name:var(--font-inter)] text-[12px] ${t.dim5}`}>{badge.percentile}</p>
             </div>
             {isNewPB && (
               <span className="ml-auto font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-2.5 py-1 shrink-0">
@@ -360,7 +397,7 @@ function ResultsScreen({
           </div>
         ) : (
           <div className="flex items-center justify-between mb-5">
-            <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/30">No badge yet — reach 30 WPM to earn Bronze</p>
+            <p className={`font-[family-name:var(--font-inter)] text-[12px] ${t.dim6}`}>No badge yet — reach 30 WPM to earn Bronze</p>
             {isNewPB && (
               <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#FFD23F] bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-2.5 py-1">
                 ⭐ New PB
@@ -373,37 +410,37 @@ function ResultsScreen({
         <div className="flex items-center gap-5 mb-5">
           <div className="relative w-20 h-20 shrink-0 flex items-center justify-center">
             <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 80 80">
-              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+              <circle cx="40" cy="40" r="34" fill="none" stroke={t.ringTrack} strokeWidth="5" />
               <circle cx="40" cy="40" r="34" fill="none" stroke="#FFD23F" strokeWidth="5"
                 strokeDasharray={`${2 * Math.PI * 34}`}
                 strokeDashoffset={`${2 * Math.PI * 34 * (1 - total / 100)}`}
                 strokeLinecap="round" />
             </svg>
             <div className="text-center">
-              <p className="font-sans text-[22px] font-bold text-white leading-none">{total}</p>
-              <p className="font-[family-name:var(--font-inter)] text-[9px] text-white/30">/ 100</p>
+              <p className={`font-sans text-[22px] font-bold leading-none ${t.text}`}>{total}</p>
+              <p className={`font-[family-name:var(--font-inter)] text-[9px] ${t.dim6}`}>/ 100</p>
             </div>
           </div>
           <div className="flex-1">
             <div className="flex items-baseline gap-2 mb-0.5">
-              <span className="font-sans text-[32px] font-bold text-white leading-none">{grade}</span>
+              <span className={`font-sans text-[32px] font-bold leading-none ${t.text}`}>{grade}</span>
               <span className="text-2xl">{emoji}</span>
-              <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/30 ml-1">Overall Score</span>
+              <span className={`font-[family-name:var(--font-inter)] text-[12px] ml-1 ${t.dim6}`}>Overall Score</span>
             </div>
             <div className="flex gap-4 mt-2">
               <div>
                 <p className="font-sans text-[22px] font-bold text-[#FFD23F] leading-none">{wpm}</p>
-                <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/30 uppercase tracking-[1px]">WPM</p>
+                <p className={`font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-[1px] ${t.dim6}`}>WPM</p>
               </div>
-              <div className="w-px bg-white/10" />
+              <div className={`w-px ${t.divider2}`} />
               <div>
                 <p className="font-sans text-[22px] font-bold text-[#34D399] leading-none">{accuracy}%</p>
-                <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/30 uppercase tracking-[1px]">Accuracy</p>
+                <p className={`font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-[1px] ${t.dim6}`}>Accuracy</p>
               </div>
-              <div className="w-px bg-white/10" />
+              <div className={`w-px ${t.divider2}`} />
               <div>
-                <p className="font-sans text-[22px] font-bold text-white/70 leading-none">{formatTime(elapsed)}</p>
-                <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/30 uppercase tracking-[1px]">Time</p>
+                <p className={`font-sans text-[22px] font-bold leading-none ${t.dim1}`}>{formatTime(elapsed)}</p>
+                <p className={`font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-[1px] ${t.dim6}`}>Time</p>
               </div>
             </div>
           </div>
@@ -412,22 +449,22 @@ function ResultsScreen({
       </div>
 
       {/* ── Score Breakdown ── */}
-      <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
-        <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-4">Score Breakdown</p>
+      <div className={`border rounded-2xl p-5 ${t.card}`}>
+        <p className={`font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[2px] mb-4 ${t.dim7}`}>Score Breakdown</p>
         <div className="space-y-3">
           {scoreBreakdown.map(({ label, weight, value, max, color, display }) => (
             <div key={label}>
               <div className="flex justify-between items-center mb-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white">{label}</span>
-                  <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/25">{weight}</span>
+                  <span className={`font-[family-name:var(--font-inter)] text-[13px] font-bold ${t.text}`}>{label}</span>
+                  <span className={`font-[family-name:var(--font-inter)] text-[10px] ${t.dim7}`}>{weight}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">{display}</span>
+                  <span className={`font-[family-name:var(--font-inter)] text-[12px] ${t.dim4}`}>{display}</span>
                   <span className="font-sans text-[14px] font-bold" style={{ color }}>{value}/{max}</span>
                 </div>
               </div>
-              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+              <div className={`h-1.5 rounded-full overflow-hidden ${t.divider}`}>
                 <div className="h-full rounded-full" style={{ width: `${(value / max) * 100}%`, backgroundColor: color }} />
               </div>
             </div>
@@ -439,51 +476,51 @@ function ResultsScreen({
 
       {/* ── Badge Card: readiness + careers + next milestone ── */}
       {badge && (
-        <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-5">
-          <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-3">What {badge.name} Means</p>
+        <div className={`border rounded-2xl p-5 ${t.card}`}>
+          <p className={`font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[2px] mb-3 ${t.dim7}`}>What {badge.name} Means</p>
 
           {/* Readiness */}
           <div className="flex items-start gap-3 mb-4">
             <span className="text-xl mt-0.5">{readiness.ready ? "✅" : "🎯"}</span>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <p className="font-sans text-[15px] font-bold text-white">{readiness.heading}</p>
+                <p className={`font-sans text-[15px] font-bold ${t.text}`}>{readiness.heading}</p>
                 <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[1.5px] px-2 py-0.5 rounded-full border"
                   style={{ color: readiness.color, borderColor: `${readiness.color}40`, backgroundColor: `${readiness.color}12` }}>
                   {readiness.ready ? "Job Ready" : "In Progress"}
                 </span>
               </div>
-              <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/45 leading-[1.6] mb-1">{readiness.subheading}</p>
+              <p className={`font-[family-name:var(--font-inter)] text-[12px] leading-[1.6] mb-1 ${t.dim3}`}>{readiness.subheading}</p>
               <p className="font-[family-name:var(--font-inter)] text-[13px] font-bold leading-[1.6]" style={{ color: readiness.color }}>{readiness.goal}</p>
             </div>
           </div>
 
-          <div className="h-px bg-white/[0.06] mb-4" />
+          <div className={`h-px mb-4 ${t.divider}`} />
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/35 mb-2 uppercase tracking-[1px]">Recommended Careers</p>
+              <p className={`font-[family-name:var(--font-inter)] text-[11px] mb-2 uppercase tracking-[1px] ${t.dim5}`}>Recommended Careers</p>
               <div className="flex flex-col gap-1.5">
                 {badge.careers.map((c) => (
                   <div key={c} className="flex items-center gap-2">
                     <span className="w-1 h-1 rounded-full bg-[#FFD23F] shrink-0" />
-                    <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/70">{c}</span>
+                    <span className={`font-[family-name:var(--font-inter)] text-[13px] ${t.dim1}`}>{c}</span>
                   </div>
                 ))}
               </div>
             </div>
             {badge.nextName && (
-              <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3">
-                <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/35 mb-2 uppercase tracking-[1px]">Next Milestone</p>
-                <p className="font-sans text-[15px] font-bold text-white mb-2">{badge.nextEmoji} {badge.nextName}</p>
+              <div className={`border rounded-xl p-3 ${t.subtle}`}>
+                <p className={`font-[family-name:var(--font-inter)] text-[11px] mb-2 uppercase tracking-[1px] ${t.dim5}`}>Next Milestone</p>
+                <p className={`font-sans text-[15px] font-bold mb-2 ${t.text}`}>{badge.nextEmoji} {badge.nextName}</p>
                 <div className="flex flex-col gap-1">
                   {badge.nextWpm && (
-                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">
+                    <p className={`font-[family-name:var(--font-inter)] text-[12px] ${t.dim2}`}>
                       <span className="text-[#FFD23F] font-bold">{badge.nextWpm} WPM</span> required
                     </p>
                   )}
                   {badge.nextAcc && (
-                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">
+                    <p className={`font-[family-name:var(--font-inter)] text-[12px] ${t.dim2}`}>
                       <span className="text-[#34D399] font-bold">{badge.nextAcc}% accuracy</span> required
                     </p>
                   )}
@@ -496,40 +533,40 @@ function ResultsScreen({
 
       {/* ── Typing Heatmap ── */}
       <div>
-        <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[2px] mb-3">Typing Heatmap</p>
-        <div className="bg-[#111118] border border-white/[0.06] rounded-2xl p-4">
+        <p className={`font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[2px] mb-3 ${t.dim7}`}>Typing Heatmap</p>
+        <div className={`border rounded-2xl p-4 ${t.cardAlt}`}>
           <div className="grid grid-cols-2 gap-3 mb-4">
             {[
               { label: "Left Hand", value: leftAcc, color: "#60A5FA" },
               { label: "Right Hand", value: rightAcc, color: "#34D399" },
             ].map(({ label, value, color }) => (
-              <div key={label} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3">
+              <div key={label} className={`border rounded-xl p-3 ${t.subtle2}`}>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/50">{label}</span>
+                  <span className={`font-[family-name:var(--font-inter)] text-[12px] ${t.dim2}`}>{label}</span>
                   <span className="font-sans text-[16px] font-bold" style={{ color }}>{value}%</span>
                 </div>
-                <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className={`h-1.5 rounded-full overflow-hidden ${t.divider}`}>
                   <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: color }} />
                 </div>
               </div>
             ))}
           </div>
-          <HeatmapKeyboard mistakeMap={mistakeMap} />
+          <HeatmapKeyboard mistakeMap={mistakeMap} isDark={isDark} />
           <div className="flex items-center justify-center gap-4 mt-3">
             {[{ color: "#34D399", label: "Clean" },{ color: "#FBB724", label: "Some errors" },{ color: "#F97316", label: "Trouble" },{ color: "#EF4444", label: "Weak key" }].map(({ color, label }) => (
               <div key={label} className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: color }} />
-                <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/35">{label}</span>
+                <span className={`font-[family-name:var(--font-inter)] text-[11px] ${t.dim5}`}>{label}</span>
               </div>
             ))}
           </div>
         </div>
         {weakKeys.length > 0 && (
           <div className="mt-3">
-            <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/30 mb-2">Weak keys to practice:</p>
+            <p className={`font-[family-name:var(--font-inter)] text-[11px] mb-2 ${t.dim6}`}>Weak keys to practice:</p>
             <div className="flex flex-wrap gap-2">
               {weakKeys.map((k) => (
-                <span key={k} className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-1.5">{k}</span>
+                <span key={k} className={`font-[family-name:var(--font-inter)] text-[13px] font-bold rounded-lg px-3 py-1.5 border ${t.weakKeyPill}`}>{k}</span>
               ))}
             </div>
           </div>
@@ -539,7 +576,7 @@ function ResultsScreen({
       {/* ── Actions ── */}
       <div className="flex gap-3 pt-2">
         <button onClick={onRetry}
-          className="flex-1 inline-flex items-center justify-center gap-2 bg-white/[0.06] border border-white/[0.1] hover:border-white/20 text-white/70 hover:text-white font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all">
+          className={`flex-1 inline-flex items-center justify-center gap-2 border font-[family-name:var(--font-inter)] text-[14px] font-bold py-3.5 rounded-xl transition-all ${t.ghostBtn}`}>
           <RotateCcw size={14} /> Try Again
         </button>
         <button onClick={onReset}
@@ -547,29 +584,29 @@ function ResultsScreen({
           Next Passage →
         </button>
       </div>
-      <p className="text-center font-[family-name:var(--font-inter)] text-[11px] text-white/25">
+      <p className={`text-center font-[family-name:var(--font-inter)] text-[11px] ${t.dim7}`}>
         or press{" "}
-        <kbd className="px-1.5 py-0.5 rounded-md bg-white/[0.06] border border-white/[0.12] text-white/50 font-sans text-[10px]">
+        <kbd className={`px-1.5 py-0.5 rounded-md border font-sans text-[10px] ${t.kbd}`}>
           Tab
         </kbd>{" "}
         on your keyboard
       </p>
 
       {/* ── AI Mistake Analysis — Coming Soon ── */}
-      <div className="relative rounded-2xl border border-white/[0.08] overflow-hidden">
-        <div className="absolute inset-0 backdrop-blur-[2px] bg-[#0F0F1A]/60 z-10 flex flex-col items-center justify-center gap-3 px-6">
+      <div className={`relative rounded-2xl border overflow-hidden ${isDark ? "border-white/[0.08]" : "border-gray-200"}`}>
+        <div className={`absolute inset-0 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center gap-3 px-6 ${t.aiOverlay}`}>
           <div className="flex items-center gap-2 bg-[#FFD23F]/10 border border-[#FFD23F]/25 rounded-full px-4 py-1.5">
             <Lock size={12} className="text-[#FFD23F]" />
             <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[2px]">Coming Soon — Premium</span>
           </div>
-          <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 text-center max-w-xs">
+          <p className={`font-[family-name:var(--font-inter)] text-[13px] text-center max-w-xs ${t.dim2}`}>
             AI-powered mistake analysis with personalized drill exercises. Launching soon for premium members.
           </p>
         </div>
         <div className="p-5 select-none pointer-events-none">
           <div className="flex items-center gap-2 mb-4">
             <Sparkles size={15} className="text-[#FFD23F]" />
-            <span className="font-sans text-[16px] font-bold text-white">AI Mistake Analysis</span>
+            <span className={`font-sans text-[16px] font-bold ${t.text}`}>AI Mistake Analysis</span>
             <div className="flex gap-0.5 ml-1">
               {[...Array(5)].map((_, i) => <Star key={i} size={11} className="text-[#FFD23F] fill-[#FFD23F]" />)}
             </div>
@@ -578,7 +615,7 @@ function ResultsScreen({
             {["You frequently miss punctuation keys — try daily comma and period drills.","Your right pinky is weak — practice ; and ' key exercises.","You slow down on long words — focus on rhythm, not speed.","Suggested drill: type the alphabet 3× daily focusing on home row."].map((line, i) => (
               <div key={i} className="flex items-start gap-2">
                 <span className="text-[#FFD23F] text-[14px] mt-0.5">→</span>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40">{line}</p>
+                <p className={`font-[family-name:var(--font-inter)] text-[13px] ${t.dim4}`}>{line}</p>
               </div>
             ))}
           </div>
@@ -590,7 +627,8 @@ function ResultsScreen({
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function TypingPractice() {
+export default function TypingPractice({ isDark = true }: { isDark?: boolean }) {
+  const t = tt(isDark);
   const [difficulty, setDifficulty] = useState<Difficulty>("easy");
   const [passageIndex, setPassageIndex] = useState(0);
   const [typed, setTyped] = useState("");
@@ -787,7 +825,7 @@ export default function TypingPractice() {
         className={`${widthClass} h-10 rounded-lg flex items-center justify-center font-[family-name:var(--font-inter)] text-[11px] font-bold select-none border transition-all duration-75 shrink-0 ${
           isError ? "bg-red-500/30 border-red-400/60 text-red-300 scale-95"
           : isActive ? "bg-[#FFD23F]/25 border-[#FFD23F]/60 text-[#FFD23F] scale-95"
-          : "bg-white/[0.04] border-white/[0.08] text-white/50"
+          : t.keyDefault
         }`}
       >
         {label}
@@ -821,12 +859,12 @@ export default function TypingPractice() {
       let bg: string | undefined;
 
       if (isTyped) {
-        color = typed[i] === char ? "#16A34A" : "#DC2626";
+        color = typed[i] === char ? (isDark ? "#4ADE80" : "#16A34A") : (isDark ? "#F87171" : "#DC2626");
       } else if (inCurrentWord) {
         color = "#111827";
         bg = "#FFE082";
       } else {
-        color = "#9CA3AF";
+        color = isDark ? "#6B7280" : "#9CA3AF";
       }
 
       return (
@@ -851,6 +889,7 @@ export default function TypingPractice() {
           mistakeMap={mistakeMap} errorCount={errorCount} correctedCount={correctedCount}
           onReset={() => reset()}
           onRetry={() => reset(undefined, true)}
+          isDark={isDark}
         />
       </div>
     );
@@ -866,10 +905,10 @@ export default function TypingPractice() {
 
       {/* Live stats */}
       <div className="flex flex-wrap justify-center gap-3 mb-8">
-        <Stat icon={Zap}    label="WPM"      value={wpm}             color="#FFD23F" />
-        <Stat icon={Target} label="Accuracy"  value={`${accuracy}%`} color="#34D399" />
-        <Stat icon={Clock}  label="Time"      value={formatTime(elapsed)} color="#60A5FA" />
-        <Stat icon={Trophy} label="Chars"     value={typed.length}   color="#F472B6" />
+        <Stat icon={Zap}    label="WPM"      value={wpm}             color="#FFD23F" isDark={isDark} />
+        <Stat icon={Target} label="Accuracy"  value={`${accuracy}%`} color="#34D399" isDark={isDark} />
+        <Stat icon={Clock}  label="Time"      value={formatTime(elapsed)} color="#60A5FA" isDark={isDark} />
+        <Stat icon={Trophy} label="Chars"     value={typed.length}   color="#F472B6" isDark={isDark} />
       </div>
 
       {/* Difficulty selector */}
@@ -877,16 +916,16 @@ export default function TypingPractice() {
         <div className="relative">
           <button
             onClick={(e) => { e.stopPropagation(); setShowDropdown(!showDropdown); }}
-            className="flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2 font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/60 hover:text-white transition-colors"
+            className={`flex items-center gap-2 border rounded-xl px-4 py-2 font-[family-name:var(--font-inter)] text-[13px] font-bold transition-colors ${t.dropdownBtn}`}
           >
             {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
             <ChevronDown size={13} />
           </button>
           {showDropdown && (
-            <div className="absolute top-full mt-1 left-0 bg-[#18181F] border border-white/[0.1] rounded-xl overflow-hidden z-10 w-36">
+            <div className={`absolute top-full mt-1 left-0 border rounded-xl overflow-hidden z-10 w-36 ${t.dropdownPanel}`}>
               {(["easy","medium","hard"] as Difficulty[]).map((d) => (
                 <button key={d} onClick={(e) => { e.stopPropagation(); reset(d); setShowDropdown(false); }}
-                  className={`w-full text-left px-4 py-2.5 font-[family-name:var(--font-inter)] text-[13px] font-bold transition-colors ${difficulty === d ? "text-[#FFD23F] bg-[#FFD23F]/05" : "text-white/50 hover:text-white hover:bg-white/[0.04]"}`}>
+                  className={`w-full text-left px-4 py-2.5 font-[family-name:var(--font-inter)] text-[13px] font-bold transition-colors ${difficulty === d ? "text-[#FFD23F] bg-[#FFD23F]/05" : t.dropdownOption}`}>
                   {d.charAt(0).toUpperCase() + d.slice(1)}
                 </button>
               ))}
@@ -897,7 +936,7 @@ export default function TypingPractice() {
 
       {/* Text passage */}
       <div className="max-w-[820px] mx-auto w-full mb-8">
-        <div className="bg-[#FAFAFA] border border-gray-200 rounded-2xl px-8 md:px-12 pt-8 pb-6 cursor-text">
+        <div className={`border rounded-2xl px-8 md:px-12 pt-8 pb-6 cursor-text ${t.passage}`}>
           {/* Scrolling window — shows 3 lines */}
           <div style={{ height: `${LINE_H * 3}px`, overflow: "hidden", position: "relative" }}>
             <div style={{
@@ -912,17 +951,17 @@ export default function TypingPractice() {
             <div style={{
               position: "absolute", bottom: 0, left: 0, right: 0,
               height: `${LINE_H}px`,
-              background: "linear-gradient(to bottom, transparent, #FAFAFA)",
+              background: `linear-gradient(to bottom, transparent, ${t.passageFadeFrom})`,
               pointerEvents: "none",
             }} />
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-            <p className="font-[family-name:var(--font-inter)] text-[11px] text-gray-400">
+          <div className={`flex items-center justify-between mt-4 pt-3 border-t ${isDark ? "border-white/[0.08]" : "border-gray-100"}`}>
+            <p className={`font-[family-name:var(--font-inter)] text-[11px] ${isDark ? "text-white/35" : "text-gray-400"}`}>
               {typed.length === 0 ? "Start typing" : `${passage.length - typed.length} chars left`}
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[11px] text-gray-400">
+            <p className={`font-[family-name:var(--font-inter)] text-[11px] ${isDark ? "text-white/35" : "text-gray-400"}`}>
               Tab → next passage · Finish to see Heatmap & Stats
             </p>
           </div>
@@ -930,7 +969,7 @@ export default function TypingPractice() {
       </div>
 
       {/* Live keyboard */}
-      <div className="bg-[#111118] border border-white/[0.06] rounded-2xl p-4 md:p-6 overflow-x-auto">
+      <div className={`border rounded-2xl p-4 md:p-6 overflow-x-auto ${t.keyboardCard}`}>
         <div className="flex flex-col gap-1.5 items-center min-w-[580px]">
           {ROWS.map((row, ri) => (
             <div key={ri} className="flex gap-1.5 justify-center w-full">
@@ -942,13 +981,13 @@ export default function TypingPractice() {
 
       <div className="flex items-center justify-center gap-4 mt-5">
         <button onClick={() => reset(undefined, true)}
-          className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/40 hover:text-white transition-colors">
+          className={`flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] transition-colors ${isDark ? "text-white/40 hover:text-white" : "text-gray-400 hover:text-gray-900"}`}>
           <RotateCcw size={13} /> Restart
         </button>
-        <span className="text-white/10">·</span>
+        <span className={isDark ? "text-white/10" : "text-gray-200"}>·</span>
         <button onClick={() => reset()}
-          className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/60 hover:text-[#FFD23F] transition-colors">
-          Next passage <span className="text-[10px] bg-white/[0.07] border border-white/[0.1] rounded px-1.5 py-0.5 text-white/30">Tab</span>
+          className={`flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] font-bold transition-colors ${isDark ? "text-white/60 hover:text-[#FFD23F]" : "text-gray-500 hover:text-[#B8860B]"}`}>
+          Next passage <span className={`text-[10px] rounded px-1.5 py-0.5 border ${t.kbd}`}>Tab</span>
         </button>
       </div>
     </div>
