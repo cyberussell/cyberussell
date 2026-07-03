@@ -48,7 +48,7 @@ export default function ChatGPTCanvasPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             ChatGPT Canvas
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Write documents with AI beside you — not buried in a chat thread below you.
           </p>
         </section>
@@ -58,7 +58,7 @@ export default function ChatGPTCanvasPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#10B981] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Use ChatGPT Canvas to write, edit, and refine a real document — without going back and forth in chat.
             </p>
           </div>
@@ -66,7 +66,7 @@ export default function ChatGPTCanvasPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Regular ChatGPT chat is back-and-forth. You ask for a draft, it writes one, you ask for changes, it rewrites the whole thing, and soon you are scrolling through a long conversation to find the version you actually wanted.
             </p>
@@ -95,8 +95,8 @@ export default function ChatGPTCanvasPage() {
                 <div key={action} className="flex gap-3 py-3 border-b border-white/[0.05] last:border-0">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-[6px] shrink-0" />
                   <div>
-                    <p className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/80">{action}</p>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-0.5 leading-[1.6]">{detail}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white/80">{action}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-0.5 leading-[1.6]">{detail}</p>
                   </div>
                 </div>
               ))}
@@ -111,7 +111,7 @@ export default function ChatGPTCanvasPage() {
               {["Business proposals", "Cover letters & resumes", "Social media posts & captions", "Email drafts", "Scripts & scripts outlines", "Study notes & summaries"].map((type) => (
                 <div key={type} className="flex items-center gap-2">
                   <div className="w-1 h-1 rounded-full bg-[#10B981] shrink-0" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55">{type}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55">{type}</span>
                 </div>
               ))}
             </div>
@@ -124,21 +124,21 @@ export default function ChatGPTCanvasPage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-4">Without Canvas</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8]">
                 Jake is a freelance graphic designer writing a project proposal for his biggest client yet. He asks ChatGPT to help him write it. ChatGPT writes a draft in chat. He asks for changes. ChatGPT rewrites it. He asks for a different introduction. Now there are 3 versions of the proposal scattered across the conversation — and he is not sure which parts to combine. It takes him 2 hours.
               </p>
             </div>
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#10B981] uppercase tracking-[2px] mb-4">With Canvas</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Jake opens Canvas and says: &ldquo;Help me write a project proposal for a branding project. The client is a small food business, budget is ₱15,000, timeline is 3 weeks. Include: intro, scope of work, deliverables, timeline, payment terms.&rdquo;
               </p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Canvas opens with a full draft. He highlights the payment terms section and says &ldquo;make this more professional and add a 50% deposit clause.&rdquo; Only that section updates. He edits the intro himself, uses the toolbar to shorten the whole document, and copies it into an email — all done in 20 minutes.
               </p>
               <div className="bg-[#10B981]/8 border border-[#10B981]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#10B981]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#10B981]/80 leading-[1.6]">
                   2 hours of back-and-forth writing reduced to 20 focused minutes.
                 </p>
               </div>
@@ -148,13 +148,13 @@ export default function ChatGPTCanvasPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 15 minutes · ChatGPT (free or paid)</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 15 minutes · ChatGPT (free or paid)</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1 — Open Canvas</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Open ChatGPT on desktop → start a new chat → type &ldquo;Open Canvas&rdquo; or click the Canvas button in the toolbar if you see it. Alternatively, just ask ChatGPT to write a document and it may open Canvas automatically.
                 </p>
               </div>
@@ -162,7 +162,7 @@ export default function ChatGPTCanvasPage() {
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 — Use this starting prompt</span>
                 <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4 mt-2">
-                  <p className="font-mono text-[14px] text-[#10B981] leading-[1.8]">
+                  <p className="font-mono text-[15px] text-[#10B981] leading-[1.8]">
                     Help me write a [TYPE OF DOCUMENT: professional email / business proposal / cover letter / social media post / script] for [YOUR SPECIFIC SITUATION — be detailed]. Open Canvas and write a full draft.
                   </p>
                 </div>
@@ -170,7 +170,7 @@ export default function ChatGPTCanvasPage() {
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 — Edit in Canvas</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Once the draft appears in Canvas, highlight one section and ask for a specific change. Then try the toolbar options — &ldquo;Make shorter,&rdquo; &ldquo;Fix grammar,&rdquo; or &ldquo;Change tone.&rdquo;
                 </p>
               </div>
@@ -190,7 +190,7 @@ export default function ChatGPTCanvasPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -203,7 +203,7 @@ export default function ChatGPTCanvasPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               What is one document you write regularly — emails, reports, proposals, posts — that you could use Canvas for instead? <span className="text-white font-bold">Pick the one that currently takes you the most time and frustration.</span>
             </p>
           </div>
@@ -220,7 +220,7 @@ export default function ChatGPTCanvasPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -232,8 +232,8 @@ export default function ChatGPTCanvasPage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Write your best document yet.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Write your best document yet.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Use Canvas to write the most important document in your life right now — a job application, a business proposal, a letter to a client, a school paper. Spend at least 30 minutes refining it in Canvas until you are genuinely proud of it. Then send it.
             </p>
           </div>
@@ -243,14 +243,14 @@ export default function ChatGPTCanvasPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&rsquo;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Claude Artifacts</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Claude Artifacts</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Meet Your AI Team · Claude Guide 1 of 5 · Beginner · 5 min
               </p>
             </div>
             <a
               href="/learn/ai-team/claude-artifacts"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

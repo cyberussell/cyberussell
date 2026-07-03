@@ -106,7 +106,7 @@ export default function HowToChooseTheRightAIPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             How to Choose the Right AI
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Most people open whichever AI tab is already on their screen. This Guide gives you a reason to choose intentionally instead.
           </p>
         </section>
@@ -116,7 +116,7 @@ export default function HowToChooseTheRightAIPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Choose between ChatGPT, Claude, and Gemini for a general task — using a simple decision framework — without needing to test all three every time.
             </p>
           </div>
@@ -124,7 +124,7 @@ export default function HowToChooseTheRightAIPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why Tool Choice Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Different AI tools were trained differently and optimized for different strengths. Using the wrong tool for a task is not dangerous — but it is inefficient. You might get a weaker result and conclude AI isn't helpful for that task, when a different tool would have performed much better.
             </p>
@@ -146,7 +146,7 @@ export default function HowToChooseTheRightAIPage() {
                   <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: t.color }} />
                   <h3 className="font-sans text-[18px] font-bold text-white">{t.name}</h3>
                 </div>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] mb-4" style={{ color: `${t.color}99` }}>{t.profile}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] mb-4" style={{ color: `${t.color}99` }}>{t.profile}</p>
 
                 <div className="mb-4">
                   <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-2">Best for</p>
@@ -154,7 +154,7 @@ export default function HowToChooseTheRightAIPage() {
                     {t.bestFor.map((item) => (
                       <div key={item} className="flex items-start gap-2">
                         <div className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ backgroundColor: t.color }} />
-                        <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6]">{item}</p>
+                        <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.6]">{item}</p>
                       </div>
                     ))}
                   </div>
@@ -162,7 +162,7 @@ export default function HowToChooseTheRightAIPage() {
 
                 <div className="bg-[#0F0F1A] border border-white/[0.06] rounded-[8px] px-4 py-3">
                   <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-1">Reach for this when</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6]">{t.reach}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.6]">{t.reach}</p>
                 </div>
               </div>
             ))}
@@ -174,7 +174,7 @@ export default function HowToChooseTheRightAIPage() {
           <div className="space-y-3">
             {tasks.map((t) => (
               <div key={t.task} className="bg-[#18181F] border border-white/[0.08] rounded-[12px] p-4 flex flex-col sm:flex-row sm:items-start gap-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/70 leading-[1.6] flex-1">{t.task}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-[1.6] flex-1">{t.task}</p>
                 <div className="shrink-0 sm:text-right">
                   <p className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-[#FFD23F]">{t.tool}</p>
                   <p className="font-[family-name:var(--font-inter)] text-[11px] text-white/30 mt-0.5 leading-[1.5]">{t.reason}</p>
@@ -186,27 +186,27 @@ export default function HowToChooseTheRightAIPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 8 minutes · Any two AI tools</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 8 minutes · Any two AI tools</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Think of a real task you need to do this week — something work-related or for your learning goals.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Using the three profiles above, decide which AI you would use for that task. Write one sentence explaining why.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Run the task in your chosen AI. Then run the same prompt in a second AI. Compare both responses — which one was more useful for your specific task?
                 </p>
               </div>
@@ -232,7 +232,7 @@ export default function HowToChooseTheRightAIPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -245,10 +245,10 @@ export default function HowToChooseTheRightAIPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Before this Guide, which AI were you defaulting to — and why? <span className="text-white font-bold">Is there one type of task in your regular work that you now plan to route to a specific tool?</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">You do not need to write it down. Just think.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">You do not need to write it down. Just think.</p>
           </div>
         </section>
 
@@ -263,7 +263,7 @@ export default function HowToChooseTheRightAIPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -273,14 +273,14 @@ export default function HowToChooseTheRightAIPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What's Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Your First Real Prompt</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Your First Real Prompt</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Foundations · Guide 6 of 7 · Beginner · 10 min
               </p>
             </div>
             <a
               href="/learn/foundations/your-first-real-prompt"
-              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Continue <ArrowRight size={14} />
             </a>

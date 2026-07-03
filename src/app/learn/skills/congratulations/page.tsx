@@ -66,12 +66,12 @@ export default function SkillsCongratulationsPage() {
           </h1>
 
           {learner && (
-            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 mb-2">
+            <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 mb-2">
               Congrats, <span className="text-white font-bold">{learner.name}</span>!
             </p>
           )}
 
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/45 leading-[1.8] mb-10 max-w-lg mx-auto">
+          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/45 leading-[1.8] mb-10 max-w-lg mx-auto">
             You&apos;ve completed Pillar 5 and proven you can apply AI to real digital skills — website creation, SEO, design, writing, marketing, and more.
           </p>
 
@@ -79,7 +79,7 @@ export default function SkillsCongratulationsPage() {
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="w-14 h-14 rounded-xl bg-[#FB923C]/10 border border-[#FB923C]/20 flex items-center justify-center text-[28px]">🏅</div>
             </div>
-            <p className="font-sans text-[16px] font-bold text-white mb-1">Digital Skills Bida Badge</p>
+            <p className="font-sans text-[17px] font-bold text-white mb-1">Digital Skills Bida Badge</p>
             <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/35">Earned by completing Pillar 5 of the Cyberussell Learning Program</p>
           </div>
 
@@ -87,21 +87,21 @@ export default function SkillsCongratulationsPage() {
             <button
               onClick={shareToFacebook}
               disabled={sharing}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#1877F2] text-white font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-[#1877F2]/90 transition-colors disabled:opacity-60"
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#1877F2] text-white font-[family-name:var(--font-inter)] text-[15px] font-bold hover:bg-[#1877F2]/90 transition-colors disabled:opacity-60"
             >
               <Share2 size={15} />
               {sharing ? "Sharing..." : "Share on Facebook"}
             </button>
             <a
               href="/learn/missions"
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#FFD23F] text-[#0a0a12] font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-[#FFD23F]/90 transition-colors"
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#FFD23F] text-[#0a0a12] font-[family-name:var(--font-inter)] text-[15px] font-bold hover:bg-[#FFD23F]/90 transition-colors"
             >
               Start Pillar 6: AI Missions
               <ArrowRight size={15} />
             </a>
           </div>
 
-          <a href="/learn/dashboard" className="font-[family-name:var(--font-inter)] text-[13px] text-white/35 hover:text-white/60 transition-colors">
+          <a href="/learn/dashboard" className="font-[family-name:var(--font-inter)] text-[14px] text-white/35 hover:text-white/60 transition-colors">
             View Learning Dashboard →
           </a>
         </div>

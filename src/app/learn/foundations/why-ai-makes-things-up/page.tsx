@@ -74,7 +74,7 @@ export default function WhyAIMakesThingsUpPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Why AI Makes Things Up
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             AI sometimes states things confidently that are completely false. This is not a glitch. It is a predictable result of how AI works — and once you understand it, you'll never be blindsided by it again.
           </p>
         </section>
@@ -84,7 +84,7 @@ export default function WhyAIMakesThingsUpPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Identify when an AI response may be hallucinated — and know what to do next.
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function WhyAIMakesThingsUpPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">What Is Hallucination?</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Hallucination is when AI produces output that sounds accurate but is factually wrong.
             </p>
@@ -114,7 +114,7 @@ export default function WhyAIMakesThingsUpPage() {
               <AlertTriangle size={14} className="text-[#E8373A]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A] uppercase tracking-[1.5px]">The Most Important Point</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/75 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/75 leading-[1.8]">
               A hallucinated response does not sound like a guess. It sounds like a fact. It is delivered with the same confident tone as everything else AI says. <span className="text-white font-bold">There is no warning. No disclaimer. No signal that something is wrong.</span> That is what makes hallucination dangerous for people who do not know to look for it.
             </p>
           </div>
@@ -126,13 +126,13 @@ export default function WhyAIMakesThingsUpPage() {
             {patterns.map((p, i) => (
               <div key={p.title} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="font-mono text-[13px] font-bold text-[#E8373A]/50">0{i + 1}</span>
-                  <h3 className="font-sans text-[16px] font-bold text-white">{p.title}</h3>
+                  <span className="font-mono text-[14px] font-bold text-[#E8373A]/50">0{i + 1}</span>
+                  <h3 className="font-sans text-[17px] font-bold text-white">{p.title}</h3>
                 </div>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7] mb-4">{p.desc}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7] mb-4">{p.desc}</p>
                 <div className="bg-[#0F0F1A] border border-[#E8373A]/15 rounded-[8px] px-4 py-3">
                   <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#E8373A]/50 uppercase tracking-[1.5px] mb-1">Example of what hallucination looks like</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6] italic">{p.example}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.6] italic">{p.example}</p>
                 </div>
               </div>
             ))}
@@ -142,7 +142,7 @@ export default function WhyAIMakesThingsUpPage() {
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">The One Detection Rule</h2>
           <div className="bg-[#22C55E]/5 border border-[#22C55E]/20 rounded-[14px] p-6">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#22C55E] uppercase tracking-[1.5px] mb-3">Apply This Every Time</p>
+            <p className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#22C55E] uppercase tracking-[1.5px] mb-3">Apply This Every Time</p>
             <p className="font-sans text-[20px] font-bold text-white leading-[1.4] mb-4">
               If an AI output contains a specific claim you would quote, cite, or act on — verify it from a non-AI source before using it.
             </p>
@@ -156,11 +156,11 @@ export default function WhyAIMakesThingsUpPage() {
               ].map((item) => (
                 <div key={item} className="flex items-start gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#22C55E] mt-[7px] shrink-0" />
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/60 leading-[1.6]">{item}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.6]">{item}</p>
                 </div>
               ))}
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/35 mt-4">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/35 mt-4">
               Non-AI sources: official government sites, news organizations, published research, the organization's own website, a qualified professional.
             </p>
           </div>
@@ -168,13 +168,13 @@ export default function WhyAIMakesThingsUpPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 8 minutes · ChatGPT, Claude, or Gemini</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 8 minutes · ChatGPT, Claude, or Gemini</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Run this prompt in your AI tool. It is designed to trigger hallucination.
                 </p>
               </div>
@@ -183,21 +183,21 @@ export default function WhyAIMakesThingsUpPage() {
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-3">
                   Prompt — ChatGPT / Claude / Gemini
                 </p>
-                <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.8]">
+                <p className="font-mono text-[15px] text-[#FFD23F] leading-[1.8]">
                   Give me three recent statistics about social media usage in the Philippines. Include the source and year for each one.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Pick one specific statistic from the response. Search for the original source AI mentioned. Try to find the actual report or article.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Compare what you find to what AI said. Did the source exist? Did the number match? Did the year match?
                 </p>
               </div>
@@ -217,7 +217,7 @@ export default function WhyAIMakesThingsUpPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -230,10 +230,10 @@ export default function WhyAIMakesThingsUpPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Before this Guide, how would you have responded if AI gave you a confident statistic with a source? <span className="text-white font-bold">What would you do differently now — and what specific types of claims will you always verify going forward?</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">
               You do not need to write it down. Just think.
             </p>
           </div>
@@ -250,7 +250,7 @@ export default function WhyAIMakesThingsUpPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -260,14 +260,14 @@ export default function WhyAIMakesThingsUpPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What's Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">How to Choose the Right AI</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">How to Choose the Right AI</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Foundations · Guide 5 of 7 · Beginner · 10 min
               </p>
             </div>
             <a
               href="/learn/foundations/how-to-choose-the-right-ai"
-              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Continue <ArrowRight size={14} />
             </a>

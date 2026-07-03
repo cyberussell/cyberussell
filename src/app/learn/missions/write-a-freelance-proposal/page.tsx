@@ -44,28 +44,28 @@ export default function WriteAFreelanceProposalPage() {
           <h1 className="font-sans text-[32px] md:text-[48px] font-bold text-white mb-4 leading-tight">
             Write a Freelance Proposal
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-[1.8] mb-6 max-w-2xl">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 leading-[1.8] mb-6 max-w-2xl">
             Most freelance proposals lose the job before the client finishes reading. This mission teaches you
             how to write proposals that get responses — using Claude to write copy that feels personal, not generic.
           </p>
 
           <div className="flex items-center gap-6 mb-4 flex-wrap">
-            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/45">
+            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[14px] text-white/45">
               <Clock size={13} /> 30 minutes
             </span>
-            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#22C55E]">
+            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#22C55E]">
               <BarChart2 size={13} /> Beginner
             </span>
           </div>
 
           <div className="inline-block bg-white/[0.05] border border-white/[0.08] rounded-lg px-4 py-2 mb-8">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50">
               <span className="text-white/70 font-bold">Deliverable:</span> A ready-to-send freelance proposal.
             </p>
           </div>
 
           <div className="bg-[#FFD23F]/5 border border-[#FFD23F]/15 rounded-xl px-5 py-4 mb-12">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.7]">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
               Full step-by-step guide with prompts coming soon. Here&rsquo;s the mission overview:
             </p>
           </div>
@@ -77,8 +77,8 @@ export default function WriteAFreelanceProposalPage() {
                   <span className="text-[#FFD23F]/60 text-[12px] font-bold font-[family-name:var(--font-inter)]">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 <div>
-                  <h3 className="font-sans text-[15px] font-bold text-white mb-1">{step.title}</h3>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.5]">{step.desc}</p>
+                  <h3 className="font-sans text-[16px] font-bold text-white mb-1">{step.title}</h3>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 leading-[1.5]">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -86,7 +86,7 @@ export default function WriteAFreelanceProposalPage() {
         </section>
 
         <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
-          <a href="/learn/missions" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/40 hover:text-white transition-colors">
+          <a href="/learn/missions" className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white/40 hover:text-white transition-colors">
             ← Back to All Missions
           </a>
         </section>

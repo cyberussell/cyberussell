@@ -56,7 +56,7 @@ export default function GuideTwelvePage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             When to Trust AI and When to Override It
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             AI is a thinking partner — not the decision maker. Here is the line.
           </p>
         </section>
@@ -66,7 +66,7 @@ export default function GuideTwelvePage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Identify situations where AI advice should be trusted, questioned, or overridden — and apply that judgment in a real scenario.
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function GuideTwelvePage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               The biggest failure mode with AI is not using it too little. It is trusting it too completely.
             </p>
@@ -93,7 +93,7 @@ export default function GuideTwelvePage() {
           <div className="space-y-4 mb-8">
             <div className="bg-[#22C55E]/5 border border-[#22C55E]/15 rounded-[14px] p-5">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#22C55E]/80 uppercase tracking-[1.5px] mb-3">Trust AI when</p>
-              <ul className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] space-y-2">
+              <ul className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] space-y-2">
                 <li>→ The stakes are low and you can check the output easily</li>
                 <li>→ The task is well-defined with clear right and wrong answers</li>
                 <li>→ You are working with general knowledge that does not depend on your specific context</li>
@@ -103,7 +103,7 @@ export default function GuideTwelvePage() {
 
             <div className="bg-[#F59E0B]/5 border border-[#F59E0B]/15 rounded-[14px] p-5">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B]/80 uppercase tracking-[1.5px] mb-3">Question AI when</p>
-              <ul className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] space-y-2">
+              <ul className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] space-y-2">
                 <li>→ The advice depends heavily on your personal context, relationships, or emotions</li>
                 <li>→ The situation requires specific local knowledge AI may not have</li>
                 <li>→ The stakes are high and the cost of being wrong is significant</li>
@@ -113,7 +113,7 @@ export default function GuideTwelvePage() {
 
             <div className="bg-[#E8373A]/5 border border-[#E8373A]/15 rounded-[14px] p-5">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A]/80 uppercase tracking-[1.5px] mb-3">Override AI when</p>
-              <ul className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] space-y-2">
+              <ul className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] space-y-2">
                 <li>→ Your lived experience directly contradicts generic advice for your specific situation</li>
                 <li>→ AI is giving you what worked somewhere else for someone else — not what fits you</li>
                 <li>→ The decision requires moral judgment about your own values</li>
@@ -126,7 +126,7 @@ export default function GuideTwelvePage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[2px] mb-3">
               The Core Principle
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.9]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/65 leading-[1.9]">
               AI knows a lot about how things work in general. You know something AI will never know: what it is like to be you, in your community, with your history, your relationships, and your constraints. When those two bodies of knowledge conflict, neither one automatically wins. Your job is to know which source to weight more — and why.
             </p>
           </div>
@@ -138,18 +138,18 @@ export default function GuideTwelvePage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-3">The Situation</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8]">
                 AI tells someone to price their freelance service at ₱500/hour based on market data and their skill level. The recommendation is grounded in real data — that is what people with similar skills earn in the market.
               </p>
             </div>
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A] uppercase tracking-[2px] mb-3">Why They Override</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 They know their clients. They are based in a smaller city in the province. Their network is made up of small local businesses with tight budgets. The market data comes from Metro Manila and international clients — not their actual customer base.
               </p>
               <div className="bg-[#22C55E]/8 border border-[#22C55E]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#22C55E]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#22C55E]/80 leading-[1.6]">
                   They price at ₱250/hour — lower than the market rate, but right for their actual market. They get clients. They build a portfolio. They raise rates later. Their local knowledge overrides the generic recommendation — and they are right to let it.
                 </p>
               </div>
@@ -159,20 +159,20 @@ export default function GuideTwelvePage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 10 minutes · ChatGPT, Claude, or Gemini</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 10 minutes · ChatGPT, Claude, or Gemini</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1 — Get AI advice on something real</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Ask AI for advice on something relevant to your life or work — pricing, a strategy, a life decision, a creative direction. Get a real recommendation.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 — Evaluate the advice</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Using the Trust / Question / Override framework, categorize this advice. Ask yourself:
                 </p>
                 <div className="mt-2 space-y-1">
@@ -182,7 +182,7 @@ export default function GuideTwelvePage() {
                     "Do I have lived experience that contradicts this?",
                     "Is this a low-stakes or high-stakes situation?",
                   ].map((q) => (
-                    <p key={q} className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.6] flex gap-2">
+                    <p key={q} className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 leading-[1.6] flex gap-2">
                       <span className="text-[#A78BFA]">→</span> {q}
                     </p>
                   ))}
@@ -191,7 +191,7 @@ export default function GuideTwelvePage() {
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 — Decide: Trust, Question, or Override</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Make the call. If you question or override, write one sentence explaining why. That sentence is your judgment — own it.
                 </p>
               </div>
@@ -212,7 +212,7 @@ export default function GuideTwelvePage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -225,7 +225,7 @@ export default function GuideTwelvePage() {
               <Lightbulb size={14} className="text-[#A78BFA]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               When was the last time you followed advice — from anyone — that was technically correct but wrong for your specific situation? <span className="text-white font-bold">What did that experience teach you about the difference between general truth and personal truth?</span>
             </p>
           </div>
@@ -242,7 +242,7 @@ export default function GuideTwelvePage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -253,13 +253,13 @@ export default function GuideTwelvePage() {
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA]/70 uppercase tracking-[1.5px] mb-1">You Are Ready</p>
               <p className="font-sans text-[18px] font-bold text-white">Take the Final Assessment</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Earn your Thinking Bida Badge and personalized certificate
               </p>
             </div>
             <a
               href="/learn/think/complete"
-              className="inline-flex items-center gap-2 bg-[#A78BFA] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#A78BFA] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Complete Pillar 2 <ArrowRight size={14} />
             </a>

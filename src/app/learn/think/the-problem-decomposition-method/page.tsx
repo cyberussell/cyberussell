@@ -56,7 +56,7 @@ export default function GuideFivePage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             The Problem Decomposition Method
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             10 minutes with AI replaces hours of circular thinking.
           </p>
         </section>
@@ -66,7 +66,7 @@ export default function GuideFivePage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Break down a real problem into root causes and sub-problems using a repeatable AI-assisted method.
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function GuideFivePage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Circular thinking is when you think about the same problem over and over without getting anywhere. You have probably experienced it — going over the same options, the same fears, the same questions, arriving nowhere.
             </p>
@@ -99,11 +99,11 @@ export default function GuideFivePage() {
             ].map((step) => (
               <div key={step.num} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-5 flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-[#A78BFA]/15 flex items-center justify-center shrink-0 mt-0.5">
-                  <span className="font-sans text-[13px] font-bold text-[#A78BFA]">{step.num}</span>
+                  <span className="font-sans text-[14px] font-bold text-[#A78BFA]">{step.num}</span>
                 </div>
                 <div>
-                  <p className="font-sans text-[15px] font-bold text-white mb-2">{step.title}</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">{step.desc}</p>
+                  <p className="font-sans text-[16px] font-bold text-white mb-2">{step.title}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.7]">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -112,13 +112,13 @@ export default function GuideFivePage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 10 minutes · ChatGPT, Claude, or Gemini</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 10 minutes · ChatGPT, Claude, or Gemini</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Your Task</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Think of a real problem you are currently stuck on. It should be something that matters — not a trivial task. Replace [problem] in the prompt below.
                 </p>
               </div>
@@ -127,14 +127,14 @@ export default function GuideFivePage() {
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-3">
                   Prompt — run all at once
                 </p>
-                <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.7]">
+                <p className="font-mono text-[15px] text-[#FFD23F] leading-[1.7]">
                   Here is my problem: [problem]. Step 1: What are the 3 most likely root causes? Step 2: Break this into 5 sub-problems I could work on separately. Step 3: Which one should I tackle first and why?
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">After you read the response</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Notice whether the root causes surprise you. Notice whether any of the sub-problems feel immediately actionable. Save the sub-problem you are going to work on first — you will need it in the next guide.
                 </p>
               </div>
@@ -155,7 +155,7 @@ export default function GuideFivePage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -168,7 +168,7 @@ export default function GuideFivePage() {
               <Lightbulb size={14} className="text-[#A78BFA]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Did any of the root causes surprise you? <span className="text-white font-bold">Were you thinking about the problem at the right level — or were you trying to solve symptoms instead of causes?</span>
             </p>
           </div>
@@ -185,7 +185,7 @@ export default function GuideFivePage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -197,8 +197,8 @@ export default function GuideFivePage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Use this method on a problem someone else is stuck on.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Use this method on a problem someone else is stuck on.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Think of a friend, family member, or colleague who is stuck on something. Run their problem through the 4-step method (with their permission). Walk them through what AI surfaces. Notice whether it helps them see their situation differently.
             </p>
           </div>
@@ -208,14 +208,14 @@ export default function GuideFivePage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&apos;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">From Problem to Action Plan</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">From Problem to Action Plan</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Think with AI · Guide 6 of 12 · Intermediate · 8 min
               </p>
             </div>
             <a
               href="/learn/think/from-problem-to-action-plan"
-              className="inline-flex items-center gap-2 bg-[#A78BFA] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#A78BFA] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

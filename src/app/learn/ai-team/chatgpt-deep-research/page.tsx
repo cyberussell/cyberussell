@@ -48,7 +48,7 @@ export default function ChatGPTDeepResearchPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             ChatGPT Deep Research
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Stop opening 20 browser tabs. Get a full research report delivered to you in minutes.
           </p>
         </section>
@@ -58,7 +58,7 @@ export default function ChatGPTDeepResearchPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#10B981] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Use ChatGPT Deep Research to get a comprehensive report on any topic — in minutes instead of hours.
             </p>
           </div>
@@ -66,7 +66,7 @@ export default function ChatGPTDeepResearchPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Normally, researching a topic properly means opening 20 browser tabs, reading for hours, taking notes, comparing sources, and still feeling like you might have missed something important.
             </p>
@@ -87,7 +87,7 @@ export default function ChatGPTDeepResearchPage() {
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-6">
             <p className="font-sans text-[18px] font-bold text-white mb-3">What Deep Research Does</p>
-            <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-3">
+            <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-3">
               <p>
                 Deep Research is a special mode in ChatGPT (available for Plus and Pro subscribers). Instead of answering from its training data, it actively searches the web, reads dozens of sources, and writes a structured report.
               </p>
@@ -108,7 +108,7 @@ export default function ChatGPTDeepResearchPage() {
                   {items.map((item) => (
                     <div key={item} className="flex items-start gap-2">
                       <div className="w-1 h-1 rounded-full bg-[#10B981] mt-[7px] shrink-0" />
-                      <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6]">{item}</p>
+                      <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.6]">{item}</p>
                     </div>
                   ))}
                 </div>
@@ -123,21 +123,21 @@ export default function ChatGPTDeepResearchPage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-4">The Situation</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8]">
                 Marco is thinking about starting an online business selling Filipino food products — bagoong, achara, and dried mangoes — to OFW families in the US. He does not know if there is a market for it, how to price things, or which platforms to use. He spends a week Googling and still feels confused.
               </p>
             </div>
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#10B981] uppercase tracking-[2px] mb-4">With Deep Research</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Marco uses ChatGPT Deep Research and asks: &ldquo;Research the market for selling Filipino food products to Filipino communities in the United States. I want to understand: market size, competition, best platforms to sell on, typical pricing, shipping considerations, and what successful Filipino food brands are doing.&rdquo;
               </p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 10 minutes later, he has a 2,000-word report with sections on each topic — and links to the sources so he can verify the key claims.
               </p>
               <div className="bg-[#10B981]/8 border border-[#10B981]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#10B981]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#10B981]/80 leading-[1.6]">
                   One week of confused Googling → replaced by one 10-minute research session.
                 </p>
               </div>
@@ -147,13 +147,13 @@ export default function ChatGPTDeepResearchPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 15 minutes · ChatGPT Plus or Pro</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 15 minutes · ChatGPT Plus or Pro</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1 — Access Deep Research</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Open ChatGPT → start a new chat → click the model dropdown at the top (where it says GPT-4 or similar) → select &ldquo;Deep Research.&rdquo; Or look for the tools icon / &ldquo;+&rdquo; button before typing.
                 </p>
               </div>
@@ -161,7 +161,7 @@ export default function ChatGPTDeepResearchPage() {
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 — Use this prompt template</span>
                 <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4 mt-2">
-                  <p className="font-mono text-[14px] text-[#10B981] leading-[1.8]">
+                  <p className="font-mono text-[15px] text-[#10B981] leading-[1.8]">
                     I want to [YOUR GOAL OR BUSINESS IDEA — e.g., start selling handmade soap online / become a freelance VA / understand the market for X]. Research the market, competition, opportunities, and risks for someone based in the Philippines starting with a small budget. Include practical next steps I can take right now.
                   </p>
                 </div>
@@ -169,7 +169,7 @@ export default function ChatGPTDeepResearchPage() {
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 — Wait and read</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Deep Research takes 5–15 minutes. You will see it searching in real time. When it finishes, read the full report. Check 2–3 of the source links to verify the most important claims.
                 </p>
               </div>
@@ -189,7 +189,7 @@ export default function ChatGPTDeepResearchPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -202,7 +202,7 @@ export default function ChatGPTDeepResearchPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               What decision have you been putting off because you did not have enough information? <span className="text-white font-bold">Deep Research is not just for business — it works for any question where you need more than a quick answer.</span>
             </p>
           </div>
@@ -219,7 +219,7 @@ export default function ChatGPTDeepResearchPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -231,8 +231,8 @@ export default function ChatGPTDeepResearchPage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Research your next big move.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Research your next big move.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Is there a career change, business idea, investment, or big life decision you have been thinking about? Use Deep Research to get a full picture of what it involves — risks, opportunities, costs, timeline — before making a move. Come back and tell us what you found.
             </p>
           </div>
@@ -242,14 +242,14 @@ export default function ChatGPTDeepResearchPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&rsquo;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">ChatGPT Canvas</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">ChatGPT Canvas</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Meet Your AI Team · ChatGPT Guide 6 of 6 · Beginner · 5 min
               </p>
             </div>
             <a
               href="/learn/ai-team/chatgpt-canvas"
-              className="inline-flex items-center gap-2 bg-[#10B981] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#10B981] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

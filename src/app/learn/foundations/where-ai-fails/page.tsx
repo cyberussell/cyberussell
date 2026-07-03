@@ -88,7 +88,7 @@ export default function WhereAIFailsPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Where AI Fails
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             AI fails predictably. Once you know the pattern, you'll see it coming before you even run the prompt.
           </p>
         </section>
@@ -99,7 +99,7 @@ export default function WhereAIFailsPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Identify three situations where AI is likely to produce a poor result — before you run the prompt.
             </p>
           </div>
@@ -108,7 +108,7 @@ export default function WhereAIFailsPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               AI's failures are not random. They are the direct consequence of how AI works.
             </p>
@@ -125,13 +125,13 @@ export default function WhereAIFailsPage() {
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why the Same Mechanism That Helps Can Hurt</h2>
           <div className="bg-[#FFD23F]/5 border border-[#FFD23F]/15 rounded-[14px] p-6">
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.9]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.9]">
               AI was trained to produce plausible-sounding output. That is its strength when it comes to drafting, summarizing, and explaining.
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.9] mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.9] mt-3">
               But "plausible-sounding" is not the same as "accurate." When the task requires real-time data, personal context, or deep domain expertise — AI still produces plausible-sounding output. <span className="text-white font-bold">It just isn't accurate.</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.9] mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.9] mt-3">
               And because it sounds right, you might not notice.
             </p>
           </div>
@@ -144,22 +144,22 @@ export default function WhereAIFailsPage() {
             {failures.map((f) => (
               <div key={f.number} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="font-mono text-[13px] font-bold shrink-0" style={{ color: `${f.color}60` }}>{f.number}</span>
-                  <h3 className="font-sans text-[16px] font-bold text-white">{f.title}</h3>
+                  <span className="font-mono text-[14px] font-bold shrink-0" style={{ color: `${f.color}60` }}>{f.number}</span>
+                  <h3 className="font-sans text-[17px] font-bold text-white">{f.title}</h3>
                   <span className="ml-auto text-[10px] font-bold font-[family-name:var(--font-inter)] uppercase tracking-[1px] px-2 py-0.5 rounded-full border" style={{ color: f.color, borderColor: `${f.color}30`, backgroundColor: `${f.color}10` }}>
                     Risk: {f.risk.split(" — ")[0]}
                   </span>
                 </div>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7] mb-4">{f.why}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7] mb-4">{f.why}</p>
 
                 <div className="space-y-3">
                   <div className="bg-[#0F0F1A] border border-white/[0.06] rounded-[8px] px-4 py-3">
                     <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-1">Warning signal</p>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/60 leading-[1.6]">{f.signal}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.6]">{f.signal}</p>
                   </div>
                   <div className="bg-[#0F0F1A] border border-white/[0.06] rounded-[8px] px-4 py-3">
                     <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-1">Example prompt to avoid</p>
-                    <p className="font-mono text-[13px] text-[#FFD23F]/70 leading-[1.6]">{f.example}</p>
+                    <p className="font-mono text-[14px] text-[#FFD23F]/70 leading-[1.6]">{f.example}</p>
                   </div>
                 </div>
               </div>
@@ -170,13 +170,13 @@ export default function WhereAIFailsPage() {
         {/* Interactive Exercise */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 5 minutes · ChatGPT, Claude, or Gemini</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 5 minutes · ChatGPT, Claude, or Gemini</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Run all three prompts below in your AI tool — one for each failure category.
                 </p>
               </div>
@@ -188,20 +188,20 @@ export default function WhereAIFailsPage() {
               ].map((p) => (
                 <div key={p.label} className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4">
                   <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">{p.label}</p>
-                  <p className="font-mono text-[13px] text-[#FFD23F] leading-[1.7]">{p.prompt}</p>
+                  <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.7]">{p.prompt}</p>
                 </div>
               ))}
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Read each response. For each one, decide: <span className="text-white/80 italic">Would I act on this without verifying it first?</span>
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Notice how confident each response sounds — regardless of whether it should be trusted. That gap between confidence and trustworthiness is what this Guide is about.
                 </p>
               </div>
@@ -221,7 +221,7 @@ export default function WhereAIFailsPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -235,10 +235,10 @@ export default function WhereAIFailsPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Think about the last time you used AI — or a time you've seen someone else use it. <span className="text-white font-bold">Did the task fall into one of these three failure categories?</span> What would a responsible professional do before submitting AI output to a client, employer, or colleague?
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">
               You do not need to write it down. Just think.
             </p>
           </div>
@@ -256,7 +256,7 @@ export default function WhereAIFailsPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -267,14 +267,14 @@ export default function WhereAIFailsPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What's Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Why AI Makes Things Up</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Why AI Makes Things Up</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Foundations · Guide 4 of 7 · Beginner · 10 min
               </p>
             </div>
             <a
               href="/learn/foundations"
-              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Back to Pillar <ArrowRight size={14} />
             </a>

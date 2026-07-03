@@ -56,7 +56,7 @@ export default function GuideElevenPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             The AI Decision Framework
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             A repeatable 6-step method for making any important decision better.
           </p>
         </section>
@@ -66,7 +66,7 @@ export default function GuideElevenPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Apply a repeatable AI-assisted decision framework to a real choice you are facing.
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function GuideElevenPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               In Guide 10, you learned what goes wrong with decisions when we make them alone. Now you get the antidote — a structured method that works every time because it takes the same steps in the same order regardless of the decision size.
             </p>
@@ -98,11 +98,11 @@ export default function GuideElevenPage() {
             ].map((step) => (
               <div key={step.num} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-5 flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-[#A78BFA]/15 flex items-center justify-center shrink-0 mt-0.5">
-                  <span className="font-sans text-[13px] font-bold text-[#A78BFA]">{step.num}</span>
+                  <span className="font-sans text-[14px] font-bold text-[#A78BFA]">{step.num}</span>
                 </div>
                 <div>
-                  <p className="font-sans text-[15px] font-bold text-white mb-2">{step.title}</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">{step.desc}</p>
+                  <p className="font-sans text-[16px] font-bold text-white mb-2">{step.title}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.7]">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -111,13 +111,13 @@ export default function GuideElevenPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 12 minutes · ChatGPT, Claude, or Gemini</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 12 minutes · ChatGPT, Claude, or Gemini</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Your Task</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Pick a real decision you are currently weighing — something with two or more real options where you are not yet fully committed. Use the prompt below and run through all 6 steps in one conversation.
                 </p>
               </div>
@@ -126,14 +126,14 @@ export default function GuideElevenPage() {
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-3">
                   Prompt
                 </p>
-                <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.7]">
+                <p className="font-mono text-[15px] text-[#FFD23F] leading-[1.7]">
                   I need to decide between [Option A] and [Option B]. Here is my situation: [context]. Walk me through the pros, cons, and risks of each option. Then steelman Option [the one I&apos;m NOT leaning toward]. Finally, tell me what I might be missing or not considering.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">After AI responds</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Read the steelman carefully. Ask yourself: does this change anything? Is there something in the case for the other option that you had not genuinely weighed? Then make your decision.
                 </p>
               </div>
@@ -155,7 +155,7 @@ export default function GuideElevenPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -168,7 +168,7 @@ export default function GuideElevenPage() {
               <Lightbulb size={14} className="text-[#A78BFA]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Did the steelman of the other option change anything? <span className="text-white font-bold">Is there a real argument for the path you were not taking — one you had not genuinely considered before?</span>
             </p>
           </div>
@@ -185,7 +185,7 @@ export default function GuideElevenPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -197,8 +197,8 @@ export default function GuideElevenPage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Apply the framework to a decision you have been avoiding.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Apply the framework to a decision you have been avoiding.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Everyone has a decision they keep putting off. Often we avoid decisions because we are afraid of what a clear analysis might reveal. Run this framework on your avoided decision. The clarity might feel uncomfortable — but it is better than the ongoing weight of not deciding.
             </p>
           </div>
@@ -208,14 +208,14 @@ export default function GuideElevenPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&apos;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">When to Trust AI and When to Override It</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">When to Trust AI and When to Override It</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Think with AI · Guide 12 of 12 · Intermediate · 8 min
               </p>
             </div>
             <a
               href="/learn/think/when-to-trust-ai-and-when-to-override-it"
-              className="inline-flex items-center gap-2 bg-[#A78BFA] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#A78BFA] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

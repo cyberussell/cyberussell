@@ -113,7 +113,7 @@ export default function LearningNewSkillsPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Learning New Skills Workflow
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Learn any new skill faster with ChatGPT and Claude as your personal tutors.
           </p>
         </section>
@@ -124,7 +124,7 @@ export default function LearningNewSkillsPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Learn any new skill faster by using ChatGPT and Claude as your personal tutors — with a structured study plan.
             </p>
           </div>
@@ -133,7 +133,7 @@ export default function LearningNewSkillsPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Traditional learning is slow because it is one-size-fits-all. A YouTube tutorial does not know what you already know, what confuses you, or what your real goal is. It moves at one pace, in one direction, for everyone.
             </p>
@@ -153,7 +153,7 @@ export default function LearningNewSkillsPage() {
             {examples.map((ex) => (
               <div key={ex} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{ex}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{ex}</p>
               </div>
             ))}
           </div>
@@ -181,8 +181,8 @@ export default function LearningNewSkillsPage() {
                     <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[1.5px]" style={{ color: s.dotColor }}>{s.toolLabel}</span>
                     <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/25">· {s.time}</span>
                   </div>
-                  <p className="font-sans text-[16px] font-bold text-white mb-1">{s.title}</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">{s.description}</p>
+                  <p className="font-sans text-[17px] font-bold text-white mb-1">{s.title}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">{s.description}</p>
                 </div>
               </div>
             ))}
@@ -192,13 +192,13 @@ export default function LearningNewSkillsPage() {
         {/* Try It Yourself */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Try It Yourself</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">Start today · ChatGPT + Claude · 30-day commitment</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">Start today · ChatGPT + Claude · 30-day commitment</p>
 
           <div className="space-y-4">
             {/* Step 1 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] block mb-3">Step 1 · You</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7] mb-3">
                 Write down the answers to these four questions before you open any AI tool:
               </p>
               <ul className="space-y-1.5">
@@ -210,7 +210,7 @@ export default function LearningNewSkillsPage() {
                 ].map((q) => (
                   <li key={q} className="flex items-start gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                    <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55">{q}</span>
+                    <span className="font-[family-name:var(--font-inter)] text-[15px] text-white/55">{q}</span>
                   </li>
                 ))}
               </ul>
@@ -219,12 +219,12 @@ export default function LearningNewSkillsPage() {
             {/* Step 2 prompt */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] block mb-4">Step 2 · ChatGPT</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7] mb-4">
                 Open ChatGPT. Fill in the brackets with your answers from Step 1.
               </p>
               <div className="bg-[#0F0F1A] border border-[#10B981]/20 rounded-[10px] p-4">
                 <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#10B981] uppercase tracking-[1.5px] block mb-3">ChatGPT</span>
-                <p className="font-mono text-[13px] text-[#10B981] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#10B981] leading-[1.7]">
                   {`I want to learn [skill] in 30 days. I am a complete beginner. My goal is to be able to [specific outcome]. I can study [X minutes] per day. Create a day-by-day 30-day learning plan. For each day, tell me: the topic for that day, one free resource to use (YouTube video, article, or free tool), and one small thing to practice. Group the days into 4 weekly themes.`}
                 </p>
               </div>
@@ -233,12 +233,12 @@ export default function LearningNewSkillsPage() {
             {/* Step 3 prompt */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] block mb-4">Step 3 · Claude · Use Every Day</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7] mb-4">
                 Each day, open Claude and paste this prompt with the day's topic from your plan.
               </p>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4">
                 <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#F59E0B] uppercase tracking-[1.5px] block mb-3">Claude · Daily Tutor</span>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.7]">
                   {`I am learning [skill]. Today is Day [X] and the topic is [today's topic from the plan]. Explain this topic to me like I have never heard of it before. Use a simple analogy. Then give me 3 questions to test whether I understood. After I answer, tell me what I got right and what needs more explanation.`}
                 </p>
               </div>
@@ -247,12 +247,12 @@ export default function LearningNewSkillsPage() {
             {/* Step 4 prompt */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] block mb-4">Step 4 · ChatGPT · Use Every Week</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7] mb-4">
                 At the end of each week, ask ChatGPT for a real project that uses what you learned.
               </p>
               <div className="bg-[#0F0F1A] border border-[#10B981]/20 rounded-[10px] p-4">
                 <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#10B981] uppercase tracking-[1.5px] block mb-3">ChatGPT · Weekly Project</span>
-                <p className="font-mono text-[13px] text-[#10B981] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#10B981] leading-[1.7]">
                   {`I just finished Week [X] of learning [skill]. I now know: [list what you learned]. Give me one small real-world project I can complete in 30-60 minutes that uses everything I learned this week. Make it practical — something I could show to a potential client or employer.`}
                 </p>
               </div>
@@ -271,7 +271,7 @@ export default function LearningNewSkillsPage() {
               {checklist.map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -285,10 +285,10 @@ export default function LearningNewSkillsPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               After your first day of Claude tutoring, <span className="text-white font-bold">did the explanation feel more personal than a YouTube video? What did you ask that you would not have been able to ask a video?</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">
               That gap — the question you could actually ask — is where AI tutoring beats passive learning every time.
             </p>
           </div>
@@ -301,7 +301,7 @@ export default function LearningNewSkillsPage() {
             {takeaways.map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -312,14 +312,14 @@ export default function LearningNewSkillsPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What's Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Programming Workflow</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Programming Workflow</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Workflows · Guide 8 of 10
               </p>
             </div>
             <a
               href="/learn/workflows/programming"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

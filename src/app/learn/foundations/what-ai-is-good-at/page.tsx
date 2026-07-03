@@ -91,7 +91,7 @@ export default function WhatAIIsGoodAtPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             What AI Is Good At
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Now that you know what AI is, the next question is: what should you actually use it for?
           </p>
         </section>
@@ -102,7 +102,7 @@ export default function WhatAIIsGoodAtPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Identify five types of tasks where AI consistently delivers useful results — and explain why it works well for each one.
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function WhatAIIsGoodAtPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Most people who try AI for the first time pick the wrong task.
             </p>
@@ -131,10 +131,10 @@ export default function WhatAIIsGoodAtPage() {
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why AI Is Strong at These Tasks</h2>
           <div className="bg-[#FFD23F]/5 border border-[#FFD23F]/15 rounded-[14px] p-6 mb-6">
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.9]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.9]">
               Remember from Guide 1: AI was trained on enormous amounts of human-written text. It learned to predict what words and sentences follow other words and sentences.
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.9] mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.9] mt-3">
               That mechanism makes AI strong at tasks where the answer already exists somewhere in human language — and just needs to be found, reorganized, or expressed differently. <span className="text-white font-bold">It does not need to know something new. It needs to rearrange what it already knows.</span>
             </p>
           </div>
@@ -147,13 +147,13 @@ export default function WhatAIIsGoodAtPage() {
             {strengths.map((s) => (
               <div key={s.number} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
                 <div className="flex items-start gap-4">
-                  <span className="font-mono text-[13px] font-bold text-[#4F8EF7]/50 shrink-0 mt-0.5">{s.number}</span>
+                  <span className="font-mono text-[14px] font-bold text-[#4F8EF7]/50 shrink-0 mt-0.5">{s.number}</span>
                   <div>
-                    <h3 className="font-sans text-[16px] font-bold text-white mb-2">{s.title}</h3>
-                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7] mb-3">{s.desc}</p>
+                    <h3 className="font-sans text-[17px] font-bold text-white mb-2">{s.title}</h3>
+                    <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7] mb-3">{s.desc}</p>
                     <div className="bg-[#0F0F1A] border border-white/[0.06] rounded-[8px] px-4 py-3">
                       <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/25 uppercase tracking-[1.5px] mb-1">Example prompt</p>
-                      <p className="font-mono text-[13px] text-[#FFD23F] leading-[1.6]">{s.example}</p>
+                      <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.6]">{s.example}</p>
                     </div>
                   </div>
                 </div>
@@ -165,20 +165,20 @@ export default function WhatAIIsGoodAtPage() {
         {/* Interactive Exercise */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 5 minutes · ChatGPT, Claude, or Gemini</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 5 minutes · ChatGPT, Claude, or Gemini</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Look at the five strength categories above. Pick the one most relevant to your own work or life goal right now.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Open your AI tool and run this prompt — replacing the brackets with your own details.
                 </p>
               </div>
@@ -187,14 +187,14 @@ export default function WhatAIIsGoodAtPage() {
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-3">
                   Prompt — ChatGPT / Claude / Gemini
                 </p>
-                <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.8]">
+                <p className="font-mono text-[15px] text-[#FFD23F] leading-[1.8]">
                   I need help with [drafting / summarizing / explaining / brainstorming / organizing] for [describe your specific task]. Give me a useful starting point.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Read the response. Ask yourself: was this genuinely useful — or did it miss what you actually needed? If it missed, what extra context would have helped?
                 </p>
               </div>
@@ -214,7 +214,7 @@ export default function WhatAIIsGoodAtPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -228,10 +228,10 @@ export default function WhatAIIsGoodAtPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Of the five strength categories, <span className="text-white font-bold">which one would save you the most time if you used it every day?</span> Where in your current work or learning could AI replace the first draft — freeing you to focus on the part only you can do?
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">
               You do not need to write it down. Just think.
             </p>
           </div>
@@ -249,7 +249,7 @@ export default function WhatAIIsGoodAtPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -260,14 +260,14 @@ export default function WhatAIIsGoodAtPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What's Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Where AI Fails</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Where AI Fails</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Foundations · Guide 3 of 7 · Beginner · 5 min
               </p>
             </div>
             <a
               href="/learn/foundations/where-ai-fails"
-              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Continue <ArrowRight size={14} />
             </a>

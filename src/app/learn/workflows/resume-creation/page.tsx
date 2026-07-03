@@ -111,7 +111,7 @@ export default function ResumeCreationPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Resume Creation Workflow
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             A resume that passes ATS filters and actually sounds like you.
           </p>
         </section>
@@ -122,7 +122,7 @@ export default function ResumeCreationPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Write a professional, personalized resume that passes ATS filters and sounds like you — using ChatGPT and Claude together.
             </p>
           </div>
@@ -131,7 +131,7 @@ export default function ResumeCreationPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Most AI-written resumes sound generic. This workflow uses two AIs for different strengths: ChatGPT to brainstorm and structure, Claude to write and polish. The result sounds human but is professionally formatted.
             </p>
@@ -159,8 +159,8 @@ export default function ResumeCreationPage() {
                       <span className={`font-[family-name:var(--font-inter)] text-[12px] font-bold uppercase tracking-[1px] ${s.actorColor}`}>{s.actor}</span>
                       <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/25">· {s.time}</span>
                     </div>
-                    <p className="font-sans text-[15px] font-bold text-white mb-1">{s.title}</p>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">{s.description}</p>
+                    <p className="font-sans text-[16px] font-bold text-white mb-1">{s.title}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.7]">{s.description}</p>
                   </div>
                 </div>
               ))}
@@ -175,7 +175,7 @@ export default function ResumeCreationPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-3">
               Filipino Job Seeker Story
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.9]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.9]">
               A fresh grad applies for a virtual assistant role on OnlineJobs.ph. She has no formal VA experience but has organized events at school and managed her family&apos;s sari-sari store inventory. ChatGPT identifies those as relevant skills. Claude writes a resume that frames them professionally. She gets 3 interview invites in her first week.
             </p>
           </div>
@@ -184,13 +184,13 @@ export default function ResumeCreationPage() {
         {/* Try It Yourself */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Try It Yourself</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">Follow each step in order. Do not skip ahead.</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">Follow each step in order. Do not skip ahead.</p>
 
           <div className="space-y-4">
             {/* Step 1 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1 — You</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-2 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-2 leading-[1.7]">
                 Write down all your experience — jobs, school projects, freelance work, volunteer work, anything you have done that required a skill.
               </p>
             </div>
@@ -198,12 +198,12 @@ export default function ResumeCreationPage() {
             {/* Step 2 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#10B981] uppercase tracking-[1.5px]">Step 2 — ChatGPT</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-2 mb-3 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-2 mb-3 leading-[1.7]">
                 Open ChatGPT and run this prompt:
               </p>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — ChatGPT</p>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.8]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.8]">
                   I am applying for a [job title] role. Here is my background: [your experience list]. What are my 5 strongest selling points for this specific role? What skills from my background are most relevant? What should I highlight?
                 </p>
               </div>
@@ -212,12 +212,12 @@ export default function ResumeCreationPage() {
             {/* Step 3 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Step 3 — Claude</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-2 mb-3 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-2 mb-3 leading-[1.7]">
                 Open Claude and run this prompt:
               </p>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — Claude</p>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.8]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.8]">
                   Write a professional resume for me. Here is my background: [your experience]. Here are my key selling points: [ChatGPT&apos;s output]. The role I am applying for is: [job title and description]. Format it cleanly with sections for Summary, Skills, Experience, and Education. Make it ATS-friendly and keep it to one page.
                 </p>
               </div>
@@ -226,12 +226,12 @@ export default function ResumeCreationPage() {
             {/* Step 4 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#10B981] uppercase tracking-[1.5px]">Step 4 — ChatGPT</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-2 mb-3 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-2 mb-3 leading-[1.7]">
                 Go back to ChatGPT and run this prompt:
               </p>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — ChatGPT</p>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.8]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.8]">
                   Here is my current resume: [paste Claude&apos;s output]. Here is the job description I am applying for: [paste the job post]. What specific words, skills, or phrases from the job description should I add to my resume? What should I change or remove?
                 </p>
               </div>
@@ -240,7 +240,7 @@ export default function ResumeCreationPage() {
             {/* Step 5 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[1.5px]">Step 5 — Human Review</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-2 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-2 leading-[1.7]">
                 Make the edits, double-check every fact, add your actual contact info, and export as PDF using Google Docs or Canva.
               </p>
             </div>
@@ -264,7 +264,7 @@ export default function ResumeCreationPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -278,7 +278,7 @@ export default function ResumeCreationPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               What experience did you have that you almost did not include — but ChatGPT told you was relevant? <span className="text-white font-bold">How did Claude&apos;s version of your resume differ from what you would have written on your own?</span>
             </p>
           </div>
@@ -296,7 +296,7 @@ export default function ResumeCreationPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -307,14 +307,14 @@ export default function ResumeCreationPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&apos;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Content Creation Workflow</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Content Creation Workflow</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Workflows · Guide 4 of 10 · Beginner · 40 min
               </p>
             </div>
             <a
               href="/learn/workflows/content-creation"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

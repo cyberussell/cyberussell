@@ -56,7 +56,7 @@ export default function GuideTwoPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             The Thinking Partner Mindset
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             The small mindset shift that changes everything about how you use AI.
           </p>
         </section>
@@ -66,7 +66,7 @@ export default function GuideTwoPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Describe the difference between using AI as a tool and using it as a thinking partner — and use it the right way in a real conversation.
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function GuideTwoPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               There is a version of AI use that gets you 10% of the value. And there is a version that gets you everything. The difference is not which AI you use or how long your prompts are.
             </p>
@@ -93,7 +93,7 @@ export default function GuideTwoPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div className="bg-[#E8373A]/5 border border-[#E8373A]/15 rounded-[14px] p-5">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A]/80 uppercase tracking-[1.5px] mb-3">Tool Mode</p>
-              <ul className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] space-y-2">
+              <ul className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] space-y-2">
                 <li>You ask. AI answers. Done.</li>
                 <li>You treat the output as a final product.</li>
                 <li>You leave when the answer arrives.</li>
@@ -102,7 +102,7 @@ export default function GuideTwoPage() {
             </div>
             <div className="bg-[#22C55E]/5 border border-[#22C55E]/15 rounded-[14px] p-5">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#22C55E]/80 uppercase tracking-[1.5px] mb-3">Partner Mode</p>
-              <ul className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] space-y-2">
+              <ul className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] space-y-2">
                 <li>You think out loud. AI responds.</li>
                 <li>You react, push back, redirect.</li>
                 <li>The conversation finds the insight.</li>
@@ -111,7 +111,7 @@ export default function GuideTwoPage() {
             </div>
           </div>
 
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4 mb-6">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4 mb-6">
             <p>
               The shift is small. The results are not. A thinking partner does not just answer your questions — it asks better ones back.
             </p>
@@ -124,7 +124,7 @@ export default function GuideTwoPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[2px] mb-3">
               The Brilliant Friend Analogy
             </p>
-            <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.9] space-y-3">
+            <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/65 leading-[1.9] space-y-3">
               <p>
                 Imagine you have a brilliant friend who has read everything — medicine, law, business, psychology, design. You can call them any time.
               </p>
@@ -144,20 +144,20 @@ export default function GuideTwoPage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-4">Tool Mode</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-2">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-2">
                 <span className="text-white/80 italic">"Write me a caption for my food business post."</span>
               </p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 leading-[1.7]">
                 AI writes a generic caption. You post it. Nothing happens.
               </p>
             </div>
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[2px] mb-4">Partner Mode</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-2">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-2">
                 <span className="text-white/80 italic">"I run a small sari-sari store in Cavite and want to grow on Facebook. My customers are mostly moms aged 25-45. Help me think through what kind of content would actually make them want to follow my page."</span>
               </p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 leading-[1.7]">
                 AI asks clarifying questions. You go back and forth. You land on a content angle that is specific to your store, your community, and your customers. You write a caption that gets actual comments.
               </p>
             </div>
@@ -166,13 +166,13 @@ export default function GuideTwoPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 10 minutes · ChatGPT, Claude, or Gemini</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 10 minutes · ChatGPT, Claude, or Gemini</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Your Task</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Think of something real you are working on — a project, a goal, a problem. Replace [your real situation] in the prompt below with one or two sentences about it.
                 </p>
               </div>
@@ -181,14 +181,14 @@ export default function GuideTwoPage() {
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-3">
                   Prompt — use this exactly
                 </p>
-                <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.7]">
+                <p className="font-mono text-[15px] text-[#FFD23F] leading-[1.7]">
                   I want to use you as a thinking partner, not just an answering machine. Here is something I am working on: [your real situation]. Do not give me answers yet. Ask me 3 questions that will help you understand my situation better.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">What to notice</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   When AI asks YOU questions instead of giving you answers, that is partner mode. Notice how answering those questions helps you clarify your own thinking — before AI says anything useful at all.
                 </p>
               </div>
@@ -209,7 +209,7 @@ export default function GuideTwoPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -222,7 +222,7 @@ export default function GuideTwoPage() {
               <Lightbulb size={14} className="text-[#A78BFA]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               When AI asked you questions, did you learn something about your own situation just by answering them? <span className="text-white font-bold">What does that tell you about what a thinking partner actually does?</span>
             </p>
           </div>
@@ -239,7 +239,7 @@ export default function GuideTwoPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -251,8 +251,8 @@ export default function GuideTwoPage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Catch yourself in tool mode — and switch.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Catch yourself in tool mode — and switch.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Over the next 24 hours, every time you open an AI tool and type a one-line question, stop. Rewrite it in partner mode — add context, your situation, what you are actually trying to figure out. Track how different the answers feel.
             </p>
           </div>
@@ -262,14 +262,14 @@ export default function GuideTwoPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&apos;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Your First Deep Conversation with AI</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Your First Deep Conversation with AI</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Think with AI · Guide 3 of 12 · Beginner · 10 min
               </p>
             </div>
             <a
               href="/learn/think/your-first-deep-conversation-with-ai"
-              className="inline-flex items-center gap-2 bg-[#A78BFA] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#A78BFA] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

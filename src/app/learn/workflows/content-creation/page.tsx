@@ -118,7 +118,7 @@ export default function ContentCreationWorkflowPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Content Creation Workflow
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Create a week of social media content in one focused hour.
           </p>
         </section>
@@ -129,7 +129,7 @@ export default function ContentCreationWorkflowPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Create a week of social media content in one hour using ChatGPT and Claude — for any business or personal brand.
             </p>
           </div>
@@ -138,7 +138,7 @@ export default function ContentCreationWorkflowPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Most small business owners post randomly or not at all because content feels hard. Coming up with ideas is hard. Writing captions is hard. Doing it every day is impossible when you are also running a business.
             </p>
@@ -176,8 +176,8 @@ export default function ContentCreationWorkflowPage() {
                     <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[1.5px]" style={{ color: s.color.dot }}>{s.toolLabel}</span>
                     <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/25">· {s.time}</span>
                   </div>
-                  <p className="font-sans text-[16px] font-bold text-white mb-1">{s.title}</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">{s.description}</p>
+                  <p className="font-sans text-[17px] font-bold text-white mb-1">{s.title}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">{s.description}</p>
                 </div>
               </div>
             ))}
@@ -191,7 +191,7 @@ export default function ContentCreationWorkflowPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-4">
               Sari-Sari Store Owner · Cebu
             </p>
-            <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.9] space-y-3">
+            <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/65 leading-[1.9] space-y-3">
               <p>
                 A sari-sari store owner in Cebu creates a week of Facebook content in one Sunday afternoon. She tells ChatGPT she runs a small convenience store for her neighborhood.
               </p>
@@ -208,7 +208,7 @@ export default function ContentCreationWorkflowPage() {
         {/* Try It Yourself */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Try It Yourself</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 60 minutes · ChatGPT + Claude</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 60 minutes · ChatGPT + Claude</p>
 
           <div className="space-y-4">
             {/* Step 1 */}
@@ -216,14 +216,14 @@ export default function ContentCreationWorkflowPage() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1 · You</span>
               </div>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7]">
                 Write answers to these three questions before opening any AI tool:
               </p>
               <ul className="mt-3 space-y-1.5">
                 {["What platform am I posting on?", "Who is my audience (be specific — age, location, what they care about)?", "What do I want them to do after seeing my post?"].map((q) => (
                   <li key={q} className="flex items-start gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                    <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55">{q}</span>
+                    <span className="font-[family-name:var(--font-inter)] text-[15px] text-white/55">{q}</span>
                   </li>
                 ))}
               </ul>
@@ -234,12 +234,12 @@ export default function ContentCreationWorkflowPage() {
               <div className="flex items-center gap-2 mb-4">
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 · ChatGPT</span>
               </div>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7] mb-4">
                 Open ChatGPT and paste this prompt. Fill in the brackets with your answers from Step 1.
               </p>
               <div className="bg-[#0F0F1A] border border-[#10B981]/20 rounded-[10px] p-4">
                 <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#10B981] uppercase tracking-[1.5px] block mb-3">ChatGPT</span>
-                <p className="font-mono text-[13px] text-[#10B981] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#10B981] leading-[1.7]">
                   {`I run [describe your business]. My audience is [describe them specifically — age, location, what they care about]. I post on [platform]. Give me 14 social media post ideas for the next 7 days (2 per day). Each idea should be simple, relevant to my audience, and encourage engagement. Label them Day 1 through Day 7.`}
                 </p>
               </div>
@@ -250,12 +250,12 @@ export default function ContentCreationWorkflowPage() {
               <div className="flex items-center gap-2 mb-4">
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 · Claude</span>
               </div>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7] mb-4">
                 Open Claude and paste this prompt. Paste ChatGPT's list of 14 ideas into the bracket.
               </p>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4">
                 <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#F59E0B] uppercase tracking-[1.5px] block mb-3">Claude</span>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.7]">
                   {`Write complete social media captions for these 14 post ideas: [paste ChatGPT's output]. For each post, write: a strong opening hook (first line that stops scrolling), 2-3 sentences of body, a clear call to action, and 5 relevant hashtags. The tone should be [warm and friendly / professional / fun]. My brand is [your business name].`}
                 </p>
               </div>
@@ -266,7 +266,7 @@ export default function ContentCreationWorkflowPage() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 4 · Human Review</span>
               </div>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7]">
                 Read all 14 captions. Pick your 7 favorites. Edit any that don't sound like you. Schedule them using Meta Business Suite (free) or Buffer (free plan available).
               </p>
             </div>
@@ -284,7 +284,7 @@ export default function ContentCreationWorkflowPage() {
               {checklist.map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -298,10 +298,10 @@ export default function ContentCreationWorkflowPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Look at the 7 posts you scheduled. <span className="text-white font-bold">Which ones sound most like you — and what did you change to make them feel that way?</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">
               That editing instinct is your voice. The more you use this workflow, the faster you'll recognize it.
             </p>
           </div>
@@ -314,7 +314,7 @@ export default function ContentCreationWorkflowPage() {
             {takeaways.map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -325,14 +325,14 @@ export default function ContentCreationWorkflowPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What's Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Freelancing Proposal Workflow</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Freelancing Proposal Workflow</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Workflows · Guide 5 of 10
               </p>
             </div>
             <a
               href="/learn/workflows/freelancing-proposal"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

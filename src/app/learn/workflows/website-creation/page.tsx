@@ -101,7 +101,7 @@ export default function WebsiteCreationPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Website Creation Workflow
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Two AIs. One afternoon. A website that is actually yours.
           </p>
         </section>
@@ -112,7 +112,7 @@ export default function WebsiteCreationPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Build a complete website for your business or portfolio using ChatGPT and Claude together — even if you have never built a website before.
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function WebsiteCreationPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Building a website used to require a web developer. Now you can create a professional site in one afternoon using AI — for free or near-free. This workflow shows you exactly how.
             </p>
@@ -146,8 +146,8 @@ export default function WebsiteCreationPage() {
                       <span className={`font-[family-name:var(--font-inter)] text-[12px] font-bold uppercase tracking-[1px] ${s.actorColor}`}>{s.actor}</span>
                       <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/25">· {s.time}</span>
                     </div>
-                    <p className="font-sans text-[15px] font-bold text-white mb-1">{s.title}</p>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">{s.description}</p>
+                    <p className="font-sans text-[16px] font-bold text-white mb-1">{s.title}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.7]">{s.description}</p>
                   </div>
                 </div>
               ))}
@@ -162,7 +162,7 @@ export default function WebsiteCreationPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-3">
               Filipino Freelancer Story
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.9]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.9]">
               A Filipino freelance graphic designer builds a portfolio website in one afternoon. ChatGPT plans 5 pages, Claude writes all the copy, she publishes on Carrd for free.
             </p>
           </div>
@@ -171,13 +171,13 @@ export default function WebsiteCreationPage() {
         {/* Try It Yourself */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Try It Yourself</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">Follow each step in order. Do not skip ahead.</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">Follow each step in order. Do not skip ahead.</p>
 
           <div className="space-y-4">
             {/* Step 1 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1 — You</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-2 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-2 leading-[1.7]">
                 Write down: What is this website for? Who will visit it? What do you want them to do?
               </p>
             </div>
@@ -185,12 +185,12 @@ export default function WebsiteCreationPage() {
             {/* Step 2 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#10B981] uppercase tracking-[1.5px]">Step 2 — ChatGPT</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-2 mb-3 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-2 mb-3 leading-[1.7]">
                 Open ChatGPT and run this prompt:
               </p>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — ChatGPT</p>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.8]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.8]">
                   I want to build a simple website for [your purpose]. My target visitor is [describe them]. I want them to [desired action]. Plan my website structure: list the pages and what each section should include.
                 </p>
               </div>
@@ -199,12 +199,12 @@ export default function WebsiteCreationPage() {
             {/* Step 3 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Step 3 — Claude</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-2 mb-3 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-2 mb-3 leading-[1.7]">
                 Open Claude and run this prompt:
               </p>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — Claude</p>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.8]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.8]">
                   Here is my website structure: [paste ChatGPT&apos;s output]. Write complete copy for every section. I am [name], I do [what you do], for [who]. Make it sound personal and professional.
                 </p>
               </div>
@@ -213,7 +213,7 @@ export default function WebsiteCreationPage() {
             {/* Step 4 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[1.5px]">Step 4 — Human Review</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-2 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-2 leading-[1.7]">
                 Sign up for Carrd.co (free), choose a template, paste Claude's copy into each section, add your own photos.
               </p>
             </div>
@@ -235,7 +235,7 @@ export default function WebsiteCreationPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -249,7 +249,7 @@ export default function WebsiteCreationPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               What surprised you about how fast this came together? <span className="text-white font-bold">What would you change about the copy Claude wrote?</span>
             </p>
           </div>
@@ -267,7 +267,7 @@ export default function WebsiteCreationPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -278,14 +278,14 @@ export default function WebsiteCreationPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&apos;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Business Planning Workflow</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Business Planning Workflow</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Workflows · Guide 2 of 10 · Beginner · 55 min
               </p>
             </div>
             <a
               href="/learn/workflows/business-planning"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

@@ -34,19 +34,19 @@ export default function LessonPage() {
           </div>
           <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/30 uppercase tracking-[2px] mb-3">Website Creation · Lesson 3 of 7</p>
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">Planning Your Site with AI Before You Build</h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">The fastest way to build is to think first. AI is your planning partner.</p>
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">The fastest way to build is to think first. AI is your planning partner.</p>
         </section>
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <div className="rounded-[14px] p-5" style={{ backgroundColor: `${COLOR}10`, border: `1px solid ${COLOR}30` }}>
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[2px] mb-2" style={{ color: COLOR }}>After This Lesson, You Will Be Able To</p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">Use AI to define your site's pages, content, and structure — before opening any builder tool.</p>
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">Use AI to define your site's pages, content, and structure — before opening any builder tool.</p>
           </div>
         </section>
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why You Should Plan Before You Build</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>Most people open a website builder, pick a template, and start dragging things around — then realize two hours in that they don't know what to say, how many pages they need, or what the site is actually supposed to do.</p>
             <p>Planning with AI first takes 30 minutes and saves hours. You walk into the builder knowing exactly what pages you need, what goes on each one, and what the site's job is.</p>
           </div>
@@ -62,8 +62,8 @@ export default function LessonPage() {
               { q: "What content goes on each page?", a: "For each page: what's the headline, what does the body say, what does the visitor do next? Answer this before you open any builder." },
             ].map((item, i) => (
               <div key={i} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-5">
-                <p className="font-sans text-[14px] font-bold text-white mb-2">{item.q}</p>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">{item.a}</p>
+                <p className="font-sans text-[15px] font-bold text-white mb-2">{item.q}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.7]">{item.a}</p>
               </div>
             ))}
           </div>
@@ -71,11 +71,11 @@ export default function LessonPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">15 minutes · ChatGPT or Claude</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">15 minutes · ChatGPT or Claude</p>
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4 mb-4">
               <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-3">Prompt to use</p>
-              <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.7]">I want to plan a website before I start building it. My goal is [your goal]. My target visitor is [describe them]. Help me: 1) Define the site's one main job, 2) List the pages I need (no more than 5), 3) For each page, tell me what should go on it in plain bullet points. Keep it simple — this is a first website.</p>
+              <p className="font-mono text-[15px] text-[#FFD23F] leading-[1.7]">I want to plan a website before I start building it. My goal is [your goal]. My target visitor is [describe them]. Help me: 1) Define the site's one main job, 2) List the pages I need (no more than 5), 3) For each page, tell me what should go on it in plain bullet points. Keep it simple — this is a first website.</p>
             </div>
             <div className="bg-[#22C55E]/5 border border-[#22C55E]/15 rounded-[14px] p-5">
               <div className="flex items-center gap-2 mb-3"><CheckSquare size={14} className="text-[#22C55E]" /><span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#22C55E] uppercase tracking-[1.5px]">Mark Complete</span></div>
@@ -83,7 +83,7 @@ export default function LessonPage() {
                 {["I have a clear site map (list of pages)", "Each page has a purpose I can explain in one sentence", "I know what content I need to write before I start building"].map((item) => (
                   <label key={item} className="flex items-center gap-3 cursor-pointer group">
                     <input type="checkbox" className="w-4 h-4 rounded cursor-pointer" />
-                    <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                    <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                   </label>
                 ))}
               </div>
@@ -94,7 +94,7 @@ export default function LessonPage() {
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <div className="bg-[#A78BFA]/5 border border-[#A78BFA]/15 rounded-[14px] p-6">
             <div className="flex items-center gap-2 mb-3"><Lightbulb size={14} className="text-[#A78BFA]" /><span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[1.5px]">Reflect</span></div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">If someone landed on your site for the first time and had 10 seconds, <span className="text-white font-bold">would they immediately know what you do and who it's for?</span> If not, your planning isn't done yet.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">If someone landed on your site for the first time and had 10 seconds, <span className="text-white font-bold">would they immediately know what you do and who it's for?</span> If not, your planning isn't done yet.</p>
           </div>
         </section>
 
@@ -104,7 +104,7 @@ export default function LessonPage() {
             {["Planning with AI first takes 30 minutes and prevents hours of rework inside the builder.", "Most first sites need 3–5 pages. More pages = more content to write = longer to launch.", "For every page, define: what it says, who it's for, and what the visitor does next.", "A clear site map is your blueprint. Don't open the builder until you have one."].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full mt-[7px] shrink-0" style={{ backgroundColor: COLOR }} />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -113,8 +113,8 @@ export default function LessonPage() {
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <div className="bg-[#F59E0B]/5 border border-[#F59E0B]/15 rounded-[14px] p-6">
             <div className="flex items-center gap-2 mb-3"><Trophy size={14} className="text-[#F59E0B]" /><span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge</span></div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Draw your site map by hand.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">Take a piece of paper and sketch your site structure. Boxes for pages, arrows for navigation. Doing it by hand forces clarity that a typed list doesn't.</p>
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Draw your site map by hand.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">Take a piece of paper and sketch your site structure. Boxes for pages, arrows for navigation. Doing it by hand forces clarity that a typed list doesn't.</p>
           </div>
         </section>
 
@@ -122,10 +122,10 @@ export default function LessonPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">Next Lesson</p>
-              <p className="font-sans text-[16px] font-bold text-white">Writing Website Copy That Actually Converts</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">Website Creation · Lesson 4 of 7 · 12 min</p>
+              <p className="font-sans text-[17px] font-bold text-white">Writing Website Copy That Actually Converts</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">Website Creation · Lesson 4 of 7 · 12 min</p>
             </div>
-            <a href="/learn/skills/website-creation/writing-website-copy-that-converts" className="inline-flex items-center gap-2 text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0 hover:opacity-90 transition-opacity" style={{ backgroundColor: COLOR }}>
+            <a href="/learn/skills/website-creation/writing-website-copy-that-converts" className="inline-flex items-center gap-2 text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0 hover:opacity-90 transition-opacity" style={{ backgroundColor: COLOR }}>
               Next <ArrowRight size={14} />
             </a>
           </div>

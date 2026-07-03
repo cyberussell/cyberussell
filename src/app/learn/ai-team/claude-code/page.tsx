@@ -48,7 +48,7 @@ export default function ClaudeCodePage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Claude Code
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             You do not need to be a programmer. Claude can write code for you — and explain exactly what it does in plain language.
           </p>
         </section>
@@ -58,7 +58,7 @@ export default function ClaudeCodePage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Use Claude to create or fix a simple piece of code — even if you have never coded before.
             </p>
           </div>
@@ -66,7 +66,7 @@ export default function ClaudeCodePage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Up until recently, code was only accessible to people who spent years learning how to write it. That excluded most people from tools that could save them hours every week.
             </p>
@@ -108,8 +108,8 @@ export default function ClaudeCodePage() {
                 },
               ].map(({ title, desc, example }) => (
                 <div key={title} className="border-b border-white/[0.05] pb-4 last:border-0 last:pb-0">
-                  <p className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white mb-1">{title}</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6] mb-2">{desc}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[16px] font-bold text-white mb-1">{title}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.6] mb-2">{desc}</p>
                   <p className="font-mono text-[12px] text-[#F59E0B]/80 italic leading-[1.6]">{example}</p>
                 </div>
               ))}
@@ -117,7 +117,7 @@ export default function ClaudeCodePage() {
           </div>
 
           <div className="bg-[#F59E0B]/5 border border-[#F59E0B]/15 rounded-[14px] p-5">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#F59E0B]/80 leading-[1.7]">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#F59E0B]/80 leading-[1.7]">
               <span className="font-bold text-[#F59E0B]">Important:</span> Always tell Claude you are a beginner and ask it to explain what the code does in simple language. This way you understand what you are using — and you can describe what to fix if something goes wrong.
             </p>
           </div>
@@ -129,21 +129,21 @@ export default function ClaudeCodePage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-4">Before</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8]">
                 Grace is a Filipino virtual assistant managing 3 clients. Every month end, she manually adds up client hours from her tracker spreadsheet — checking each row, using a calculator, copying totals. It takes 30–45 minutes and she sometimes makes mistakes.
               </p>
             </div>
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-4">After Using Claude Code</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Grace asks Claude: &ldquo;I do not know how to code. I have a Google Sheets tracker with client names in column A, hours worked in column B, and my hourly rate in column C. Help me create a formula that calculates total billing for each client. Explain what the formula does in simple words.&rdquo;
               </p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Claude writes the formula, explains it in plain language (&ldquo;This multiplies column B by column C to get your total billing&rdquo;), and tells her exactly which cell to paste it in. She does it in 5 minutes. The calculation is now automatic.
               </p>
               <div className="bg-[#F59E0B]/8 border border-[#F59E0B]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#F59E0B]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#F59E0B]/80 leading-[1.6]">
                   30–45 minutes of manual calculation every month — eliminated in 5 minutes.
                 </p>
               </div>
@@ -153,13 +153,13 @@ export default function ClaudeCodePage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 10 minutes · Claude (claude.ai) + Google Sheets</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 10 minutes · Claude (claude.ai) + Google Sheets</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1 — Pick your spreadsheet problem</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Think of one calculation or task in Google Sheets or Excel that you do manually right now. It could be simple — totaling a column, filtering rows, or calculating a percentage.
                 </p>
               </div>
@@ -167,7 +167,7 @@ export default function ClaudeCodePage() {
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 — Ask Claude using this template</span>
                 <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4 mt-2">
-                  <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.8]">
+                  <p className="font-mono text-[15px] text-[#F59E0B] leading-[1.8]">
                     I do not know how to code. Help me create a Google Sheets formula that: [DESCRIBE YOUR SPECIFIC PROBLEM — e.g., adds up column B only if column A says &ldquo;Paid&rdquo; / calculates my profit by subtracting column C from column B / counts how many rows have &ldquo;Done&rdquo; in column D].<br /><br />
                     Explain what the formula does in simple words so I understand it.
                   </p>
@@ -176,7 +176,7 @@ export default function ClaudeCodePage() {
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 — Paste it in Sheets</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Copy the formula Claude gives you. Open Google Sheets, click on the cell where you want the result, and paste it. If it does not work, go back to Claude and describe the error — it will fix it.
                 </p>
               </div>
@@ -196,7 +196,7 @@ export default function ClaudeCodePage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -209,7 +209,7 @@ export default function ClaudeCodePage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               What other manual, repetitive tasks do you do in spreadsheets or online tools that could be automated? <span className="text-white font-bold">Most people have at least 3–5 of these hiding in their daily work.</span>
             </p>
           </div>
@@ -226,7 +226,7 @@ export default function ClaudeCodePage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -238,8 +238,8 @@ export default function ClaudeCodePage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Build a simple one-page website.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Build a simple one-page website.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Ask Claude: &ldquo;I do not know how to code. Help me create a simple one-page HTML website for my [business/portfolio/project]. Include: my name, what I do, a few highlights, and a way to contact me. Make it look clean and professional.&rdquo; Then ask Claude how to put it online for free.
             </p>
           </div>
@@ -249,14 +249,14 @@ export default function ClaudeCodePage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&rsquo;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Claude Long Context</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Claude Long Context</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Meet Your AI Team · Claude Guide 4 of 5 · Beginner · 5 min
               </p>
             </div>
             <a
               href="/learn/ai-team/claude-long-context"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

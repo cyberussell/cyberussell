@@ -91,7 +91,7 @@ export default function YourFirstRealPromptPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Your First Real Prompt
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Most AI interactions are disappointing because most prompts are vague. This Guide fixes that — with four elements you can apply to any task, starting now.
           </p>
         </section>
@@ -101,7 +101,7 @@ export default function YourFirstRealPromptPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Write a prompt that includes enough context for AI to respond usefully the first time — for any task connected to your own life or work.
             </p>
           </div>
@@ -109,7 +109,7 @@ export default function YourFirstRealPromptPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why Prompts Matter</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>A prompt is the instruction you give AI. The quality of the prompt determines the quality of the response.</p>
             <p>AI cannot read your mind. It does not know your situation, your audience, your goal, your tone preference, or your constraints. When you give AI more context, it produces more relevant output.</p>
             <p className="text-white/80 font-bold">A vague prompt produces a vague response. A specific prompt produces a specific response.</p>
@@ -119,7 +119,7 @@ export default function YourFirstRealPromptPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">The Four Elements</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">Use these as a checklist until writing good prompts becomes intuitive.</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">Use these as a checklist until writing good prompts becomes intuitive.</p>
 
           <div className="space-y-4">
             {elements.map((e) => (
@@ -128,16 +128,16 @@ export default function YourFirstRealPromptPage() {
                   <span className="font-mono text-[12px] font-bold text-[#FFD23F]/40">{e.number}</span>
                   <h3 className="font-sans text-[17px] font-bold text-[#FFD23F]">{e.label}</h3>
                 </div>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 italic mb-4">{e.question}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 italic mb-4">{e.question}</p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                   <div className="bg-[#E8373A]/5 border border-[#E8373A]/15 rounded-[8px] px-3 py-3">
                     <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#E8373A]/60 uppercase tracking-[1.5px] mb-1">Weak</p>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.5] italic">{e.weak}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.5] italic">{e.weak}</p>
                   </div>
                   <div className="bg-[#22C55E]/5 border border-[#22C55E]/15 rounded-[8px] px-3 py-3">
                     <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#22C55E]/60 uppercase tracking-[1.5px] mb-1">Strong</p>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/70 leading-[1.5] italic">{e.strong}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-[1.5] italic">{e.strong}</p>
                   </div>
                 </div>
 
@@ -152,7 +152,7 @@ export default function YourFirstRealPromptPage() {
           <div className="bg-[#FFD23F]/5 border border-[#FFD23F]/15 rounded-[14px] p-6">
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[1.5px] mb-3">Example — All 4 Elements Combined</p>
             <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4">
-              <p className="font-mono text-[13px] text-[#FFD23F] leading-[1.9]">
+              <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.9]">
                 Write a short introduction paragraph for my freelance services page. [Task]
                 <br /><br />
                 I offer social media management to small Filipino businesses — mostly restaurants and retail shops that aren't very active online yet. [Context]
@@ -170,34 +170,34 @@ export default function YourFirstRealPromptPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 8 minutes · ChatGPT, Claude, or Gemini</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 8 minutes · ChatGPT, Claude, or Gemini</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Think of a real task you need done — something for your work, job search, freelance goals, or learning. It must be yours, not a practice scenario.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Write your prompt using all four elements: Task, Context, Format, and Constraints. Take your time — this is the most important part of the exercise.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Run it. Read the response. Then ask: was this more useful than what a one-sentence version of this prompt would have produced?
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 4 — Optional</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Remove one element and run the prompt again. Notice what changes. Which element made the biggest difference?
                 </p>
               </div>
@@ -217,7 +217,7 @@ export default function YourFirstRealPromptPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -230,10 +230,10 @@ export default function YourFirstRealPromptPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Think about a time you were frustrated with an AI output. <span className="text-white font-bold">Was the problem the AI — or was the problem the prompt?</span> What would you add to that prompt using the four-element framework?
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">You do not need to write it down. Just think.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">You do not need to write it down. Just think.</p>
           </div>
         </section>
 
@@ -248,7 +248,7 @@ export default function YourFirstRealPromptPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -260,7 +260,7 @@ export default function YourFirstRealPromptPage() {
               <Zap size={14} className="text-[#E8373A]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A] uppercase tracking-[1.5px]">One More Guide</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">
               You just wrote your first real prompt. Before you finish the Pillar, there's one thing to check — what you should never type into that prompt box.
             </p>
           </div>
@@ -270,14 +270,14 @@ export default function YourFirstRealPromptPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What's Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">What Not to Share with AI</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">What Not to Share with AI</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Foundations · Guide 7 of 7 · Beginner · 10 min
               </p>
             </div>
             <a
               href="/learn/foundations/what-not-to-share-with-ai"
-              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Continue <ArrowRight size={14} />
             </a>

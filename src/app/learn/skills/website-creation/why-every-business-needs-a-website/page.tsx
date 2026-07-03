@@ -56,7 +56,7 @@ export default function LessonPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Why Every Business Needs a Website in 2025
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             The case for building your own web presence — and why AI makes it finally accessible.
           </p>
         </section>
@@ -66,7 +66,7 @@ export default function LessonPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[2px] mb-2" style={{ color: COLOR }}>
               After This Lesson, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Explain why a website is non-negotiable for any serious business or freelance career — and know what to look for in your first site.
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function LessonPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Social media is rented land. Facebook can change its algorithm tomorrow. TikTok can be banned. Instagram can restrict your reach. And none of those platforms belong to you.
             </p>
@@ -97,8 +97,8 @@ export default function LessonPage() {
               { title: "Ranks on Google", body: "Social media posts disappear in 24 hours. A well-written page on your site can rank for a keyword and bring in traffic for years." },
             ].map((item) => (
               <div key={item.title} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-5">
-                <p className="font-sans text-[14px] font-bold text-white mb-2">{item.title}</p>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">{item.body}</p>
+                <p className="font-sans text-[15px] font-bold text-white mb-2">{item.title}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.7]">{item.body}</p>
               </div>
             ))}
           </div>
@@ -114,8 +114,8 @@ export default function LessonPage() {
               { excuse: "\"My Facebook page is enough.\"", answer: "It isn't. Potential clients, employers, and partners expect a website. Facebook is for discovery — websites are for credibility." },
             ].map((item) => (
               <div key={item.excuse} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-5">
-                <p className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/70 mb-1.5 italic">{item.excuse}</p>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">{item.answer}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white/70 mb-1.5 italic">{item.excuse}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.7]">{item.answer}</p>
               </div>
             ))}
           </div>
@@ -123,7 +123,7 @@ export default function LessonPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">What Your First Site Should Do</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4 mb-6">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4 mb-6">
             <p>Your first site doesn't need to be perfect. It needs to do three things:</p>
           </div>
           <div className="space-y-3">
@@ -135,8 +135,8 @@ export default function LessonPage() {
               <div key={item.num} className="flex items-start gap-4 bg-[#18181F] border border-white/[0.08] rounded-[14px] p-5">
                 <span className="font-sans text-[20px] font-bold shrink-0" style={{ color: COLOR }}>{item.num}</span>
                 <div>
-                  <p className="font-sans text-[15px] font-bold text-white mb-1">{item.title}</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.6]">{item.desc}</p>
+                  <p className="font-sans text-[16px] font-bold text-white mb-1">{item.title}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.6]">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -145,18 +145,18 @@ export default function LessonPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">5 minutes · ChatGPT or Claude</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">5 minutes · ChatGPT or Claude</p>
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Your Task</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Use the prompt below to get AI to help you think through exactly what YOUR first website needs to do.
                 </p>
               </div>
               <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-3">Prompt to use</p>
-                <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.7]">
+                <p className="font-mono text-[15px] text-[#FFD23F] leading-[1.7]">
                   I want to build my first website. I am [describe what you do or want to do — freelancer, small business owner, student, etc.]. Help me define: 1) The one main goal of my site, 2) Who it's for, 3) The single action I want visitors to take. Ask me questions if you need to.
                 </p>
               </div>
@@ -169,7 +169,7 @@ export default function LessonPage() {
                   {["I can name the one goal my website needs to achieve", "I know who my target visitor is", "I've defined the single action I want visitors to take"].map((item) => (
                     <label key={item} className="flex items-center gap-3 cursor-pointer group">
                       <input type="checkbox" className="w-4 h-4 rounded cursor-pointer" />
-                      <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                      <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                     </label>
                   ))}
                 </div>
@@ -184,7 +184,7 @@ export default function LessonPage() {
               <Lightbulb size={14} className="text-[#A78BFA]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Think of the last time you tried to verify if a business or freelancer was legit. Did you Google them? What did you find — or not find? <span className="text-white font-bold">What does that tell you about what your potential clients are doing right now?</span>
             </p>
           </div>
@@ -201,7 +201,7 @@ export default function LessonPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full mt-[7px] shrink-0" style={{ backgroundColor: COLOR }} />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -213,8 +213,8 @@ export default function LessonPage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Google 3 people in your field right now.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Google 3 people in your field right now.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Search for 3 freelancers or businesses doing what you want to do. Look at their websites critically: What do they do well? What's missing? What would make YOU choose them — or not? Write down 3 things you want your site to do that theirs doesn't.
             </p>
           </div>
@@ -224,10 +224,10 @@ export default function LessonPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">Next Lesson</p>
-              <p className="font-sans text-[16px] font-bold text-white">Picking Your Stack: No-Code vs AI-Code vs Traditional</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">Website Creation · Lesson 2 of 7 · 10 min</p>
+              <p className="font-sans text-[17px] font-bold text-white">Picking Your Stack: No-Code vs AI-Code vs Traditional</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">Website Creation · Lesson 2 of 7 · 10 min</p>
             </div>
-            <a href="/learn/skills/website-creation/picking-your-stack" className="inline-flex items-center gap-2 text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0 hover:opacity-90 transition-opacity" style={{ backgroundColor: COLOR }}>
+            <a href="/learn/skills/website-creation/picking-your-stack" className="inline-flex items-center gap-2 text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0 hover:opacity-90 transition-opacity" style={{ backgroundColor: COLOR }}>
               Next <ArrowRight size={14} />
             </a>
           </div>

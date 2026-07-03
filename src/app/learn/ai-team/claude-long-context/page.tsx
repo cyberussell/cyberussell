@@ -48,7 +48,7 @@ export default function ClaudeLongContextPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Claude Long Context
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Claude can read an entire book. Hand it a long document and ask it exactly what you need to know.
           </p>
         </section>
@@ -58,7 +58,7 @@ export default function ClaudeLongContextPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Upload a long document to Claude and extract exactly the information you need from it.
             </p>
           </div>
@@ -66,7 +66,7 @@ export default function ClaudeLongContextPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Some of the most important documents in our lives are also the hardest to read. Employment contracts full of legal language. Government forms. Long business reports. Academic papers. Insurance policies.
             </p>
@@ -84,7 +84,7 @@ export default function ClaudeLongContextPage() {
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-6">
             <p className="font-sans text-[18px] font-bold text-white mb-3">What &ldquo;Long Context&rdquo; Means</p>
-            <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-3">
+            <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-3">
               <p>
                 Every AI has a limit to how much text it can process in one conversation. This limit is called its &ldquo;context window.&rdquo; A small context window means the AI can only read a few pages at a time. Claude&rsquo;s context window can handle hundreds of pages — entire books, long contracts, full reports.
               </p>
@@ -109,7 +109,7 @@ export default function ClaudeLongContextPage() {
               ].map((use) => (
                 <div key={use} className="flex items-start gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[6px] shrink-0" />
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/60 leading-[1.7]">{use}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{use}</p>
                 </div>
               ))}
             </div>
@@ -122,24 +122,24 @@ export default function ClaudeLongContextPage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-4">The Situation</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8]">
                 Nena is a Filipino worker who received a 25-page employment contract for a new job opportunity. It is written in formal English with legal terms she does not fully understand. She is excited about the job but nervous about what she might be agreeing to. She cannot afford a lawyer.
               </p>
             </div>
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-4">With Claude Long Context</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Nena uploads the contract PDF to Claude and asks:
               </p>
-              <p className="font-mono text-[13px] text-white/70 leading-[1.8] italic mb-3">
+              <p className="font-mono text-[14px] text-white/70 leading-[1.8] italic mb-3">
                 &ldquo;Explain this contract to me like I am 18 years old. Tell me what I am agreeing to in plain language. Flag anything I should ask my employer about before signing. Also, are there any clauses that might limit what I can do after I leave this job?&rdquo;
               </p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Claude reads all 25 pages and gives her a plain-language summary — what the job is, what she is agreeing to, what benefits are included, and 3 specific clauses she should ask her employer to clarify (a non-compete clause, an IP ownership clause, and an unclear overtime policy).
               </p>
               <div className="bg-[#F59E0B]/8 border border-[#F59E0B]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#F59E0B]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#F59E0B]/80 leading-[1.6]">
                   She signed with full understanding — and negotiated one clause before signing. Something she could not have done without Claude.
                 </p>
               </div>
@@ -149,24 +149,24 @@ export default function ClaudeLongContextPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 10 minutes · Claude (claude.ai) + any long document</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 10 minutes · Claude (claude.ai) + any long document</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1 — Find a long document</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Find any long document you have — an employment contract, a lease agreement, a business report, a terms of service, a long article, or even a PDF book chapter. Anything you find hard to read or have been putting off reading.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 — Upload and ask</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Open claude.ai → click the paperclip icon to attach the file → ask:
                 </p>
                 <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4 mt-2">
-                  <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.8]">
+                  <p className="font-mono text-[15px] text-[#F59E0B] leading-[1.8]">
                     Summarize this in 5 bullet points. Then tell me the 3 most important things I need to know from this document. Use simple, plain language — no jargon.
                   </p>
                 </div>
@@ -174,7 +174,7 @@ export default function ClaudeLongContextPage() {
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 — Go deeper</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   After reading Claude&rsquo;s summary, ask a follow-up question about something specific. &ldquo;Tell me more about [specific section/clause/point].&rdquo; Or: &ldquo;Are there any parts I should be concerned about?&rdquo;
                 </p>
               </div>
@@ -194,7 +194,7 @@ export default function ClaudeLongContextPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -207,7 +207,7 @@ export default function ClaudeLongContextPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Is there an important document you have been avoiding because it is too long or too confusing to read? <span className="text-white font-bold">Claude can read it for you in seconds — and tell you exactly what you need to know.</span>
             </p>
           </div>
@@ -224,7 +224,7 @@ export default function ClaudeLongContextPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -236,8 +236,8 @@ export default function ClaudeLongContextPage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Read a document you have been avoiding.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Read a document you have been avoiding.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Everyone has at least one important document they have been putting off reading — a contract, a policy, a long report, a government form. Find yours, upload it to Claude, and finally understand what it says. Then decide what to do with that information.
             </p>
           </div>
@@ -247,14 +247,14 @@ export default function ClaudeLongContextPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&rsquo;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Claude Coding Workflows</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Claude Coding Workflows</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Meet Your AI Team · Claude Guide 5 of 5 · Beginner · 10 min
               </p>
             </div>
             <a
               href="/learn/ai-team/claude-coding-workflows"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

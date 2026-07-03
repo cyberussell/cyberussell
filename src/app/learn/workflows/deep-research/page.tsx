@@ -116,7 +116,7 @@ export default function DeepResearchWorkflowPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Deep Research Workflow
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Research any topic thoroughly in under 30 minutes — using each AI for what it does best.
           </p>
         </section>
@@ -127,7 +127,7 @@ export default function DeepResearchWorkflowPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Research any topic thoroughly in under 30 minutes — using Gemini, ChatGPT, and Claude for different parts of the research.
             </p>
           </div>
@@ -136,7 +136,7 @@ export default function DeepResearchWorkflowPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Bad research leads to bad decisions. You pick the wrong skill to learn, apply for the wrong kind of jobs, or waste months on something the market doesn't need.
             </p>
@@ -171,8 +171,8 @@ export default function DeepResearchWorkflowPage() {
                     <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[1.5px]" style={{ color: s.dotColor }}>{s.toolLabel}</span>
                     <span className="font-[family-name:var(--font-inter)] text-[11px] text-white/25">· {s.time}</span>
                   </div>
-                  <p className="font-sans text-[16px] font-bold text-white mb-1">{s.title}</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">{s.description}</p>
+                  <p className="font-sans text-[17px] font-bold text-white mb-1">{s.title}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">{s.description}</p>
                 </div>
               </div>
             ))}
@@ -186,7 +186,7 @@ export default function DeepResearchWorkflowPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-4">
               Fresh Graduate · Choosing a Freelance Skill
             </p>
-            <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.9] space-y-3">
+            <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/65 leading-[1.9] space-y-3">
               <p>
                 A fresh graduate wants to know which freelance skill to learn first. She asks Gemini Deep Research: "What are the highest-paying remote freelance skills for Filipino beginners in 2025?"
               </p>
@@ -203,13 +203,13 @@ export default function DeepResearchWorkflowPage() {
         {/* Try It Yourself */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Try It Yourself</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 45 minutes · Gemini + ChatGPT + Claude</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 45 minutes · Gemini + ChatGPT + Claude</p>
 
           <div className="space-y-4">
             {/* Step 1 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] block mb-3">Step 1 · You</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7]">
                 Write your research question. Make it specific. Include your situation: who you are, why you need this information, and what decision you will make with it.
               </p>
             </div>
@@ -217,12 +217,12 @@ export default function DeepResearchWorkflowPage() {
             {/* Step 2 prompt */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] block mb-4">Step 2 · Gemini Deep Research</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7] mb-4">
                 Enable Deep Research mode in Gemini (look for the lightbulb or "Deep Research" button), then paste this prompt.
               </p>
               <div className="bg-[#0F0F1A] border border-[#4F8EF7]/20 rounded-[10px] p-4">
                 <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#4F8EF7] uppercase tracking-[1.5px] block mb-3">Gemini Deep Research</span>
-                <p className="font-mono text-[13px] text-[#4F8EF7] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#4F8EF7] leading-[1.7]">
                   {`Research: [your specific question]. I need current data, real examples, and credible sources. Focus on the Philippines context where relevant.`}
                 </p>
               </div>
@@ -231,12 +231,12 @@ export default function DeepResearchWorkflowPage() {
             {/* Step 3 prompt */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] block mb-4">Step 3 · ChatGPT</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7] mb-4">
                 Paste the key points from Gemini's report and ask ChatGPT for what's missing.
               </p>
               <div className="bg-[#0F0F1A] border border-[#10B981]/20 rounded-[10px] p-4">
                 <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#10B981] uppercase tracking-[1.5px] block mb-3">ChatGPT</span>
-                <p className="font-mono text-[13px] text-[#10B981] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#10B981] leading-[1.7]">
                   {`I am researching [your topic]. Here is what I found from Gemini: [paste the key points]. What important information is missing? Explain [specific concept you did not understand] in simple terms.`}
                 </p>
               </div>
@@ -245,12 +245,12 @@ export default function DeepResearchWorkflowPage() {
             {/* Step 4 prompt */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] block mb-4">Step 4 · Claude</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7] mb-4">
                 Paste everything you collected into Claude for a final organized summary.
               </p>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4">
                 <span className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#F59E0B] uppercase tracking-[1.5px] block mb-3">Claude</span>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.7]">
                   {`I am trying to answer this question: [your original question]. Here is the research I have gathered: [paste everything from Gemini and ChatGPT]. Summarize this into a clear, organized document with: the main answer to my question, 3-5 key facts I need to know, and a recommended next action.`}
                 </p>
               </div>
@@ -259,7 +259,7 @@ export default function DeepResearchWorkflowPage() {
             {/* Step 5 */}
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] block mb-3">Step 5 · Human Review</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7]">
                 Click through to 2-3 sources that Gemini cited. Verify the most important facts before making any decision based on this research.
               </p>
             </div>
@@ -277,7 +277,7 @@ export default function DeepResearchWorkflowPage() {
               {checklist.map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -291,10 +291,10 @@ export default function DeepResearchWorkflowPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               When you verified Gemini's sources, <span className="text-white font-bold">did any of the AI's claims turn out to be wrong, outdated, or missing important context?</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">
               This is why Step 5 exists. AI gives you a head start — not a final answer.
             </p>
           </div>
@@ -307,7 +307,7 @@ export default function DeepResearchWorkflowPage() {
             {takeaways.map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -318,14 +318,14 @@ export default function DeepResearchWorkflowPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What's Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Learning New Skills Workflow</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Learning New Skills Workflow</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Workflows · Guide 7 of 10
               </p>
             </div>
             <a
               href="/learn/workflows/learning-new-skills"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

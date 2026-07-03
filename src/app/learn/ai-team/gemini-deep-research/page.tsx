@@ -48,7 +48,7 @@ export default function GeminiDeepResearchPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Gemini Deep Research
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Google&rsquo;s research tool that actually searches the internet and shows you its sources.
           </p>
         </section>
@@ -58,7 +58,7 @@ export default function GeminiDeepResearchPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Use Gemini Deep Research to get a comprehensive, sourced research report on any topic in minutes.
             </p>
           </div>
@@ -66,7 +66,7 @@ export default function GeminiDeepResearchPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Gemini Deep Research is Google&rsquo;s answer to the problem of spending hours doing research. It searches the web like you would — but faster, more thorough, and with sources you can actually check.
             </p>
@@ -84,7 +84,7 @@ export default function GeminiDeepResearchPage() {
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-6">
             <p className="font-sans text-[18px] font-bold text-white mb-3">How Gemini Deep Research Works</p>
-            <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-3">
+            <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-3">
               <p>
                 Go to gemini.google.com → click the dropdown or look for the &ldquo;Deep Research&rdquo; option. Type your research question. Gemini shows you a research plan — a list of what it will search. You can edit the plan, then click &ldquo;Start Research.&rdquo;
               </p>
@@ -109,7 +109,7 @@ export default function GeminiDeepResearchPage() {
               ].map((use) => (
                 <div key={use} className="flex items-start gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#4F8EF7] mt-[6px] shrink-0" />
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/60 leading-[1.6]">{use}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.6]">{use}</p>
                 </div>
               ))}
             </div>
@@ -122,21 +122,21 @@ export default function GeminiDeepResearchPage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-4">The Situation</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8]">
                 Jay is a Filipino entrepreneur who wants to start selling native Filipino snacks — pili nuts, pastillas, and dried mangoes — online. He does not know whether Shopee or Lazada is better for his product, what the fees are, how other sellers price similar products, or what categories sell best on each platform. He has been Googling for a week with no clear answers.
               </p>
             </div>
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-4">With Gemini Deep Research</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Jay goes to gemini.google.com, selects Deep Research, and types: &ldquo;I want to sell Filipino native snacks (pili nuts, pastillas, dried mangoes) online in the Philippines. Research and compare Shopee vs Lazada — fees, commission rates, customer traffic, best product categories, seller requirements, and what Filipino food sellers are earning on each platform.&rdquo;
               </p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 8 minutes later, Jay has a 1,500-word report comparing both platforms with real data, current fee structures, and specific recommendations for food sellers in his situation.
               </p>
               <div className="bg-[#4F8EF7]/8 border border-[#4F8EF7]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#4F8EF7]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#4F8EF7]/80 leading-[1.6]">
                   One week of confused Googling replaced by one 8-minute research session. He launched on Shopee first based on the report.
                 </p>
               </div>
@@ -146,13 +146,13 @@ export default function GeminiDeepResearchPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 15 minutes · gemini.google.com (free)</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 15 minutes · gemini.google.com (free)</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1 — Go to Gemini</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Open gemini.google.com in your browser → sign in with your Google account → look for the &ldquo;Deep Research&rdquo; option in the toolbar or dropdown at the top.
                 </p>
               </div>
@@ -160,7 +160,7 @@ export default function GeminiDeepResearchPage() {
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 — Use this prompt template</span>
                 <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4 mt-2">
-                  <p className="font-mono text-[14px] text-[#4F8EF7] leading-[1.8]">
+                  <p className="font-mono text-[15px] text-[#4F8EF7] leading-[1.8]">
                     I am a Filipino [YOUR ROLE: student / entrepreneur / freelancer / job seeker]. Research [YOUR QUESTION OR TOPIC]. Include: key facts, pros and cons, what experts recommend, Philippine-specific information if available, and what I should do first.
                   </p>
                 </div>
@@ -168,7 +168,7 @@ export default function GeminiDeepResearchPage() {
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 — Review and verify</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   When the report is done, read it. Click 2–3 of the source links to verify the key facts. Note anything surprising or that you need to investigate further.
                 </p>
               </div>
@@ -188,7 +188,7 @@ export default function GeminiDeepResearchPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -201,7 +201,7 @@ export default function GeminiDeepResearchPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Because Gemini uses Google Search, it finds local, current information that other AI tools miss. <span className="text-white font-bold">What Philippine-specific questions have you been unable to find good answers to? Those are perfect for Gemini Deep Research.</span>
             </p>
           </div>
@@ -218,7 +218,7 @@ export default function GeminiDeepResearchPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#4F8EF7] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -230,8 +230,8 @@ export default function GeminiDeepResearchPage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Research your biggest current question.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Research your biggest current question.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               What is the one question you most need answered right now — about your career, your business, a financial decision, a major life change? Use Gemini Deep Research to get the most complete answer you have ever had to that question. Then make a decision based on real information.
             </p>
           </div>
@@ -241,14 +241,14 @@ export default function GeminiDeepResearchPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&rsquo;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Gemini Search Integration</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Gemini Search Integration</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Meet Your AI Team · Gemini Guide 5 of 5 · Beginner · 5 min
               </p>
             </div>
             <a
               href="/learn/ai-team/gemini-search-integration"
-              className="inline-flex items-center gap-2 bg-[#4F8EF7] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#4F8EF7] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

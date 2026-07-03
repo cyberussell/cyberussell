@@ -58,7 +58,7 @@ export default function WhatAIActuallyIsPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             What AI Actually Is
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             The most useful thing you can know about AI — before anything else.
           </p>
         </section>
@@ -69,7 +69,7 @@ export default function WhatAIActuallyIsPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Explain in plain language what AI is and what it actually does — without using the words "smart," "thinks," or "knows."
             </p>
           </div>
@@ -78,7 +78,7 @@ export default function WhatAIActuallyIsPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Most people who use AI are working with a wrong picture of what it is.
             </p>
@@ -103,7 +103,7 @@ export default function WhatAIActuallyIsPage() {
             <p className="font-sans text-[22px] font-bold text-[#FFD23F]">It predicts.</p>
           </div>
 
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4 mb-8">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4 mb-8">
             <p>
               When you type a question into an AI tool, the system does not reason through your problem and arrive at an answer. It looks at your words and produces the most likely sequence of words to follow them — based on patterns it learned from an enormous amount of human-written text.
             </p>
@@ -120,7 +120,7 @@ export default function WhatAIActuallyIsPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[2px] mb-3">
               The Cooking Show Analogy
             </p>
-            <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.9] space-y-3">
+            <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/65 leading-[1.9] space-y-3">
               <p>
                 Imagine someone who has watched ten thousand cooking shows. They have seen every technique, heard every explanation, and read every recipe. They can describe how to make a dish in accurate, confident detail.
               </p>
@@ -147,14 +147,14 @@ export default function WhatAIActuallyIsPage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-4">Before</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-4">
                 A learner asks AI: <span className="text-white/80 italic">"Is it safe to take ibuprofen every day?"</span>
               </p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-4">
                 The AI responds with a confident, well-organized paragraph. The learner reads it and thinks: <span className="text-white/80 italic">"AI knows about medicine. I can trust this."</span>
               </p>
               <div className="bg-[#E8373A]/8 border border-[#E8373A]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#E8373A]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#E8373A]/80 leading-[1.6]">
                   What actually happened: AI produced what sounded right based on medical content in its training data. The AI did not verify it. It did not examine the learner's health history.
                 </p>
               </div>
@@ -162,11 +162,11 @@ export default function WhatAIActuallyIsPage() {
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#22C55E] uppercase tracking-[2px] mb-4">After</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-4">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-4">
                 The same learner reads the same confident response and thinks: <span className="text-white/80 italic">"This sounds like the right kind of answer. But this is a medical question. I'll check this with a doctor or a verified health source before acting on it."</span>
               </p>
               <div className="bg-[#22C55E]/8 border border-[#22C55E]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#22C55E]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#22C55E]/80 leading-[1.6]">
                   The response did not change. The learner's relationship to it did. That shift is the entire point of this Guide.
                 </p>
               </div>
@@ -177,13 +177,13 @@ export default function WhatAIActuallyIsPage() {
         {/* Interactive Exercise */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 3 minutes · ChatGPT, Claude, or Gemini</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 3 minutes · ChatGPT, Claude, or Gemini</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Open your AI tool. Copy and run this prompt exactly as written.
                 </p>
               </div>
@@ -194,21 +194,21 @@ export default function WhatAIActuallyIsPage() {
                     Prompt — ChatGPT / Claude / Gemini
                   </span>
                 </div>
-                <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.7]">
+                <p className="font-mono text-[15px] text-[#FFD23F] leading-[1.7]">
                   Explain how rainbows are formed. Keep it short — three sentences maximum.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Read the full response.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Pick one sentence from the response. Ask yourself: <span className="text-white/80 italic">If I were going to use this in a school report, a presentation, or a message to someone else — would I verify it first, or would I use it as-is?</span>
                 </p>
               </div>
@@ -225,7 +225,7 @@ export default function WhatAIActuallyIsPage() {
               {["Run the prompt", "Read the full response", "Pick one sentence and asked the verification question"].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -239,10 +239,10 @@ export default function WhatAIActuallyIsPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               The AI's response probably sounded accurate and confident. <span className="text-white font-bold">What made it sound that way — and does that confidence tell you anything about whether the information is actually correct?</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">
               You do not need to write it down. Just think.
             </p>
           </div>
@@ -260,7 +260,7 @@ export default function WhatAIActuallyIsPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -273,11 +273,11 @@ export default function WhatAIActuallyIsPage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Explain AI to someone else.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Explain AI to someone else.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Pick someone in your life who is curious or skeptical about AI. Explain what AI is — using your own words, not the cooking show analogy. See if your explanation makes sense to them.
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/35 mt-3 italic">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/35 mt-3 italic">
               Expected outcome: A one-minute explanation that uses an analogy you came up with yourself.
             </p>
           </div>
@@ -290,11 +290,11 @@ export default function WhatAIActuallyIsPage() {
               <Zap size={14} className="text-[#E8373A]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A] uppercase tracking-[1.5px]">This Unlocks</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-1">Mission: Know Your AI</p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mb-3">
+            <p className="font-sans text-[16px] font-bold text-white mb-1">Mission: Know Your AI</p>
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mb-3">
               A one-page personal AI profile — what AI is and is not, in your own words, for your own work. · 45 minutes
             </p>
-            <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white/25 cursor-not-allowed">
+            <span className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/25 cursor-not-allowed">
               Complete all 7 guides to unlock →
             </span>
           </div>
@@ -305,14 +305,14 @@ export default function WhatAIActuallyIsPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What's Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">What AI Is Good At</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">What AI Is Good At</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Foundations · Guide 2 of 7 · Beginner · 5 min
               </p>
             </div>
             <a
               href="/learn/foundations"
-              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Back to Pillar <ArrowRight size={14} />
             </a>

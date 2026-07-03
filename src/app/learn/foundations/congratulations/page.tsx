@@ -74,7 +74,7 @@ export default function CongratulationsPage() {
           <div className="text-center mb-10">
             <div className="text-[64px] mb-2">🎉</div>
             <h1 className="font-sans text-[32px] md:text-[40px] font-bold text-white mb-3 leading-tight">Congratulations!</h1>
-            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-relaxed">
+            <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 leading-relaxed">
               You earned your first Cyberussell Bida Badge,<br />
               <span className="text-white/80 font-medium">{learner?.name}!</span>
             </p>
@@ -91,7 +91,7 @@ export default function CongratulationsPage() {
               <div>
                 <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F]/60 uppercase tracking-[2px] mb-1">Bida Badge</p>
                 <p className="font-sans text-[20px] font-bold text-white">AI Foundations Explorer</p>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 mt-0.5">Pillar 1 · {new Date().toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" })}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mt-0.5">Pillar 1 · {new Date().toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" })}</p>
               </div>
             </div>
 
@@ -112,7 +112,7 @@ export default function CongratulationsPage() {
               <button
                 onClick={shareToFacebook}
                 disabled={sharing}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[#1877F2] text-white font-[family-name:var(--font-inter)] text-[13px] font-bold hover:bg-[#1877F2]/90 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[#1877F2] text-white font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-[#1877F2]/90 transition-colors"
               >
                 <Share2 size={14} strokeWidth={2.5} />
                 {sharing ? "Opening..." : "Share to Facebook"}
@@ -128,7 +128,7 @@ export default function CongratulationsPage() {
               </div>
               <div>
                 <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#818CF8]/60 uppercase tracking-[2px] mb-1">Certificate</p>
-                <p className="font-sans text-[16px] font-bold text-white">Cyberussell AI Foundations Certificate</p>
+                <p className="font-sans text-[17px] font-bold text-white">Cyberussell AI Foundations Certificate</p>
               </div>
             </div>
 
@@ -137,14 +137,14 @@ export default function CongratulationsPage() {
                 href={learner ? certificateUrl("certificate") : "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-white/[0.10] text-white/70 font-[family-name:var(--font-inter)] text-[13px] font-medium hover:bg-white/[0.04] transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-white/[0.10] text-white/70 font-[family-name:var(--font-inter)] text-[14px] font-medium hover:bg-white/[0.04] transition-colors"
               >
                 <ExternalLink size={14} strokeWidth={2} />
                 View Certificate
               </a>
               <button
                 onClick={downloadCertificate}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[#818CF8]/10 border border-[#818CF8]/20 text-[#818CF8] font-[family-name:var(--font-inter)] text-[13px] font-bold hover:bg-[#818CF8]/20 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[#818CF8]/10 border border-[#818CF8]/20 text-[#818CF8] font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-[#818CF8]/20 transition-colors"
               >
                 <Download size={14} strokeWidth={2.5} />
                 Download
@@ -160,7 +160,7 @@ export default function CongratulationsPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-white/[0.05] flex items-center justify-center text-[18px]">📊</div>
-                <span className="font-[family-name:var(--font-inter)] text-[14px] font-medium text-white">View My Dashboard</span>
+                <span className="font-[family-name:var(--font-inter)] text-[15px] font-medium text-white">View My Dashboard</span>
               </div>
               <ArrowRight size={16} className="text-white/30" />
             </a>
@@ -172,7 +172,7 @@ export default function CongratulationsPage() {
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-[#FFD23F]/10 flex items-center justify-center text-[18px]">🚀</div>
                 <div>
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white">Continue to Pillar 2</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white">Continue to Pillar 2</p>
                   <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">Think with AI</p>
                 </div>
               </div>

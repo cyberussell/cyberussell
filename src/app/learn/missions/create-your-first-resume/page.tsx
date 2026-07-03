@@ -94,22 +94,22 @@ export default function CreateYourFirstResumePage() {
           <h1 className="font-sans text-[32px] md:text-[48px] font-bold text-white mb-4 leading-tight">
             Create Your First<br />Professional Resume
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-[1.8] mb-6 max-w-2xl">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 leading-[1.8] mb-6 max-w-2xl">
             This mission walks you through building a complete, polished resume using ChatGPT and Claude.
             You&rsquo;ll leave with an actual document ready to send — not just notes about how to write one.
           </p>
 
           <div className="flex items-center gap-6 mb-4 flex-wrap">
-            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/45">
+            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[14px] text-white/45">
               <Clock size={13} /> 45 minutes
             </span>
-            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#22C55E]">
+            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#22C55E]">
               <BarChart2 size={13} /> Beginner
             </span>
           </div>
 
           <div className="inline-block bg-white/[0.05] border border-white/[0.08] rounded-lg px-4 py-2 mb-12">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50">
               <span className="text-white/70 font-bold">Deliverable:</span> A complete, polished resume ready to send.
             </p>
           </div>
@@ -139,18 +139,18 @@ export default function CreateYourFirstResumePage() {
                     </span>
                   </div>
                   <h3 className="font-sans text-[18px] font-bold text-white mb-2">{step.title}</h3>
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7] mb-4">{step.desc}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7] mb-4">{step.desc}</p>
 
                   {"prompt" in step && step.prompt && (
                     <div className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-4 mb-4">
                       <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[1.5px] text-white/30 mb-2">Prompt to use</p>
-                      <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/65 leading-[1.7] italic">&ldquo;{step.prompt}&rdquo;</p>
+                      <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7] italic">&ldquo;{step.prompt}&rdquo;</p>
                     </div>
                   )}
 
                   <ul className="flex flex-col gap-1.5">
                     {step.tips.map((tip) => (
-                      <li key={tip} className="flex items-start gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/40">
+                      <li key={tip} className="flex items-start gap-2 font-[family-name:var(--font-inter)] text-[14px] text-white/40">
                         <CheckSquare size={13} className="mt-0.5 shrink-0 text-white/20" />
                         {tip}
                       </li>
@@ -163,7 +163,7 @@ export default function CreateYourFirstResumePage() {
 
           <div className="bg-[#FFD23F]/5 border border-[#FFD23F]/20 rounded-2xl p-6 md:p-8 mb-12">
             <h2 className="font-sans text-[20px] font-bold text-white mb-2">Mission Complete?</h2>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               You now have a complete resume built with AI. Save it, export it as a PDF, and start sending it out.
               Come back when you want to tailor it for a specific job — the same workflow applies.
             </p>
@@ -172,10 +172,10 @@ export default function CreateYourFirstResumePage() {
 
         <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
           <div className="flex flex-col sm:flex-row gap-4">
-            <a href="/learn/missions" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/40 hover:text-white transition-colors">
+            <a href="/learn/missions" className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white/40 hover:text-white transition-colors">
               ← Back to Missions
             </a>
-            <a href="/learn/missions/build-a-landing-page" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#FFD23F] hover:text-white transition-colors">
+            <a href="/learn/missions/build-a-landing-page" className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-[#FFD23F] hover:text-white transition-colors">
               Next Mission: Build a Landing Page →
             </a>
           </div>

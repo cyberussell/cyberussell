@@ -165,14 +165,14 @@ export default function ThinkCompletePage() {
             <h1 className="font-sans text-[32px] md:text-[40px] font-bold text-white mb-3 leading-tight">
               Congratulations!
             </h1>
-            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-relaxed">
+            <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/60 leading-relaxed">
               You have successfully completed<br />
               <span className="text-white font-semibold">Pillar 2: Think with AI.</span>
             </p>
           </div>
 
           <div className="bg-[#14141e] border border-white/[0.08] rounded-2xl p-6 mb-6">
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/70 leading-relaxed mb-5 text-center">
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-relaxed mb-5 text-center">
               You&rsquo;re one step away from earning your second Cyberussell achievement.
               <br />
               <span className="text-white/90 font-medium">Take the final assessment to earn your Thinking Bida Badge and personalized certificate.</span>
@@ -190,7 +190,7 @@ export default function ThinkCompletePage() {
             {error && (
               <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 mb-4">
                 <AlertCircle size={14} className="text-red-400 shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-red-400">{error}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-red-400">{error}</p>
               </div>
             )}
 
@@ -199,7 +199,7 @@ export default function ThinkCompletePage() {
                 <button
                   onClick={signInWithGoogle}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-3 py-3.5 px-5 rounded-xl bg-white text-[#1a1a1a] font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-white/90 transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-3 py-3.5 px-5 rounded-xl bg-white text-[#1a1a1a] font-[family-name:var(--font-inter)] text-[15px] font-bold hover:bg-white/90 transition-colors disabled:opacity-50"
                 >
                   {loading ? <Loader2 size={16} className="animate-spin text-gray-600" /> : (
                     <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z" /><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z" /><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z" /><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z" /></svg>
@@ -210,7 +210,7 @@ export default function ThinkCompletePage() {
                 <button
                   onClick={fbAppId ? signInWithFacebook : () => setMode("signin")}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-3 py-3.5 px-5 rounded-xl bg-[#1877F2] text-white font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-[#1877F2]/90 transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-3 py-3.5 px-5 rounded-xl bg-[#1877F2] text-white font-[family-name:var(--font-inter)] text-[15px] font-bold hover:bg-[#1877F2]/90 transition-colors disabled:opacity-50"
                 >
                   {loading ? <Loader2 size={16} className="animate-spin text-white" /> : (
                     <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
@@ -219,7 +219,7 @@ export default function ThinkCompletePage() {
                 </button>
 
                 <div className="text-center pt-1">
-                  <button onClick={() => setMode("signin")} className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 hover:text-white/60 transition-colors">
+                  <button onClick={() => setMode("signin")} className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 hover:text-white/60 transition-colors">
                     Already have an account? <span className="text-[#A78BFA] font-medium">Sign In</span>
                   </button>
                 </div>
@@ -235,7 +235,7 @@ export default function ThinkCompletePage() {
                     placeholder="Your full name"
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    className="w-full bg-[#0e0e18] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white text-[14px] placeholder-white/20 focus:outline-none focus:border-white/20 font-[family-name:var(--font-inter)]"
+                    className="w-full bg-[#0e0e18] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white text-[15px] placeholder-white/20 focus:outline-none focus:border-white/20 font-[family-name:var(--font-inter)]"
                   />
                 </div>
                 <div className="relative">
@@ -245,13 +245,13 @@ export default function ThinkCompletePage() {
                     placeholder="Your email address"
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    className="w-full bg-[#0e0e18] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white text-[14px] placeholder-white/20 focus:outline-none focus:border-white/20 font-[family-name:var(--font-inter)]"
+                    className="w-full bg-[#0e0e18] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white text-[15px] placeholder-white/20 focus:outline-none focus:border-white/20 font-[family-name:var(--font-inter)]"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 rounded-xl bg-[#A78BFA] text-white font-[family-name:var(--font-inter)] text-[14px] font-bold hover:bg-[#A78BFA]/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl bg-[#A78BFA] text-white font-[family-name:var(--font-inter)] text-[15px] font-bold hover:bg-[#A78BFA]/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading ? <><Loader2 size={15} className="animate-spin" /> Creating account...</> : "Create Free Account & Continue"}
                 </button>

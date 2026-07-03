@@ -46,19 +46,19 @@ export default function LessonPage() {
           </div>
           <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/30 uppercase tracking-[2px] mb-3">Website Creation · Lesson 2 of 7</p>
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">Picking Your Stack</h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">No-Code vs AI-Code vs Traditional — compare before you commit.</p>
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">No-Code vs AI-Code vs Traditional — compare before you commit.</p>
         </section>
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <div className="rounded-[14px] p-5" style={{ backgroundColor: `${COLOR}10`, border: `1px solid ${COLOR}30` }}>
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[2px] mb-2" style={{ color: COLOR }}>After This Lesson, You Will Be Able To</p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">Choose the right website-building approach for your specific goal, budget, and skill level — and explain why.</p>
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">Choose the right website-building approach for your specific goal, budget, and skill level — and explain why.</p>
           </div>
         </section>
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">The Three Approaches</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>One of the biggest mistakes new builders make is choosing a tool before knowing what they need to build. The tool should follow the goal — not the other way around.</p>
             <p>There are three main approaches to building websites today, and each has a different sweet spot. Understanding them prevents you from spending weeks learning the wrong one.</p>
           </div>
@@ -94,23 +94,23 @@ export default function LessonPage() {
             ].map((approach) => (
               <div key={approach.label} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="font-sans text-[14px] font-bold px-3 py-1 rounded-full" style={{ backgroundColor: `${approach.color}15`, color: approach.color }}>{approach.label}</span>
+                  <span className="font-sans text-[15px] font-bold px-3 py-1 rounded-full" style={{ backgroundColor: `${approach.color}15`, color: approach.color }}>{approach.label}</span>
                   <span className="font-[family-name:var(--font-inter)] text-[12px] text-white/35">{approach.tools}</span>
                 </div>
                 <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/35 uppercase tracking-[1px] mb-1">Best for</p>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/65 mb-4">{approach.bestFor}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mb-4">{approach.bestFor}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                   <div>
                     <p className="font-[family-name:var(--font-inter)] text-[11px] text-[#22C55E] font-bold uppercase tracking-[1px] mb-2">Pros</p>
-                    {approach.pros.map(p => <p key={p} className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.6] mb-1">+ {p}</p>)}
+                    {approach.pros.map(p => <p key={p} className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.6] mb-1">+ {p}</p>)}
                   </div>
                   <div>
                     <p className="font-[family-name:var(--font-inter)] text-[11px] text-[#E8373A] font-bold uppercase tracking-[1px] mb-2">Cons</p>
-                    {approach.cons.map(c => <p key={c} className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.6] mb-1">− {c}</p>)}
+                    {approach.cons.map(c => <p key={c} className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.6] mb-1">− {c}</p>)}
                   </div>
                 </div>
                 <div className="bg-[#FFD23F]/5 border border-[#FFD23F]/15 rounded-lg px-4 py-2">
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#FFD23F] font-bold">{approach.verdict}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#FFD23F] font-bold">{approach.verdict}</p>
                 </div>
               </div>
             ))}
@@ -119,11 +119,11 @@ export default function LessonPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">10 minutes · ChatGPT or Claude</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">10 minutes · ChatGPT or Claude</p>
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4 mb-4">
               <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-3">Prompt to use</p>
-              <p className="font-mono text-[14px] text-[#FFD23F] leading-[1.7]">
+              <p className="font-mono text-[15px] text-[#FFD23F] leading-[1.7]">
                 I want to build a website for [describe your goal]. My budget is [free / low budget / flexible]. I [do / don't] know how to code. I want to launch within [your timeline]. Based on this, which approach should I use — no-code, AI-code, or traditional? Give me a specific recommendation with a reason.
               </p>
             </div>
@@ -136,7 +136,7 @@ export default function LessonPage() {
                 {["I know which approach fits my goal", "I've picked one specific tool to start with", "I understand why the other approaches aren't right for me yet"].map((item) => (
                   <label key={item} className="flex items-center gap-3 cursor-pointer group">
                     <input type="checkbox" className="w-4 h-4 rounded cursor-pointer" />
-                    <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                    <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                   </label>
                 ))}
               </div>
@@ -147,7 +147,7 @@ export default function LessonPage() {
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <div className="bg-[#A78BFA]/5 border border-[#A78BFA]/15 rounded-[14px] p-6">
             <div className="flex items-center gap-2 mb-3"><Lightbulb size={14} className="text-[#A78BFA]" /><span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A78BFA] uppercase tracking-[1.5px]">Reflect</span></div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">Most people spend more time choosing a tool than building with it. <span className="text-white font-bold">What's the real cost of not deciding and just starting?</span></p>
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">Most people spend more time choosing a tool than building with it. <span className="text-white font-bold">What's the real cost of not deciding and just starting?</span></p>
           </div>
         </section>
 
@@ -162,7 +162,7 @@ export default function LessonPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full mt-[7px] shrink-0" style={{ backgroundColor: COLOR }} />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -171,8 +171,8 @@ export default function LessonPage() {
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <div className="bg-[#F59E0B]/5 border border-[#F59E0B]/15 rounded-[14px] p-6">
             <div className="flex items-center gap-2 mb-3"><Trophy size={14} className="text-[#F59E0B]" /><span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge</span></div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Create a free account on Carrd or Framer — right now.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">Don't overthink it. Just sign up and click around for 10 minutes. Familiarity with the tool before you need to use it reduces friction when it's time to build.</p>
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Create a free account on Carrd or Framer — right now.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">Don't overthink it. Just sign up and click around for 10 minutes. Familiarity with the tool before you need to use it reduces friction when it's time to build.</p>
           </div>
         </section>
 
@@ -180,10 +180,10 @@ export default function LessonPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">Next Lesson</p>
-              <p className="font-sans text-[16px] font-bold text-white">Planning Your Site with AI Before You Build</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">Website Creation · Lesson 3 of 7 · 10 min</p>
+              <p className="font-sans text-[17px] font-bold text-white">Planning Your Site with AI Before You Build</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">Website Creation · Lesson 3 of 7 · 10 min</p>
             </div>
-            <a href="/learn/skills/website-creation/planning-your-site-with-ai" className="inline-flex items-center gap-2 text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0 hover:opacity-90 transition-opacity" style={{ backgroundColor: COLOR }}>
+            <a href="/learn/skills/website-creation/planning-your-site-with-ai" className="inline-flex items-center gap-2 text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0 hover:opacity-90 transition-opacity" style={{ backgroundColor: COLOR }}>
               Next <ArrowRight size={14} />
             </a>
           </div>

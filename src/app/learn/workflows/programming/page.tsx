@@ -134,7 +134,7 @@ export default function ProgrammingWorkflowPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Programming Workflow
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Build real, useful things with code — without knowing how to code.
           </p>
         </section>
@@ -145,7 +145,7 @@ export default function ProgrammingWorkflowPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Build a simple working program or automation — even with zero coding experience — using Claude and ChatGPT together.
             </p>
           </div>
@@ -154,7 +154,7 @@ export default function ProgrammingWorkflowPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               You do not need to know how to code to benefit from code.
             </p>
@@ -178,7 +178,7 @@ export default function ProgrammingWorkflowPage() {
               ].map((ex) => (
                 <div key={ex} className="flex items-start gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7]">{ex}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7]">{ex}</p>
                 </div>
               ))}
             </div>
@@ -206,8 +206,8 @@ export default function ProgrammingWorkflowPage() {
                       </span>
                       <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/25 uppercase tracking-[1px]">{step.time}</span>
                     </div>
-                    <p className="font-sans text-[15px] font-bold text-white mb-2">{step.title}</p>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.7]">{step.description}</p>
+                    <p className="font-sans text-[16px] font-bold text-white mb-2">{step.title}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">{step.description}</p>
                   </div>
                 </div>
               ))}
@@ -221,8 +221,8 @@ export default function ProgrammingWorkflowPage() {
           <div className="space-y-3">
             {PASTE_LOCATIONS.map((loc) => (
               <div key={loc.name} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-5">
-                <p className="font-sans text-[14px] font-bold text-white mb-1">{loc.name}</p>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.6]">{loc.instruction}</p>
+                <p className="font-sans text-[15px] font-bold text-white mb-1">{loc.name}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.6]">{loc.instruction}</p>
               </div>
             ))}
           </div>
@@ -231,12 +231,12 @@ export default function ProgrammingWorkflowPage() {
         {/* Try It Yourself */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Try It Yourself</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">Follow these steps exactly</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">Follow these steps exactly</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 space-y-6">
             <div>
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                 Write down exactly what you want to build. Be specific about what it should do, what information goes in, and what result comes out.
               </p>
             </div>
@@ -245,7 +245,7 @@ export default function ProgrammingWorkflowPage() {
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 — Claude</span>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4 mt-3">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — Claude</p>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.7]">
                   I want to build [describe what you want in plain language]. I am a complete beginner with no coding experience. Write the complete code I need. Tell me exactly where to paste it and how to run it. Explain each major part in one sentence.
                 </p>
               </div>
@@ -253,7 +253,7 @@ export default function ProgrammingWorkflowPage() {
 
             <div>
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                 Follow Claude&rsquo;s instructions exactly. If it says paste into Google Sheets, do that. If it says create an HTML file, do that.
               </p>
             </div>
@@ -262,7 +262,7 @@ export default function ProgrammingWorkflowPage() {
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 4 — ChatGPT (if needed)</span>
               <div className="bg-[#0F0F1A] border border-[#10B981]/20 rounded-[10px] p-4 mt-3">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — ChatGPT</p>
-                <p className="font-mono text-[13px] text-[#10B981] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#10B981] leading-[1.7]">
                   I tried to run this code: [paste the code]. I got this error: [copy the exact error message]. I am a beginner. What does this error mean in plain language, and what exactly do I need to change to fix it?
                 </p>
               </div>
@@ -272,7 +272,7 @@ export default function ProgrammingWorkflowPage() {
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 5 — Claude (once it works)</span>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4 mt-3">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — Claude</p>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.7]">
                   This code works: [paste the working code]. Now I want to add [new feature]. Update the code and explain what changed.
                 </p>
               </div>
@@ -289,7 +289,7 @@ export default function ProgrammingWorkflowPage() {
               {CHECKLIST.map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -303,10 +303,10 @@ export default function ProgrammingWorkflowPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               What is one small, useful thing you could build this week that would save you time? <span className="text-white font-bold">Even a formula that takes 30 seconds off a task you do daily adds up to hours every year.</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">
               You do not need to write it down. Just think.
             </p>
           </div>
@@ -319,7 +319,7 @@ export default function ProgrammingWorkflowPage() {
             {TAKEAWAYS.map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -330,14 +330,14 @@ export default function ProgrammingWorkflowPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&rsquo;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Marketing Strategy</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Marketing Strategy</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 AI Workflows · Guide 9 of 10 · Beginner · 50 min
               </p>
             </div>
             <a
               href="/learn/workflows/marketing-strategy"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

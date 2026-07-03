@@ -54,13 +54,13 @@ export default function SEOSkillPage() {
           <h1 className="font-sans text-[32px] md:text-[48px] font-bold text-white mb-4 leading-tight">
             SEO
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-[1.8] mb-4 max-w-2xl">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 leading-[1.8] mb-4 max-w-2xl">
             SEO is one of the highest-leverage skills you can learn — it brings in clients and customers
             while you sleep. AI makes it faster to research, write, and optimize. This track teaches you
             how to rank on Google without guessing.
           </p>
           <div className="inline-block bg-white/[0.05] border border-white/[0.08] rounded-lg px-4 py-2 mb-12">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50">
               <span className="text-white/70 font-bold">Outcome:</span> You rank on Google and drive consistent organic traffic using AI.
             </p>
           </div>
@@ -78,8 +78,8 @@ export default function SEOSkillPage() {
                   </span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-sans text-[15px] font-bold text-white mb-1">{lesson.title}</h3>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.5]">{lesson.desc}</p>
+                  <h3 className="font-sans text-[16px] font-bold text-white mb-1">{lesson.title}</h3>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 leading-[1.5]">{lesson.desc}</p>
                 </div>
                 <ArrowRight size={16} className="text-[#E8373A]/60 shrink-0 mt-1" />
               </a>
@@ -88,7 +88,7 @@ export default function SEOSkillPage() {
         </section>
 
         <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
-          <a href="/learn/skills" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/40 hover:text-white transition-colors">
+          <a href="/learn/skills" className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white/40 hover:text-white transition-colors">
             ← Back to Build Real Skills
           </a>
         </section>

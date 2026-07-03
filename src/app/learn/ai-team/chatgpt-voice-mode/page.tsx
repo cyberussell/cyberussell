@@ -48,7 +48,7 @@ export default function ChatGPTVoiceModePage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             ChatGPT Voice Mode
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             Talk to ChatGPT like a person. No typing needed — just speak naturally and it responds.
           </p>
         </section>
@@ -58,7 +58,7 @@ export default function ChatGPTVoiceModePage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#10B981] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Have your first real voice conversation with ChatGPT — and use it for a task you normally do by typing.
             </p>
           </div>
@@ -66,7 +66,7 @@ export default function ChatGPTVoiceModePage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Typing is slow. Especially when you are commuting, doing chores, or when your hands are busy. And sometimes the ideas in your head are easier to speak than to type.
             </p>
@@ -84,7 +84,7 @@ export default function ChatGPTVoiceModePage() {
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-6">
             <p className="font-sans text-[18px] font-bold text-white mb-3">Advanced Voice Mode</p>
-            <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-3">
+            <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-3">
               <p>
                 Advanced Voice Mode is available in the ChatGPT mobile app (iOS and Android). ChatGPT Plus users get priority access, but free users can access it in limited amounts.
               </p>
@@ -108,7 +108,7 @@ export default function ChatGPTVoiceModePage() {
               ].map((use) => (
                 <div key={use} className="flex items-start gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-[6px] shrink-0" />
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7]">{use}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7]">{use}</p>
                 </div>
               ))}
             </div>
@@ -121,18 +121,18 @@ export default function ChatGPTVoiceModePage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-4">The Situation</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8]">
                 Carlo is a Filipino freelancer applying for virtual assistant jobs with international clients. His biggest fear is the video interview — his English is good enough to write, but he gets nervous speaking it out loud with a foreign client listening.
               </p>
             </div>
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#10B981] uppercase tracking-[2px] mb-4">How Voice Mode Helps</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Every morning on his commute from Cainta to Makati, Carlo opens ChatGPT Voice Mode and says: <span className="text-white italic">&ldquo;Let&rsquo;s practice. You are interviewing me for a virtual assistant position. Ask me questions one at a time, give me feedback after each answer, and correct my grammar gently.&rdquo;</span>
               </p>
               <div className="bg-[#10B981]/8 border border-[#10B981]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#10B981]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#10B981]/80 leading-[1.6]">
                   After two weeks of daily practice, Carlo&rsquo;s confidence in spoken English improved dramatically — and he landed his first international client.
                 </p>
               </div>
@@ -142,20 +142,20 @@ export default function ChatGPTVoiceModePage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 10 minutes · ChatGPT mobile app</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 10 minutes · ChatGPT mobile app</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Open the ChatGPT mobile app on your phone. (Download it free from the App Store or Google Play if you do not have it.)
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Tap the headphones icon or the sound wave icon at the bottom of the chat screen to enter Voice Mode.
                 </p>
               </div>
@@ -163,7 +163,7 @@ export default function ChatGPTVoiceModePage() {
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 — Say this to start</span>
                 <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4 mt-2">
-                  <p className="font-mono text-[14px] text-[#10B981] leading-[1.8]">
+                  <p className="font-mono text-[15px] text-[#10B981] leading-[1.8]">
                     &ldquo;Let&rsquo;s practice. Ask me a job interview question for a virtual assistant position. After I answer, give me feedback — what I did well and what I can improve. Then ask me the next question.&rdquo;
                   </p>
                 </div>
@@ -171,7 +171,7 @@ export default function ChatGPTVoiceModePage() {
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 4</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Have a 5-turn voice conversation. Answer 5 questions and receive feedback on each one.
                 </p>
               </div>
@@ -191,7 +191,7 @@ export default function ChatGPTVoiceModePage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -204,7 +204,7 @@ export default function ChatGPTVoiceModePage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               How did it feel to speak to an AI out loud? <span className="text-white font-bold">Was it strange at first? What would you use Voice Mode for in your real life — commuting, practicing, thinking out loud?</span>
             </p>
           </div>
@@ -221,7 +221,7 @@ export default function ChatGPTVoiceModePage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -233,8 +233,8 @@ export default function ChatGPTVoiceModePage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Use Voice Mode every day for one week.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Use Voice Mode every day for one week.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               Pick one activity you do daily — commuting, a morning walk, washing dishes — and use that time for a voice conversation with ChatGPT. It can be practice, brainstorming, or just thinking out loud about a problem you are working on.
             </p>
           </div>
@@ -244,14 +244,14 @@ export default function ChatGPTVoiceModePage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&rsquo;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">ChatGPT Image Generation</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">ChatGPT Image Generation</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Meet Your AI Team · ChatGPT Guide 4 of 6 · Beginner · 5 min
               </p>
             </div>
             <a
               href="/learn/ai-team/chatgpt-image-generation"
-              className="inline-flex items-center gap-2 bg-[#10B981] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#10B981] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

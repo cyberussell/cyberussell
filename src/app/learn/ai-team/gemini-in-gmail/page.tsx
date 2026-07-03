@@ -48,7 +48,7 @@ export default function GeminiInGmailPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Gemini in Gmail
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             AI built directly into your inbox — write, reply to, and summarize emails without leaving Gmail.
           </p>
         </section>
@@ -58,7 +58,7 @@ export default function GeminiInGmailPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Use Gemini inside Gmail to write, reply to, and summarize emails faster than ever.
             </p>
           </div>
@@ -66,7 +66,7 @@ export default function GeminiInGmailPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               Email takes up more time than most people realize. You read an email, think about how to respond, rewrite your reply three times trying to sound professional, and then worry you did not say it right — all for a 3-sentence message.
             </p>
@@ -100,15 +100,15 @@ export default function GeminiInGmailPage() {
                 },
               ].map(({ title, how }) => (
                 <div key={title} className="border-b border-white/[0.05] pb-4 last:border-0 last:pb-0">
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white mb-1.5">{title}</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.6]">{how}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white mb-1.5">{title}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.6]">{how}</p>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="bg-[#4F8EF7]/5 border border-[#4F8EF7]/15 rounded-[14px] p-5">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#4F8EF7]/80 leading-[1.7]">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#4F8EF7]/80 leading-[1.7]">
               <span className="font-bold text-[#4F8EF7]">Access:</span> Available in Gmail on desktop and mobile. Works with a personal Google account. If you do not see the Gemini icon, go to Gmail settings and look for the &ldquo;Gemini&rdquo; option — you may need to enable it or join a waitlist depending on your region.
             </p>
           </div>
@@ -120,21 +120,21 @@ export default function GeminiInGmailPage() {
           <div className="space-y-3">
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[2px] mb-4">The Situation</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8]">
                 Bea just finished a job interview and wants to send a professional follow-up email to the hiring manager — in English. She knows what she wants to say but is not confident writing formal English. She has been putting it off for two days.
               </p>
             </div>
 
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6">
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-4">With Gemini in Gmail</p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Bea opens Gmail, clicks Compose, and uses Gemini: &ldquo;Write a professional follow-up email to a hiring manager after a job interview for a customer service position. Thank them for the time, mention I enjoyed learning about the team culture, and say I am very interested in the role.&rdquo;
               </p>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.8] mb-3">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.8] mb-3">
                 Gemini writes a perfect follow-up email in seconds. Bea reads it, adds one personal detail about a specific thing discussed in the interview, and sends it — all in under 2 minutes.
               </p>
               <div className="bg-[#4F8EF7]/8 border border-[#4F8EF7]/15 rounded-lg px-4 py-3">
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#4F8EF7]/80 leading-[1.6]">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#4F8EF7]/80 leading-[1.6]">
                   She sent the email the same day as the interview — and got called back for a second round.
                 </p>
               </div>
@@ -144,13 +144,13 @@ export default function GeminiInGmailPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 5 minutes · Gmail (Google account)</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 5 minutes · Gmail (Google account)</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Open Gmail on your desktop → click Compose → look for the sparkle/stars icon or the Gemini icon in the compose toolbar.
                 </p>
               </div>
@@ -158,7 +158,7 @@ export default function GeminiInGmailPage() {
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 — Use this prompt</span>
                 <div className="bg-[#0F0F1A] border border-white/[0.08] rounded-[10px] p-4 mt-2">
-                  <p className="font-mono text-[14px] text-[#4F8EF7] leading-[1.8]">
+                  <p className="font-mono text-[15px] text-[#4F8EF7] leading-[1.8]">
                     Write a professional email to [RECIPIENT — e.g., my team / a client / a company / my employer] asking about [TOPIC — e.g., my application status / a project update / a meeting schedule]. Keep it short, polite, and professional.
                   </p>
                 </div>
@@ -166,7 +166,7 @@ export default function GeminiInGmailPage() {
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 — Edit and send</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Read the generated email. Add or change any personal details. Click &ldquo;Insert&rdquo; to put it in your compose window, then send it (or save it as a draft if you just want to practice).
                 </p>
               </div>
@@ -186,7 +186,7 @@ export default function GeminiInGmailPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -199,7 +199,7 @@ export default function GeminiInGmailPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               What emails do you regularly put off writing because they feel hard or awkward? <span className="text-white font-bold">Gemini in Gmail can handle all of them — in seconds, without switching to another tool.</span>
             </p>
           </div>
@@ -216,7 +216,7 @@ export default function GeminiInGmailPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#4F8EF7] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -228,8 +228,8 @@ export default function GeminiInGmailPage() {
               <Trophy size={14} className="text-[#F59E0B]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[1.5px]">Challenge — Optional</span>
             </div>
-            <p className="font-sans text-[15px] font-bold text-white mb-2">Use Gemini for every work email this week.</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
+            <p className="font-sans text-[16px] font-bold text-white mb-2">Use Gemini for every work email this week.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 leading-[1.7]">
               For one full week, every time you need to write a work email, use Gemini to draft it first. Review, edit, personalize, then send. At the end of the week, estimate how many minutes you saved.
             </p>
           </div>
@@ -239,14 +239,14 @@ export default function GeminiInGmailPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&rsquo;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">Gemini in Docs</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Gemini in Docs</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Meet Your AI Team · Gemini Guide 2 of 5 · Beginner · 5 min
               </p>
             </div>
             <a
               href="/learn/ai-team/gemini-in-docs"
-              className="inline-flex items-center gap-2 bg-[#4F8EF7] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#4F8EF7] hover:opacity-90 transition-opacity text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Next Guide <ArrowRight size={14} />
             </a>

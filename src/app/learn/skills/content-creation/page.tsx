@@ -36,11 +36,11 @@ export default function ContentCreationSkillPage() {
             <span className="text-[#E8373A] text-[11px] font-bold uppercase tracking-[2px] font-[family-name:var(--font-inter)]">Pillar 5 · Content Creation</span>
           </div>
           <h1 className="font-sans text-[32px] md:text-[48px] font-bold text-white mb-4 leading-tight">Content Creation</h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-[1.8] mb-4 max-w-2xl">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 leading-[1.8] mb-4 max-w-2xl">
             Content is how you build an audience, attract clients, and establish expertise online. AI removes the biggest barrier to consistent content: time. This track teaches you to create more, faster, without burning out.
           </p>
           <div className="inline-block bg-white/[0.05] border border-white/[0.08] rounded-lg px-4 py-2 mb-12">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50"><span className="text-white/70 font-bold">Outcome:</span> You post consistently and grow an audience using AI-assisted workflows.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50"><span className="text-white/70 font-bold">Outcome:</span> You post consistently and grow an audience using AI-assisted workflows.</p>
           </div>
           <div className="flex flex-col gap-3">
             {lessons.map((lesson, i) => (
@@ -49,8 +49,8 @@ export default function ContentCreationSkillPage() {
                   <span className="text-[#E8373A] text-[12px] font-bold font-[family-name:var(--font-inter)]">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-sans text-[15px] font-bold text-white mb-1">{lesson.title}</h3>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.5]">{lesson.desc}</p>
+                  <h3 className="font-sans text-[16px] font-bold text-white mb-1">{lesson.title}</h3>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 leading-[1.5]">{lesson.desc}</p>
                 </div>
                 <ArrowRight size={16} className="text-[#E8373A]/60 shrink-0 mt-1" />
               </a>
@@ -58,7 +58,7 @@ export default function ContentCreationSkillPage() {
           </div>
         </section>
         <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
-          <a href="/learn/skills" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/40 hover:text-white transition-colors">← Back to Build Real Skills</a>
+          <a href="/learn/skills" className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white/40 hover:text-white transition-colors">← Back to Build Real Skills</a>
         </section>
       </main>
       <Footer />

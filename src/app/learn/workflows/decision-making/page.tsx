@@ -123,7 +123,7 @@ export default function DecisionMakingWorkflowPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             Decision Making Workflow
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             See every side clearly before you choose — so you make decisions you will not regret.
           </p>
         </section>
@@ -134,7 +134,7 @@ export default function DecisionMakingWorkflowPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#F59E0B] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Use ChatGPT and Claude to make an important decision clearly — by seeing all sides before you choose.
             </p>
           </div>
@@ -143,7 +143,7 @@ export default function DecisionMakingWorkflowPage() {
         {/* Why This Matters */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">Why This Matters</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               We make bad decisions when we are emotional, rushed, or missing information.
             </p>
@@ -151,7 +151,7 @@ export default function DecisionMakingWorkflowPage() {
               AI does not make the decision for you. It helps you see clearly before you choose. This workflow slows you down in the right way — so you make choices you will not regret.
             </p>
             <div className="bg-[#18181F] border border-white/[0.08] rounded-[12px] px-5 py-4">
-              <p className="font-sans text-[15px] font-bold text-white">
+              <p className="font-sans text-[16px] font-bold text-white">
                 Key principle: AI informs the decision. YOU make it.
               </p>
             </div>
@@ -168,7 +168,7 @@ export default function DecisionMakingWorkflowPage() {
               {FILIPINO_EXAMPLES.map((ex) => (
                 <div key={ex} className="flex items-start gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 leading-[1.7]">{ex}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 leading-[1.7]">{ex}</p>
                 </div>
               ))}
             </div>
@@ -195,8 +195,8 @@ export default function DecisionMakingWorkflowPage() {
                       </span>
                       <span className="font-[family-name:var(--font-inter)] text-[10px] text-white/25 uppercase tracking-[1px]">{step.time}</span>
                     </div>
-                    <p className="font-sans text-[15px] font-bold text-white mb-2">{step.title}</p>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.7]">{step.description}</p>
+                    <p className="font-sans text-[16px] font-bold text-white mb-2">{step.title}</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">{step.description}</p>
                   </div>
                 </div>
               ))}
@@ -207,12 +207,12 @@ export default function DecisionMakingWorkflowPage() {
         {/* Try It Yourself */}
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Try It Yourself</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">Use a real decision you are facing right now</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">Use a real decision you are facing right now</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 space-y-6">
             <div>
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                 Write the decision you need to make. Then write your options (usually 2-3). Then write: What am I most afraid of getting wrong here?
               </p>
             </div>
@@ -221,7 +221,7 @@ export default function DecisionMakingWorkflowPage() {
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2 — ChatGPT</span>
               <div className="bg-[#0F0F1A] border border-[#10B981]/20 rounded-[10px] p-4 mt-3">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — ChatGPT</p>
-                <p className="font-mono text-[13px] text-[#10B981] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#10B981] leading-[1.7]">
                   I need to make a decision: [describe your decision and options]. For each option, give me: the strongest reasons to choose it, the main risks or downsides, and what I would need to be true for this to work out well. Be honest and balanced — do not just tell me what I want to hear.
                 </p>
               </div>
@@ -231,7 +231,7 @@ export default function DecisionMakingWorkflowPage() {
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3 — Claude</span>
               <div className="bg-[#0F0F1A] border border-[#F59E0B]/20 rounded-[10px] p-4 mt-3">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — Claude</p>
-                <p className="font-mono text-[13px] text-[#F59E0B] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#F59E0B] leading-[1.7]">
                   I am deciding between [your options]. I am currently leaning toward [option]. Make the strongest possible argument for [the OTHER option] — steelman it completely. Assume that option is the right choice and give me the best case for it. Then do the same for [your preferred option]. Do not tell me which to choose.
                 </p>
               </div>
@@ -241,7 +241,7 @@ export default function DecisionMakingWorkflowPage() {
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 4 — Gemini</span>
               <div className="bg-[#0F0F1A] border border-[#4F8EF7]/20 rounded-[10px] p-4 mt-3">
                 <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/25 uppercase tracking-[1.5px] mb-2">Prompt — Gemini</p>
-                <p className="font-mono text-[13px] text-[#4F8EF7] leading-[1.7]">
+                <p className="font-mono text-[14px] text-[#4F8EF7] leading-[1.7]">
                   I am making a decision about [your topic]. Find current, factual information about: [the specific data you need, e.g., &quot;average freelance rates for VAs in the Philippines in 2025&quot; or &quot;startup costs for a food cart business in the Philippines&quot;].
                 </p>
               </div>
@@ -249,7 +249,7 @@ export default function DecisionMakingWorkflowPage() {
 
             <div>
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 5 — You</span>
-              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+              <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                 Lay out all the information in front of you. Make your decision. Write one paragraph explaining why you chose what you chose. Keep it — it will help you stay committed and learn from the outcome.
               </p>
             </div>
@@ -265,7 +265,7 @@ export default function DecisionMakingWorkflowPage() {
               {CHECKLIST.map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -279,10 +279,10 @@ export default function DecisionMakingWorkflowPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Think of a decision you made in the past that you regret. <span className="text-white font-bold">Would having all the information — without the emotional urgency — have changed what you chose?</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">
               You do not need to write it down. Just think.
             </p>
           </div>
@@ -295,7 +295,7 @@ export default function DecisionMakingWorkflowPage() {
             {TAKEAWAYS.map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -306,14 +306,14 @@ export default function DecisionMakingWorkflowPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">What&rsquo;s Next</p>
-              <p className="font-sans text-[16px] font-bold text-white">You&rsquo;ve completed all 10 guides!</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">You&rsquo;ve completed all 10 guides!</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Take the assessment to earn your Workflow Bida Badge.
               </p>
             </div>
             <a
               href="/learn/workflows/complete"
-              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-[#F59E0B] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Take the Final Assessment <ArrowRight size={14} />
             </a>

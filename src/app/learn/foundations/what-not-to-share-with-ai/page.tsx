@@ -75,7 +75,7 @@ export default function WhatNotToShareWithAIPage() {
           <h1 className="font-sans text-[32px] md:text-[46px] font-bold text-white mb-5 leading-tight">
             What Not to Share with AI
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/50 leading-[1.8]">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/50 leading-[1.8]">
             You just wrote your first real prompt. Before you finish this Pillar, there's one thing every AI user needs to understand — and almost nobody teaches it clearly.
           </p>
         </section>
@@ -85,7 +85,7 @@ export default function WhatNotToShareWithAIPage() {
             <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#4F8EF7] uppercase tracking-[2px] mb-2">
               After This Guide, You Will Be Able To
             </p>
-            <p className="font-sans text-[16px] font-bold text-white leading-[1.5]">
+            <p className="font-sans text-[17px] font-bold text-white leading-[1.5]">
               Apply one practical rule for protecting your personal and professional information every time you use an AI tool.
             </p>
           </div>
@@ -93,7 +93,7 @@ export default function WhatNotToShareWithAIPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">What Happens When You Type Into AI</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4">
             <p>
               When you type something into an AI tool, that input may be used to improve the model. It may be stored. In some cases, it may be reviewed by humans at the company.
             </p>
@@ -119,11 +119,11 @@ export default function WhatNotToShareWithAIPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
               <div className="bg-[#22C55E]/5 border border-[#22C55E]/15 rounded-[10px] px-4 py-3">
                 <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#22C55E] uppercase tracking-[1.5px] mb-1">If yes</p>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/60">Proceed. Type it in.</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60">Proceed. Type it in.</p>
               </div>
               <div className="bg-[#E8373A]/5 border border-[#E8373A]/15 rounded-[10px] px-4 py-3">
                 <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#E8373A] uppercase tracking-[1.5px] mb-1">If no</p>
-                <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/60">Remove or generalize it before typing.</p>
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60">Remove or generalize it before typing.</p>
               </div>
             </div>
           </div>
@@ -136,13 +136,13 @@ export default function WhatNotToShareWithAIPage() {
               <div key={cat.title} className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <span className="font-mono text-[12px] font-bold text-white/20">0{i + 1}</span>
-                  <h3 className="font-sans text-[15px] font-bold text-white">{cat.title}</h3>
+                  <h3 className="font-sans text-[16px] font-bold text-white">{cat.title}</h3>
                 </div>
                 <div className="space-y-1.5">
                   {cat.examples.map((ex) => (
                     <div key={ex} className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-white/20 mt-[7px] shrink-0" />
-                      <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.5]">{ex}</p>
+                      <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 leading-[1.5]">{ex}</p>
                     </div>
                   ))}
                 </div>
@@ -153,7 +153,7 @@ export default function WhatNotToShareWithAIPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-4">How to Work Around It</h2>
-          <div className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.9] space-y-4 mb-6">
+          <div className="font-[family-name:var(--font-inter)] text-[16px] text-white/60 leading-[1.9] space-y-4 mb-6">
             <p>
               You do not need to avoid AI for sensitive tasks. You need to use placeholder language instead of real details.
             </p>
@@ -167,11 +167,11 @@ export default function WhatNotToShareWithAIPage() {
               <div key={i} className="bg-[#18181F] border border-white/[0.08] rounded-[12px] p-4 space-y-3">
                 <div>
                   <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#E8373A]/60 uppercase tracking-[1.5px] mb-1">Avoid</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/40 italic leading-[1.5]">{ex.real}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 italic leading-[1.5]">{ex.real}</p>
                 </div>
                 <div>
                   <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-[#22C55E]/60 uppercase tracking-[1.5px] mb-1">Use instead</p>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/65 italic leading-[1.5]">{ex.safe}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 italic leading-[1.5]">{ex.safe}</p>
                 </div>
               </div>
             ))}
@@ -180,27 +180,27 @@ export default function WhatNotToShareWithAIPage() {
 
         <section className="px-6 md:px-10 pb-10 max-w-3xl mx-auto">
           <h2 className="font-sans text-[20px] font-bold text-white mb-2">Interactive Exercise</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/40 mb-6">About 5 minutes · No AI tool needed</p>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 mb-6">About 5 minutes · No AI tool needed</p>
 
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 mb-4">
             <div className="space-y-5">
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 1</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Look back at the prompt you wrote in Guide 6. Read it again.
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 2</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   Apply the one rule: <span className="text-white/80 italic">"Would I be comfortable if this were public?"</span>
                 </p>
               </div>
 
               <div>
                 <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px]">Step 3</span>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/65 mt-1 leading-[1.7]">
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/65 mt-1 leading-[1.7]">
                   If there is anything in the prompt you would not want public — rewrite that part using placeholder language. See if the rewritten version still gets AI a useful result.
                 </p>
               </div>
@@ -226,7 +226,7 @@ export default function WhatNotToShareWithAIPage() {
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded accent-[#22C55E] cursor-pointer" />
-                  <span className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
+                  <span className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 group-hover:text-white/75 transition-colors">{item}</span>
                 </label>
               ))}
             </div>
@@ -239,10 +239,10 @@ export default function WhatNotToShareWithAIPage() {
               <Lightbulb size={14} className="text-[#A855F7]" />
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#A855F7] uppercase tracking-[1.5px]">Reflect</span>
             </div>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/70 leading-[1.8]">
+            <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/70 leading-[1.8]">
               Think about the kind of work you want to do with AI — freelancing, job hunting, content creation, business. <span className="text-white font-bold">What types of information will you regularly need to share with AI to get useful help — and how will you protect the sensitive parts?</span>
             </p>
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/30 mt-3">You do not need to write it down. Just think.</p>
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/30 mt-3">You do not need to write it down. Just think.</p>
           </div>
         </section>
 
@@ -257,7 +257,7 @@ export default function WhatNotToShareWithAIPage() {
             ].map((point) => (
               <div key={point} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#FFD23F] mt-[7px] shrink-0" />
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/60 leading-[1.7]">{point}</p>
+                <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/60 leading-[1.7]">{point}</p>
               </div>
             ))}
           </div>
@@ -270,12 +270,12 @@ export default function WhatNotToShareWithAIPage() {
               <Target size={32} className="text-[#FFD23F]" />
             </div>
             <p className="font-sans text-[22px] font-bold text-white mb-2">AI Foundations — Complete</p>
-            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50 leading-[1.7] max-w-md mx-auto mb-6">
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/50 leading-[1.7] max-w-md mx-auto mb-6">
               You've finished all 7 guides. You understand what AI is, where it helps, where it fails, why it makes things up, how to choose a tool, how to write a real prompt, and how to protect your information.
             </p>
             <a
               href="/learn/foundations/complete"
-              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[15px] px-6 py-3 rounded-xl"
+              className="inline-flex items-center gap-2 bg-[#FFD23F] hover:opacity-90 transition-opacity text-[#0F0F1A] font-bold font-[family-name:var(--font-inter)] text-[16px] px-6 py-3 rounded-xl"
             >
               Take Final Assessment 🏅 <ArrowRight size={14} />
             </a>
@@ -286,14 +286,14 @@ export default function WhatNotToShareWithAIPage() {
           <div className="bg-[#18181F] border border-white/[0.08] rounded-[14px] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1.5px] mb-1">Next Pillar</p>
-              <p className="font-sans text-[16px] font-bold text-white">Think with AI</p>
-              <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 mt-1">
+              <p className="font-sans text-[17px] font-bold text-white">Think with AI</p>
+              <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 mt-1">
                 Learn to collaborate — not just prompt. Pillar 2 of 6.
               </p>
             </div>
             <a
               href="/learn/think"
-              className="inline-flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] transition-colors border border-white/[0.1] text-white font-bold font-[family-name:var(--font-inter)] text-[14px] px-5 py-3 rounded-xl shrink-0"
+              className="inline-flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] transition-colors border border-white/[0.1] text-white font-bold font-[family-name:var(--font-inter)] text-[15px] px-5 py-3 rounded-xl shrink-0"
             >
               Explore Pillar 2 <ArrowRight size={14} />
             </a>

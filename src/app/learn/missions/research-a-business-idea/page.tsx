@@ -44,28 +44,28 @@ export default function ResearchABusinessIdeaPage() {
           <h1 className="font-sans text-[32px] md:text-[48px] font-bold text-white mb-4 leading-tight">
             Research a Business Idea
           </h1>
-          <p className="font-[family-name:var(--font-inter)] text-[16px] text-white/55 leading-[1.8] mb-6 max-w-2xl">
+          <p className="font-[family-name:var(--font-inter)] text-[17px] text-white/55 leading-[1.8] mb-6 max-w-2xl">
             Most business ideas die from lack of research, not lack of effort. This mission teaches you how to
             use Gemini and ChatGPT to validate a business idea with real market data — in under an hour.
           </p>
 
           <div className="flex items-center gap-6 mb-4 flex-wrap">
-            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] text-white/45">
+            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[14px] text-white/45">
               <Clock size={13} /> 1 hour
             </span>
-            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#F59E0B]">
+            <span className="flex items-center gap-2 font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#F59E0B]">
               <BarChart2 size={13} /> Intermediate
             </span>
           </div>
 
           <div className="inline-block bg-white/[0.05] border border-white/[0.08] rounded-lg px-4 py-2 mb-8">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/50">
               <span className="text-white/70 font-bold">Deliverable:</span> A 1-page business research summary.
             </p>
           </div>
 
           <div className="bg-[#FFD23F]/5 border border-[#FFD23F]/15 rounded-xl px-5 py-4 mb-12">
-            <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/55 leading-[1.7]">
+            <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
               Full step-by-step guide with prompts coming soon. Here&rsquo;s the mission overview:
             </p>
           </div>
@@ -77,8 +77,8 @@ export default function ResearchABusinessIdeaPage() {
                   <span className="text-[#FFD23F]/60 text-[12px] font-bold font-[family-name:var(--font-inter)]">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 <div>
-                  <h3 className="font-sans text-[15px] font-bold text-white mb-1">{step.title}</h3>
-                  <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.5]">{step.desc}</p>
+                  <h3 className="font-sans text-[16px] font-bold text-white mb-1">{step.title}</h3>
+                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/45 leading-[1.5]">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -86,7 +86,7 @@ export default function ResearchABusinessIdeaPage() {
         </section>
 
         <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
-          <a href="/learn/missions" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-white/40 hover:text-white transition-colors">
+          <a href="/learn/missions" className="font-[family-name:var(--font-inter)] text-[15px] font-bold text-white/40 hover:text-white transition-colors">
             ← Back to All Missions
           </a>
         </section>
