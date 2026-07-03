@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const SHEETS_URL =
-  "https://script.google.com/macros/s/AKfycbyf1UclH7xhnliCpniNr39qJafCOYekZVHJbirXWPm-QnRtRxHReygMwa_ZNT5W6Emc/exec";
+import { getAdminClient } from "@/lib/supabaseAdmin";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, honeypot } = await req.json();
+    const { name, email, source, honeypot } = await req.json();
 
     if (honeypot) return NextResponse.json({ success: true });
 
@@ -13,14 +11,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email." }, { status: 400 });
     }
 
-    const res = await fetch(SHEETS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ name: name || "", email }),
-      redirect: "follow",
-    });
+    const db = getAdminClient();
+    const { error } = await db
+      .from("subscribers")
+      .upsert(
+        {
+          id: `sub-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          name: name || "",
+          email: email.trim().toLowerCase(),
+          source: source || "website",
+        },
+        { onConflict: "email", ignoreDuplicates: true }
+      );
 
-    if (!res.ok && res.status !== 302) throw new Error("Sheets error");
+    if (error) throw error;
 
     return NextResponse.json({ success: true });
   } catch {

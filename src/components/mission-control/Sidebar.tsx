@@ -10,6 +10,7 @@ import {
   GraduationCap,
   Briefcase,
   ClipboardList,
+  Users,
 } from "lucide-react";
 
 const NAV = [
@@ -18,6 +19,7 @@ const NAV = [
   { label: "Learning System", href: "/mission-control/learning-system", icon: GraduationCap },
   { label: "Service Catalog", href: "/mission-control/service-catalog", icon: Briefcase },
   { label: "Client Intake", href: "/mission-control/client-intake", icon: ClipboardList },
+  { label: "Subscribers", href: "/mission-control/subscribers", icon: Users },
   { label: "Roadmap", href: "/mission-control/roadmap", icon: Map },
   { label: "Settings", href: "/mission-control/settings", icon: Settings },
 ];

@@ -37,7 +37,7 @@ export default function PrivacyPage() {
               {[
                 { label: "Analytics data", detail: "Page views, device type, location (country/city), and traffic source. Collected automatically via Google Analytics 4 when you visit the site." },
                 { label: "Contact form submissions", detail: "Your name, email address, and message when you contact us through the contact page. Sent directly to cyberussellofficial@gmail.com." },
-                { label: "Email subscriptions", detail: "Your name (optional) and email address if you subscribe to updates. Stored in a private Google Sheet accessible only to the site owner." },
+                { label: "Email subscriptions", detail: "Your name (optional) and email address if you subscribe to updates. Stored in a private database accessible only to the site owner." },
               ].map(({ label, detail }) => (
                 <li key={label} className="flex gap-3">
                   <span className="text-[#FFD23F] mt-1 shrink-0">→</span>
@@ -80,7 +80,7 @@ export default function PrivacyPage() {
               {[
                 { name: "Google Analytics 4", url: "https://policies.google.com/privacy", note: "site traffic analysis" },
                 { name: "Vercel", url: "https://vercel.com/legal/privacy-policy", note: "hosting and deployment" },
-                { name: "Google Sheets", url: "https://policies.google.com/privacy", note: "email list storage" },
+                { name: "Supabase", url: "https://supabase.com/privacy", note: "email list storage" },
               ].map(({ name, note }) => (
                 <li key={name} className="flex gap-3">
                   <span className="text-white/55 mt-1 shrink-0">—</span>
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-sans text-[20px] font-bold text-white mb-3">7. Data Retention</h2>
             <p>
-              Contact form submissions are retained in email as long as needed to respond to your inquiry. Email subscriber data is stored in Google Sheets and can be deleted upon request. Analytics data is retained for 14 months per Google Analytics default settings.
+              Contact form submissions are retained in email as long as needed to respond to your inquiry. Email subscriber data is stored in our database and can be deleted upon request. Analytics data is retained for 14 months per Google Analytics default settings.
             </p>
           </section>
 

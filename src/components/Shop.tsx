@@ -110,11 +110,12 @@ export default function Shop() {
     lastSubmit.current = now;
     setEmailStatus("loading");
     try {
-      const params = new URLSearchParams({ name: "", email });
-      await fetch(
-        `https://script.google.com/macros/s/AKfycbwsbD7W3ZYIte7UHvzvkWfNQ4pZ1QwVB5alvt3ok3u7lYVz1pyUtDiTTIcKI9Ebfp05/exec?${params.toString()}`,
-        { method: "GET", mode: "no-cors" }
-      );
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "", email, source: "shop" }),
+      });
+      if (!res.ok) throw new Error("Failed to subscribe.");
       setEmailStatus("success");
       setEmail("");
     } catch {

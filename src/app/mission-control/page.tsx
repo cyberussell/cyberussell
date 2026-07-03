@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, FileEdit, Clock, Plus, Library, ExternalLink, GraduationCap, Briefcase, CheckCircle2 } from "lucide-react";
+import { BookOpen, FileEdit, Clock, Plus, Library, ExternalLink, GraduationCap, Briefcase, CheckCircle2, Users } from "lucide-react";
 import AuthGuard from "@/components/mission-control/AuthGuard";
 import Sidebar from "@/components/mission-control/Sidebar";
 
@@ -22,6 +22,7 @@ type Stats = {
 export default function DashboardPage() {
   const [blueprints, setBlueprints] = useState<BlueprintSummary[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [subscriberCount, setSubscriberCount] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/mission-control/blueprints").then((r) => r.json()).then((data) => {
@@ -29,6 +30,9 @@ export default function DashboardPage() {
     });
     fetch("/api/mission-control/analytics").then((r) => r.json()).then((data) => {
       if (!data.error) setStats(data);
+    });
+    fetch("/api/mission-control/subscribers").then((r) => r.json()).then((data) => {
+      if (Array.isArray(data)) setSubscriberCount(data.length);
     });
   }, []);
 
@@ -74,6 +78,20 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Subscribers */}
+            <div className="mb-10">
+              <h2 className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/30 uppercase tracking-[1px] mb-3">Subscribers</h2>
+              <a href="/mission-control/subscribers" className="flex items-center justify-between bg-[#14141e] border border-white/[0.06] rounded-xl p-5 hover:border-white/[0.10] transition-colors max-w-xs">
+                <div className="flex items-center gap-3">
+                  <Users size={16} className="text-[#FFD23F]" strokeWidth={2} />
+                  <div>
+                    <div className="font-sans text-[32px] font-bold text-white leading-none">{subscriberCount ?? "—"}</div>
+                    <div className="font-[family-name:var(--font-inter)] text-[11px] text-white/25 mt-1">total subscribers</div>
+                  </div>
+                </div>
+              </a>
             </div>
 
             {/* Quick actions */}
