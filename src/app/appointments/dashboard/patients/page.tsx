@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { requireClinic } from '@/lib/booklypro/auth'
+import { requireClinic } from '@/lib/appointment-system/auth'
 
 export const dynamic = 'force-dynamic'
 

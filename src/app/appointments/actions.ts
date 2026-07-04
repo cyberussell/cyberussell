@@ -3,10 +3,10 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
-import { createServerSupabase, createAdminSupabase } from '@/lib/booklypro/supabase-server'
-import { requireClinic } from '@/lib/booklypro/auth'
-import { logEvent } from '@/lib/booklypro/events'
-import { bookAppointment, wallTimeToUtc } from '@/lib/booklypro/slots'
+import { createServerSupabase, createAdminSupabase } from '@/lib/appointment-system/supabase-server'
+import { requireClinic } from '@/lib/appointment-system/auth'
+import { logEvent } from '@/lib/appointment-system/events'
+import { bookAppointment, wallTimeToUtc } from '@/lib/appointment-system/slots'
 
 export interface ActionResult {
   error?: string

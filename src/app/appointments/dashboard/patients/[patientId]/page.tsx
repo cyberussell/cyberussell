@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { requireClinic } from '@/lib/booklypro/auth'
-import { formatSlotLabel } from '@/lib/booklypro/slots'
-import RecordPaymentForm from '@/components/booklypro/RecordPaymentForm'
+import { requireClinic } from '@/lib/appointment-system/auth'
+import { formatSlotLabel } from '@/lib/appointment-system/slots'
+import RecordPaymentForm from '@/components/appointment-system/RecordPaymentForm'
 import { updatePatientNotes } from '../../../actions'
 
 export const dynamic = 'force-dynamic'

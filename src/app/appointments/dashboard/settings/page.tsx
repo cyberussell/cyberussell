@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { requireClinic } from '@/lib/booklypro/auth'
-import ChangePasswordForm from '@/components/booklypro/ChangePasswordForm'
+import { requireClinic } from '@/lib/appointment-system/auth'
+import ChangePasswordForm from '@/components/appointment-system/ChangePasswordForm'
 import { updateClinicProfile, saveFbConnection, updateClosedNotice } from '../../actions'
 
 export const dynamic = 'force-dynamic'

@@ -2,11 +2,11 @@ import 'server-only'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { getBooklyProEnv } from './supabase'
+import { getAppointmentSystemEnv } from './supabase'
 
 // Session-scoped client for server components / actions. RLS applies.
 export async function createServerSupabase() {
-  const { url, anonKey } = getBooklyProEnv()
+  const { url, anonKey } = getAppointmentSystemEnv()
   const cookieStore = await cookies()
   return createServerClient(url, anonKey, {
     cookies: {
@@ -32,10 +32,10 @@ export async function createServerSupabase() {
 let adminClient: SupabaseClient | null = null
 export function createAdminSupabase(): SupabaseClient {
   if (adminClient) return adminClient
-  const { url } = getBooklyProEnv()
+  const { url } = getAppointmentSystemEnv()
   const serviceKey = process.env.BOOKLYPRO_SUPABASE_SERVICE_ROLE_KEY
   if (!serviceKey) {
-    throw new Error('BOOKLYPRO_SUPABASE_SERVICE_ROLE_KEY is missing (see booklypro/SETUP.md).')
+    throw new Error('BOOKLYPRO_SUPABASE_SERVICE_ROLE_KEY is missing (see appointment-system/SETUP.md).')
   }
   adminClient = createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },

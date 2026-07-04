@@ -16,6 +16,16 @@ const nextConfig: NextConfig = {
         destination: "/earn/freelance-platforms",
         permanent: true,
       },
+      {
+        source: "/demo/booklypro",
+        destination: "/demo/appointment-system",
+        permanent: true,
+      },
+      {
+        source: "/portfolio/booklypro",
+        destination: "/portfolio/appointment-system",
+        permanent: true,
+      },
     ];
   },
   async headers() {

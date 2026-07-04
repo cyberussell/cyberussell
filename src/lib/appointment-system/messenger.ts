@@ -52,7 +52,7 @@ async function callSendApi(
     body: JSON.stringify(body),
   })
   if (!res.ok) {
-    console.error('[booklypro] Messenger send failed', res.status, await res.text())
+    console.error('[appointment-system] Messenger send failed', res.status, await res.text())
     return false
   }
   return true

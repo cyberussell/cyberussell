@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminSupabase } from '@/lib/booklypro/supabase-server'
-import { verifyMetaSignature } from '@/lib/booklypro/messenger'
-import { handleIncoming } from '@/lib/booklypro/flow'
-import type { Clinic } from '@/lib/booklypro/types'
+import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
+import { verifyMetaSignature } from '@/lib/appointment-system/messenger'
+import { handleIncoming } from '@/lib/appointment-system/flow'
+import type { Clinic } from '@/lib/appointment-system/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       try {
         await handleIncoming(db, clinic as Clinic, pageToken, psid, { payload, text })
       } catch (err) {
-        console.error('[booklypro] webhook handling failed', err)
+        console.error('[appointment-system] webhook handling failed', err)
       }
     }
   }

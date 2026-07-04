@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef } from 'react'
 import { createManualAppointment, type ActionResult } from '@/app/appointments/actions'
-import type { Service, Staff } from '@/lib/booklypro/types'
+import type { Service, Staff } from '@/lib/appointment-system/types'
 
 export default function ManualAppointmentForm({
   services,

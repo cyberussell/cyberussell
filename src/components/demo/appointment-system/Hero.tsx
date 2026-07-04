@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { CalendarDays, Clock3, CheckCircle2, ArrowRight, MonitorPlay } from "lucide-react";
-import { BOOKLY } from "./data";
+import { PRODUCT } from "./data";
 import { fadeUp } from "./motion";
 
 export default function Hero() {
@@ -40,7 +40,7 @@ export default function Hero() {
             custom={1}
             className="font-sans text-[34px] md:text-[52px] font-extrabold text-[#0B1220] leading-[1.08] tracking-tight mb-5"
           >
-            {BOOKLY.tagline}
+            {PRODUCT.tagline}
           </motion.h1>
 
           <motion.p
@@ -50,12 +50,12 @@ export default function Hero() {
             custom={2}
             className="font-[family-name:var(--font-inter)] text-[16px] md:text-[17px] text-[#0B1220]/60 leading-[1.7] max-w-[480px] mb-8"
           >
-            {BOOKLY.subhead}
+            {PRODUCT.subhead}
           </motion.p>
 
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3} className="flex flex-wrap items-center gap-4">
             <a
-              href="/portfolio/booklypro"
+              href="/portfolio/appointment-system"
               className="inline-flex items-center gap-2 bg-[#3B5BFF] text-white font-[family-name:var(--font-inter)] font-bold text-[15px] py-3.5 px-7 rounded-full hover:opacity-90 hover:-translate-y-[1px] transition-all"
             >
               View Case Study
@@ -77,7 +77,7 @@ export default function Hero() {
             custom={4}
             className="font-[family-name:var(--font-inter)] text-[12px] text-[#0B1220]/35 mt-8"
           >
-            {BOOKLY.altTagline} — a fictional concept, not a live product.
+            {PRODUCT.altTagline} — a fictional concept, not a live product.
           </motion.p>
         </div>
 

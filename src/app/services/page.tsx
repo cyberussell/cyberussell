@@ -229,23 +229,8 @@ export default function ServicesPage() {
           </motion.div>
         </section>
 
-        {/* ── Trust ── */}
-        <section className="px-6 md:px-10 py-20 max-w-5xl mx-auto">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-12">
-            <h2 className="font-sans text-[28px] md:text-[36px] font-bold text-white mb-3">
-              Why Businesses Work With Me
-            </h2>
-            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 max-w-lg mx-auto">
-              Straightforward. Business-focused. Delivered.
-            </p>
-          </motion.div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {TRUST.map((item, i) => <TrustCard key={item.title} item={item} index={i} />)}
-          </div>
-        </section>
-
         {/* ── Services ── */}
-        <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
+        <section className="px-6 md:px-10 py-20 max-w-5xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-14">
             <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[3px]">What I Offer</span>
             <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-white mt-2">
@@ -257,6 +242,21 @@ export default function ServicesPage() {
             {services.map((service, i) => (
               <ServiceCard key={service.slug} service={service} index={i} />
             ))}
+          </div>
+        </section>
+
+        {/* ── Trust ── */}
+        <section className="px-6 md:px-10 pb-20 max-w-5xl mx-auto">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-12">
+            <h2 className="font-sans text-[28px] md:text-[36px] font-bold text-white mb-3">
+              Why Businesses Work With Me
+            </h2>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/40 max-w-lg mx-auto">
+              Straightforward. Business-focused. Delivered.
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {TRUST.map((item, i) => <TrustCard key={item.title} item={item} index={i} />)}
           </div>
         </section>
 

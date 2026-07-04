@@ -103,7 +103,7 @@ Classify the message and extract fields per the output schema. "book" = wants an
     return { parsed, usage }
   } catch (err) {
     // AI is a fallback, never a dependency: the button flow keeps working.
-    console.error('[booklypro] parseIntent failed', err)
+    console.error('[appointment-system] parseIntent failed', err)
     return null
   }
 }

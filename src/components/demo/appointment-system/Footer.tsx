@@ -1,5 +1,5 @@
 import { CalendarCheck2 } from "lucide-react";
-import { BOOKLY, TECH_STACK } from "./data";
+import { PRODUCT, TECH_STACK } from "./data";
 
 export default function Footer() {
   return (
@@ -9,7 +9,7 @@ export default function Footer() {
           <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#3B5BFF] to-[#14B8A6] flex items-center justify-center">
             <CalendarCheck2 size={18} className="text-white" />
           </span>
-          <span className="font-sans text-[18px] font-extrabold text-white">{BOOKLY.name}</span>
+          <span className="font-sans text-[18px] font-extrabold text-white">{PRODUCT.name}</span>
         </div>
 
         <div className="flex flex-wrap gap-2 pb-10 border-b border-white/[0.08]">
@@ -22,7 +22,7 @@ export default function Footer() {
 
         <div className="pt-8 pb-2 max-w-[640px]">
           <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.8]">
-            <span className="font-bold text-white/70">This is a fictional concept.</span> BooklyPro was designed and
+            <span className="font-bold text-white/70">This is a fictional concept.</span> Appointment System was designed and
             built exclusively for the Cyberussell portfolio to demonstrate UX, UI, front-end, and full-stack
             engineering capability. It is not a live product, and no signup, payment, or scheduling on this page is
             real.
@@ -33,7 +33,7 @@ export default function Footer() {
           <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/30">
             &copy; {new Date().getFullYear()} Cyberussell. Concept project, not a real company.
           </p>
-          <a href="/portfolio/booklypro" className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 hover:text-[#5EEAD4] transition-colors">
+          <a href="/portfolio/appointment-system" className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 hover:text-[#5EEAD4] transition-colors">
             View full case study →
           </a>
         </div>

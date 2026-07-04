@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createAdminSupabase } from '@/lib/booklypro/supabase-server'
-import { bookAppointment, getAvailableSlots } from '@/lib/booklypro/slots'
-import { logEvent } from '@/lib/booklypro/events'
-import type { Clinic } from '@/lib/booklypro/types'
+import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
+import { bookAppointment, getAvailableSlots } from '@/lib/appointment-system/slots'
+import { logEvent } from '@/lib/appointment-system/events'
+import type { Clinic } from '@/lib/appointment-system/types'
 
 export const dynamic = 'force-dynamic'
 

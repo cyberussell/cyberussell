@@ -1,5 +1,5 @@
--- BooklyPro schema — run against the DEDICATED BooklyPro Supabase project
--- (not the main cyberussell.com project). See booklypro/SETUP.md.
+-- Appointment System schema — run against the DEDICATED Appointment System Supabase project
+-- (not the main cyberussell.com project). See appointment-system/SETUP.md.
 
 create extension if not exists btree_gist;
 

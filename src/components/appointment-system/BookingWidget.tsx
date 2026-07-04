@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { Service, Slot } from '@/lib/booklypro/types'
+import type { Service, Slot } from '@/lib/appointment-system/types'
 
 type Step = 'service' | 'slot' | 'details' | 'done'
 

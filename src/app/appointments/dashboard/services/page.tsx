@@ -1,4 +1,4 @@
-import { requireClinic } from '@/lib/booklypro/auth'
+import { requireClinic } from '@/lib/appointment-system/auth'
 import { createService, toggleService, deleteService } from '../../actions'
 
 export const dynamic = 'force-dynamic'

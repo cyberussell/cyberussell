@@ -1,9 +1,9 @@
-export const BOOKLY = {
-  name: "BooklyPro",
+export const PRODUCT = {
+  name: "Appointment System",
   tagline: "Modern Appointment Scheduling for Professionals",
   altTagline: "Simple scheduling. Better client experiences.",
   subhead:
-    "BooklyPro is a fictional SaaS concept designed to demonstrate modern UX, scheduling workflows, dashboard architecture, and scalable full-stack application design for dentists, doctors, and lawyers.",
+    "Appointment System is a fictional SaaS concept designed to demonstrate modern UX, scheduling workflows, dashboard architecture, and scalable full-stack application design for dentists, doctors, and lawyers.",
 };
 
 export const PROBLEMS = [

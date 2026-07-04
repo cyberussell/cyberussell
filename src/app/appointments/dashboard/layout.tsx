@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { requireClinic } from '@/lib/booklypro/auth'
-import NavTabs from '@/components/booklypro/NavTabs'
+import { requireClinic } from '@/lib/appointment-system/auth'
+import NavTabs from '@/components/appointment-system/NavTabs'
 import { signOut } from '../actions'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {

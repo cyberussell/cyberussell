@@ -44,7 +44,7 @@ const TIERS = [
   },
 ]
 
-export default function BooklyProLanding() {
+export default function AppointmentSystemLanding() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       {/* Hero */}
@@ -68,7 +68,7 @@ export default function BooklyProLanding() {
             Start free 14-day trial
           </Link>
           <Link
-            href="/demo/booklypro"
+            href="/demo/appointment-system"
             className="rounded-lg border border-slate-700 px-6 py-3 font-semibold text-slate-200 hover:border-emerald-400 transition"
           >
             See the concept demo

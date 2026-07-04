@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X, CalendarCheck2 } from "lucide-react";
-import { NAV_LINKS, BOOKLY } from "./data";
+import { NAV_LINKS, PRODUCT } from "./data";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -30,7 +30,7 @@ export default function Header() {
           <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#3B5BFF] to-[#14B8A6] flex items-center justify-center">
             <CalendarCheck2 size={18} className="text-white" />
           </span>
-          <span className="font-sans text-[19px] font-extrabold text-[#0B1220] tracking-tight">{BOOKLY.name}</span>
+          <span className="font-sans text-[19px] font-extrabold text-[#0B1220] tracking-tight">{PRODUCT.name}</span>
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -46,7 +46,7 @@ export default function Header() {
         </nav>
 
         <a
-          href="/portfolio/booklypro"
+          href="/portfolio/appointment-system"
           className="hidden md:inline-flex items-center gap-2 bg-[#0B1220] text-white font-[family-name:var(--font-inter)] font-bold text-[13px] py-2.5 px-5 rounded-full hover:opacity-90 transition-all"
         >
           View Case Study
@@ -70,7 +70,7 @@ export default function Header() {
             </a>
           ))}
           <a
-            href="/portfolio/booklypro"
+            href="/portfolio/appointment-system"
             onClick={() => setOpen(false)}
             className="mt-4 text-center bg-[#0B1220] text-white font-[family-name:var(--font-inter)] font-bold text-[14px] py-3 rounded-full"
           >

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
-import { createAdminSupabase } from '@/lib/booklypro/supabase-server'
-import type { Clinic, Service } from '@/lib/booklypro/types'
-import BookingWidget from '@/components/booklypro/BookingWidget'
+import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
+import type { Clinic, Service } from '@/lib/appointment-system/types'
+import BookingWidget from '@/components/appointment-system/BookingWidget'
 
 export const dynamic = 'force-dynamic'
 

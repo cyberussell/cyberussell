@@ -1,18 +1,18 @@
-# BooklyPro Setup Guide
+# Appointment System Setup Guide
 
-BooklyPro is the subscription booking system for clinics at `/appointments`. It runs on its
+Appointment System is the subscription booking system for clinics at `/appointments`. It runs on its
 **own Supabase project** (separate from the main site's) so it can be extracted into a
 standalone SaaS later. All code lives in three scoped places:
 
 - `src/app/appointments/` — routes (landing, auth, dashboard, public booking, webhook)
-- `src/lib/booklypro/` — core logic (slots, Messenger, AI, auth)
-- `src/components/booklypro/` — UI components
-- `booklypro/` — migrations + this guide
+- `src/lib/appointment-system/` — core logic (slots, Messenger, AI, auth)
+- `src/components/appointment-system/` — UI components
+- `appointment-system/` — migrations + this guide
 
 ## 1. Create the dedicated Supabase project
 
-1. Go to [supabase.com/dashboard](https://supabase.com/dashboard) → **New project** → name it `booklypro`.
-2. Open **SQL Editor** and run `booklypro/migrations/001_init.sql` in full.
+1. Go to [supabase.com/dashboard](https://supabase.com/dashboard) → **New project** → name it `appointment-system`.
+2. Open **SQL Editor** and run `appointment-system/migrations/001_init.sql` in full.
 3. In **Authentication → Providers → Email**: keep Email enabled.
    - *Recommended for the trial phase:* turn **off** "Confirm email" so clinic signups land in
      the dashboard immediately. Turn it back on before public launch.
@@ -53,7 +53,7 @@ tester on the app. Per pilot clinic:
 2. **Messenger → Settings → Access Tokens**: connect their Page, generate a **Page Access Token**.
 3. In the same panel, under Webhooks, **Add subscriptions** for that Page (`messages`,
    `messaging_postbacks`).
-4. In the BooklyPro dashboard (**Settings** tab), paste the **Page ID** and **Page Access Token**.
+4. In the Appointment System dashboard (**Settings** tab), paste the **Page ID** and **Page Access Token**.
 5. Message the Page from a personal account — the bot should reply with the main menu.
 
 ## 4. App review (before scaling past testers)
