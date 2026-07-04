@@ -60,6 +60,14 @@ function dateInTz(date: Date, timeZone: string): { y: number; m: number; d: numb
   }
 }
 
+// Convert a datetime-local value ("2026-07-06T14:00") entered as clinic wall
+// time into a UTC Date.
+export function wallTimeToUtc(value: string, timeZone: string): Date | null {
+  const m = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/)
+  if (!m) return null
+  return zonedToUtc(Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4]), Number(m[5]), timeZone)
+}
+
 export function formatSlotLabel(iso: string, timeZone: string): string {
   return new Intl.DateTimeFormat('en-PH', {
     timeZone,

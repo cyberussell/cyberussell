@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'BooklyPro — Messenger Booking System for Philippine Clinics',
+  title: 'Appointment System — Messenger Booking for Philippine Clinics',
   description:
     'Your clinic\'s Facebook Page answers instantly and books appointments by itself. AI receptionist in English at Tagalog, built for PH clinics.',
 }
@@ -49,15 +49,15 @@ export default function BooklyProLanding() {
     <main className="min-h-screen bg-slate-950 text-white">
       {/* Hero */}
       <section className="mx-auto max-w-5xl px-4 pt-20 pb-16 text-center">
-        <p className="text-sm font-semibold tracking-widest text-emerald-400 uppercase">BooklyPro</p>
+        <p className="text-sm font-semibold tracking-widest text-emerald-400 uppercase">Appointment System</p>
         <h1 className="mt-4 text-4xl sm:text-5xl font-bold leading-tight">
           Your clinic&apos;s Facebook Page,
           <br />
           <span className="text-emerald-400">answering and booking by itself.</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300">
-          Patients already message your Page asking &ldquo;open ba kayo?&rdquo; — BooklyPro replies
-          instantly, shows real available slots, and books the appointment. In English, Tagalog, or
+          Patients already message your Page asking &ldquo;open ba kayo?&rdquo; — our AI receptionist
+          replies instantly, shows real available slots, and books the appointment. In English, Tagalog, or
           Taglish. No app for patients to install.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
@@ -154,7 +154,7 @@ export default function BooklyProLanding() {
       </section>
 
       <footer className="border-t border-slate-800 py-8 text-center text-sm text-slate-500">
-        BooklyPro · Built by{' '}
+        Appointment System · Built by{' '}
         <Link href="/" className="text-slate-300 hover:text-emerald-300">
           Cyberussell
         </Link>

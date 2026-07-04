@@ -70,6 +70,8 @@ export interface Appointment {
   status: AppointmentStatus
   source: AppointmentSource
   intake_note: string
+  amount_paid: number
+  paid_at: string | null
   created_at: string
 }
 

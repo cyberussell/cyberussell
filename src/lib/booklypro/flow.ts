@@ -29,6 +29,18 @@ export async function handleIncoming(
     payload: incoming.payload ?? null,
   })
 
+  // Clinic marked closed: tell the patient and stop — no booking flow.
+  const settings = clinic.settings as { closed?: boolean; closed_message?: string }
+  if (settings.closed) {
+    await sendText(
+      pageToken,
+      psid,
+      settings.closed_message ||
+        `Hi po! ${clinic.name} is temporarily closed. Message na lang po kami ulit kapag bukas na. 🙏`
+    )
+    return
+  }
+
   // Human mode: bot stays silent until staff hands back or 12h pass.
   if (convo.mode === 'human') {
     const idleMs = Date.now() - new Date(convo.last_message_at).getTime()

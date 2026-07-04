@@ -11,7 +11,7 @@ export default function LoginPage() {
     <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <Link href="/appointments" className="block text-center text-2xl font-bold text-white mb-8">
-          Bookly<span className="text-emerald-400">Pro</span>
+          Appointment <span className="text-emerald-400">System</span>
         </Link>
         <form action={formAction} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-6">
           <label className="block">

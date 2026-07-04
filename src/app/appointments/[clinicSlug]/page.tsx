@@ -36,6 +36,16 @@ export default async function ClinicPublicPage({
           {clinic.phone && <p className="text-slate-400">{clinic.phone}</p>}
         </header>
 
+        {(clinic.settings as { closed?: boolean }).closed && (
+          <div className="mt-8 rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 text-center">
+            <p className="font-semibold text-amber-300">Temporarily closed</p>
+            <p className="mt-1 text-sm text-slate-300">
+              {(clinic.settings as { closed_message?: string }).closed_message ||
+                'Online booking is paused for now — please check back soon.'}
+            </p>
+          </div>
+        )}
+
         {clinic.fb_page_id && (
           <a
             href={`https://m.me/${clinic.fb_page_id}`}
@@ -47,17 +57,19 @@ export default async function ClinicPublicPage({
           </a>
         )}
 
-        <div className="mt-10">
-          <h2 className="text-lg font-semibold text-center text-slate-300">
-            {clinic.fb_page_id ? 'Or book here on the web' : 'Book an appointment'}
-          </h2>
-          <div className="mt-4">
-            <BookingWidget clinicSlug={clinic.slug} services={(services ?? []) as Service[]} />
+        {!(clinic.settings as { closed?: boolean }).closed && (
+          <div className="mt-10">
+            <h2 className="text-lg font-semibold text-center text-slate-300">
+              {clinic.fb_page_id ? 'Or book here on the web' : 'Book an appointment'}
+            </h2>
+            <div className="mt-4">
+              <BookingWidget clinicSlug={clinic.slug} services={(services ?? []) as Service[]} />
+            </div>
           </div>
-        </div>
+        )}
 
         <footer className="mt-14 text-center text-xs text-slate-600">
-          Powered by <span className="text-slate-400">BooklyPro</span>
+          Powered by <span className="text-slate-400">Cyberussell Appointment System</span>
         </footer>
       </div>
     </main>

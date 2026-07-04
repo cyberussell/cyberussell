@@ -55,6 +55,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
   }
 
+  const settings = (clinic as Clinic).settings as { closed?: boolean; closed_message?: string }
+  if (settings.closed) {
+    return NextResponse.json(
+      { error: settings.closed_message || 'The clinic is temporarily closed.' },
+      { status: 403 }
+    )
+  }
+
   const result = await bookAppointment(db, {
     clinicId: clinic.id,
     serviceId: input.serviceId,

@@ -12,7 +12,7 @@ export default function SignupPage() {
     <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <Link href="/appointments" className="block text-center text-2xl font-bold text-white mb-2">
-          Bookly<span className="text-emerald-400">Pro</span>
+          Appointment <span className="text-emerald-400">System</span>
         </Link>
         <p className="text-center text-slate-400 mb-8 text-sm">
           Start your 14-day free trial — no credit card needed.
