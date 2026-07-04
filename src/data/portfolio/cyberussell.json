@@ -1,0 +1,19 @@
+{
+  "slug": "cyberussell",
+  "title": "Cyberussell — AI Career Platform",
+  "client": "Personal Project",
+  "tagline": "A free platform helping Filipinos find online income paths using AI-powered tools and step-by-step career blueprints.",
+  "category": "Web App",
+  "date": "2026-06-21",
+  "timeline": "Ongoing",
+  "coverImage": "",
+  "gallery": [],
+  "liveUrl": "https://www.cyberussell.com",
+  "techStack": ["Next.js", "TypeScript", "Tailwind CSS", "Supabase"],
+  "overview": "Cyberussell is a free, AI-powered platform built to help Filipinos discover realistic online income paths. It combines a Skill Finder quiz, dozens of step-by-step Career Blueprints, and free AI tools (scam checker, prompt trainer, bio generator) into one guided experience.",
+  "problem": "Most Filipinos looking to earn online face the same wall: too much scattered, outdated, or scammy advice, and no clear starting point that matches their actual skills and situation.",
+  "solution": "Built a single platform that starts with a short assessment, matches the user to a specific income path, then hands them a complete blueprint — roadmap, tools, platforms, and today's mission — instead of generic advice.",
+  "results": "Launched and actively growing, with a full library of career blueprints, free AI tools, and a content engine feeding new visitors through blog and social content.",
+  "testimonial": null,
+  "featured": true
+}

@@ -72,6 +72,10 @@ const navItems: NavItem[] = [
   {
     label: "SERVICES",
     href: "/services",
+    dropdown: [
+      { label: "All Services", href: "/services" },
+      { label: "Portfolio", href: "/portfolio" },
+    ],
   },
   {
     label: "SHOP",

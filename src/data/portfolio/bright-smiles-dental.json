@@ -1,0 +1,24 @@
+{
+  "slug": "bright-smiles-dental",
+  "title": "Bright Smiles Dental Studio",
+  "client": "Concept Project",
+  "tagline": "A fully animated dental clinic website concept — built to show what a modern healthcare site can look like.",
+  "category": "Web Design",
+  "date": "2026-07-04",
+  "timeline": "Concept sprint",
+  "coverImage": "/portfolio/luma-dental/hero-clinic.jpg",
+  "gallery": [
+    "/portfolio/luma-dental/hero-clinic.jpg",
+    "/portfolio/luma-dental/team-maya.jpg",
+    "/portfolio/luma-dental/team-carlo.jpg",
+    "/portfolio/luma-dental/team-anna.jpg"
+  ],
+  "liveUrl": "/demo/luma-dental",
+  "techStack": ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
+  "overview": "Bright Smiles Dental Studio is a self-initiated concept build — a fictional clinic used to demonstrate what a modern, conversion-focused healthcare website looks like: a full animated single-page site with a booking flow, team profiles, service breakdown, and patient testimonials.",
+  "problem": "Most local clinic websites look the same — static, dated, and built years ago. Prospective clients rarely see a live example of what a genuinely modern, animated clinic site could feel like before committing to a rebuild.",
+  "solution": "Designed and built a complete single-page clinic experience from scratch: animated hero with floating UI, scroll-triggered reveals on every section, animated stat counters, an interactive FAQ accordion, and a working appointment booking form with a real success state — all in a calming teal-and-white healthcare palette.",
+  "results": "A live, fully working demo that shows the full range of what's possible for a clinic or healthcare client — motion design, booking UX, and a mobile-responsive layout — used as proof of capability for prospective healthcare clients.",
+  "testimonial": null,
+  "featured": true
+}
