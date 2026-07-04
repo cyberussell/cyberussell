@@ -16,6 +16,7 @@ export interface PortfolioProject {
   icon?: string;
   gallery?: string[];
   liveUrl?: string;
+  liveProduct?: { text: string; label: string; url: string };
   techStack: string[];
   overview: string;
   problem: string;

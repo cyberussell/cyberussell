@@ -10,6 +10,11 @@
   "icon": "/portfolio/appointment-system/icon.png",
   "gallery": [],
   "liveUrl": "/demo/appointment-system",
+  "liveProduct": {
+    "text": "This concept grew into a real product —",
+    "label": "see the Appointment System live",
+    "url": "/appointments"
+  },
   "techStack": [
     "Next.js 16",
     "React 19",

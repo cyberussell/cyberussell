@@ -172,6 +172,16 @@ export default async function PortfolioProjectPage({ params }: Props) {
             </a>
           </div>
 
+          {/* Live product note */}
+          {project.liveProduct && (
+            <p className="mt-6 text-center font-[family-name:var(--font-inter)] text-[13px] text-white/40">
+              {project.liveProduct.text}{" "}
+              <a href={project.liveProduct.url} className="text-white/60 underline underline-offset-4 decoration-white/20 hover:text-white hover:decoration-white/50 transition-colors">
+                {project.liveProduct.label} →
+              </a>
+            </p>
+          )}
+
           {/* Related projects */}
           {related.length > 0 && (
             <div className="pt-8 mt-10 border-t border-white/10">
