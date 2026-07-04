@@ -1,0 +1,20 @@
+{
+  "slug": "hireworkers",
+  "title": "PayJobs.work — AI Hiring Assistant",
+  "client": "Personal Project",
+  "tagline": "Hire Skills. Not Degrees. — an AI-assisted platform matching employers with skilled workers, no formal credentials required.",
+  "category": "Web App",
+  "date": "2026-07-04",
+  "timeline": "Ongoing",
+  "coverImage": "/portfolio/hireworkers/cover.svg",
+  "icon": "/portfolio/hireworkers/icon.png",
+  "gallery": [],
+  "liveUrl": "https://hireworkers.work",
+  "techStack": ["Next.js", "TypeScript", "Tailwind CSS"],
+  "overview": "PayJobs.work (hireworkers.work) is a skills-based hiring platform that matches employers with workers based on real competencies instead of formal credentials. Employers describe a role in minutes using pre-populated templates — electrician, developer, virtual assistant, carpenter, designer, caregiver, customer support, driver — while workers build an AI-assisted profile that showcases what they can actually do.",
+  "problem": "Traditional hiring filters on degrees and resumes, which screens out capable workers — especially in skilled trades and remote support roles — before an employer ever sees what they can do. Employers, meanwhile, waste time posting generic job ads and sorting unqualified applicants instead of getting matched directly with people who have the right skills.",
+  "solution": "Built an AI hiring assistant end to end: a fast job-posting flow with ready-made role templates so employers can list a position in minutes, an AI-powered profile builder that helps workers present their skills clearly, and a matching layer that connects the two sides directly — swapping credential screening for a skills-first approach.",
+  "results": "Live and onboarding both employers and workers across roles like electricians, developers, virtual assistants, carpenters, designers, caregivers, customer support, and drivers — an ongoing personal project proving out a skills-first alternative to degree-filtered hiring.",
+  "testimonial": null,
+  "featured": true
+}

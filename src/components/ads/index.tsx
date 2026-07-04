@@ -70,7 +70,7 @@ export function AdInArticle({ className }: { className?: string }) {
       adSlot={SLOTS.inArticle}
       adFormat="fluid"
       responsive
-      className={className ?? "my-8"}
+      className={className ?? "my-5"}
     />
   );
 }
@@ -82,7 +82,7 @@ export function AdMultiplex({ className }: { className?: string }) {
       adSlot={SLOTS.multiplex}
       adFormat="autorelaxed"
       responsive
-      className={className ?? "my-8"}
+      className={className ?? "my-5"}
     />
   );
 }

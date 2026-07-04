@@ -118,7 +118,28 @@
       "Bash(find /private/tmp/claude-501 -name \"*.jpg\" -o -name \"*.jpeg\" -o -name \"*.png\" 2>/dev/null | head -20)",
       "Bash(kill 17829)",
       "Bash(mkdir -p /Users/russellparayno/Documents/Business/cyberussell.com/src/app/api/mission-control/services/\\\\[id\\\\])",
-      "Bash(mkdir -p \"/Users/russellparayno/Documents/Business/cyberussell.com/src/app/mission-control/service-catalog/[id]\")"
+      "Bash(mkdir -p \"/Users/russellparayno/Documents/Business/cyberussell.com/src/app/mission-control/service-catalog/[id]\")",
+      "Bash(xxd)",
+      "Bash(gh run *)",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "Bash(npx eslint *)",
+      "Bash(command -v gh)",
+      "Bash(vercel whoami *)",
+      "Bash(vercel project *)",
+      "Bash(vercel ls *)",
+      "Bash(vercel inspect *)",
+      "Bash(git restore *)",
+      "Bash(git reset *)",
+      "Bash(vercel --prod --yes)",
+      "Bash(curl -s \"https://www.cyberussell.com/learn/foundations/complete\")",
+      "Bash(curl -s -X POST http://localhost:57509/api/subscribe -H \"Content-Type: application/json\" -d '{\"name\":\"Test User\",\"email\":\"test-subscriber@example.com\",\"source\":\"manual-test\"}')",
+      "Bash(curl -s -o /dev/null -w \"status=%{http_code} type=%{content_type} size=%{size_download} time=%{time_total}s\\\\n\" \"http://localhost:3001/_next/image?url=%2Fportfolio%2Fluma-dental%2Fhero-clinic.jpg&w=750&q=75\")",
+      "Bash(curl -s -o /dev/null -w \"status=%{http_code} time=%{time_total}s\\\\n\" \"http://localhost:3001/_next/image?url=%2Fportfolio%2Fluma-dental%2Fhero-clinic.jpg&w=1920&q=75\")",
+      "Bash(time curl -s -o /tmp/test_hero_3840.png -w \"status=%{http_code} size=%{size_download}\\\\n\" \"http://localhost:3001/_next/image?url=%2Fportfolio%2Fluma-dental%2Fhero-clinic.jpg&w=3840&q=75\")",
+      "Bash(node -e \"require\\('gsap/ScrollTrigger'\\); console.log\\('ok'\\)\")",
+      "WebFetch(domain:hireworkers.work)",
+      "Bash(command -v vercel)"
     ]
   }
 }

@@ -7,6 +7,7 @@
   "date": "2026-06-21",
   "timeline": "Ongoing",
   "coverImage": "",
+  "icon": "/portfolio/cyberussell/icon.png",
   "gallery": [],
   "liveUrl": "https://www.cyberussell.com",
   "techStack": ["Next.js", "TypeScript", "Tailwind CSS", "Supabase"],

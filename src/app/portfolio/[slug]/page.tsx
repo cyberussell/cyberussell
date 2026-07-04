@@ -100,6 +100,7 @@ export default async function PortfolioProjectPage({ params }: Props) {
                 alt={project.title}
                 fill
                 priority
+                unoptimized={project.coverImage.endsWith(".svg")}
                 sizes="768px"
                 className="object-cover"
               />
@@ -145,7 +146,7 @@ export default async function PortfolioProjectPage({ params }: Props) {
                 <div className="grid grid-cols-2 gap-3">
                   {project.gallery.map((img) => (
                     <div key={img} className="relative aspect-video bg-[#18181F] border border-white/[0.08] rounded-lg overflow-hidden">
-                      <Image src={img} alt={project.title} fill sizes="(max-width: 768px) 100vw, 336px" className="object-cover" />
+                      <Image src={img} alt={project.title} fill unoptimized={img.endsWith(".svg")} sizes="(max-width: 768px) 100vw, 336px" className="object-cover" />
                     </div>
                   ))}
                 </div>

@@ -13,6 +13,7 @@ export interface PortfolioProject {
   date: string;
   timeline: string;
   coverImage?: string;
+  icon?: string;
   gallery?: string[];
   liveUrl?: string;
   techStack: string[];

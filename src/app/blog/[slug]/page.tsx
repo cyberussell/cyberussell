@@ -153,7 +153,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           const related = getAllPosts().filter((p) => p.slug !== slug).slice(0, 3);
           if (related.length === 0) return null;
           return (
-            <div className="mt-10 pt-8 border-t border-white/10">
+            <div className="pt-8 border-t border-white/10">
               <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold text-white/30 uppercase tracking-[2px] mb-5">
                 More articles
               </p>

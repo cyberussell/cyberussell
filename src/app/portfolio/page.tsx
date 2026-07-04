@@ -39,11 +39,23 @@ export default function PortfolioIndex() {
                 className="group bg-[#18181F] border border-white/[0.08] rounded-xl overflow-hidden flex flex-col hover:border-[#FFD23F]/30 hover:-translate-y-[2px] transition-all duration-200"
               >
                 <div className="relative aspect-video bg-gradient-to-br from-[#E8373A]/20 via-[#18181F] to-[#FFD23F]/10 flex items-center justify-center">
-                  {project.coverImage ? (
+                  {project.icon ? (
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105">
+                      <Image
+                        src={project.icon}
+                        alt={`${project.title} icon`}
+                        fill
+                        unoptimized={project.icon.endsWith(".svg")}
+                        sizes="96px"
+                        className="object-contain"
+                      />
+                    </div>
+                  ) : project.coverImage ? (
                     <Image
                       src={project.coverImage}
                       alt={project.title}
                       fill
+                      unoptimized={project.coverImage.endsWith(".svg")}
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover"
                     />
