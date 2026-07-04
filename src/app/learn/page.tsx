@@ -151,27 +151,27 @@ export default function LearnPage() {
                       <Icon size={20} style={{ color: pillar.color }} strokeWidth={1.8} />
                     </div>
                     <span
-                      className="font-[family-name:var(--font-inter)] text-[11px] font-bold uppercase tracking-[1.5px]"
+                      className="font-[family-name:var(--font-inter)] text-[12px] md:text-[11px] font-bold uppercase tracking-[1.5px]"
                       style={{ color: `${pillar.color}99` }}
                     >
                       Pillar {i + 1}
                     </span>
                   </div>
-                  <h3 className="font-sans text-[17px] font-bold text-white mb-2 group-hover:text-[#FFD23F] transition-colors">
+                  <h3 className="font-sans text-[18px] md:text-[17px] font-bold text-white mb-2 group-hover:text-[#FFD23F] transition-colors">
                     {pillar.title}
                   </h3>
-                  <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.6] flex-1 mb-4">
+                  <p className="font-[family-name:var(--font-inter)] text-[15px] md:text-[14px] text-white/55 leading-[1.6] flex-1 mb-4">
                     {pillar.desc}
                   </p>
                   <div className="border-t border-white/[0.06] pt-4">
-                    <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/35 mb-3">
+                    <p className="font-[family-name:var(--font-inter)] text-[13px] md:text-[12px] text-white/35 mb-3">
                       Outcome
                     </p>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/60 italic leading-[1.5]">
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] md:text-[13px] text-white/60 italic leading-[1.5]">
                       "{pillar.outcome}"
                     </p>
                   </div>
-                  <span className="mt-4 text-[13px] font-bold font-[family-name:var(--font-inter)] text-[#FFD23F] group-hover:text-white transition-colors">
+                  <span className="mt-4 text-[14px] md:text-[13px] font-bold font-[family-name:var(--font-inter)] text-[#FFD23F] group-hover:text-white transition-colors">
                     Explore →
                   </span>
                 </a>
