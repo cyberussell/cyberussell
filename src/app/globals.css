@@ -95,6 +95,25 @@ body {
   [class~="text-[15px]"] { font-size: 17px; }
 }
 
+/* Card border visibility floor.
+   Cards across the site use very low-opacity white borders
+   (border-white/[0.03]-[0.10]) that are barely visible against the dark
+   background. Same mechanism as the font-size floor above: unlayered CSS
+   always wins over Tailwind's layered utilities, so this applies everywhere
+   without per-file edits. Hover/emphasis variants (hover:border-white/20
+   etc) are untouched since those are separate class tokens. */
+[class~="border-white/[0.03]"],
+[class~="border-white/[0.04]"],
+[class~="border-white/[0.05]"],
+[class~="border-white/5"] { border-color: rgba(255,255,255,0.14); }
+[class~="border-white/[0.06]"],
+[class~="border-white/[0.07]"],
+[class~="border-white/[0.08]"] { border-color: rgba(255,255,255,0.16); }
+[class~="border-white/[0.10]"],
+[class~="border-white/[0.1]"],
+[class~="border-white/10"] { border-color: rgba(255,255,255,0.18); }
+[class~="border-white/[0.12]"] { border-color: rgba(255,255,255,0.2); }
+
 /* Typing Practice caret */
 @keyframes typing-blink {
   0%, 100% { border-color: #374151; }
