@@ -170,6 +170,12 @@ export default function ServicesPage() {
                 >
                   Let&apos;s Discuss Your Project <ArrowRight size={16} />
                 </a>
+                <a
+                  href="/portfolio"
+                  className="inline-flex items-center justify-center gap-2 bg-white/[0.08] hover:bg-white/[0.12] border border-white/[0.12] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
+                >
+                  Sample Work
+                </a>
               </motion.div>
             </div>
           </div>
