@@ -4,9 +4,10 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { createServerSupabase, createAdminSupabase } from '@/lib/appointment-system/supabase-server'
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { requireBusiness } from '@/lib/appointment-system/auth'
 import { logEvent } from '@/lib/appointment-system/events'
 import { bookAppointment, wallTimeToUtc } from '@/lib/appointment-system/slots'
+import { canCreateAppointment, canAddProvider, PLANS } from '@/lib/appointment-system/entitlements'
 
 export interface ActionResult {
   error?: string
@@ -24,7 +25,8 @@ function slugify(name: string): string {
 
 const signUpSchema = z.object({
   fullName: z.string().min(2).max(80),
-  clinicName: z.string().min(2).max(80),
+  businessName: z.string().min(2).max(80),
+  businessType: z.enum(['medical', 'dental', 'spa', 'salon', 'law', 'veterinary', 'other']),
   email: z.string().email(),
   password: z.string().min(8),
 })
@@ -32,12 +34,13 @@ const signUpSchema = z.object({
 export async function signUp(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = signUpSchema.safeParse({
     fullName: formData.get('fullName'),
-    clinicName: formData.get('clinicName'),
+    businessName: formData.get('businessName'),
+    businessType: formData.get('businessType'),
     email: formData.get('email'),
     password: formData.get('password'),
   })
   if (!parsed.success) return { error: 'Please fill in all fields (password: 8+ characters).' }
-  const { fullName, clinicName, email, password } = parsed.data
+  const { fullName, businessName, businessType, email, password } = parsed.data
 
   const supabase = await createServerSupabase()
   const { data, error } = await supabase.auth.signUp({
@@ -48,20 +51,20 @@ export async function signUp(_prev: ActionResult, formData: FormData): Promise<A
   if (error) return { error: error.message }
   if (!data.user) return { error: 'Signup failed — please try again.' }
 
-  // Clinic row is created with the service role so signup works even when
+  // Business row is created with the service role so signup works even when
   // email confirmation is enabled (no session yet → RLS would block it).
   const admin = createAdminSupabase()
-  let slug = slugify(clinicName)
-  if (slug.length < 3) slug = `clinic-${slug}`
-  const { count } = await admin.from('clinics').select('id', { count: 'exact', head: true }).eq('slug', slug)
+  let slug = slugify(businessName)
+  if (slug.length < 3) slug = `business-${slug}`
+  const { count } = await admin.from('businesses').select('id', { count: 'exact', head: true }).eq('slug', slug)
   if (count && count > 0) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`
 
-  const { error: clinicError } = await admin
-    .from('clinics')
-    .insert({ owner_id: data.user.id, name: clinicName, slug })
-  if (clinicError) return { error: clinicError.message }
+  const { error: businessError } = await admin
+    .from('businesses')
+    .insert({ owner_id: data.user.id, name: businessName, slug, business_type: businessType })
+  if (businessError) return { error: businessError.message }
 
-  await logEvent(admin, null, 'clinic_signed_up', { clinic_name: clinicName, slug })
+  await logEvent(admin, null, 'business_signed_up', { business_name: businessName, slug })
 
   if (!data.session) {
     return { error: 'CONFIRM_EMAIL' } // handled as info, not error, in the UI
@@ -87,13 +90,13 @@ export async function signOut(): Promise<void> {
 // ── Services ─────────────────────────────────────────────────────────────────
 
 export async function createService(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const name = String(formData.get('name') ?? '').trim()
   const duration = Number(formData.get('duration_min'))
   const price = Number(formData.get('price'))
   if (!name || !Number.isFinite(duration) || duration < 5) return
   await supabase.from('services').insert({
-    clinic_id: clinic.id,
+    business_id: business.id,
     name,
     duration_min: Math.round(duration),
     price: Number.isFinite(price) ? price : 0,
@@ -102,27 +105,29 @@ export async function createService(formData: FormData): Promise<void> {
 }
 
 export async function toggleService(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const id = String(formData.get('id'))
   const active = formData.get('active') === 'true'
-  await supabase.from('services').update({ active: !active }).eq('id', id).eq('clinic_id', clinic.id)
+  await supabase.from('services').update({ active: !active }).eq('id', id).eq('business_id', business.id)
   revalidatePath('/appointments/dashboard/services')
 }
 
 export async function deleteService(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
-  await supabase.from('services').delete().eq('id', String(formData.get('id'))).eq('clinic_id', clinic.id)
+  const { supabase, business } = await requireBusiness()
+  await supabase.from('services').delete().eq('id', String(formData.get('id'))).eq('business_id', business.id)
   revalidatePath('/appointments/dashboard/services')
 }
 
 // ── Staff ────────────────────────────────────────────────────────────────────
 
 export async function createStaff(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const name = String(formData.get('name') ?? '').trim()
   if (!name) return
+  const seats = await canAddProvider(supabase, business)
+  if (!seats.allowed) return
   await supabase.from('staff').insert({
-    clinic_id: clinic.id,
+    business_id: business.id,
     name,
     title: String(formData.get('title') ?? '').trim(),
   })
@@ -130,30 +135,30 @@ export async function createStaff(formData: FormData): Promise<void> {
 }
 
 export async function toggleStaff(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const id = String(formData.get('id'))
   const active = formData.get('active') === 'true'
-  await supabase.from('staff').update({ active: !active }).eq('id', id).eq('clinic_id', clinic.id)
+  await supabase.from('staff').update({ active: !active }).eq('id', id).eq('business_id', business.id)
   revalidatePath('/appointments/dashboard/staff')
 }
 
 export async function deleteStaff(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
-  await supabase.from('staff').delete().eq('id', String(formData.get('id'))).eq('clinic_id', clinic.id)
+  const { supabase, business } = await requireBusiness()
+  await supabase.from('staff').delete().eq('id', String(formData.get('id'))).eq('business_id', business.id)
   revalidatePath('/appointments/dashboard/staff')
 }
 
 // ── Availability ─────────────────────────────────────────────────────────────
 
 export async function addAvailability(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const staffId = String(formData.get('staff_id'))
   const day = Number(formData.get('day_of_week'))
   const start = String(formData.get('start_time'))
   const end = String(formData.get('end_time'))
   if (!staffId || !(day >= 0 && day <= 6) || !start || !end || start >= end) return
   await supabase.from('availability').insert({
-    clinic_id: clinic.id,
+    business_id: business.id,
     staff_id: staffId,
     day_of_week: day,
     start_time: start,
@@ -163,25 +168,25 @@ export async function addAvailability(formData: FormData): Promise<void> {
 }
 
 export async function deleteAvailability(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   await supabase
     .from('availability')
     .delete()
     .eq('id', String(formData.get('id')))
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
   revalidatePath('/appointments/dashboard/availability')
 }
 
 // ── Appointments ─────────────────────────────────────────────────────────────
 
 export async function updateAppointmentStatus(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const id = String(formData.get('id'))
   const status = String(formData.get('status'))
   if (!['confirmed', 'completed', 'cancelled', 'no_show'].includes(status)) return
-  await supabase.from('appointments').update({ status }).eq('id', id).eq('clinic_id', clinic.id)
+  await supabase.from('appointments').update({ status }).eq('id', id).eq('business_id', business.id)
   const admin = createAdminSupabase()
-  await logEvent(admin, clinic.id, `appointment_${status}`, { appointment_id: id })
+  await logEvent(admin, business.id, `appointment_${status}`, { appointment_id: id })
   revalidatePath('/appointments/dashboard')
   revalidatePath('/appointments/dashboard/appointments')
 }
@@ -190,7 +195,7 @@ export async function createManualAppointment(
   _prev: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const fullName = String(formData.get('fullName') ?? '').trim()
   const phone = String(formData.get('phone') ?? '').trim()
   const serviceId = String(formData.get('service_id') ?? '')
@@ -201,15 +206,22 @@ export async function createManualAppointment(
   if (fullName.length < 2 || !serviceId || !staffId || !when) {
     return { error: 'Please fill in name, service, staff, and date/time.' }
   }
-  const startsAt = wallTimeToUtc(when, clinic.timezone)
+  const startsAt = wallTimeToUtc(when, business.timezone)
   if (!startsAt) return { error: 'Invalid date/time.' }
 
+  const quota = await canCreateAppointment(supabase, business)
+  if (!quota.allowed) {
+    return {
+      error: `You've reached your monthly limit of ${quota.limit} appointments on the ${PLANS[business.plan_tier].name} plan. Upgrade to accept more bookings.`,
+    }
+  }
+
   const result = await bookAppointment(supabase, {
-    clinicId: clinic.id,
+    businessId: business.id,
     serviceId,
     staffId,
     startsAt: startsAt.toISOString(),
-    patient: { fullName, phone },
+    client: { fullName, phone },
     source: 'manual',
     intakeNote: note,
   })
@@ -222,7 +234,7 @@ export async function createManualAppointment(
     }
   }
   const admin = createAdminSupabase()
-  await logEvent(admin, clinic.id, 'booking_created', {
+  await logEvent(admin, business.id, 'booking_created', {
     appointment_id: result.appointmentId,
     source: 'manual',
   })
@@ -235,18 +247,18 @@ export async function rescheduleAppointment(
   _prev: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const id = String(formData.get('id') ?? '')
   const when = String(formData.get('starts_at') ?? '')
 
-  const startsAt = wallTimeToUtc(when, clinic.timezone)
+  const startsAt = wallTimeToUtc(when, business.timezone)
   if (!id || !startsAt) return { error: 'Invalid date/time.' }
 
   const { data: appt } = await supabase
     .from('appointments')
     .select('id, services(duration_min)')
     .eq('id', id)
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
     .single()
   const duration = (appt?.services as { duration_min?: number } | null)?.duration_min
   if (!appt || !duration) return { error: 'Appointment not found.' }
@@ -256,7 +268,7 @@ export async function rescheduleAppointment(
     .from('appointments')
     .update({ starts_at: startsAt.toISOString(), ends_at: endsAt.toISOString(), status: 'confirmed' })
     .eq('id', id)
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
   if (error) {
     return {
       error:
@@ -266,22 +278,22 @@ export async function rescheduleAppointment(
     }
   }
   const admin = createAdminSupabase()
-  await logEvent(admin, clinic.id, 'appointment_rescheduled', { appointment_id: id })
+  await logEvent(admin, business.id, 'appointment_rescheduled', { appointment_id: id })
   revalidatePath('/appointments/dashboard/appointments')
   revalidatePath('/appointments/dashboard')
   return {}
 }
 
 export async function recordPayment(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const id = String(formData.get('id') ?? '')
   const amount = Number(formData.get('amount'))
   const dateStr = String(formData.get('paid_date') ?? '')
 
   if (!id || !Number.isFinite(amount) || amount < 0) return { error: 'Enter a valid amount.' }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return { error: 'Enter a valid date.' }
-  // Midday clinic time keeps the date stable across timezones.
-  const paidAt = wallTimeToUtc(`${dateStr}T12:00`, clinic.timezone)
+  // Midday business time keeps the date stable across timezones.
+  const paidAt = wallTimeToUtc(`${dateStr}T12:00`, business.timezone)
   if (!paidAt) return { error: 'Enter a valid date.' }
 
   const { error } = await supabase
@@ -291,55 +303,55 @@ export async function recordPayment(_prev: ActionResult, formData: FormData): Pr
       paid_at: amount > 0 ? paidAt.toISOString() : null,
     })
     .eq('id', id)
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
   if (error) return { error: error.message }
 
   const admin = createAdminSupabase()
-  await logEvent(admin, clinic.id, 'payment_recorded', { appointment_id: id, amount })
+  await logEvent(admin, business.id, 'payment_recorded', { appointment_id: id, amount })
   revalidatePath('/appointments/dashboard')
   revalidatePath('/appointments/dashboard/appointments')
-  revalidatePath('/appointments/dashboard/patients')
+  revalidatePath('/appointments/dashboard/clients')
   return {}
 }
 
 // ── Conversations ────────────────────────────────────────────────────────────
 
 export async function resumeBot(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   await supabase
     .from('conversations')
     .update({ mode: 'bot' })
     .eq('id', String(formData.get('id')))
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
   revalidatePath('/appointments/dashboard/conversations')
 }
 
 // ── Settings ─────────────────────────────────────────────────────────────────
 
-export async function updateClinicProfile(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+export async function updateBusinessProfile(formData: FormData): Promise<void> {
+  const { supabase, business } = await requireBusiness()
   const name = String(formData.get('name') ?? '').trim()
   if (!name) return
   await supabase
-    .from('clinics')
+    .from('businesses')
     .update({
       name,
       phone: String(formData.get('phone') ?? '').trim(),
       address: String(formData.get('address') ?? '').trim(),
     })
-    .eq('id', clinic.id)
+    .eq('id', business.id)
   revalidatePath('/appointments/dashboard/settings')
 }
 
 // Temporarily-closed notice: pauses Messenger + web booking with a message.
 export async function updateClosedNotice(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const closed = formData.get('closed') === 'on'
   const message = String(formData.get('closed_message') ?? '').trim().slice(0, 300)
   await supabase
-    .from('clinics')
-    .update({ settings: { ...clinic.settings, closed, closed_message: message } })
-    .eq('id', clinic.id)
+    .from('businesses')
+    .update({ settings: { ...business.settings, closed, closed_message: message } })
+    .eq('id', business.id)
   revalidatePath('/appointments/dashboard/settings')
   revalidatePath('/appointments/dashboard')
 }
@@ -355,34 +367,34 @@ export async function changePassword(_prev: ActionResult, formData: FormData): P
   return { error: 'DONE' } // rendered as success in the UI
 }
 
-export async function updatePatientNotes(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+export async function updateClientNotes(formData: FormData): Promise<void> {
+  const { supabase, business } = await requireBusiness()
   const id = String(formData.get('id'))
   await supabase
-    .from('patients')
+    .from('clients')
     .update({ notes: String(formData.get('notes') ?? '').slice(0, 2000) })
     .eq('id', id)
-    .eq('clinic_id', clinic.id)
-  revalidatePath(`/appointments/dashboard/patients/${id}`)
-  revalidatePath('/appointments/dashboard/patients')
+    .eq('business_id', business.id)
+  revalidatePath(`/appointments/dashboard/clients/${id}`)
+  revalidatePath('/appointments/dashboard/clients')
 }
 
 // Facebook Page connection. v1: owner pastes Page ID + Page Access Token from
 // the Meta developer console (dev-mode testers). OAuth flow comes with app review.
 export async function saveFbConnection(formData: FormData): Promise<void> {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const pageId = String(formData.get('fb_page_id') ?? '').trim()
   const pageToken = String(formData.get('fb_page_token') ?? '').trim()
   if (!pageId || !pageToken) return
 
-  const { error } = await supabase.from('clinics').update({ fb_page_id: pageId }).eq('id', clinic.id)
+  const { error } = await supabase.from('businesses').update({ fb_page_id: pageId }).eq('id', business.id)
   if (error) return
 
   // Token goes into the service-role-only table.
   const admin = createAdminSupabase()
   await admin
-    .from('clinic_secrets')
-    .upsert({ clinic_id: clinic.id, fb_page_token: pageToken, updated_at: new Date().toISOString() })
-  await logEvent(admin, clinic.id, 'fb_page_connected', { page_id: pageId })
+    .from('business_secrets')
+    .upsert({ business_id: business.id, fb_page_token: pageToken, updated_at: new Date().toISOString() })
+  await logEvent(admin, business.id, 'fb_page_connected', { page_id: pageId })
   revalidatePath('/appointments/dashboard/settings')
 }

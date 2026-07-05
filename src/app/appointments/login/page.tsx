@@ -43,7 +43,7 @@ export default function LoginPage() {
           <p className="text-center text-sm text-slate-400">
             New here?{' '}
             <Link href="/appointments/signup" className="text-emerald-400 hover:underline">
-              Create your clinic
+              Create your account
             </Link>
           </p>
         </form>

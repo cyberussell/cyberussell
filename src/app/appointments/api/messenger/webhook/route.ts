@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
 import { verifyMetaSignature } from '@/lib/appointment-system/messenger'
 import { handleIncoming } from '@/lib/appointment-system/flow'
-import type { Clinic } from '@/lib/appointment-system/types'
+import type { Business } from '@/lib/appointment-system/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,21 +49,21 @@ export async function POST(request: NextRequest) {
   const db = createAdminSupabase()
 
   for (const entry of body.entry) {
-    // Route by page id → clinic tenant.
-    const { data: clinic } = await db
-      .from('clinics')
+    // Route by page id → business tenant.
+    const { data: business } = await db
+      .from('businesses')
       .select('*')
       .eq('fb_page_id', entry.id)
       .maybeSingle()
-    if (!clinic) continue
+    if (!business) continue
 
-    // Suspended clinics stop getting bot replies (manual billing enforcement).
-    if ((clinic as Clinic).plan_status === 'suspended') continue
+    // Suspended businesses stop getting bot replies (manual billing enforcement).
+    if ((business as Business).plan_status === 'suspended') continue
 
     const { data: secret } = await db
-      .from('clinic_secrets')
+      .from('business_secrets')
       .select('fb_page_token')
-      .eq('clinic_id', clinic.id)
+      .eq('business_id', business.id)
       .maybeSingle()
     const pageToken = secret?.fb_page_token
     if (!pageToken) continue
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
 
       if (!payload && !text) continue
       try {
-        await handleIncoming(db, clinic as Clinic, pageToken, psid, { payload, text })
+        await handleIncoming(db, business as Business, pageToken, psid, { payload, text })
       } catch (err) {
         console.error('[appointment-system] webhook handling failed', err)
       }

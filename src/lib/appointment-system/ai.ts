@@ -1,6 +1,7 @@
 import 'server-only'
 import Anthropic from '@anthropic-ai/sdk'
-import type { Clinic, Service } from './types'
+import type { Business, Service } from './types'
+import { getTerms } from './terminology'
 
 // Haiku handles only the free-text messages the button flow can't parse
 // (~1 in 5 messages). Buttons and quick replies cost zero AI tokens.
@@ -26,11 +27,11 @@ const INTENT_SCHEMA = {
     intent: {
       type: 'string',
       enum: ['book', 'question', 'human', 'cancel', 'greeting', 'other'],
-      description: 'What the patient wants',
+      description: 'What the customer wants',
     },
     service_name: {
       type: ['string', 'null'],
-      description: 'Which clinic service they mentioned, matched to the service list, else null',
+      description: 'Which service they mentioned, matched to the service list, else null',
     },
     time_preference: {
       type: ['string', 'null'],
@@ -38,12 +39,12 @@ const INTENT_SCHEMA = {
     },
     intake_note: {
       type: ['string', 'null'],
-      description: "Any symptom/complaint they described, e.g. 'masakit ang ngipin', else null",
+      description: "Any symptom, concern, or request details they described, e.g. 'masakit ang ngipin', else null",
     },
     answer: {
       type: ['string', 'null'],
       description:
-        'For intent=question only: a short friendly answer (max 2 sentences, mirror their language) using ONLY the clinic info provided. If the info is not available, say so and suggest talking to staff. Otherwise null.',
+        'For intent=question only: a short friendly answer (max 2 sentences, mirror their language) using ONLY the business info provided. If the info is not available, say so and suggest talking to staff. Otherwise null.',
     },
   },
   required: ['intent', 'service_name', 'time_preference', 'intake_note', 'answer'],
@@ -57,7 +58,7 @@ export interface AiUsage {
 }
 
 export async function parseIntent(
-  clinic: Clinic,
+  business: Business,
   services: Service[],
   userText: string
 ): Promise<{ parsed: ParsedIntent; usage: AiUsage } | null> {
@@ -66,7 +67,7 @@ export async function parseIntent(
       .map((s) => `- ${s.name} (${s.duration_min} min, ₱${Number(s.price).toFixed(0)})`)
       .join('\n')
 
-    // Per-clinic context is stable across messages → prompt-cached.
+    // Per-business context is stable across messages → prompt-cached.
     // The volatile user message goes after the cache breakpoint.
     const response = await getClient().messages.create({
       model: MODEL,
@@ -74,11 +75,11 @@ export async function parseIntent(
       system: [
         {
           type: 'text',
-          text: `You classify Facebook Messenger messages sent to a clinic's page. Patients write in English, Tagalog, or Taglish.
+          text: `You classify Facebook Messenger messages sent to a ${getTerms(business.business_type).business}'s page. Customers write in English, Tagalog, or Taglish.
 
-Clinic: ${clinic.name}
-Address: ${clinic.address || 'not provided'}
-Phone: ${clinic.phone || 'not provided'}
+Business: ${business.name} (${getTerms(business.business_type).business})
+Address: ${business.address || 'not provided'}
+Phone: ${business.phone || 'not provided'}
 Services:
 ${serviceList || '(none configured)'}
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useRef, useState } from 'react'
+import { CircleCheck } from 'lucide-react'
 import { recordPayment, type ActionResult } from '@/app/appointments/actions'
 
 export default function RecordPaymentForm({
@@ -14,7 +15,7 @@ export default function RecordPaymentForm({
   defaultAmount: number
   paidAmount: number
   paidLabel: string | null // e.g. "Jul 4, 2026", null when unpaid
-  today: string // YYYY-MM-DD in clinic timezone
+  today: string // YYYY-MM-DD in business timezone
 }) {
   const [open, setOpen] = useState(false)
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(recordPayment, {})
@@ -32,7 +33,8 @@ export default function RecordPaymentForm({
         title="Edit payment"
         className="rounded-full bg-emerald-500/15 px-3 py-1.5 text-xs font-medium text-emerald-300 hover:bg-emerald-500/25 transition"
       >
-        ✓ Paid ₱{Number(paidAmount).toLocaleString('en-PH')}
+        <CircleCheck className="mr-1 inline h-3.5 w-3.5 align-[-2px]" aria-hidden />
+        Paid ₱{Number(paidAmount).toLocaleString('en-PH')}
         {paidLabel && <span className="opacity-75"> · {paidLabel}</span>}
       </button>
     ) : (

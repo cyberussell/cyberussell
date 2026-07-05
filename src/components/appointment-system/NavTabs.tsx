@@ -9,13 +9,13 @@ const NAV = [
   { href: '/appointments/dashboard/services', label: 'Services' },
   { href: '/appointments/dashboard/staff', label: 'Staff' },
   { href: '/appointments/dashboard/availability', label: 'Availability' },
-  { href: '/appointments/dashboard/patients', label: 'Patients' },
+  { href: '/appointments/dashboard/clients', label: 'Clients' },
   { href: '/appointments/dashboard/conversations', label: 'Conversations' },
   { href: '/appointments/dashboard/settings', label: 'Settings' },
   { href: '/appointments/dashboard/help', label: 'Help' },
 ]
 
-export default function NavTabs() {
+export default function NavTabs({ clientsLabel = 'Clients' }: { clientsLabel?: string }) {
   const pathname = usePathname()
 
   return (
@@ -35,7 +35,7 @@ export default function NavTabs() {
                 : 'text-slate-300 border-transparent hover:text-emerald-300 hover:border-emerald-400/50'
             }`}
           >
-            {item.label}
+            {item.href.endsWith('/clients') ? clientsLabel : item.label}
           </Link>
         )
       })}

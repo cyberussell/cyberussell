@@ -7,9 +7,13 @@ import type { Service, Staff } from '@/lib/appointment-system/types'
 export default function ManualAppointmentForm({
   services,
   staff,
+  clientLabel = 'Client',
+  providerNoun = 'doctor',
 }: {
   services: Service[]
   staff: Staff[]
+  clientLabel?: string
+  providerNoun?: string
 }) {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(
     createManualAppointment,
@@ -45,7 +49,7 @@ export default function ManualAppointmentForm({
         <input
           name="fullName"
           required
-          placeholder="Patient name"
+          placeholder={`${clientLabel} name`}
           className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none"
         />
         <input
@@ -83,7 +87,7 @@ export default function ManualAppointmentForm({
         />
         <input
           name="note"
-          placeholder="Note for the doctor (optional)"
+          placeholder={`Note for the ${providerNoun} (optional)`}
           className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none"
         />
       </div>

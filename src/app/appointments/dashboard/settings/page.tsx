@@ -1,7 +1,9 @@
 import Link from 'next/link'
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { CircleCheck } from 'lucide-react'
+import { requireBusiness } from '@/lib/appointment-system/auth'
+import { getTerms } from '@/lib/appointment-system/terminology'
 import ChangePasswordForm from '@/components/appointment-system/ChangePasswordForm'
-import { updateClinicProfile, saveFbConnection, updateClosedNotice } from '../../actions'
+import { updateBusinessProfile, saveFbConnection, updateClosedNotice } from '../../actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,12 +14,13 @@ const TIER_PRICES: Record<string, string> = {
 }
 
 export default async function SettingsPage() {
-  const { clinic } = await requireClinic()
-  const connected = Boolean(clinic.fb_page_id)
-  const settings = clinic.settings as { closed?: boolean; closed_message?: string }
+  const { business } = await requireBusiness()
+  const t = getTerms(business.business_type)
+  const connected = Boolean(business.fb_page_id)
+  const settings = business.settings as { closed?: boolean; closed_message?: string }
   const trialDaysLeft = Math.max(
     0,
-    Math.ceil((new Date(clinic.trial_ends_at).getTime() - Date.now()) / 86400_000)
+    Math.ceil((new Date(business.trial_ends_at).getTime() - Date.now()) / 86400_000)
   )
   const webhookUrl = 'https://www.cyberussell.com/appointments/api/messenger/webhook'
 
@@ -25,15 +28,15 @@ export default async function SettingsPage() {
     <div className="space-y-10 max-w-2xl">
       {/* Profile */}
       <section className="space-y-4">
-        <h1 className="text-2xl font-bold">Clinic profile</h1>
-        <form action={updateClinicProfile} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <Field label="Clinic name" name="name" defaultValue={clinic.name} required />
-          <Field label="Phone" name="phone" defaultValue={clinic.phone} />
-          <Field label="Address" name="address" defaultValue={clinic.address} />
+        <h1 className="text-2xl font-bold">Business profile</h1>
+        <form action={updateBusinessProfile} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-5">
+          <Field label="Business name" name="name" defaultValue={business.name} required />
+          <Field label="Phone" name="phone" defaultValue={business.phone} />
+          <Field label="Address" name="address" defaultValue={business.address} />
           <p className="text-xs text-slate-500">
             Public booking page:{' '}
-            <Link href={`/appointments/${clinic.slug}`} className="text-emerald-400 underline">
-              cyberussell.com/appointments/{clinic.slug}
+            <Link href={`/appointments/${business.slug}`} className="text-emerald-400 underline">
+              cyberussell.com/appointments/{business.slug}
             </Link>
           </p>
           <button className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">
@@ -46,7 +49,7 @@ export default async function SettingsPage() {
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-bold">
-            Clinic status{' '}
+            Business status{' '}
             <span
               className={`ml-2 rounded-full px-3 py-1 text-xs align-middle ${
                 settings.closed ? 'bg-amber-500/15 text-amber-300' : 'bg-emerald-500/15 text-emerald-300'
@@ -56,7 +59,7 @@ export default async function SettingsPage() {
             </span>
           </h2>
           <p className="text-slate-400 text-sm mt-1">
-            Mark the clinic closed (holiday, emergency, renovation) — the Messenger bot and web
+            Mark the {t.business} closed (holiday, emergency, renovation) — the Messenger bot and web
             booking pause and show your message instead.
           </p>
         </div>
@@ -68,10 +71,10 @@ export default async function SettingsPage() {
               defaultChecked={Boolean(settings.closed)}
               className="h-4 w-4 accent-emerald-500"
             />
-            Clinic is temporarily closed
+            Temporarily closed
           </label>
           <label className="block">
-            <span className="text-sm text-slate-300">Message shown to patients</span>
+            <span className="text-sm text-slate-300">Message shown to {t.clients}</span>
             <input
               name="closed_message"
               defaultValue={settings.closed_message ?? ''}
@@ -92,27 +95,32 @@ export default async function SettingsPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="font-semibold capitalize">
-                {clinic.plan_tier} plan{' '}
-                <span className="text-slate-400 font-normal">· {TIER_PRICES[clinic.plan_tier]}</span>
+                {business.plan_tier} plan{' '}
+                <span className="text-slate-400 font-normal">· {TIER_PRICES[business.plan_tier]}</span>
               </p>
               <p className="text-sm text-slate-400 mt-0.5">
-                {clinic.plan_status === 'trial' &&
-                  `Free trial — ${trialDaysLeft} day${trialDaysLeft === 1 ? '' : 's'} remaining (ends ${new Date(clinic.trial_ends_at).toLocaleDateString('en-PH', { month: 'long', day: 'numeric' })}).`}
-                {clinic.plan_status === 'active' && 'Subscription active. Salamat po! 🙌'}
-                {clinic.plan_status === 'suspended' &&
+                {business.plan_status === 'trial' &&
+                  `Free trial — ${trialDaysLeft} day${trialDaysLeft === 1 ? '' : 's'} remaining (ends ${new Date(business.trial_ends_at).toLocaleDateString('en-PH', { month: 'long', day: 'numeric' })}).`}
+                {business.plan_status === 'active' && (
+                  <span className="inline-flex items-center gap-1.5">
+                    Subscription active. Salamat po!
+                    <CircleCheck className="h-3.5 w-3.5 text-emerald-300" aria-hidden />
+                  </span>
+                )}
+                {business.plan_status === 'suspended' &&
                   'Subscription inactive — bookings are paused until payment is settled.'}
               </p>
             </div>
             <span
               className={`rounded-full px-3 py-1 text-xs font-medium ${
-                clinic.plan_status === 'active'
+                business.plan_status === 'active'
                   ? 'bg-emerald-500/15 text-emerald-300'
-                  : clinic.plan_status === 'trial'
+                  : business.plan_status === 'trial'
                     ? 'bg-amber-500/15 text-amber-300'
                     : 'bg-red-500/15 text-red-300'
               }`}
             >
-              {clinic.plan_status}
+              {business.plan_status}
             </span>
           </div>
           <div className="rounded-lg bg-slate-800/60 p-4 text-sm text-slate-300 space-y-2">
@@ -123,7 +131,7 @@ export default async function SettingsPage() {
               <Link href="/contact" className="text-emerald-400 underline">
                 contact page
               </Link>{' '}
-              with your clinic name and we&apos;ll send payment details. Your account is activated
+              with your business name and we&apos;ll send payment details. Your account is activated
               within 24 hours of payment.
             </p>
             <p className="text-slate-400">
@@ -144,7 +152,7 @@ export default async function SettingsPage() {
             Facebook Page connection{' '}
             {connected ? (
               <span className="ml-2 rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-300 align-middle">
-                Connected · Page {clinic.fb_page_id}
+                Connected · Page {business.fb_page_id}
               </span>
             ) : (
               <span className="ml-2 rounded-full bg-amber-500/15 px-3 py-1 text-xs text-amber-300 align-middle">
@@ -153,7 +161,7 @@ export default async function SettingsPage() {
             )}
           </h2>
           <p className="text-slate-400 text-sm mt-1">
-            Connect your Page so patients can book by simply messaging you on Facebook.{' '}
+            Connect your Page so {t.clients} can book by simply messaging you on Facebook.{' '}
             <Link href="/appointments/dashboard/help" className="text-emerald-400 underline">
               Step-by-step guide in Help
             </Link>
@@ -161,7 +169,7 @@ export default async function SettingsPage() {
           </p>
         </div>
         <form action={saveFbConnection} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <Field label="Facebook Page ID" name="fb_page_id" defaultValue={clinic.fb_page_id ?? ''} required />
+          <Field label="Facebook Page ID" name="fb_page_id" defaultValue={business.fb_page_id ?? ''} required />
           <Field label="Page Access Token" name="fb_page_token" type="password" required />
           <p className="text-xs text-slate-500 break-all">Webhook URL for the Meta app: {webhookUrl}</p>
           <button className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">

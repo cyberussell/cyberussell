@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState } from 'react'
+import { CircleCheck } from 'lucide-react'
 import { changePassword, type ActionResult } from '@/app/appointments/actions'
 
 export default function ChangePasswordForm() {
@@ -30,7 +31,12 @@ export default function ChangePasswordForm() {
         />
       </label>
       {state.error && !success && <p className="text-sm text-red-400">{state.error}</p>}
-      {success && <p className="text-sm text-emerald-400">Password updated ✔</p>}
+      {success && (
+        <p className="flex items-center gap-1.5 text-sm text-emerald-400">
+          <CircleCheck className="h-3.5 w-3.5" aria-hidden />
+          Password updated
+        </p>
+      )}
       <button
         type="submit"
         disabled={pending}

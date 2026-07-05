@@ -1,12 +1,13 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Clinic, Conversation, ConversationState, Service, Slot } from './types'
+import type { Business, Conversation, ConversationState, Service, Slot } from './types'
 import { getAvailableSlots, bookAppointment, formatSlotLabel } from './slots'
 import { sendText, sendButtons, sendQuickReplies } from './messenger'
 import { parseIntent } from './ai'
 import { logEvent } from './events'
+import { hasFeature, canUseAI, canCreateAppointment } from './entitlements'
 
-// Flow: menu → choosing_service → choosing_slot → (known patient? book)
+// Flow: menu → choosing_service → choosing_slot → (known client? book)
 //       → collecting_name → collecting_phone → book → confirmation.
 // Buttons handle ~80% of traffic for free; Haiku catches free text.
 
@@ -17,26 +18,37 @@ interface Incoming {
 
 export async function handleIncoming(
   db: SupabaseClient,
-  clinic: Clinic,
+  business: Business,
   pageToken: string,
   psid: string,
   incoming: Incoming
 ): Promise<void> {
-  const convo = await getOrCreateConversation(db, clinic.id, psid)
-  await logEvent(db, clinic.id, 'message_in', {
+  const convo = await getOrCreateConversation(db, business.id, psid)
+  await logEvent(db, business.id, 'message_in', {
     psid,
     text: incoming.text ?? null,
     payload: incoming.payload ?? null,
   })
 
-  // Clinic marked closed: tell the patient and stop — no booking flow.
-  const settings = clinic.settings as { closed?: boolean; closed_message?: string }
+  // Business marked closed: tell the client and stop — no booking flow.
+  const settings = business.settings as { closed?: boolean; closed_message?: string }
   if (settings.closed) {
     await sendText(
       pageToken,
       psid,
       settings.closed_message ||
-        `Hi po! ${clinic.name} is temporarily closed. Message na lang po kami ulit kapag bukas na. 🙏`
+        `Hi po! ${business.name} is temporarily closed. Message na lang po kami ulit kapag bukas na. 🙏`
+    )
+    return
+  }
+
+  // Interactive Messenger booking is a Pro+ feature. Lower plans still get a
+  // useful reply: a link to their public booking page.
+  if (!hasFeature(business, 'messenger_booking_bot')) {
+    await sendText(
+      pageToken,
+      psid,
+      `Hi po! 👋 To book with ${business.name}, please use our booking page:\n\nhttps://www.cyberussell.com/appointments/${business.slug}\n\nSalamat po!`
     )
     return
   }
@@ -52,9 +64,9 @@ export async function handleIncoming(
   }
 
   if (incoming.payload) {
-    await handlePayload(db, clinic, pageToken, psid, convo, incoming.payload)
+    await handlePayload(db, business, pageToken, psid, convo, incoming.payload)
   } else if (incoming.text) {
-    await handleText(db, clinic, pageToken, psid, convo, incoming.text)
+    await handleText(db, business, pageToken, psid, convo, incoming.text)
   }
 }
 
@@ -62,20 +74,20 @@ export async function handleIncoming(
 
 async function handlePayload(
   db: SupabaseClient,
-  clinic: Clinic,
+  business: Business,
   pageToken: string,
   psid: string,
   convo: Conversation,
   payload: string
 ): Promise<void> {
   if (payload === 'GET_STARTED' || payload === 'MAIN_MENU') {
-    return showMainMenu(db, clinic, pageToken, psid, convo)
+    return showMainMenu(db, business, pageToken, psid, convo)
   }
   if (payload === 'BOOK') {
-    return showServices(db, clinic, pageToken, psid, convo)
+    return showServices(db, business, pageToken, psid, convo)
   }
   if (payload === 'TALK_HUMAN') {
-    return handoffToHuman(db, clinic, pageToken, psid, convo)
+    return handoffToHuman(db, business, pageToken, psid, convo)
   }
   if (payload === 'ASK') {
     await setState(db, convo.id, { step: 'idle' })
@@ -84,7 +96,7 @@ async function handlePayload(
   }
   if (payload.startsWith('SERVICE_')) {
     const serviceId = payload.slice('SERVICE_'.length)
-    return showSlots(db, clinic, pageToken, psid, convo, serviceId)
+    return showSlots(db, business, pageToken, psid, convo, serviceId)
   }
   if (payload.startsWith('SLOT_')) {
     // SLOT_{staffId}_{epochMs}
@@ -92,17 +104,17 @@ async function handlePayload(
     const sep = rest.indexOf('_')
     const staffId = rest.slice(0, sep)
     const startsAt = new Date(Number(rest.slice(sep + 1))).toISOString()
-    return onSlotChosen(db, clinic, pageToken, psid, convo, staffId, startsAt)
+    return onSlotChosen(db, business, pageToken, psid, convo, staffId, startsAt)
   }
   // Unknown payload → menu
-  return showMainMenu(db, clinic, pageToken, psid, convo)
+  return showMainMenu(db, business, pageToken, psid, convo)
 }
 
 // ── Free-text routing ────────────────────────────────────────────────────────
 
 async function handleText(
   db: SupabaseClient,
-  clinic: Clinic,
+  business: Business,
   pageToken: string,
   psid: string,
   convo: Conversation,
@@ -116,7 +128,7 @@ async function handleText(
       await sendText(pageToken, psid, 'Pakitype po ang buong pangalan ninyo. 🙂')
       return
     }
-    await setState(db, convo.id, { ...state, step: 'collecting_phone', patientName: name })
+    await setState(db, convo.id, { ...state, step: 'collecting_phone', clientName: name })
     await sendText(pageToken, psid, `Thanks, ${name}! Ano po ang mobile number ninyo? (e.g. 09171234567)`)
     return
   }
@@ -127,19 +139,21 @@ async function handleText(
       await sendText(pageToken, psid, 'Mukhang kulang po ang number — pakitype ulit (e.g. 09171234567).')
       return
     }
-    return finalizeBooking(db, clinic, pageToken, psid, convo, {
+    return finalizeBooking(db, business, pageToken, psid, convo, {
       ...state,
-      patientPhone: phone,
-    } as ConversationState & { patientName?: string; patientPhone?: string })
+      clientPhone: phone,
+    } as ConversationState & { clientName?: string; clientPhone?: string })
   }
 
   // Everything else: cheap AI classification, then back into the button flow.
-  const services = await getActiveServices(db, clinic.id)
-  const result = await parseIntent(clinic, services, text)
+  // Free-text understanding is exclusive to the AI Receptionist plan; other
+  // plans fall through to the button menu below.
+  const services = await getActiveServices(db, business.id)
+  const result = canUseAI(business) ? await parseIntent(business, services, text) : null
 
   if (result) {
     const { parsed, usage } = result
-    await logEvent(db, clinic.id, 'ai_call', { psid, usage, intent: parsed.intent })
+    await logEvent(db, business.id, 'ai_call', { psid, usage, intent: parsed.intent })
 
     // Free-text symptom descriptions become the doctor's intake note.
     if (parsed.intake_note) {
@@ -150,8 +164,8 @@ async function handleText(
     switch (parsed.intent) {
       case 'book': {
         const match = parsed.service_name ? matchService(services, parsed.service_name) : null
-        if (match) return showSlots(db, clinic, pageToken, psid, convo, match.id)
-        return showServices(db, clinic, pageToken, psid, convo)
+        if (match) return showSlots(db, business, pageToken, psid, convo, match.id)
+        return showServices(db, business, pageToken, psid, convo)
       }
       case 'question': {
         if (parsed.answer) {
@@ -162,15 +176,15 @@ async function handleText(
           ])
           return
         }
-        return handoffToHuman(db, clinic, pageToken, psid, convo)
+        return handoffToHuman(db, business, pageToken, psid, convo)
       }
       case 'human':
-        return handoffToHuman(db, clinic, pageToken, psid, convo)
+        return handoffToHuman(db, business, pageToken, psid, convo)
       case 'cancel':
         // v1: cancellations go to staff.
         return handoffToHuman(
           db,
-          clinic,
+          business,
           pageToken,
           psid,
           convo,
@@ -178,25 +192,25 @@ async function handleText(
         )
       case 'greeting':
       case 'other':
-        return showMainMenu(db, clinic, pageToken, psid, convo)
+        return showMainMenu(db, business, pageToken, psid, convo)
     }
   }
 
   // AI unavailable → the flow still works via buttons.
-  return showMainMenu(db, clinic, pageToken, psid, convo)
+  return showMainMenu(db, business, pageToken, psid, convo)
 }
 
 // ── Flow steps ───────────────────────────────────────────────────────────────
 
 async function showMainMenu(
   db: SupabaseClient,
-  clinic: Clinic,
+  business: Business,
   pageToken: string,
   psid: string,
   convo: Conversation
 ): Promise<void> {
   await setState(db, convo.id, { step: 'idle', intakeNote: convo.state.intakeNote })
-  await sendButtons(pageToken, psid, `Hi! 👋 Welcome to ${clinic.name}. Paano po kami makakatulong?`, [
+  await sendButtons(pageToken, psid, `Hi! 👋 Welcome to ${business.name}. Paano po kami makakatulong?`, [
     { title: '📅 Book appointment', payload: 'BOOK' },
     { title: '❓ Ask a question', payload: 'ASK' },
     { title: '💬 Talk to staff', payload: 'TALK_HUMAN' },
@@ -205,12 +219,12 @@ async function showMainMenu(
 
 async function showServices(
   db: SupabaseClient,
-  clinic: Clinic,
+  business: Business,
   pageToken: string,
   psid: string,
   convo: Conversation
 ): Promise<void> {
-  const services = await getActiveServices(db, clinic.id)
+  const services = await getActiveServices(db, business.id)
   if (services.length === 0) {
     await sendText(pageToken, psid, 'Wala pa pong naka-setup na services. Message na lang po kayo ulit mamaya!')
     return
@@ -229,15 +243,15 @@ async function showServices(
 
 async function showSlots(
   db: SupabaseClient,
-  clinic: Clinic,
+  business: Business,
   pageToken: string,
   psid: string,
   convo: Conversation,
   serviceId: string
 ): Promise<void> {
   const slots = await getAvailableSlots(db, {
-    clinicId: clinic.id,
-    timezone: clinic.timezone,
+    businessId: business.id,
+    timezone: business.timezone,
     serviceId,
     days: 7,
     limit: 8,
@@ -264,7 +278,7 @@ async function showSlots(
 
 async function onSlotChosen(
   db: SupabaseClient,
-  clinic: Clinic,
+  business: Business,
   pageToken: string,
   psid: string,
   convo: Conversation,
@@ -273,19 +287,19 @@ async function onSlotChosen(
 ): Promise<void> {
   const state: ConversationState = { ...convo.state, slotStart: startsAt, slotStaffId: staffId }
 
-  // Returning patients are recognized by PSID — no re-typing details.
-  const { data: patient } = await db
-    .from('patients')
+  // Returning clients are recognized by PSID — no re-typing details.
+  const { data: client } = await db
+    .from('clients')
     .select('id, full_name, phone')
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
     .eq('messenger_psid', psid)
     .maybeSingle()
 
-  if (patient?.full_name && patient.phone) {
-    return finalizeBooking(db, clinic, pageToken, psid, convo, {
+  if (client?.full_name && client.phone) {
+    return finalizeBooking(db, business, pageToken, psid, convo, {
       ...state,
-      patientName: patient.full_name,
-      patientPhone: patient.phone,
+      clientName: client.full_name,
+      clientPhone: client.phone,
     } as ConversationState)
   }
 
@@ -295,25 +309,38 @@ async function onSlotChosen(
 
 async function finalizeBooking(
   db: SupabaseClient,
-  clinic: Clinic,
+  business: Business,
   pageToken: string,
   psid: string,
   convo: Conversation,
-  state: ConversationState & { patientName?: string; patientPhone?: string }
+  state: ConversationState & { clientName?: string; clientPhone?: string }
 ): Promise<void> {
   if (!state.serviceId || !state.slotStart || !state.slotStaffId) {
     await setState(db, convo.id, { step: 'idle' })
-    return showServices(db, clinic, pageToken, psid, convo)
+    return showServices(db, business, pageToken, psid, convo)
+  }
+
+  const quota = await canCreateAppointment(db, business)
+  if (!quota.allowed) {
+    await logEvent(db, business.id, 'booking_blocked_quota', { psid, used: quota.used, limit: quota.limit })
+    return handoffToHuman(
+      db,
+      business,
+      pageToken,
+      psid,
+      convo,
+      'Paki-antay po sandali — ipapasa ko kayo sa staff namin para ma-ayos ang booking ninyo. 🙏'
+    )
   }
 
   const result = await bookAppointment(db, {
-    clinicId: clinic.id,
+    businessId: business.id,
     serviceId: state.serviceId,
     staffId: state.slotStaffId,
     startsAt: state.slotStart,
-    patient: {
-      fullName: state.patientName ?? '',
-      phone: state.patientPhone ?? '',
+    client: {
+      fullName: state.clientName ?? '',
+      phone: state.clientPhone ?? '',
       messengerPsid: psid,
     },
     source: 'messenger',
@@ -323,17 +350,17 @@ async function finalizeBooking(
   if (!result.ok) {
     if (result.reason === 'conflict') {
       await sendText(pageToken, psid, 'Ay, kakakuha lang po ng slot na iyon. 😅 Eto po ang iba pang available:')
-      return showSlots(db, clinic, pageToken, psid, convo, state.serviceId)
+      return showSlots(db, business, pageToken, psid, convo, state.serviceId)
     }
-    await logEvent(db, clinic.id, 'booking_failed', { psid, message: result.message })
+    await logEvent(db, business.id, 'booking_failed', { psid, message: result.message })
     await sendText(pageToken, psid, 'May problema po sa booking. Pakisubukan ulit, o i-tap ang "Talk to staff".')
     return
   }
 
   const { data: service } = await db.from('services').select('name').eq('id', state.serviceId).single()
-  const label = formatSlotLabel(state.slotStart, clinic.timezone)
+  const label = formatSlotLabel(state.slotStart, business.timezone)
   await setState(db, convo.id, { step: 'idle' })
-  await logEvent(db, clinic.id, 'booking_created', {
+  await logEvent(db, business.id, 'booking_created', {
     psid,
     appointment_id: result.appointmentId,
     source: 'messenger',
@@ -341,20 +368,20 @@ async function finalizeBooking(
   await sendText(
     pageToken,
     psid,
-    `Booked na po! ✅\n\n${service?.name ?? 'Appointment'}\n🗓️ ${label}\n📍 ${clinic.name}${clinic.address ? `, ${clinic.address}` : ''}\n\nSee you po! Magre-remind kami bago ang schedule ninyo.`
+    `Booked na po! ✅\n\n${service?.name ?? 'Appointment'}\n🗓️ ${label}\n📍 ${business.name}${business.address ? `, ${business.address}` : ''}\n\nSee you po! Magre-remind kami bago ang schedule ninyo.`
   )
 }
 
 async function handoffToHuman(
   db: SupabaseClient,
-  clinic: Clinic,
+  business: Business,
   pageToken: string,
   psid: string,
   convo: Conversation,
   customMessage?: string
 ): Promise<void> {
   await setMode(db, convo.id, 'human')
-  await logEvent(db, clinic.id, 'handoff_to_human', { psid })
+  await logEvent(db, business.id, 'handoff_to_human', { psid })
   await sendText(
     pageToken,
     psid,
@@ -365,17 +392,17 @@ async function handoffToHuman(
 
 // ── Small helpers ────────────────────────────────────────────────────────────
 
-async function getOrCreateConversation(db: SupabaseClient, clinicId: string, psid: string): Promise<Conversation> {
+async function getOrCreateConversation(db: SupabaseClient, businessId: string, psid: string): Promise<Conversation> {
   const { data } = await db
     .from('conversations')
     .select('*')
-    .eq('clinic_id', clinicId)
+    .eq('business_id', businessId)
     .eq('psid', psid)
     .maybeSingle()
   if (data) return data as Conversation
   const { data: created, error } = await db
     .from('conversations')
-    .insert({ clinic_id: clinicId, psid })
+    .insert({ business_id: businessId, psid })
     .select('*')
     .single()
   if (error || !created) throw new Error(`conversation insert failed: ${error?.message}`)
@@ -400,11 +427,11 @@ async function touchConversation(db: SupabaseClient, convoId: string) {
   await db.from('conversations').update({ last_message_at: new Date().toISOString() }).eq('id', convoId)
 }
 
-async function getActiveServices(db: SupabaseClient, clinicId: string): Promise<Service[]> {
+async function getActiveServices(db: SupabaseClient, businessId: string): Promise<Service[]> {
   const { data } = await db
     .from('services')
     .select('*')
-    .eq('clinic_id', clinicId)
+    .eq('business_id', businessId)
     .eq('active', true)
     .order('created_at')
   return (data ?? []) as Service[]

@@ -1,15 +1,18 @@
 import Link from 'next/link'
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { DoorClosed } from 'lucide-react'
+import { requireBusiness } from '@/lib/appointment-system/auth'
+import { getTerms } from '@/lib/appointment-system/terminology'
 import NavTabs from '@/components/appointment-system/NavTabs'
 import { signOut } from '../actions'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { clinic } = await requireClinic()
+  const { business } = await requireBusiness()
+  const t = getTerms(business.business_type)
   const trialDaysLeft = Math.max(
     0,
-    Math.ceil((new Date(clinic.trial_ends_at).getTime() - Date.now()) / 86400_000)
+    Math.ceil((new Date(business.trial_ends_at).getTime() - Date.now()) / 86400_000)
   )
-  const settings = clinic.settings as { closed?: boolean; closed_message?: string }
+  const settings = business.settings as { closed?: boolean; closed_message?: string }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -19,22 +22,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <Link href="/appointments/dashboard" className="text-lg font-bold">
               Appointment <span className="text-emerald-400">System</span>
             </Link>
-            <span className="text-slate-400 text-sm hidden sm:inline">· {clinic.name}</span>
+            <span className="text-slate-400 text-sm hidden sm:inline">· {business.name}</span>
           </div>
           <div className="flex items-center gap-3">
             <span
               className={`rounded-full px-3 py-1 text-xs font-medium ${
-                clinic.plan_status === 'active'
+                business.plan_status === 'active'
                   ? 'bg-emerald-500/15 text-emerald-300'
-                  : clinic.plan_status === 'trial'
+                  : business.plan_status === 'trial'
                     ? 'bg-amber-500/15 text-amber-300'
                     : 'bg-red-500/15 text-red-300'
               }`}
             >
-              {clinic.plan_status === 'trial'
+              {business.plan_status === 'trial'
                 ? `Trial · ${trialDaysLeft}d left`
-                : clinic.plan_status === 'active'
-                  ? `${clinic.plan_tier} plan`
+                : business.plan_status === 'active'
+                  ? `${business.plan_tier} plan`
                   : 'Suspended'}
             </span>
             <form action={signOut}>
@@ -42,19 +45,24 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </form>
           </div>
         </div>
-        <NavTabs />
+        <NavTabs clientsLabel={t.Clients} />
       </header>
       {settings.closed && (
-        <div className="bg-amber-500/10 border-b border-amber-500/30 text-amber-300 text-sm text-center py-2 px-4">
-          🚪 Your clinic is marked as <strong>CLOSED</strong> — patients cannot book via Messenger or
-          the web right now. Reopen it in{' '}
+        <div className="bg-amber-500/10 border-b border-amber-500/30 text-amber-300 text-sm py-2 px-4">
+          <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 text-center">
+            <DoorClosed className="h-4 w-4 shrink-0" aria-hidden />
+            <span>
+              Your {t.business} is marked as <strong>CLOSED</strong> — {t.clients} cannot book via Messenger or
+              the web right now. Reopen it in{' '}
           <Link href="/appointments/dashboard/settings" className="underline">
             Settings
           </Link>
-          .
+              .
+            </span>
+          </div>
         </div>
       )}
-      {clinic.plan_status === 'suspended' && (
+      {business.plan_status === 'suspended' && (
         <div className="bg-red-500/10 border-b border-red-500/30 text-red-300 text-sm text-center py-2 px-4">
           Your subscription is inactive — the Messenger bot and public booking page are paused. See{' '}
           <Link href="/appointments/dashboard/settings" className="underline">

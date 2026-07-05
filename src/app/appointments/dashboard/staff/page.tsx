@@ -1,14 +1,16 @@
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { requireBusiness } from '@/lib/appointment-system/auth'
+import { getTerms } from '@/lib/appointment-system/terminology'
 import { createStaff, toggleStaff, deleteStaff } from '../../actions'
 
 export const dynamic = 'force-dynamic'
 
 export default async function StaffPage() {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
+  const t = getTerms(business.business_type)
   const { data: staff } = await supabase
     .from('staff')
     .select('*')
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
     .order('created_at')
 
   return (
@@ -16,7 +18,7 @@ export default async function StaffPage() {
       <div>
         <h1 className="text-2xl font-bold">Staff</h1>
         <p className="text-slate-400 text-sm mt-1">
-          Doctors and practitioners patients can be booked with.
+          Who your {t.clients} can be booked with.
         </p>
       </div>
 

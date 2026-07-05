@@ -1,14 +1,17 @@
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { TriangleAlert } from 'lucide-react'
+import { requireBusiness } from '@/lib/appointment-system/auth'
+import { getTerms } from '@/lib/appointment-system/terminology'
 import { resumeBot } from '../../actions'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ConversationsPage() {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
+  const t = getTerms(business.business_type)
   const { data: conversations } = await supabase
     .from('conversations')
     .select('*')
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
     .order('last_message_at', { ascending: false })
     .limit(100)
 
@@ -20,9 +23,14 @@ export default async function ConversationsPage() {
       <div>
         <h1 className="text-2xl font-bold">Messenger conversations</h1>
         <p className="text-slate-400 text-sm mt-1">
-          {handoffs.length > 0
-            ? `⚠️ ${handoffs.length} conversation${handoffs.length === 1 ? '' : 's'} waiting for a human reply — answer them in your Facebook Page inbox.`
-            : 'The bot is handling everything. Handed-off chats will appear here.'}
+          {handoffs.length > 0 ? (
+            <span className="inline-flex items-center gap-1.5">
+              <TriangleAlert className="h-3.5 w-3.5 text-amber-300" aria-hidden />
+              {handoffs.length} conversation{handoffs.length === 1 ? '' : 's'} waiting for a human reply — answer them in your Facebook Page inbox.
+            </span>
+          ) : (
+            'The bot is handling everything. Handed-off chats will appear here.'
+          )}
         </p>
       </div>
 
@@ -34,7 +42,7 @@ export default async function ConversationsPage() {
           >
             <div>
               <p className="font-medium text-sm">
-                Patient {c.psid.slice(-6)}
+                {t.Client} {c.psid.slice(-6)}
                 <span
                   className={`ml-2 rounded-full px-2 py-0.5 text-xs ${
                     c.mode === 'human' ? 'bg-amber-500/15 text-amber-300' : 'bg-emerald-500/15 text-emerald-300'
@@ -44,7 +52,7 @@ export default async function ConversationsPage() {
                 </span>
               </p>
               <p className="text-xs text-slate-400 mt-1">
-                Last activity: {new Date(c.last_message_at).toLocaleString('en-PH', { timeZone: clinic.timezone })}
+                Last activity: {new Date(c.last_message_at).toLocaleString('en-PH', { timeZone: business.timezone })}
                 {' · '}step: {(c.state as { step?: string })?.step ?? 'idle'}
               </p>
             </div>

@@ -1,6 +1,6 @@
 # Appointment System Setup Guide
 
-Appointment System is the subscription booking system for clinics at `/appointments`. It runs on its
+Appointment System is the subscription booking system for clinics, spas, salons, law offices, and vet clinics at `/appointments`. It runs on its
 **own Supabase project** (separate from the main site's) so it can be extracted into a
 standalone SaaS later. All code lives in three scoped places:
 
@@ -12,7 +12,7 @@ standalone SaaS later. All code lives in three scoped places:
 ## 1. Create the dedicated Supabase project
 
 1. Go to [supabase.com/dashboard](https://supabase.com/dashboard) → **New project** → name it `appointment-system`.
-2. Open **SQL Editor** and run `appointment-system/migrations/001_init.sql` in full.
+2. Open **SQL Editor** and run every file in `appointment-system/migrations/` in order (001 → 004).
 3. In **Authentication → Providers → Email**: keep Email enabled.
    - *Recommended for the trial phase:* turn **off** "Confirm email" so clinic signups land in
      the dashboard immediately. Turn it back on before public launch.
@@ -44,7 +44,7 @@ META_VERIFY_TOKEN=any-random-string-you-invent   # e.g. output of `openssl rand 
    - Verify token: the same `META_VERIFY_TOKEN` value
    - Subscribe to fields: `messages`, `messaging_postbacks`
 
-## 3. Connect a clinic's Page (dev mode — first 3–5 clinics)
+## 3. Connect a business's Page (dev mode — first 3–5 businesses)
 
 While the Meta app is in **Development Mode**, it works fully for any Page whose admin is a
 tester on the app. Per pilot clinic:
@@ -67,9 +67,9 @@ After approval, replace the paste-a-token flow with proper Facebook Login OAuth.
 
 There is no PayMongo integration yet — by design:
 
-- New clinics start on a 14-day `trial`.
+- New businesses start on a 14-day `trial`.
 - After they pay (GCash/bank transfer), set `plan_status = 'active'` and the right `plan_tier`
-  directly in the Supabase table editor (`clinics` table).
+  directly in the Supabase table editor (`businesses` table).
 - Setting `plan_status = 'suspended'` pauses their Messenger bot and public booking page.
 
 ## 6. AI cost tracking

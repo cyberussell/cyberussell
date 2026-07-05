@@ -1,9 +1,11 @@
 import Link from 'next/link'
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { MessageCircle, NotebookText } from 'lucide-react'
+import { requireBusiness } from '@/lib/appointment-system/auth'
+import { getTerms } from '@/lib/appointment-system/terminology'
 
 export const dynamic = 'force-dynamic'
 
-interface PatientRow {
+interface ClientRow {
   id: string
   full_name: string
   phone: string
@@ -12,18 +14,19 @@ interface PatientRow {
   appointments: { starts_at: string; status: string }[]
 }
 
-export default async function PatientsPage() {
-  const { supabase, clinic } = await requireClinic()
+export default async function ClientsPage() {
+  const { supabase, business } = await requireBusiness()
+  const t = getTerms(business.business_type)
   const { data } = await supabase
-    .from('patients')
+    .from('clients')
     .select('id, full_name, phone, messenger_psid, notes, appointments(starts_at, status)')
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
     .order('created_at', { ascending: false })
     .limit(300)
-  const patients = (data ?? []) as unknown as PatientRow[]
+  const clients = (data ?? []) as unknown as ClientRow[]
   const now = Date.now()
 
-  const rows = patients.map((p) => {
+  const rows = clients.map((p) => {
     const done = p.appointments
       .filter((a) => a.status === 'completed')
       .sort((a, b) => b.starts_at.localeCompare(a.starts_at))
@@ -40,7 +43,7 @@ export default async function PatientsPage() {
 
   const fmt = (iso: string) =>
     new Date(iso).toLocaleDateString('en-PH', {
-      timeZone: clinic.timezone,
+      timeZone: business.timezone,
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -49,9 +52,9 @@ export default async function PatientsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Patients</h1>
+        <h1 className="text-2xl font-bold">{t.Clients}</h1>
         <p className="text-slate-400 text-sm mt-1">
-          Everyone who has booked with you — click a patient for their full history.
+          Everyone who has booked with you — click a {t.client} for their full history.
         </p>
       </div>
 
@@ -59,14 +62,19 @@ export default async function PatientsPage() {
         {rows.map((p) => (
           <li key={p.id}>
             <Link
-              href={`/appointments/dashboard/patients/${p.id}`}
+              href={`/appointments/dashboard/clients/${p.id}`}
               className="block rounded-xl border border-slate-800 bg-slate-900 p-4 hover:border-emerald-400/50 transition"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="font-medium">
-                    {p.full_name || 'Unnamed patient'}
-                    {p.messenger_psid && <span className="ml-2 text-xs text-slate-400">💬 Messenger</span>}
+                    {p.full_name || 'Unnamed ' + t.client}
+                    {p.messenger_psid && (
+                      <span className="ml-2 inline-flex items-center gap-1 text-xs text-slate-400">
+                        <MessageCircle className="h-3 w-3" aria-hidden />
+                        Messenger
+                      </span>
+                    )}
                   </p>
                   <p className="text-sm text-slate-400">{p.phone || 'no phone'}</p>
                 </div>
@@ -82,11 +90,16 @@ export default async function PatientsPage() {
                   )}
                 </div>
               </div>
-              {p.notes && <p className="text-sm text-slate-500 mt-2 truncate">📋 {p.notes}</p>}
+              {p.notes && (
+                <p className="mt-2 flex items-center gap-1.5 truncate text-sm text-slate-500">
+                  <NotebookText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  {p.notes}
+                </p>
+              )}
             </Link>
           </li>
         ))}
-        {rows.length === 0 && <li className="text-slate-500 text-sm">No patients yet.</li>}
+        {rows.length === 0 && <li className="text-slate-500 text-sm">No {t.clients} yet.</li>}
       </ul>
     </div>
   )

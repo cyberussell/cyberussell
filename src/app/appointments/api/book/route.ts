@@ -3,27 +3,28 @@ import { z } from 'zod'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
 import { bookAppointment, getAvailableSlots } from '@/lib/appointment-system/slots'
 import { logEvent } from '@/lib/appointment-system/events'
-import type { Clinic } from '@/lib/appointment-system/types'
+import { canCreateAppointment } from '@/lib/appointment-system/entitlements'
+import type { Business } from '@/lib/appointment-system/types'
 
 export const dynamic = 'force-dynamic'
 
-// GET /appointments/api/book?clinic=slug&service=id → available slots
+// GET /appointments/api/book?business=slug&service=id → available slots
 export async function GET(request: NextRequest) {
-  const clinicSlug = request.nextUrl.searchParams.get('clinic')
+  const businessSlug = request.nextUrl.searchParams.get('business')
   const serviceId = request.nextUrl.searchParams.get('service')
-  if (!clinicSlug || !serviceId) {
-    return NextResponse.json({ error: 'clinic and service are required' }, { status: 400 })
+  if (!businessSlug || !serviceId) {
+    return NextResponse.json({ error: 'business and service are required' }, { status: 400 })
   }
 
   const db = createAdminSupabase()
-  const { data: clinic } = await db.from('clinics').select('*').eq('slug', clinicSlug).maybeSingle()
-  if (!clinic || (clinic as Clinic).plan_status === 'suspended') {
-    return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+  const { data: business } = await db.from('businesses').select('*').eq('slug', businessSlug).maybeSingle()
+  if (!business || (business as Business).plan_status === 'suspended') {
+    return NextResponse.json({ error: 'Business not found' }, { status: 404 })
   }
 
   const slots = await getAvailableSlots(db, {
-    clinicId: clinic.id,
-    timezone: (clinic as Clinic).timezone,
+    businessId: business.id,
+    timezone: (business as Business).timezone,
     serviceId,
     days: 14,
     limit: 60,
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
 }
 
 const bookSchema = z.object({
-  clinicSlug: z.string().min(1),
+  businessSlug: z.string().min(1),
   serviceId: z.string().uuid(),
   staffId: z.string().uuid(),
   startsAt: z.string().datetime(),
@@ -50,25 +51,34 @@ export async function POST(request: NextRequest) {
   const input = parsed.data
 
   const db = createAdminSupabase()
-  const { data: clinic } = await db.from('clinics').select('*').eq('slug', input.clinicSlug).maybeSingle()
-  if (!clinic || (clinic as Clinic).plan_status === 'suspended') {
-    return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+  const { data: business } = await db.from('businesses').select('*').eq('slug', input.businessSlug).maybeSingle()
+  if (!business || (business as Business).plan_status === 'suspended') {
+    return NextResponse.json({ error: 'Business not found' }, { status: 404 })
   }
 
-  const settings = (clinic as Clinic).settings as { closed?: boolean; closed_message?: string }
+  const settings = (business as Business).settings as { closed?: boolean; closed_message?: string }
   if (settings.closed) {
     return NextResponse.json(
-      { error: settings.closed_message || 'The clinic is temporarily closed.' },
+      { error: settings.closed_message || 'The business is temporarily closed.' },
+      { status: 403 }
+    )
+  }
+
+  const quota = await canCreateAppointment(db, business as Business)
+  if (!quota.allowed) {
+    await logEvent(db, business.id, 'booking_blocked_quota', { used: quota.used, limit: quota.limit })
+    return NextResponse.json(
+      { error: 'This business cannot accept more online bookings this month. Please contact them directly.' },
       { status: 403 }
     )
   }
 
   const result = await bookAppointment(db, {
-    clinicId: clinic.id,
+    businessId: business.id,
     serviceId: input.serviceId,
     staffId: input.staffId,
     startsAt: input.startsAt,
-    patient: { fullName: input.fullName, phone: input.phone },
+    client: { fullName: input.fullName, phone: input.phone },
     source: 'web',
     intakeNote: input.note,
   })
@@ -78,7 +88,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: result.message }, { status })
   }
 
-  await logEvent(db, clinic.id, 'booking_created', {
+  await logEvent(db, business.id, 'booking_created', {
     appointment_id: result.appointmentId,
     source: 'web',
   })

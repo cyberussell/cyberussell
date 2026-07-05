@@ -1,16 +1,19 @@
 'use client'
 
 import { useState } from 'react'
+import { CircleCheck } from 'lucide-react'
 import type { Service, Slot } from '@/lib/appointment-system/types'
 
 type Step = 'service' | 'slot' | 'details' | 'done'
 
 export default function BookingWidget({
-  clinicSlug,
+  businessSlug,
   services,
+  businessNoun = 'clinic',
 }: {
-  clinicSlug: string
+  businessSlug: string
   services: Service[]
+  businessNoun?: string
 }) {
   const [step, setStep] = useState<Step>('service')
   const [serviceId, setServiceId] = useState<string | null>(null)
@@ -25,7 +28,7 @@ export default function BookingWidget({
     setError(null)
     try {
       const res = await fetch(
-        `/appointments/api/book?clinic=${encodeURIComponent(clinicSlug)}&service=${encodeURIComponent(id)}`
+        `/appointments/api/book?business=${encodeURIComponent(businessSlug)}&service=${encodeURIComponent(id)}`
       )
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to load slots')
@@ -49,7 +52,7 @@ export default function BookingWidget({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          clinicSlug,
+          businessSlug,
           serviceId,
           staffId: slot.staffId,
           startsAt: slot.startsAt,
@@ -76,7 +79,7 @@ export default function BookingWidget({
   if (services.length === 0) {
     return (
       <p className="rounded-xl border border-slate-800 bg-slate-900 p-6 text-center text-sm text-slate-400">
-        Online booking isn&apos;t set up yet — please message or call the clinic directly.
+        Online booking isn&apos;t set up yet — please message or call the {businessNoun} directly.
       </p>
     )
   }
@@ -109,7 +112,7 @@ export default function BookingWidget({
             ← Change service
           </button>
           {slots.length === 0 ? (
-            <p className="text-sm text-slate-400">No open slots in the next 2 weeks — please message the clinic.</p>
+            <p className="text-sm text-slate-400">No open slots in the next 2 weeks — please message the {businessNoun} directly.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
               {slots.map((s) => (
@@ -159,7 +162,7 @@ export default function BookingWidget({
           <textarea
             name="note"
             rows={2}
-            placeholder="Anything the clinic should know? (optional)"
+            placeholder={`Anything the ${businessNoun} should know? (optional)`}
             className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none"
           />
           <button
@@ -174,7 +177,7 @@ export default function BookingWidget({
 
       {step === 'done' && (
         <div className="py-6 text-center">
-          <p className="text-2xl">✅</p>
+          <CircleCheck className="mx-auto h-8 w-8 text-emerald-300" aria-hidden />
           <p className="mt-2 font-semibold">You&apos;re booked!</p>
           <p className="mt-1 text-sm text-slate-400">
             {slot?.label} with {slot?.staffName}. See you!

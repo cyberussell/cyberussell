@@ -1,5 +1,7 @@
 import Link from 'next/link'
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { MessageCircle, NotebookText } from 'lucide-react'
+import { requireBusiness } from '@/lib/appointment-system/auth'
+import { getTerms } from '@/lib/appointment-system/terminology'
 import { formatSlotLabel, wallTimeToUtc } from '@/lib/appointment-system/slots'
 import RecordPaymentForm from '@/components/appointment-system/RecordPaymentForm'
 import { updateAppointmentStatus } from '../actions'
@@ -16,59 +18,60 @@ function dateKeyInTz(iso: string, timeZone: string): string {
 }
 
 export default async function TodayPage() {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
+  const t = getTerms(business.business_type)
 
   const now = new Date()
-  const todayKey = dateKeyInTz(now.toISOString(), clinic.timezone)
-  const dayStart = wallTimeToUtc(`${todayKey}T00:00`, clinic.timezone)!
+  const todayKey = dateKeyInTz(now.toISOString(), business.timezone)
+  const dayStart = wallTimeToUtc(`${todayKey}T00:00`, business.timezone)!
   const dayEnd = new Date(dayStart.getTime() + 86400_000)
 
-  // Monday of the current week in clinic time
+  // Monday of the current week in business time
   const [ty, tm, td] = todayKey.split('-').map(Number)
   const noon = new Date(Date.UTC(ty, tm - 1, td, 12))
   const mondayKey = new Date(noon.getTime() - ((noon.getUTCDay() + 6) % 7) * 86400_000)
     .toISOString()
     .slice(0, 10)
-  const weekStart = wallTimeToUtc(`${mondayKey}T00:00`, clinic.timezone)!
+  const weekStart = wallTimeToUtc(`${mondayKey}T00:00`, business.timezone)!
   const weekEnd = new Date(weekStart.getTime() + 7 * 86400_000)
   const last30 = new Date(now.getTime() - 30 * 86400_000)
 
-  const [todayRes, weekRes, completedRes, noShowRes, patientsRes, revenueRes] = await Promise.all([
+  const [todayRes, weekRes, completedRes, noShowRes, clientsRes, revenueRes] = await Promise.all([
     supabase
       .from('appointments')
-      .select('*, patients(full_name, phone), services(name, price), staff(name)')
-      .eq('clinic_id', clinic.id)
+      .select('*, clients(full_name, phone), services(name, price), staff(name)')
+      .eq('business_id', business.id)
       .gte('starts_at', dayStart.toISOString())
       .lt('starts_at', dayEnd.toISOString())
       .order('starts_at'),
     supabase
       .from('appointments')
       .select('id', { count: 'exact', head: true })
-      .eq('clinic_id', clinic.id)
+      .eq('business_id', business.id)
       .in('status', ['pending', 'confirmed', 'completed'])
       .gte('starts_at', weekStart.toISOString())
       .lt('starts_at', weekEnd.toISOString()),
     supabase
       .from('appointments')
       .select('id', { count: 'exact', head: true })
-      .eq('clinic_id', clinic.id)
+      .eq('business_id', business.id)
       .eq('status', 'completed')
       .gte('starts_at', last30.toISOString()),
     supabase
       .from('appointments')
       .select('id', { count: 'exact', head: true })
-      .eq('clinic_id', clinic.id)
+      .eq('business_id', business.id)
       .eq('status', 'no_show')
       .gte('starts_at', last30.toISOString()),
     supabase
-      .from('patients')
+      .from('clients')
       .select('id', { count: 'exact', head: true })
-      .eq('clinic_id', clinic.id)
+      .eq('business_id', business.id)
       .gte('created_at', last30.toISOString()),
     supabase
       .from('appointments')
       .select('amount_paid')
-      .eq('clinic_id', clinic.id)
+      .eq('business_id', business.id)
       .gt('amount_paid', 0)
       .gte('paid_at', last30.toISOString()),
   ])
@@ -85,7 +88,7 @@ export default async function TodayPage() {
     { label: 'This week', value: String(weekRes.count ?? 0), sub: 'booked this week' },
     { label: 'Completed', value: String(completed), sub: 'last 30 days' },
     { label: 'No-show rate', value: `${noShowRate}%`, sub: `${noShows} no-shows in 30 days` },
-    { label: 'New patients', value: String(patientsRes.count ?? 0), sub: 'last 30 days' },
+    { label: `New ${t.clients}`, value: String(clientsRes.count ?? 0), sub: 'last 30 days' },
     {
       label: 'Collected',
       value: `₱${revenue.toLocaleString('en-PH')}`,
@@ -137,7 +140,7 @@ export default async function TodayPage() {
               <Link href="/appointments/dashboard/settings" className="text-emerald-400 underline">
                 Facebook Page
               </Link>{' '}
-              so patients can start booking.
+              so {t.clients} can start booking.
             </p>
           </div>
         ) : (
@@ -153,19 +156,26 @@ export default async function TodayPage() {
               >
                 <div>
                   <p className="font-semibold">
-                    {formatSlotLabel(a.starts_at, clinic.timezone)}{' '}
+                    {formatSlotLabel(a.starts_at, business.timezone)}{' '}
                     <span className="text-slate-400 font-normal">· {a.services?.name}</span>
                     {a.status !== 'confirmed' && a.status !== 'pending' && (
                       <span className="ml-2 text-xs text-slate-500">({a.status})</span>
                     )}
                   </p>
                   <p className="text-sm text-slate-400">
-                    {a.patients?.full_name || 'Unknown patient'} · {a.patients?.phone || 'no phone'} · with{' '}
+                    {a.clients?.full_name || 'Unknown ' + t.client} · {a.clients?.phone || 'no phone'} · with{' '}
                     {a.staff?.name}
-                    {a.source === 'messenger' && ' · via Messenger 💬'}
+                    {a.source === 'messenger' && (
+                      <span className="inline-flex items-center gap-1">
+                        {' '}· via Messenger <MessageCircle className="h-3.5 w-3.5" aria-hidden />
+                      </span>
+                    )}
                   </p>
                   {a.intake_note && (
-                    <p className="text-sm text-emerald-300/80 mt-1">📝 {a.intake_note}</p>
+                    <p className="mt-1 flex items-center gap-1.5 text-sm text-emerald-300/80">
+                      <NotebookText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {a.intake_note}
+                    </p>
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -177,7 +187,7 @@ export default async function TodayPage() {
                       paidLabel={
                         a.paid_at
                           ? new Date(a.paid_at).toLocaleDateString('en-PH', {
-                              timeZone: clinic.timezone,
+                              timeZone: business.timezone,
                               month: 'short',
                               day: 'numeric',
                             })

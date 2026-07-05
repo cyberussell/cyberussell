@@ -1,5 +1,7 @@
 import Link from 'next/link'
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { MessageCircle, NotebookText } from 'lucide-react'
+import { requireBusiness } from '@/lib/appointment-system/auth'
+import { getTerms } from '@/lib/appointment-system/terminology'
 import { formatSlotLabel, wallTimeToUtc } from '@/lib/appointment-system/slots'
 import type { Service, Staff } from '@/lib/appointment-system/types'
 import ManualAppointmentForm from '@/components/appointment-system/ManualAppointmentForm'
@@ -25,7 +27,7 @@ interface ApptRow {
   intake_note: string
   amount_paid: number
   paid_at: string | null
-  patients: { full_name: string; phone: string } | null
+  clients: { full_name: string; phone: string } | null
   services: { name: string; price: number } | null
   staff: { name: string } | null
 }
@@ -52,12 +54,13 @@ export default async function AppointmentsPage({
 }: {
   searchParams: Promise<{ w?: string }>
 }) {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
+  const t = getTerms(business.business_type)
   const { w } = await searchParams
   const weekOffset = Number(w ?? 0) || 0
 
-  // Monday of the target week, in the clinic's timezone.
-  const todayKey = dateKeyInTz(new Date().toISOString(), clinic.timezone)
+  // Monday of the target week, in the business's timezone.
+  const todayKey = dateKeyInTz(new Date().toISOString(), business.timezone)
   const [ty, tm, td] = todayKey.split('-').map(Number)
   const todayUtcNoon = new Date(Date.UTC(ty, tm - 1, td, 12))
   const dow = todayUtcNoon.getUTCDay() // 0 = Sunday
@@ -74,25 +77,25 @@ export default async function AppointmentsPage({
     }
   })
 
-  const weekStart = wallTimeToUtc(`${days[0].key}T00:00`, clinic.timezone)!
+  const weekStart = wallTimeToUtc(`${days[0].key}T00:00`, business.timezone)!
   const weekEnd = new Date(weekStart.getTime() + 7 * 86400_000)
 
   const [apptRes, svcRes, staffRes] = await Promise.all([
     supabase
       .from('appointments')
-      .select('id, starts_at, status, source, intake_note, amount_paid, paid_at, patients(full_name, phone), services(name, price), staff(name)')
-      .eq('clinic_id', clinic.id)
+      .select('id, starts_at, status, source, intake_note, amount_paid, paid_at, clients(full_name, phone), services(name, price), staff(name)')
+      .eq('business_id', business.id)
       .gte('starts_at', weekStart.toISOString())
       .lt('starts_at', weekEnd.toISOString())
       .order('starts_at'),
-    supabase.from('services').select('*').eq('clinic_id', clinic.id).eq('active', true).order('created_at'),
-    supabase.from('staff').select('*').eq('clinic_id', clinic.id).eq('active', true).order('created_at'),
+    supabase.from('services').select('*').eq('business_id', business.id).eq('active', true).order('created_at'),
+    supabase.from('staff').select('*').eq('business_id', business.id).eq('active', true).order('created_at'),
   ])
   const appointments = (apptRes.data ?? []) as unknown as ApptRow[]
 
   const byDay = new Map<string, ApptRow[]>(days.map((d) => [d.key, []]))
   for (const a of appointments) {
-    byDay.get(dateKeyInTz(a.starts_at, clinic.timezone))?.push(a)
+    byDay.get(dateKeyInTz(a.starts_at, business.timezone))?.push(a)
   }
 
   const monthLabel = new Date(monday.getTime() + 3 * 86400_000).toLocaleDateString('en-PH', {
@@ -154,10 +157,10 @@ export default async function AppointmentsPage({
                 <div
                   key={a.id}
                   className={`rounded border px-1.5 py-1 text-[11px] leading-tight ${STATUS_STYLES[a.status] ?? ''}`}
-                  title={`${a.patients?.full_name} · ${a.services?.name} · ${a.staff?.name} (${a.status})`}
+                  title={`${a.clients?.full_name} · ${a.services?.name} · ${a.staff?.name} (${a.status})`}
                 >
-                  <span className="font-semibold">{timeInTz(a.starts_at, clinic.timezone)}</span>
-                  <span className="block truncate">{a.patients?.full_name || '—'}</span>
+                  <span className="font-semibold">{timeInTz(a.starts_at, business.timezone)}</span>
+                  <span className="block truncate">{a.clients?.full_name || '—'}</span>
                   <span className="block truncate opacity-75">{a.services?.name}</span>
                 </div>
               ))}
@@ -168,6 +171,8 @@ export default async function AppointmentsPage({
 
       {/* Manual booking */}
       <ManualAppointmentForm
+        clientLabel={t.Client}
+        providerNoun={t.provider}
         services={(svcRes.data ?? []) as Service[]}
         staff={(staffRes.data ?? []) as Staff[]}
       />
@@ -187,7 +192,7 @@ export default async function AppointmentsPage({
           >
             <div>
               <p className="font-medium">
-                {formatSlotLabel(a.starts_at, clinic.timezone)}{' '}
+                {formatSlotLabel(a.starts_at, business.timezone)}{' '}
                 <span
                   className={`ml-2 rounded-full border px-2 py-0.5 text-xs ${STATUS_STYLES[a.status] ?? ''}`}
                 >
@@ -195,10 +200,21 @@ export default async function AppointmentsPage({
                 </span>
               </p>
               <p className="text-sm text-slate-400">
-                {a.patients?.full_name || 'Unknown'} · {a.services?.name} · {a.staff?.name} ·{' '}
-                {a.source === 'messenger' ? 'Messenger 💬' : a.source}
+                {a.clients?.full_name || 'Unknown'} · {a.services?.name} · {a.staff?.name} ·{' '}
+                {a.source === 'messenger' ? (
+                  <span className="inline-flex items-center gap-1">
+                    Messenger <MessageCircle className="h-3.5 w-3.5" aria-hidden />
+                  </span>
+                ) : (
+                  a.source
+                )}
               </p>
-              {a.intake_note && <p className="text-sm text-emerald-300/80 mt-1">📝 {a.intake_note}</p>}
+              {a.intake_note && (
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-emerald-300/80">
+                  <NotebookText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  {a.intake_note}
+                </p>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {a.status !== 'cancelled' && (
@@ -209,7 +225,7 @@ export default async function AppointmentsPage({
                   paidLabel={
                     a.paid_at
                       ? new Date(a.paid_at).toLocaleDateString('en-PH', {
-                          timeZone: clinic.timezone,
+                          timeZone: business.timezone,
                           month: 'short',
                           day: 'numeric',
                         })

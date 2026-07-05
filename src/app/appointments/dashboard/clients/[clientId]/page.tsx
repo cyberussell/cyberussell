@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { MessageCircle, NotebookText } from 'lucide-react'
+import { requireBusiness } from '@/lib/appointment-system/auth'
+import { getTerms } from '@/lib/appointment-system/terminology'
 import { formatSlotLabel } from '@/lib/appointment-system/slots'
 import RecordPaymentForm from '@/components/appointment-system/RecordPaymentForm'
-import { updatePatientNotes } from '../../../actions'
+import { updateClientNotes } from '../../../actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,31 +17,32 @@ const STATUS_STYLES: Record<string, string> = {
   no_show: 'bg-red-500/15 text-red-300',
 }
 
-export default async function PatientDetailPage({
+export default async function ClientDetailPage({
   params,
 }: {
-  params: Promise<{ patientId: string }>
+  params: Promise<{ clientId: string }>
 }) {
-  const { patientId } = await params
-  const { supabase, clinic } = await requireClinic()
+  const { clientId } = await params
+  const { supabase, business } = await requireBusiness()
+  const t = getTerms(business.business_type)
 
-  const [patientRes, apptRes] = await Promise.all([
-    supabase.from('patients').select('*').eq('id', patientId).eq('clinic_id', clinic.id).maybeSingle(),
+  const [clientRes, apptRes] = await Promise.all([
+    supabase.from('clients').select('*').eq('id', clientId).eq('business_id', business.id).maybeSingle(),
     supabase
       .from('appointments')
       .select('*, services(name, price), staff(name)')
-      .eq('patient_id', patientId)
-      .eq('clinic_id', clinic.id)
+      .eq('client_id', clientId)
+      .eq('business_id', business.id)
       .order('starts_at', { ascending: false }),
   ])
-  const patient = patientRes.data
-  if (!patient) notFound()
+  const client = clientRes.data
+  if (!client) notFound()
   const appointments = apptRes.data ?? []
 
   const completed = appointments.filter((a) => a.status === 'completed')
   const totalPaid = appointments.reduce((sum, a) => sum + Number(a.amount_paid ?? 0), 0)
   const todayKey = new Intl.DateTimeFormat('en-CA', {
-    timeZone: clinic.timezone,
+    timeZone: business.timezone,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -48,14 +51,19 @@ export default async function PatientDetailPage({
   return (
     <div className="space-y-8 max-w-3xl">
       <div>
-        <Link href="/appointments/dashboard/patients" className="text-sm text-slate-400 hover:text-white">
-          ← All patients
+        <Link href="/appointments/dashboard/clients" className="text-sm text-slate-400 hover:text-white">
+          ← All {t.clients}
         </Link>
         <h1 className="text-2xl font-bold mt-2">
-          {patient.full_name || 'Unnamed patient'}
-          {patient.messenger_psid && <span className="ml-3 text-sm font-normal text-slate-400">💬 Messenger patient</span>}
+          {client.full_name || 'Unnamed ' + t.client}
+          {client.messenger_psid && (
+            <span className="ml-3 inline-flex items-center gap-1 text-sm font-normal text-slate-400">
+              <MessageCircle className="h-3.5 w-3.5" aria-hidden />
+              Messenger {t.client}
+            </span>
+          )}
         </h1>
-        <p className="text-slate-400 text-sm mt-1">{patient.phone || 'no phone on file'}</p>
+        <p className="text-slate-400 text-sm mt-1">{client.phone || 'no phone on file'}</p>
       </div>
 
       {/* Quick stats */}
@@ -76,14 +84,14 @@ export default async function PatientDetailPage({
         </div>
       </div>
 
-      {/* Clinic notes */}
-      <form action={updatePatientNotes} className="rounded-xl border border-slate-800 bg-slate-900 p-4 space-y-3">
-        <input type="hidden" name="id" value={patient.id} />
-        <p className="text-sm font-semibold text-slate-300">Clinic notes</p>
+      {/* Notes */}
+      <form action={updateClientNotes} className="rounded-xl border border-slate-800 bg-slate-900 p-4 space-y-3">
+        <input type="hidden" name="id" value={client.id} />
+        <p className="text-sm font-semibold text-slate-300">Internal notes</p>
         <textarea
           name="notes"
           rows={3}
-          defaultValue={patient.notes}
+          defaultValue={client.notes}
           placeholder="Allergies, preferences, treatment plan, balance owed…"
           className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none"
         />
@@ -103,16 +111,27 @@ export default async function PatientDetailPage({
           >
             <div>
               <p className="font-medium">
-                {formatSlotLabel(a.starts_at, clinic.timezone)}
+                {formatSlotLabel(a.starts_at, business.timezone)}
                 <span className={`ml-2 rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[a.status] ?? ''}`}>
                   {a.status}
                 </span>
               </p>
               <p className="text-sm text-slate-400 mt-1">
                 {a.services?.name} · ₱{Number(a.services?.price ?? 0).toFixed(0)} · with {a.staff?.name} ·{' '}
-                {a.source === 'messenger' ? 'Messenger 💬' : a.source}
+                {a.source === 'messenger' ? (
+                  <span className="inline-flex items-center gap-1">
+                    Messenger <MessageCircle className="h-3.5 w-3.5" aria-hidden />
+                  </span>
+                ) : (
+                  a.source
+                )}
               </p>
-              {a.intake_note && <p className="text-sm text-emerald-300/80 mt-1">📝 {a.intake_note}</p>}
+              {a.intake_note && (
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-emerald-300/80">
+                  <NotebookText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  {a.intake_note}
+                </p>
+              )}
             </div>
             {a.status !== 'cancelled' && (
               <RecordPaymentForm
@@ -122,7 +141,7 @@ export default async function PatientDetailPage({
                 paidLabel={
                   a.paid_at
                     ? new Date(a.paid_at).toLocaleDateString('en-PH', {
-                        timeZone: clinic.timezone,
+                        timeZone: business.timezone,
                         month: 'short',
                         day: 'numeric',
                       })

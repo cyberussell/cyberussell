@@ -1,4 +1,4 @@
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { requireBusiness } from '@/lib/appointment-system/auth'
 import { addAvailability, deleteAvailability } from '../../actions'
 
 export const dynamic = 'force-dynamic'
@@ -6,10 +6,10 @@ export const dynamic = 'force-dynamic'
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export default async function AvailabilityPage() {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
   const [staffRes, availRes] = await Promise.all([
-    supabase.from('staff').select('*').eq('clinic_id', clinic.id).eq('active', true).order('created_at'),
-    supabase.from('availability').select('*, staff(name)').eq('clinic_id', clinic.id),
+    supabase.from('staff').select('*').eq('business_id', business.id).eq('active', true).order('created_at'),
+    supabase.from('availability').select('*, staff(name)').eq('business_id', business.id),
   ])
   const staff = staffRes.data ?? []
   const availability = (availRes.data ?? []).sort(

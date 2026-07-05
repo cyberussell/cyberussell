@@ -28,7 +28,7 @@ function tzOffsetMs(timeZone: string, utcDate: Date): number {
   return asUtc - utcDate.getTime()
 }
 
-// Convert a wall-clock time in the clinic's timezone to a UTC Date.
+// Convert a wall-clock time in the business's timezone to a UTC Date.
 function zonedToUtc(
   y: number,
   m: number,
@@ -60,7 +60,7 @@ function dateInTz(date: Date, timeZone: string): { y: number; m: number; d: numb
   }
 }
 
-// Convert a datetime-local value ("2026-07-06T14:00") entered as clinic wall
+// Convert a datetime-local value ("2026-07-06T14:00") entered as business wall
 // time into a UTC Date.
 export function wallTimeToUtc(value: string, timeZone: string): Date | null {
   const m = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/)
@@ -80,7 +80,7 @@ export function formatSlotLabel(iso: string, timeZone: string): string {
 }
 
 interface SlotQuery {
-  clinicId: string
+  businessId: string
   timezone: string
   serviceId: string
   days?: number
@@ -90,19 +90,19 @@ interface SlotQuery {
 // Generate open slots: staff weekly availability minus booked appointments.
 export async function getAvailableSlots(
   db: SupabaseClient,
-  { clinicId, timezone, serviceId, days = 7, limit = 30 }: SlotQuery
+  { businessId, timezone, serviceId, days = 7, limit = 30 }: SlotQuery
 ): Promise<Slot[]> {
   const now = new Date()
   const windowEnd = new Date(now.getTime() + days * 86400_000)
 
   const [svcRes, staffRes, availRes, apptRes] = await Promise.all([
     db.from('services').select('*').eq('id', serviceId).single(),
-    db.from('staff').select('*').eq('clinic_id', clinicId).eq('active', true),
-    db.from('availability').select('*').eq('clinic_id', clinicId),
+    db.from('staff').select('*').eq('business_id', businessId).eq('active', true),
+    db.from('availability').select('*').eq('business_id', businessId),
     db
       .from('appointments')
       .select('staff_id, starts_at, ends_at')
-      .eq('clinic_id', clinicId)
+      .eq('business_id', businessId)
       .in('status', ['pending', 'confirmed'])
       .gte('ends_at', now.toISOString())
       .lte('starts_at', windowEnd.toISOString()),
@@ -160,11 +160,11 @@ export async function getAvailableSlots(
 }
 
 export interface BookingInput {
-  clinicId: string
+  businessId: string
   serviceId: string
   staffId: string
   startsAt: string
-  patient: { fullName: string; phone: string; messengerPsid?: string }
+  client: { fullName: string; phone: string; messengerPsid?: string }
   source: 'messenger' | 'web' | 'manual'
   intakeNote?: string
 }
@@ -183,45 +183,45 @@ export async function bookAppointment(db: SupabaseClient, input: BookingInput): 
     .single()
   if (!service) return { ok: false, reason: 'error', message: 'Service not found' }
 
-  // Find or create the patient (by PSID for Messenger, by phone for web).
-  let patientId: string | null = null
-  if (input.patient.messengerPsid) {
+  // Find or create the client (by PSID for Messenger, by phone for web).
+  let clientId: string | null = null
+  if (input.client.messengerPsid) {
     const { data } = await db
-      .from('patients')
+      .from('clients')
       .select('id')
-      .eq('clinic_id', input.clinicId)
-      .eq('messenger_psid', input.patient.messengerPsid)
+      .eq('business_id', input.businessId)
+      .eq('messenger_psid', input.client.messengerPsid)
       .maybeSingle()
-    patientId = data?.id ?? null
-  } else if (input.patient.phone) {
+    clientId = data?.id ?? null
+  } else if (input.client.phone) {
     const { data } = await db
-      .from('patients')
+      .from('clients')
       .select('id')
-      .eq('clinic_id', input.clinicId)
-      .eq('phone', input.patient.phone)
+      .eq('business_id', input.businessId)
+      .eq('phone', input.client.phone)
       .is('messenger_psid', null)
       .maybeSingle()
-    patientId = data?.id ?? null
+    clientId = data?.id ?? null
   }
 
-  if (patientId) {
+  if (clientId) {
     await db
-      .from('patients')
-      .update({ full_name: input.patient.fullName, phone: input.patient.phone })
-      .eq('id', patientId)
+      .from('clients')
+      .update({ full_name: input.client.fullName, phone: input.client.phone })
+      .eq('id', clientId)
   } else {
     const { data, error } = await db
-      .from('patients')
+      .from('clients')
       .insert({
-        clinic_id: input.clinicId,
-        full_name: input.patient.fullName,
-        phone: input.patient.phone,
-        messenger_psid: input.patient.messengerPsid ?? null,
+        business_id: input.businessId,
+        full_name: input.client.fullName,
+        phone: input.client.phone,
+        messenger_psid: input.client.messengerPsid ?? null,
       })
       .select('id')
       .single()
-    if (error || !data) return { ok: false, reason: 'error', message: error?.message ?? 'Patient insert failed' }
-    patientId = data.id
+    if (error || !data) return { ok: false, reason: 'error', message: error?.message ?? 'Client insert failed' }
+    clientId = data.id
   }
 
   const startsAt = new Date(input.startsAt)
@@ -229,8 +229,8 @@ export async function bookAppointment(db: SupabaseClient, input: BookingInput): 
   const { data: appt, error } = await db
     .from('appointments')
     .insert({
-      clinic_id: input.clinicId,
-      patient_id: patientId,
+      business_id: input.businessId,
+      client_id: clientId,
       staff_id: input.staffId,
       service_id: input.serviceId,
       starts_at: startsAt.toISOString(),

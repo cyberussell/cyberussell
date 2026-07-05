@@ -1,14 +1,16 @@
-import { requireClinic } from '@/lib/appointment-system/auth'
+import { requireBusiness } from '@/lib/appointment-system/auth'
+import { getTerms } from '@/lib/appointment-system/terminology'
 import { createService, toggleService, deleteService } from '../../actions'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ServicesPage() {
-  const { supabase, clinic } = await requireClinic()
+  const { supabase, business } = await requireBusiness()
+  const t = getTerms(business.business_type)
   const { data: services } = await supabase
     .from('services')
     .select('*')
-    .eq('clinic_id', clinic.id)
+    .eq('business_id', business.id)
     .order('created_at')
 
   return (
@@ -16,7 +18,7 @@ export default async function ServicesPage() {
       <div>
         <h1 className="text-2xl font-bold">Services</h1>
         <p className="text-slate-400 text-sm mt-1">
-          What patients can book — these show up as buttons in Messenger.
+          What {t.clients} can book — these show up as buttons in Messenger.
         </p>
       </div>
 

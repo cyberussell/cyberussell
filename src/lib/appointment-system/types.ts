@@ -1,9 +1,10 @@
-export type PlanTier = 'basic' | 'pro' | 'premium'
+export type PlanTier = 'free' | 'basic' | 'pro' | 'ai_receptionist'
 export type PlanStatus = 'trial' | 'active' | 'suspended'
 export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show'
 export type AppointmentSource = 'messenger' | 'web' | 'manual'
+export type BusinessType = 'medical' | 'dental' | 'spa' | 'salon' | 'law' | 'veterinary' | 'other'
 
-export interface Clinic {
+export interface Business {
   id: string
   owner_id: string
   name: string
@@ -11,6 +12,7 @@ export interface Clinic {
   phone: string
   address: string
   timezone: string
+  business_type: BusinessType
   plan_tier: PlanTier
   plan_status: PlanStatus
   trial_ends_at: string
@@ -21,7 +23,7 @@ export interface Clinic {
 
 export interface Staff {
   id: string
-  clinic_id: string
+  business_id: string
   name: string
   title: string
   active: boolean
@@ -30,7 +32,7 @@ export interface Staff {
 
 export interface Service {
   id: string
-  clinic_id: string
+  business_id: string
   name: string
   duration_min: number
   price: number
@@ -41,16 +43,16 @@ export interface Service {
 
 export interface Availability {
   id: string
-  clinic_id: string
+  business_id: string
   staff_id: string
   day_of_week: number
   start_time: string
   end_time: string
 }
 
-export interface Patient {
+export interface Client {
   id: string
-  clinic_id: string
+  business_id: string
   full_name: string
   phone: string
   messenger_psid: string | null
@@ -61,8 +63,8 @@ export interface Patient {
 
 export interface Appointment {
   id: string
-  clinic_id: string
-  patient_id: string
+  business_id: string
+  client_id: string
   staff_id: string
   service_id: string
   starts_at: string
@@ -93,7 +95,7 @@ export interface ConversationState {
 
 export interface Conversation {
   id: string
-  clinic_id: string
+  business_id: string
   psid: string
   state: ConversationState
   mode: 'bot' | 'human'
@@ -105,5 +107,5 @@ export interface Slot {
   endsAt: string // ISO
   staffId: string
   staffName: string
-  label: string // human label in clinic timezone, e.g. "Tue Jul 7, 2:00 PM"
+  label: string // human label in business timezone, e.g. "Tue Jul 7, 2:00 PM"
 }

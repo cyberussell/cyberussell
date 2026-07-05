@@ -5,12 +5,12 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 // have historical data to work with.
 export async function logEvent(
   db: SupabaseClient,
-  clinicId: string | null,
+  businessId: string | null,
   type: string,
   payload: Record<string, unknown> = {}
 ): Promise<void> {
   try {
-    await db.from('events').insert({ clinic_id: clinicId, type, payload })
+    await db.from('events').insert({ business_id: businessId, type, payload })
   } catch {
     // Never let analytics failures break the booking path.
   }
