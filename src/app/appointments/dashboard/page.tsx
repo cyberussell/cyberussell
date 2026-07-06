@@ -4,6 +4,8 @@ import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import { formatSlotLabel, wallTimeToUtc } from '@/lib/appointment-system/slots'
 import RecordPaymentForm from '@/components/appointment-system/RecordPaymentForm'
+import UsageBanner from '@/components/appointment-system/UsageBanner'
+import { canCreateAppointment } from '@/lib/appointment-system/entitlements'
 import { updateAppointmentStatus } from '../actions'
 
 export const dynamic = 'force-dynamic'
@@ -35,6 +37,8 @@ export default async function TodayPage() {
   const weekStart = wallTimeToUtc(`${mondayKey}T00:00`, business.timezone)!
   const weekEnd = new Date(weekStart.getTime() + 7 * 86400_000)
   const last30 = new Date(now.getTime() - 30 * 86400_000)
+
+  const quota = await canCreateAppointment(supabase, business)
 
   const [todayRes, weekRes, completedRes, noShowRes, clientsRes, revenueRes] = await Promise.all([
     supabase
@@ -107,6 +111,8 @@ export default async function TodayPage() {
           Open calendar →
         </Link>
       </div>
+
+      <UsageBanner tier={business.plan_tier} used={quota.used} limit={quota.limit} />
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">

@@ -3,6 +3,7 @@ import { DoorClosed } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import NavTabs from '@/components/appointment-system/NavTabs'
+import { PLANS } from '@/lib/appointment-system/entitlements'
 import { signOut } from '../actions'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -37,7 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               {business.plan_status === 'trial'
                 ? `Trial · ${trialDaysLeft}d left`
                 : business.plan_status === 'active'
-                  ? `${business.plan_tier} plan`
+                  ? `${PLANS[business.plan_tier]?.name ?? business.plan_tier} plan`
                   : 'Suspended'}
             </span>
             <form action={signOut}>

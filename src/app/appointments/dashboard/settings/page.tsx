@@ -3,15 +3,17 @@ import { CircleCheck } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import ChangePasswordForm from '@/components/appointment-system/ChangePasswordForm'
+import { PLANS, PLAN_ORDER } from '@/lib/appointment-system/entitlements'
 import { updateBusinessProfile, saveFbConnection, updateClosedNotice } from '../../actions'
 
 export const dynamic = 'force-dynamic'
 
-const TIER_PRICES: Record<string, string> = {
-  basic: '₱999/mo',
-  pro: '₱1,999/mo',
-  premium: '₱3,499/mo',
-}
+const TIER_PRICES: Record<string, string> = Object.fromEntries(
+  PLAN_ORDER.map((tier) => [
+    tier,
+    PLANS[tier].priceMonthly === 0 ? 'Free' : `₱${PLANS[tier].priceMonthly.toLocaleString('en-PH')}/mo`,
+  ])
+)
 
 export default async function SettingsPage() {
   const { business } = await requireBusiness()
@@ -94,8 +96,8 @@ export default async function SettingsPage() {
         <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="font-semibold capitalize">
-                {business.plan_tier} plan{' '}
+              <p className="font-semibold">
+                {PLANS[business.plan_tier]?.name ?? business.plan_tier} plan{' '}
                 <span className="text-slate-400 font-normal">· {TIER_PRICES[business.plan_tier]}</span>
               </p>
               <p className="text-sm text-slate-400 mt-0.5">
@@ -135,7 +137,7 @@ export default async function SettingsPage() {
               within 24 hours of payment.
             </p>
             <p className="text-slate-400">
-              Plans: Basic ₱999 · Pro ₱1,999 · Premium ₱3,499 per month —{' '}
+              Plans: {PLAN_ORDER.map((p) => `${PLANS[p].name} ${PLANS[p].priceMonthly === 0 ? '₱0' : `₱${PLANS[p].priceMonthly.toLocaleString('en-PH')}`}`).join(' · ')} per month —{' '}
               <Link href="/appointments#pricing" className="text-emerald-400 underline">
                 compare plans
               </Link>

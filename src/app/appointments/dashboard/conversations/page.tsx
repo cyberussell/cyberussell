@@ -1,6 +1,8 @@
+import Link from 'next/link'
 import { TriangleAlert } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
+import { hasFeature, tierWithFeature } from '@/lib/appointment-system/entitlements'
 import { resumeBot } from '../../actions'
 
 export const dynamic = 'force-dynamic'
@@ -18,8 +20,26 @@ export default async function ConversationsPage() {
   const list = conversations ?? []
   const handoffs = list.filter((c) => c.mode === 'human')
 
+  const hasBot = hasFeature(business, 'messenger_booking_bot')
+  const hasAi = hasFeature(business, 'ai_receptionist')
+
   return (
     <div className="space-y-8">
+      {!hasBot && (
+        <div role="status" className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-200">
+          Messenger booking automation is available on the {tierWithFeature('messenger_booking_bot').name} plan
+          (₱{tierWithFeature('messenger_booking_bot').priceMonthly.toLocaleString('en-PH')}/mo).{' '}
+          <Link href="/appointments#pricing" className="font-semibold underline underline-offset-4">Compare plans</Link>.
+          Until then, customers who message your Page receive your booking-page link.
+        </div>
+      )}
+      {hasBot && !hasAi && (
+        <div role="status" className="rounded-xl border border-slate-700 bg-slate-900 p-4 text-sm text-slate-300">
+          Free-text replies in English &amp; Taglish are handled by the AI Receptionist plan
+          (₱{tierWithFeature('ai_receptionist').priceMonthly.toLocaleString('en-PH')}/mo).{' '}
+          <Link href="/appointments#pricing" className="text-emerald-300 underline underline-offset-4">See what it does</Link>.
+        </div>
+      )}
       <div>
         <h1 className="text-2xl font-bold">Messenger conversations</h1>
         <p className="text-slate-400 text-sm mt-1">
