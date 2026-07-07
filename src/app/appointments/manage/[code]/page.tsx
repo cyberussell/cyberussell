@@ -12,6 +12,7 @@ interface ApptRow {
   businesses: { name: string; slug: string; timezone: string } | null
   services: { name: string } | null
   staff: { name: string } | null
+  clients: { full_name: string; phone: string } | null
 }
 
 export default async function ManageBookingPage({ params }: { params: Promise<{ code: string }> }) {
@@ -19,7 +20,9 @@ export default async function ManageBookingPage({ params }: { params: Promise<{ 
   const db = createAdminSupabase()
   const { data } = await db
     .from('appointments')
-    .select('id, starts_at, status, service_id, businesses(name, slug, timezone), services(name), staff(name)')
+    .select(
+      'id, starts_at, status, service_id, businesses(name, slug, timezone), services(name), staff(name), clients(full_name, phone)'
+    )
     .eq('reference_code', code.toUpperCase())
     .maybeSingle()
 
@@ -67,6 +70,8 @@ export default async function ManageBookingPage({ params }: { params: Promise<{ 
           serviceId={appt.service_id}
           serviceName={appt.services?.name ?? 'Appointment'}
           staffName={appt.staff?.name ?? 'staff'}
+          clientName={appt.clients?.full_name ?? ''}
+          clientPhone={appt.clients?.phone ?? ''}
           startsAtIso={appt.starts_at}
           status={appt.status}
         />

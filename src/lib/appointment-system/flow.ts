@@ -385,7 +385,10 @@ async function finalizeBooking(
     return
   }
 
-  const { data: service } = await db.from('services').select('name').eq('id', state.serviceId).single()
+  const [{ data: service }, { data: staff }] = await Promise.all([
+    db.from('services').select('name').eq('id', state.serviceId).single(),
+    db.from('staff').select('name').eq('id', state.slotStaffId).single(),
+  ])
   const label = formatSlotLabel(state.slotStart, business.timezone)
   await setState(db, convo.id, { step: 'idle' })
   await logEvent(db, business.id, 'booking_created', {
@@ -393,10 +396,12 @@ async function finalizeBooking(
     appointment_id: result.appointmentId,
     source: 'messenger',
   })
+  // Same info hierarchy as the dashboard/manage views: date & time first, then
+  // who's booked, how to reach them, what for, and with whom.
   await sendText(
     pageToken,
     psid,
-    `Booked na po! ✅\n\n${service?.name ?? 'Appointment'}\n🗓️ ${label}\n📍 ${business.name}${business.address ? `, ${business.address}` : ''}\n\nSee you po! Magre-remind kami bago ang schedule ninyo.\n\nReference code: ${result.referenceCode}\nPara mag-cancel o mag-reschedule: https://www.cyberussell.com/appointments/manage/${result.referenceCode}`
+    `Booked na po! ✅\n\n🗓️ ${label}\n🙋 ${state.clientName}\n📞 ${state.clientPhone}\n💼 ${service?.name ?? 'Appointment'}\n🧑‍⚕️ with ${staff?.name ?? 'our staff'}\n📍 ${business.name}${business.address ? `, ${business.address}` : ''}\n\nSee you po! Magre-remind kami bago ang schedule ninyo.\n\nReference code: ${result.referenceCode}\nPara mag-cancel o mag-reschedule: https://www.cyberussell.com/appointments/manage/${result.referenceCode}`
   )
 }
 
