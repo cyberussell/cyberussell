@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MessageCircle, NotebookText } from 'lucide-react'
+import { MessageCircle, NotebookText, Phone, Tag, User } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import { formatSlotLabel, wallTimeToUtc } from '@/lib/appointment-system/slots'
@@ -320,27 +320,42 @@ export default async function AppointmentsPage({
             key={a.id}
             className="rounded-xl border border-slate-800 bg-slate-900 p-4 flex flex-wrap items-center justify-between gap-3"
           >
-            <div>
-              <p className="font-medium">
-                {formatSlotLabel(a.starts_at, business.timezone)}{' '}
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-white">
+                {formatSlotLabel(a.starts_at, business.timezone)}
                 <span
-                  className={`ml-2 rounded-full border px-2 py-0.5 text-xs ${STATUS_STYLES[a.status] ?? ''}`}
+                  className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[a.status] ?? ''}`}
                 >
                   {a.status}
                 </span>
               </p>
-              <p className="text-sm text-slate-400">
-                {a.clients?.full_name || 'Unknown'} · {a.services?.name} · {a.staff?.name} ·{' '}
+              <p className="flex items-center gap-1.5 text-sm font-medium text-slate-200">
+                <User className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+                {a.clients?.full_name || 'Unknown'}
+              </p>
+              {a.clients?.phone && (
+                <p className="flex items-center gap-1.5 text-sm tracking-wide text-slate-400">
+                  <Phone className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+                  {a.clients.phone}
+                </p>
+              )}
+              <p className="flex items-center gap-1.5 text-sm text-emerald-300/90">
+                <Tag className="h-3.5 w-3.5 shrink-0 text-emerald-400/60" aria-hidden />
+                {a.services?.name}
+              </p>
+              <p className="flex items-center gap-1.5 text-xs text-slate-500">
+                with {a.staff?.name}
+                <span className="text-slate-700">·</span>
                 {a.source === 'messenger' ? (
                   <span className="inline-flex items-center gap-1">
-                    Messenger <MessageCircle className="h-3.5 w-3.5" aria-hidden />
+                    Messenger <MessageCircle className="h-3 w-3" aria-hidden />
                   </span>
                 ) : (
                   a.source
                 )}
               </p>
               {a.intake_note && (
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-emerald-300/80">
+                <p className="flex items-center gap-1.5 text-sm text-emerald-300/80">
                   <NotebookText className="h-3.5 w-3.5 shrink-0" aria-hidden />
                   {a.intake_note}
                 </p>
