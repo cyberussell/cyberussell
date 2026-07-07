@@ -1,18 +1,46 @@
 'use client'
 
-import { useActionState, useEffect } from 'react'
-import { Check } from 'lucide-react'
+import { useActionState, useEffect, useState } from 'react'
+import { Check, TriangleAlert } from 'lucide-react'
 import { initiateBillingCheckout, type BillingActionResult } from '@/app/appointments/actions'
-import { PLAN_BULLETS, type PlanConfig } from '@/lib/appointment-system/entitlements'
+import { FEATURE_LABELS, PLANS, PLAN_BULLETS, PLAN_ORDER, type PlanConfig } from '@/lib/appointment-system/entitlements'
+import type { PlanTier } from '@/lib/appointment-system/types'
 
-export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig; isCurrent: boolean }) {
+export default function BillingPlanCard({
+  plan,
+  isCurrent,
+  currentTier,
+  planStatus,
+  renewsAt,
+}: {
+  plan: PlanConfig
+  isCurrent: boolean
+  currentTier: PlanTier
+  planStatus: string
+  renewsAt: string | null
+}) {
   const [state, formAction, pending] = useActionState<BillingActionResult, FormData>(initiateBillingCheckout, {})
+  const [confirming, setConfirming] = useState(false)
 
   useEffect(() => {
     if (state.checkoutUrl) window.location.href = state.checkoutUrl
   }, [state.checkoutUrl])
 
   const included = PLAN_BULLETS[plan.tier]
+
+  const currentPlan = PLANS[currentTier]
+  const isDowngrade =
+    !isCurrent && plan.priceMonthly > 0 && PLAN_ORDER.indexOf(plan.tier) < PLAN_ORDER.indexOf(currentTier)
+  const lostFeatures = isDowngrade
+    ? currentPlan.features.filter((f) => !plan.features.includes(f)).map((f) => FEATURE_LABELS[f])
+    : []
+  const losesUnlimitedStaff = isDowngrade && currentPlan.providerLimit === null && plan.providerLimit !== null
+  const losesUnlimitedAppointments =
+    isDowngrade && currentPlan.monthlyAppointments === null && plan.monthlyAppointments !== null
+  const daysRemaining =
+    isDowngrade && planStatus === 'active' && renewsAt
+      ? Math.max(0, Math.ceil((new Date(renewsAt).getTime() - Date.now()) / 86400_000))
+      : 0
 
   return (
     <div
@@ -48,16 +76,71 @@ export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig;
           Current plan
         </p>
       ) : plan.priceMonthly > 0 ? (
-        <form action={formAction}>
-          <input type="hidden" name="tier" value={plan.tier} />
+        confirming ? (
+          <div className="space-y-3">
+            <div className="rounded-lg border border-amber-400/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+              <p className="flex items-center gap-1.5 font-semibold">
+                <TriangleAlert className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                Downgrading to {plan.name}
+              </p>
+              <ul className="mt-1.5 list-disc space-y-1 pl-4">
+                {daysRemaining > 0 && (
+                  <li>
+                    You have {daysRemaining} day{daysRemaining === 1 ? '' : 's'} left on {currentPlan.name} — paying
+                    for {plan.name} now starts a new 30-day cycle immediately, and those remaining days are not
+                    refunded or credited.
+                  </li>
+                )}
+                {losesUnlimitedStaff && <li>Staff will be capped at {plan.providerLimit} — no longer unlimited.</li>}
+                {losesUnlimitedAppointments && (
+                  <li>Appointments will be capped at {plan.monthlyAppointments}/month — no longer unlimited.</li>
+                )}
+                {lostFeatures.map((label) => (
+                  <li key={label}>
+                    {label} will stop working immediately{label === 'Messenger booking bot' ? ', mid-conversation if a customer is messaging right now' : ''}.
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <form action={formAction} className="flex gap-2">
+              <input type="hidden" name="tier" value={plan.tier} />
+              <button
+                type="submit"
+                disabled={pending}
+                className="flex-1 rounded-lg bg-amber-500 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-400 disabled:opacity-50 transition"
+              >
+                {pending ? 'Starting checkout…' : `Yes, downgrade & pay ₱${plan.priceMonthly.toLocaleString('en-PH')}`}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirming(false)}
+                disabled={pending}
+                className="rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-slate-500 transition"
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        ) : isDowngrade ? (
           <button
-            type="submit"
-            disabled={pending}
-            className="w-full rounded-lg bg-emerald-500 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50 transition"
+            type="button"
+            onClick={() => setConfirming(true)}
+            className="w-full rounded-lg bg-emerald-500 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition"
           >
-            {pending ? 'Starting checkout…' : `Pay ₱${plan.priceMonthly.toLocaleString('en-PH')} now`}
+            {`Pay ₱${plan.priceMonthly.toLocaleString('en-PH')} now`}
           </button>
-        </form>
+        ) : (
+          <form action={formAction}>
+            <input type="hidden" name="tier" value={plan.tier} />
+            <button
+              type="submit"
+              disabled={pending}
+              className="w-full rounded-lg bg-emerald-500 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50 transition"
+            >
+              {pending ? 'Starting checkout…' : `Pay ₱${plan.priceMonthly.toLocaleString('en-PH')} now`}
+            </button>
+          </form>
+        )
       ) : (
         <p className="text-center text-xs text-slate-500">Downgrade by contacting support.</p>
       )}

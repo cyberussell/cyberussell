@@ -18,6 +18,17 @@ export type FeatureFlag =
   | 'no_show_tracking'
   | 'revenue_reports'
 
+export const FEATURE_LABELS: Record<FeatureFlag, string> = {
+  public_booking_page: 'Public booking page',
+  customer_records: 'Client records',
+  email_notifications: 'Email notifications',
+  data_export: 'Data export',
+  messenger_booking_bot: 'Messenger booking bot',
+  automated_reminders: 'Automated reminders',
+  no_show_tracking: 'No-show tracking',
+  revenue_reports: 'Revenue reports',
+}
+
 export interface PlanConfig {
   tier: PlanTier
   name: string
