@@ -24,7 +24,7 @@ export default async function ClientDetailPage({
 }) {
   const { clientId } = await params
   const { supabase, business } = await requireBusiness()
-  const t = getTerms(business.business_type)
+  const t = getTerms(business.business_types)
 
   const [clientRes, apptRes] = await Promise.all([
     supabase.from('clients').select('*').eq('id', clientId).eq('business_id', business.id).maybeSingle(),

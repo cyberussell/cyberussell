@@ -32,19 +32,26 @@ export default function SignupPage() {
           <form action={formAction} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-6">
             <Field label="Your name" name="fullName" placeholder="Dr. Maria Santos" />
             <Field label="Business name" name="businessName" placeholder="Bright Smiles Dental" />
-            <label className="block">
-              <span className="text-sm text-slate-300">Business type</span>
-              <select
-                name="businessType"
-                required
-                defaultValue="medical"
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:border-emerald-400 focus:outline-none"
-              >
+            <fieldset className="block">
+              <legend className="text-sm text-slate-300">Business type (select all that apply)</legend>
+              <div className="mt-1 grid grid-cols-2 gap-2">
                 {BUSINESS_TYPE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  <label
+                    key={opt.value}
+                    className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white"
+                  >
+                    <input
+                      type="checkbox"
+                      name="businessTypes"
+                      value={opt.value}
+                      defaultChecked={opt.value === 'medical'}
+                      className="accent-emerald-400"
+                    />
+                    {opt.label}
+                  </label>
                 ))}
-              </select>
-            </label>
+              </div>
+            </fieldset>
             <Field label="Email" name="email" type="email" placeholder="you@business.com" />
             <Field label="Password" name="password" type="password" placeholder="8+ characters" />
             {state.error && !confirmEmail && (

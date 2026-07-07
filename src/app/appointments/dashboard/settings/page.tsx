@@ -17,7 +17,7 @@ const TIER_PRICES: Record<string, string> = Object.fromEntries(
 
 export default async function SettingsPage() {
   const { business } = await requireBusiness()
-  const t = getTerms(business.business_type)
+  const t = getTerms(business.business_types)
   const connected = Boolean(business.fb_page_id)
   const settings = business.settings as { closed?: boolean; closed_message?: string }
   const trialDaysLeft = Math.max(

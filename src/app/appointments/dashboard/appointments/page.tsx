@@ -7,6 +7,7 @@ import type { Service, Staff } from '@/lib/appointment-system/types'
 import ManualAppointmentForm from '@/components/appointment-system/ManualAppointmentForm'
 import RecordPaymentForm from '@/components/appointment-system/RecordPaymentForm'
 import RescheduleForm from '@/components/appointment-system/RescheduleForm'
+import AppointmentsMonthGrid, { type MonthDay } from '@/components/appointment-system/AppointmentsMonthGrid'
 import { updateAppointmentStatus } from '../../actions'
 
 export const dynamic = 'force-dynamic'
@@ -49,22 +50,132 @@ function timeInTz(iso: string, timeZone: string): string {
   }).format(new Date(iso))
 }
 
+/** Monday (UTC-noon) on/before the given UTC-noon date. */
+function mondayOf(dateUtcNoon: Date): Date {
+  const dow = dateUtcNoon.getUTCDay()
+  return new Date(dateUtcNoon.getTime() - ((dow + 6) % 7) * 86400_000)
+}
+
+function dominantStatus(statuses: string[]): MonthDay['dominant'] {
+  if (statuses.includes('pending')) return 'pending'
+  if (statuses.includes('confirmed')) return 'confirmed'
+  if (statuses.includes('completed')) return 'completed'
+  if (statuses.length > 0) return 'other'
+  return null
+}
+
 export default async function AppointmentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ w?: string }>
+  searchParams: Promise<{ w?: string; m?: string; view?: string }>
 }) {
   const { supabase, business } = await requireBusiness()
-  const t = getTerms(business.business_type)
-  const { w } = await searchParams
+  const t = getTerms(business.business_types)
+  const { w, m, view: viewParam } = await searchParams
+  const view = viewParam === 'month' ? 'month' : 'week'
   const weekOffset = Number(w ?? 0) || 0
+  const monthOffset = Number(m ?? 0) || 0
 
   // Monday of the target week, in the business's timezone.
   const todayKey = dateKeyInTz(new Date().toISOString(), business.timezone)
   const [ty, tm, td] = todayKey.split('-').map(Number)
   const todayUtcNoon = new Date(Date.UTC(ty, tm - 1, td, 12))
-  const dow = todayUtcNoon.getUTCDay() // 0 = Sunday
-  const monday = new Date(todayUtcNoon.getTime() - ((dow + 6) % 7) * 86400_000 + weekOffset * 7 * 86400_000)
+  const thisWeekMonday = mondayOf(todayUtcNoon)
+  const monday = new Date(thisWeekMonday.getTime() + weekOffset * 7 * 86400_000)
+
+  const viewToggle = (
+    <div className="flex items-center gap-1 rounded-lg border border-slate-700 p-0.5 text-sm">
+      <Link
+        href="/appointments/dashboard/appointments"
+        className={`rounded px-3 py-1 transition ${
+          view === 'week' ? 'bg-emerald-500 text-slate-950 font-semibold' : 'text-slate-300 hover:text-white'
+        }`}
+      >
+        Week
+      </Link>
+      <Link
+        href="/appointments/dashboard/appointments?view=month"
+        className={`rounded px-3 py-1 transition ${
+          view === 'month' ? 'bg-emerald-500 text-slate-950 font-semibold' : 'text-slate-300 hover:text-white'
+        }`}
+      >
+        Month
+      </Link>
+    </div>
+  )
+
+  const [svcRes, staffRes] = await Promise.all([
+    supabase.from('services').select('*').eq('business_id', business.id).eq('active', true).order('created_at'),
+    supabase.from('staff').select('*').eq('business_id', business.id).eq('active', true).order('created_at'),
+  ])
+  const manualBookingForm = (
+    <ManualAppointmentForm
+      clientLabel={t.Client}
+      providerNoun={t.provider}
+      services={(svcRes.data ?? []) as Service[]}
+      staff={(staffRes.data ?? []) as Staff[]}
+    />
+  )
+
+  if (view === 'month') {
+    const baseMonth = new Date(Date.UTC(ty, tm - 1 + monthOffset, 1, 12))
+    const y = baseMonth.getUTCFullYear()
+    const mo = baseMonth.getUTCMonth()
+    const firstOfMonth = new Date(Date.UTC(y, mo, 1, 12))
+    const firstDow = (firstOfMonth.getUTCDay() + 6) % 7 // 0 = Monday
+    const gridStart = new Date(firstOfMonth.getTime() - firstDow * 86400_000)
+    const daysInMonth = new Date(Date.UTC(y, mo + 1, 0)).getUTCDate()
+    const totalCells = firstDow + daysInMonth
+    const weeks = Math.ceil(totalCells / 7)
+    const gridDays = weeks * 7
+
+    const gridStartUtc = wallTimeToUtc(`${gridStart.toISOString().slice(0, 10)}T00:00`, business.timezone)!
+    const gridEndUtc = new Date(gridStartUtc.getTime() + gridDays * 86400_000)
+
+    const { data: monthAppts } = await supabase
+      .from('appointments')
+      .select('starts_at, status')
+      .eq('business_id', business.id)
+      .gte('starts_at', gridStartUtc.toISOString())
+      .lt('starts_at', gridEndUtc.toISOString())
+
+    const statusesByDay = new Map<string, string[]>()
+    for (const a of (monthAppts ?? []) as { starts_at: string; status: string }[]) {
+      const key = dateKeyInTz(a.starts_at, business.timezone)
+      const list = statusesByDay.get(key) ?? []
+      list.push(a.status)
+      statusesByDay.set(key, list)
+    }
+
+    const monthDays: MonthDay[] = Array.from({ length: gridDays }, (_, i) => {
+      const d = new Date(gridStart.getTime() + i * 86400_000)
+      const key = d.toISOString().slice(0, 10)
+      const statuses = statusesByDay.get(key) ?? []
+      const cellMonday = mondayOf(d)
+      return {
+        key,
+        dayNum: d.getUTCDate(),
+        isCurrentMonth: d.getUTCMonth() === mo,
+        isToday: key === todayKey,
+        weekOffset: Math.round((cellMonday.getTime() - thisWeekMonday.getTime()) / (7 * 86400_000)),
+        total: statuses.length,
+        dominant: dominantStatus(statuses),
+      }
+    })
+
+    const monthLabel = baseMonth.toLocaleDateString('en-PH', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+
+    return (
+      <div className="space-y-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-2xl font-bold">Appointments</h1>
+          {viewToggle}
+        </div>
+        <AppointmentsMonthGrid monthLabel={monthLabel} monthOffset={monthOffset} days={monthDays} />
+        {manualBookingForm}
+      </div>
+    )
+  }
 
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday.getTime() + i * 86400_000)
@@ -80,18 +191,14 @@ export default async function AppointmentsPage({
   const weekStart = wallTimeToUtc(`${days[0].key}T00:00`, business.timezone)!
   const weekEnd = new Date(weekStart.getTime() + 7 * 86400_000)
 
-  const [apptRes, svcRes, staffRes] = await Promise.all([
-    supabase
-      .from('appointments')
-      .select('id, starts_at, status, source, intake_note, amount_paid, paid_at, clients(full_name, phone), services(name, price), staff(name)')
-      .eq('business_id', business.id)
-      .gte('starts_at', weekStart.toISOString())
-      .lt('starts_at', weekEnd.toISOString())
-      .order('starts_at'),
-    supabase.from('services').select('*').eq('business_id', business.id).eq('active', true).order('created_at'),
-    supabase.from('staff').select('*').eq('business_id', business.id).eq('active', true).order('created_at'),
-  ])
-  const appointments = (apptRes.data ?? []) as unknown as ApptRow[]
+  const { data: weekApptData } = await supabase
+    .from('appointments')
+    .select('id, starts_at, status, source, intake_note, amount_paid, paid_at, clients(full_name, phone), services(name, price), staff(name)')
+    .eq('business_id', business.id)
+    .gte('starts_at', weekStart.toISOString())
+    .lt('starts_at', weekEnd.toISOString())
+    .order('starts_at')
+  const appointments = (weekApptData ?? []) as unknown as ApptRow[]
 
   const byDay = new Map<string, ApptRow[]>(days.map((d) => [d.key, []]))
   for (const a of appointments) {
@@ -111,6 +218,7 @@ export default async function AppointmentsPage({
           <h1 className="text-2xl font-bold">Appointments</h1>
           <p className="text-slate-400 text-sm mt-1">{monthLabel}</p>
         </div>
+        {viewToggle}
         <div className="flex items-center gap-2">
           <Link
             href={`/appointments/dashboard/appointments?w=${weekOffset - 1}`}
@@ -170,12 +278,7 @@ export default async function AppointmentsPage({
       </div>
 
       {/* Manual booking */}
-      <ManualAppointmentForm
-        clientLabel={t.Client}
-        providerNoun={t.provider}
-        services={(svcRes.data ?? []) as Service[]}
-        staff={(staffRes.data ?? []) as Staff[]}
-      />
+      {manualBookingForm}
 
       {/* Week list with actions */}
       <div className="space-y-2">

@@ -12,10 +12,12 @@ export interface Business {
   phone: string
   address: string
   timezone: string
-  business_type: BusinessType
+  business_types: BusinessType[]
   plan_tier: PlanTier
   plan_status: PlanStatus
   trial_ends_at: string
+  paymongo_checkout_session_id: string | null
+  plan_renews_at: string | null
   fb_page_id: string | null
   settings: Record<string, unknown>
   created_at: string

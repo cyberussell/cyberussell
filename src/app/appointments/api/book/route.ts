@@ -38,7 +38,10 @@ const bookSchema = z.object({
   staffId: z.string().uuid(),
   startsAt: z.string().datetime(),
   fullName: z.string().min(2).max(80),
-  phone: z.string().min(10).max(20),
+  phone: z
+    .string()
+    .transform((v) => v.replace(/[\s-]/g, ''))
+    .refine((v) => /^09\d{9}$/.test(v), { message: 'Enter a valid 11-digit mobile number (09XXXXXXXXX)' }),
   note: z.string().max(500).optional(),
 })
 
@@ -46,7 +49,8 @@ const bookSchema = z.object({
 export async function POST(request: NextRequest) {
   const parsed = bookSchema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Invalid booking details' }, { status: 400 })
+    const message = parsed.error.issues[0]?.message ?? 'Invalid booking details'
+    return NextResponse.json({ error: message }, { status: 400 })
   }
   const input = parsed.data
 

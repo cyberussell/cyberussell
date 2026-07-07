@@ -21,7 +21,7 @@ function dateKeyInTz(iso: string, timeZone: string): string {
 
 export default async function TodayPage() {
   const { supabase, business } = await requireBusiness()
-  const t = getTerms(business.business_type)
+  const t = getTerms(business.business_types)
 
   const now = new Date()
   const todayKey = dateKeyInTz(now.toISOString(), business.timezone)

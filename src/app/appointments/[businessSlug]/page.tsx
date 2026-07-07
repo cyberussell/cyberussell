@@ -29,6 +29,12 @@ export default async function BusinessPublicPage({
     .eq('active', true)
     .order('created_at')
 
+  const { count: staffCount } = await db
+    .from('staff')
+    .select('id', { count: 'exact', head: true })
+    .eq('business_id', business.id)
+    .eq('active', true)
+
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <div className="mx-auto max-w-2xl px-4 py-14">
@@ -66,7 +72,12 @@ export default async function BusinessPublicPage({
               {business.fb_page_id ? 'Or book here on the web' : 'Book an appointment'}
             </h2>
             <div className="mt-4">
-              <BookingWidget businessSlug={business.slug} businessNoun={getTerms(business.business_type).business} services={(services ?? []) as Service[]} />
+              <BookingWidget
+                businessSlug={business.slug}
+                businessNoun={getTerms(business.business_types).business}
+                services={(services ?? []) as Service[]}
+                showStaffNames={(staffCount ?? 0) > 1}
+              />
             </div>
           </div>
         )}

@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function HelpPage() {
   const { business } = await requireBusiness()
-  const t = getTerms(business.business_type)
+  const t = getTerms(business.business_types)
 
   return (
     <div className="space-y-8 max-w-3xl">

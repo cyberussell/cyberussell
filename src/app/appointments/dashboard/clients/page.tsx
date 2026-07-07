@@ -16,7 +16,7 @@ interface ClientRow {
 
 export default async function ClientsPage() {
   const { supabase, business } = await requireBusiness()
-  const t = getTerms(business.business_type)
+  const t = getTerms(business.business_types)
   const { data } = await supabase
     .from('clients')
     .select('id, full_name, phone, messenger_psid, notes, appointments(starts_at, status)')

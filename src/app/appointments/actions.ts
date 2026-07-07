@@ -8,9 +8,14 @@ import { requireBusiness } from '@/lib/appointment-system/auth'
 import { logEvent } from '@/lib/appointment-system/events'
 import { bookAppointment, wallTimeToUtc } from '@/lib/appointment-system/slots'
 import { canCreateAppointment, canAddProvider, PLANS } from '@/lib/appointment-system/entitlements'
+import { createBillingCheckout } from '@/lib/appointment-system/paymongo'
 
 export interface ActionResult {
   error?: string
+}
+
+export interface BillingActionResult extends ActionResult {
+  checkoutUrl?: string
 }
 
 function slugify(name: string): string {
@@ -26,7 +31,7 @@ function slugify(name: string): string {
 const signUpSchema = z.object({
   fullName: z.string().min(2).max(80),
   businessName: z.string().min(2).max(80),
-  businessType: z.enum(['medical', 'dental', 'spa', 'salon', 'law', 'veterinary', 'other']),
+  businessTypes: z.array(z.enum(['medical', 'dental', 'spa', 'salon', 'law', 'veterinary', 'other'])).min(1),
   email: z.string().email(),
   password: z.string().min(8),
 })
@@ -35,12 +40,12 @@ export async function signUp(_prev: ActionResult, formData: FormData): Promise<A
   const parsed = signUpSchema.safeParse({
     fullName: formData.get('fullName'),
     businessName: formData.get('businessName'),
-    businessType: formData.get('businessType'),
+    businessTypes: formData.getAll('businessTypes'),
     email: formData.get('email'),
     password: formData.get('password'),
   })
-  if (!parsed.success) return { error: 'Please fill in all fields (password: 8+ characters).' }
-  const { fullName, businessName, businessType, email, password } = parsed.data
+  if (!parsed.success) return { error: 'Please fill in all fields (password: 8+ characters) and pick at least one business type.' }
+  const { fullName, businessName, businessTypes, email, password } = parsed.data
 
   const supabase = await createServerSupabase()
   const { data, error } = await supabase.auth.signUp({
@@ -50,6 +55,12 @@ export async function signUp(_prev: ActionResult, formData: FormData): Promise<A
   })
   if (error) return { error: error.message }
   if (!data.user) return { error: 'Signup failed — please try again.' }
+
+  // Supabase returns a fake user (empty identities) instead of an error when
+  // the email is already registered, to prevent account enumeration.
+  if (data.user.identities && data.user.identities.length === 0) {
+    return { error: 'An account with this email already exists — please log in instead.' }
+  }
 
   // Business row is created with the service role so signup works even when
   // email confirmation is enabled (no session yet → RLS would block it).
@@ -61,7 +72,7 @@ export async function signUp(_prev: ActionResult, formData: FormData): Promise<A
 
   const { error: businessError } = await admin
     .from('businesses')
-    .insert({ owner_id: data.user.id, name: businessName, slug, business_type: businessType })
+    .insert({ owner_id: data.user.id, name: businessName, slug, business_types: businessTypes })
   if (businessError) return { error: businessError.message }
 
   await logEvent(admin, null, 'business_signed_up', { business_name: businessName, slug })
@@ -341,6 +352,40 @@ export async function updateBusinessProfile(formData: FormData): Promise<void> {
     })
     .eq('id', business.id)
   revalidatePath('/appointments/dashboard/settings')
+}
+
+// ── Billing (PayMongo "Pay Now" checkout — see docs/checkpoints for why this
+// isn't PayMongo's native Subscriptions API) ────────────────────────────────
+
+export async function initiateBillingCheckout(
+  _prev: BillingActionResult,
+  formData: FormData
+): Promise<BillingActionResult> {
+  const { business } = await requireBusiness()
+  const tier = String(formData.get('tier') ?? '')
+  const plan = (PLANS as Record<string, (typeof PLANS)[keyof typeof PLANS]>)[tier]
+  if (!plan || plan.priceMonthly <= 0) return { error: 'Pick a paid plan to continue.' }
+
+  let checkout
+  try {
+    checkout = await createBillingCheckout({
+      businessId: business.id,
+      tier: plan.tier,
+      planName: plan.name,
+      amountCentavos: Math.round(plan.priceMonthly * 100),
+      successUrl: 'https://www.cyberussell.com/appointments/dashboard/billing?paid=1',
+      cancelUrl: 'https://www.cyberussell.com/appointments/dashboard/billing?cancelled=1',
+    })
+  } catch {
+    return { error: 'Could not start checkout — please try again.' }
+  }
+
+  const admin = createAdminSupabase()
+  await admin.from('businesses').update({ paymongo_checkout_session_id: checkout.sessionId }).eq('id', business.id)
+  // Returned to the client instead of calling redirect() here — Next.js Server
+  // Actions driven by useActionState don't reliably navigate the browser to an
+  // external origin; the client does `window.location.href = checkoutUrl` instead.
+  return { checkoutUrl: checkout.checkoutUrl }
 }
 
 // Temporarily-closed notice: pauses Messenger + web booking with a message.

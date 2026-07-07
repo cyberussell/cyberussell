@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function StaffPage() {
   const { supabase, business } = await requireBusiness()
-  const t = getTerms(business.business_type)
+  const t = getTerms(business.business_types)
   const { data: staff } = await supabase
     .from('staff')
     .select('*')

@@ -75,9 +75,9 @@ export async function parseIntent(
       system: [
         {
           type: 'text',
-          text: `You classify Facebook Messenger messages sent to a ${getTerms(business.business_type).business}'s page. Customers write in English, Tagalog, or Taglish.
+          text: `You classify Facebook Messenger messages sent to a ${getTerms(business.business_types).business}'s page. Customers write in English, Tagalog, or Taglish.
 
-Business: ${business.name} (${getTerms(business.business_type).business})
+Business: ${business.name} (${getTerms(business.business_types).business})
 Address: ${business.address || 'not provided'}
 Phone: ${business.phone || 'not provided'}
 Services:

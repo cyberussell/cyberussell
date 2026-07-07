@@ -34,6 +34,7 @@ export const BUSINESS_TYPE_OPTIONS: { value: BusinessType; label: string }[] = [
   { value: 'other', label: 'Other' },
 ]
 
-export function getTerms(type: BusinessType | null | undefined): Terminology {
-  return TERMS[type ?? 'medical'] ?? TERMS.medical
+export function getTerms(types: BusinessType[] | null | undefined): Terminology {
+  const primary = types?.[0] ?? 'medical'
+  return TERMS[primary] ?? TERMS.medical
 }

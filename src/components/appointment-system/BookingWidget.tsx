@@ -10,10 +10,12 @@ export default function BookingWidget({
   businessSlug,
   services,
   businessNoun = 'clinic',
+  showStaffNames = true,
 }: {
   businessSlug: string
   services: Service[]
   businessNoun?: string
+  showStaffNames?: boolean
 }) {
   const [step, setStep] = useState<Step>('service')
   const [serviceId, setServiceId] = useState<string | null>(null)
@@ -125,7 +127,7 @@ export default function BookingWidget({
                   className="rounded-lg border border-slate-700 px-3 py-2 text-sm hover:border-emerald-400 transition"
                 >
                   {s.label}
-                  <span className="block text-xs text-slate-500">{s.staffName}</span>
+                  {showStaffNames && <span className="block text-xs text-slate-500">{s.staffName}</span>}
                 </button>
               ))}
             </div>
@@ -143,7 +145,8 @@ export default function BookingWidget({
             ← Change time
           </button>
           <p className="text-sm">
-            <span className="text-slate-400">Booking:</span> {slot.label} with {slot.staffName}
+            <span className="text-slate-400">Booking:</span> {slot.label}
+            {showStaffNames ? ` with ${slot.staffName}` : ''}
           </p>
           <input
             name="fullName"
@@ -154,8 +157,12 @@ export default function BookingWidget({
           />
           <input
             name="phone"
+            type="tel"
             required
-            minLength={10}
+            inputMode="numeric"
+            pattern="^09[0-9]{9}$"
+            maxLength={11}
+            title="Enter an 11-digit mobile number starting with 09 (e.g. 09171234567)"
             placeholder="Mobile number (09XXXXXXXXX)"
             className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none"
           />
@@ -180,7 +187,8 @@ export default function BookingWidget({
           <CircleCheck className="mx-auto h-8 w-8 text-emerald-300" aria-hidden />
           <p className="mt-2 font-semibold">You&apos;re booked!</p>
           <p className="mt-1 text-sm text-slate-400">
-            {slot?.label} with {slot?.staffName}. See you!
+            {slot?.label}
+            {showStaffNames ? ` with ${slot?.staffName}` : ''}. See you!
           </p>
         </div>
       )}

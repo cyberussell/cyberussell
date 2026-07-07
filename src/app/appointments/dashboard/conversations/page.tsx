@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function ConversationsPage() {
   const { supabase, business } = await requireBusiness()
-  const t = getTerms(business.business_type)
+  const t = getTerms(business.business_types)
   const { data: conversations } = await supabase
     .from('conversations')
     .select('*')

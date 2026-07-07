@@ -8,7 +8,7 @@ import { signOut } from '../actions'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { business } = await requireBusiness()
-  const t = getTerms(business.business_type)
+  const t = getTerms(business.business_types)
   const trialDaysLeft = Math.max(
     0,
     Math.ceil((new Date(business.trial_ends_at).getTime() - Date.now()) / 86400_000)

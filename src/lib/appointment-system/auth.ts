@@ -19,7 +19,25 @@ export async function requireBusiness() {
     .maybeSingle()
   if (!business) redirect('/appointments/signup?step=business')
 
-  return { supabase, user, business: business as Business }
+  let resolved = business as Business
+
+  // Lazy overdue check: a paid plan whose billing cycle has lapsed with no new
+  // payment gets suspended on next dashboard load (no cron needed for v1).
+  if (
+    resolved.plan_status === 'active' &&
+    resolved.plan_renews_at &&
+    new Date(resolved.plan_renews_at).getTime() < Date.now()
+  ) {
+    const { data: updated } = await supabase
+      .from('businesses')
+      .update({ plan_status: 'suspended' })
+      .eq('id', resolved.id)
+      .select('*')
+      .maybeSingle()
+    if (updated) resolved = updated as Business
+  }
+
+  return { supabase, user, business: resolved }
 }
 
 export async function getSessionUser() {
