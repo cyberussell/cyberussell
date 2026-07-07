@@ -62,7 +62,7 @@ export default async function BillingPage({
         </p>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-3">
         {PLAN_ORDER.map((tier) => (
           <BillingPlanCard key={tier} plan={PLANS[tier]} isCurrent={tier === business.plan_tier} />
         ))}
