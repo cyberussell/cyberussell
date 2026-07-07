@@ -3,12 +3,15 @@
 import { useActionState } from 'react'
 import Link from 'next/link'
 import { signIn, type ActionResult } from '../actions'
+import { AuthHeader, AuthFooter } from '@/components/appointment-system/AuthChrome'
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(signIn, {})
 
   return (
-    <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+    <div className="flex min-h-screen flex-col bg-slate-950">
+      <AuthHeader />
+      <main className="flex flex-1 items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <Link href="/appointments" className="block text-center text-2xl font-bold text-white mb-8">
           Appointment <span className="text-emerald-400">System</span>
@@ -48,6 +51,8 @@ export default function LoginPage() {
           </p>
         </form>
       </div>
-    </main>
+      </main>
+      <AuthFooter />
+    </div>
   )
 }

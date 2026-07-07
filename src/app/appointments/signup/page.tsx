@@ -5,13 +5,16 @@ import Link from 'next/link'
 import { MailCheck } from 'lucide-react'
 import { signUp, type ActionResult } from '../actions'
 import { BUSINESS_TYPE_OPTIONS } from '@/lib/appointment-system/terminology'
+import { AuthHeader, AuthFooter } from '@/components/appointment-system/AuthChrome'
 
 export default function SignupPage() {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(signUp, {})
   const confirmEmail = state.error === 'CONFIRM_EMAIL'
 
   return (
-    <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-12">
+    <div className="flex min-h-screen flex-col bg-slate-950">
+      <AuthHeader />
+      <main className="flex flex-1 items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <Link href="/appointments" className="block text-center text-2xl font-bold text-white mb-2">
           Appointment <span className="text-emerald-400">System</span>
@@ -73,7 +76,9 @@ export default function SignupPage() {
           </form>
         )}
       </div>
-    </main>
+      </main>
+      <AuthFooter />
+    </div>
   )
 }
 

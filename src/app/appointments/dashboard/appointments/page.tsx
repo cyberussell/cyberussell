@@ -28,6 +28,7 @@ interface ApptRow {
   intake_note: string
   amount_paid: number
   paid_at: string | null
+  reference_code: string | null
   clients: { full_name: string; phone: string } | null
   services: { name: string; price: number } | null
   staff: { name: string } | null
@@ -193,7 +194,7 @@ export default async function AppointmentsPage({
 
   const { data: weekApptData } = await supabase
     .from('appointments')
-    .select('id, starts_at, status, source, intake_note, amount_paid, paid_at, clients(full_name, phone), services(name, price), staff(name)')
+    .select('id, starts_at, status, source, intake_note, amount_paid, paid_at, reference_code, clients(full_name, phone), services(name, price), staff(name)')
     .eq('business_id', business.id)
     .gte('starts_at', weekStart.toISOString())
     .lt('starts_at', weekEnd.toISOString())
@@ -326,6 +327,11 @@ export default async function AppointmentsPage({
                 >
                   {a.status}
                 </span>
+                {a.reference_code && (
+                  <span className="ml-2 rounded-full border border-slate-700 px-2 py-0.5 font-mono text-xs tracking-wider text-slate-400">
+                    #{a.reference_code}
+                  </span>
+                )}
               </p>
               <p className="text-sm text-slate-400">
                 {a.clients?.full_name || 'Unknown'} · {a.services?.name} · {a.staff?.name} ·{' '}
