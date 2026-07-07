@@ -1,8 +1,21 @@
 'use client'
 
 import { useActionState, useEffect } from 'react'
+import { Check } from 'lucide-react'
 import { initiateBillingCheckout, type BillingActionResult } from '@/app/appointments/actions'
-import type { PlanConfig } from '@/lib/appointment-system/entitlements'
+import type { FeatureFlag, PlanConfig } from '@/lib/appointment-system/entitlements'
+
+const FEATURE_LABELS: Record<FeatureFlag, string> = {
+  public_booking_page: 'Public booking page',
+  customer_records: 'Client records',
+  email_notifications: 'Email notifications',
+  data_export: 'Data export',
+  messenger_booking_bot: 'Messenger booking bot',
+  automated_reminders: 'Automated reminders',
+  no_show_tracking: 'No-show tracking',
+  revenue_reports: 'Revenue reports',
+  ai_receptionist: 'AI receptionist (24/7)',
+}
 
 export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig; isCurrent: boolean }) {
   const [state, formAction, pending] = useActionState<BillingActionResult, FormData>(initiateBillingCheckout, {})
@@ -11,9 +24,15 @@ export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig;
     if (state.checkoutUrl) window.location.href = state.checkoutUrl
   }, [state.checkoutUrl])
 
+  const included = [
+    plan.monthlyAppointments === null ? 'Unlimited appointments' : `${plan.monthlyAppointments} appointments/mo`,
+    plan.providerLimit === null ? 'Unlimited staff' : `${plan.providerLimit} staff member${plan.providerLimit === 1 ? '' : 's'}`,
+    ...plan.features.map((f) => FEATURE_LABELS[f]),
+  ]
+
   return (
     <div
-      className={`rounded-xl border p-5 ${
+      className={`flex h-full flex-col rounded-xl border p-5 ${
         isCurrent ? 'border-emerald-500/40 bg-emerald-500/[0.03]' : 'border-slate-800 bg-slate-900'
       }`}
     >
@@ -23,12 +42,24 @@ export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig;
         <span className="text-sm font-normal text-slate-400">/mo</span>
       </p>
       <p className="mt-1 text-sm text-slate-400">{plan.tagline}</p>
+
+      <ul className="mt-4 space-y-2">
+        {included.map((label) => (
+          <li key={label} className="flex items-start gap-2 text-sm text-slate-300">
+            <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" aria-hidden />
+            {label}
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-4 flex-1" />
+
       {isCurrent ? (
-        <p className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-center text-sm font-medium text-emerald-300">
+        <p className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-center text-sm font-medium text-emerald-300">
           Current plan
         </p>
       ) : plan.priceMonthly > 0 ? (
-        <form action={formAction} className="mt-4">
+        <form action={formAction}>
           <input type="hidden" name="tier" value={plan.tier} />
           <button
             type="submit"
@@ -39,7 +70,7 @@ export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig;
           </button>
         </form>
       ) : (
-        <p className="mt-4 text-center text-xs text-slate-500">Downgrade by contacting support.</p>
+        <p className="text-center text-xs text-slate-500">Downgrade by contacting support.</p>
       )}
       {state.error && <p className="mt-2 text-xs text-red-400">{state.error}</p>}
     </div>
