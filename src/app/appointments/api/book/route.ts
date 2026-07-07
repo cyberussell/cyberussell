@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import QRCode from 'qrcode'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
-import { bookAppointment, getAvailableSlots } from '@/lib/appointment-system/slots'
+import { bookAppointment, getAvailableSlots, hasSameDayBooking, hasConfiguredHours } from '@/lib/appointment-system/slots'
 import { logEvent } from '@/lib/appointment-system/events'
 import { canCreateAppointment } from '@/lib/appointment-system/entitlements'
 import type { Business } from '@/lib/appointment-system/types'
@@ -20,6 +21,9 @@ export async function GET(request: NextRequest) {
   const { data: business } = await db.from('businesses').select('*').eq('slug', businessSlug).maybeSingle()
   if (!business || (business as Business).plan_status === 'suspended') {
     return NextResponse.json({ error: 'Business not found' }, { status: 404 })
+  }
+  if (!hasConfiguredHours(business as Business)) {
+    return NextResponse.json({ slots: [] })
   }
 
   const slots = await getAvailableSlots(db, {
@@ -67,12 +71,25 @@ export async function POST(request: NextRequest) {
       { status: 403 }
     )
   }
+  if (!hasConfiguredHours(business as Business)) {
+    return NextResponse.json({ error: 'This business is not accepting online bookings yet.' }, { status: 403 })
+  }
 
   const quota = await canCreateAppointment(db, business as Business)
   if (!quota.allowed) {
     await logEvent(db, business.id, 'booking_blocked_quota', { used: quota.used, limit: quota.limit })
     return NextResponse.json(
       { error: 'This business cannot accept more online bookings this month. Please contact them directly.' },
+      { status: 403 }
+    )
+  }
+
+  const sameDay = await hasSameDayBooking(db, business.id, (business as Business).timezone, input.startsAt, {
+    phone: input.phone,
+  })
+  if (sameDay) {
+    return NextResponse.json(
+      { error: 'You already have an appointment that day. Please choose a different day, or message the business to add another.' },
       { status: 403 }
     )
   }
@@ -96,5 +113,15 @@ export async function POST(request: NextRequest) {
     appointment_id: result.appointmentId,
     source: 'web',
   })
-  return NextResponse.json({ ok: true, appointmentId: result.appointmentId })
+
+  const manageUrl = `https://www.cyberussell.com/appointments/manage/${result.referenceCode}`
+  const qrDataUrl = await QRCode.toDataURL(manageUrl, { width: 240, margin: 1 })
+
+  return NextResponse.json({
+    ok: true,
+    appointmentId: result.appointmentId,
+    referenceCode: result.referenceCode,
+    manageUrl,
+    qrDataUrl,
+  })
 }

@@ -21,7 +21,6 @@ export default async function ConversationsPage() {
   const handoffs = list.filter((c) => c.mode === 'human')
 
   const hasBot = hasFeature(business, 'messenger_booking_bot')
-  const hasAi = hasFeature(business, 'ai_receptionist')
 
   return (
     <div className="space-y-8">
@@ -31,13 +30,6 @@ export default async function ConversationsPage() {
           (₱{tierWithFeature('messenger_booking_bot').priceMonthly.toLocaleString('en-PH')}/mo).{' '}
           <Link href="/appointments#pricing" className="font-semibold underline underline-offset-4">Compare plans</Link>.
           Until then, customers who message your Page receive your booking-page link.
-        </div>
-      )}
-      {hasBot && !hasAi && (
-        <div role="status" className="rounded-xl border border-slate-700 bg-slate-900 p-4 text-sm text-slate-300">
-          Free-text replies in English &amp; Taglish are handled by the AI Receptionist plan
-          (₱{tierWithFeature('ai_receptionist').priceMonthly.toLocaleString('en-PH')}/mo).{' '}
-          <Link href="/appointments#pricing" className="text-emerald-300 underline underline-offset-4">See what it does</Link>.
         </div>
       )}
       <div>

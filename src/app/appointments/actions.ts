@@ -9,6 +9,7 @@ import { logEvent } from '@/lib/appointment-system/events'
 import { bookAppointment, wallTimeToUtc } from '@/lib/appointment-system/slots'
 import { canCreateAppointment, canAddProvider, PLANS } from '@/lib/appointment-system/entitlements'
 import { createBillingCheckout } from '@/lib/appointment-system/paymongo'
+import { DAY_KEYS, type BusinessHours } from '@/lib/appointment-system/types'
 
 export interface ActionResult {
   error?: string
@@ -399,6 +400,25 @@ export async function updateClosedNotice(formData: FormData): Promise<void> {
     .eq('id', business.id)
   revalidatePath('/appointments/dashboard/settings')
   revalidatePath('/appointments/dashboard')
+}
+
+// Business-wide operating hours — gates whether the business accepts any
+// online bookings at all. Does not constrain per-staff Availability.
+export async function updateBusinessHours(formData: FormData): Promise<void> {
+  const { supabase, business } = await requireBusiness()
+  const hours: BusinessHours = DAY_KEYS.map((key) => {
+    if (formData.get(`${key}_open`) !== 'on') return null
+    const open = String(formData.get(`${key}_start`) ?? '')
+    const close = String(formData.get(`${key}_end`) ?? '')
+    if (!/^\d{2}:\d{2}$/.test(open) || !/^\d{2}:\d{2}$/.test(close) || open >= close) return null
+    return { open, close }
+  })
+  await supabase
+    .from('businesses')
+    .update({ settings: { ...business.settings, hours } })
+    .eq('id', business.id)
+  revalidatePath('/appointments/dashboard/settings')
+  revalidatePath(`/appointments/${business.slug}`)
 }
 
 export async function changePassword(_prev: ActionResult, formData: FormData): Promise<ActionResult> {

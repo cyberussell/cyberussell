@@ -42,11 +42,12 @@ const PLAN_BULLETS: Record<string, string[]> = {
     'Business hours, breaks & blocked dates',
     'Cancellation and rescheduling',
     'Manual and walk-in appointments',
-    'Up to 30 appointments / month',
+    'Up to 100 appointments / month',
   ],
   basic: [
     'Everything in Free',
-    'Up to 100 appointments / month',
+    'Up to 5 staff / providers',
+    'Up to 150 appointments / month',
     'Email notifications (soon)',
     'Expanded appointment statistics',
     'Customer management tools',
@@ -54,22 +55,12 @@ const PLAN_BULLETS: Record<string, string[]> = {
   ],
   pro: [
     'Everything in Basic',
-    'Up to 5 staff / providers',
+    'Unlimited staff / providers',
     'Unlimited appointments',
     'Messenger booking bot',
     'Automated reminders (soon)',
     'Customer notes & no-show tracking',
     'Basic revenue reports',
-  ],
-  ai_receptionist: [
-    'Everything in Pro',
-    'AI Messenger receptionist, 24/7',
-    'Free-text English & Taglish',
-    'Answers business FAQs',
-    'Checks real availability & books',
-    'Customer intake notes',
-    'Human handoff when needed',
-    'Fair-use AI usage',
   ],
 }
 
@@ -77,26 +68,23 @@ const PLAN_CTA: Record<string, string> = {
   free: 'Start Free',
   basic: 'Choose Basic',
   pro: 'Choose Pro',
-  ai_receptionist: 'Get AI Receptionist',
 }
 
 type Cell = boolean | string
-const COMPARISON: { feature: string; cells: [Cell, Cell, Cell, Cell] }[] = [
-  { feature: 'Monthly appointments', cells: ['30', '100', 'Unlimited', 'Unlimited'] },
-  { feature: 'Staff / providers', cells: ['1', '1', '5', '5'] },
-  { feature: 'Public booking page', cells: [true, true, true, true] },
-  { feature: 'Appointment calendar & dashboard', cells: [true, true, true, true] },
-  { feature: 'Customer records & history', cells: [true, true, true, true] },
-  { feature: 'Manual & walk-in bookings', cells: [true, true, true, true] },
-  { feature: 'Cancellation & rescheduling', cells: [true, true, true, true] },
-  { feature: 'No-show tracking', cells: [true, true, true, true] },
-  { feature: 'Email notifications', cells: [false, 'Soon', 'Soon', 'Soon'] },
-  { feature: 'Data export', cells: [false, 'Soon', 'Soon', 'Soon'] },
-  { feature: 'Messenger booking bot', cells: [false, false, true, true] },
-  { feature: 'Automated reminders', cells: [false, false, 'Soon', 'Soon'] },
-  { feature: 'Basic revenue reports', cells: [false, false, true, true] },
-  { feature: 'AI receptionist (English & Taglish)', cells: [false, false, false, true] },
-  { feature: 'Human handoff from AI', cells: [false, false, false, true] },
+const COMPARISON: { feature: string; cells: [Cell, Cell, Cell] }[] = [
+  { feature: 'Monthly appointments', cells: ['100', '150', 'Unlimited'] },
+  { feature: 'Staff / providers', cells: ['1', '5', 'Unlimited'] },
+  { feature: 'Public booking page', cells: [true, true, true] },
+  { feature: 'Appointment calendar & dashboard', cells: [true, true, true] },
+  { feature: 'Customer records & history', cells: [true, true, true] },
+  { feature: 'Manual & walk-in bookings', cells: [true, true, true] },
+  { feature: 'Cancellation & rescheduling', cells: [true, true, true] },
+  { feature: 'No-show tracking', cells: [true, true, true] },
+  { feature: 'Email notifications', cells: [false, 'Soon', 'Soon'] },
+  { feature: 'Data export', cells: [false, 'Soon', 'Soon'] },
+  { feature: 'Messenger booking bot', cells: [false, false, true] },
+  { feature: 'Automated reminders', cells: [false, false, 'Soon'] },
+  { feature: 'Basic revenue reports', cells: [false, false, true] },
 ]
 
 const FAQS: { q: string; a: string }[] = [
@@ -462,7 +450,7 @@ export default function AppointmentSystemLanding() {
               title="Start free. Upgrade only when you need more."
               sub="No long-term contracts. Cancel anytime. Upgrade when you need more capacity or automation."
             />
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-3">
               {PLAN_ORDER.map((tier) => {
                 const plan = PLANS[tier]
                 const popular = tier === 'pro'

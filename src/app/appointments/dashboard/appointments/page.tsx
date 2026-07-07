@@ -67,11 +67,11 @@ function dominantStatus(statuses: string[]): MonthDay['dominant'] {
 export default async function AppointmentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ w?: string; m?: string; view?: string }>
+  searchParams: Promise<{ w?: string; m?: string; view?: string; day?: string }>
 }) {
   const { supabase, business } = await requireBusiness()
   const t = getTerms(business.business_types)
-  const { w, m, view: viewParam } = await searchParams
+  const { w, m, view: viewParam, day: dayParam } = await searchParams
   const view = viewParam === 'month' ? 'month' : 'week'
   const weekOffset = Number(w ?? 0) || 0
   const monthOffset = Number(m ?? 0) || 0
@@ -211,6 +211,15 @@ export default async function AppointmentsPage({
     timeZone: 'UTC',
   })
 
+  const selectedDay = dayParam && days.find((d) => d.key === dayParam)
+  const visibleAppointments = selectedDay ? (byDay.get(selectedDay.key) ?? []) : appointments
+  const listHeading = selectedDay
+    ? new Date(monday.getTime() + days.findIndex((d) => d.key === selectedDay.key) * 86400_000).toLocaleDateString(
+        'en-PH',
+        { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' }
+      )
+    : "This week's appointments"
+
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -261,7 +270,7 @@ export default async function AppointmentsPage({
                 d.isToday ? 'border-emerald-500/30 bg-emerald-500/[0.03]' : 'border-slate-800 bg-slate-900/40'
               }`}
             >
-              {(byDay.get(d.key) ?? []).map((a) => (
+              {(byDay.get(d.key) ?? []).slice(0, 4).map((a) => (
                 <div
                   key={a.id}
                   className={`rounded border px-1.5 py-1 text-[11px] leading-tight ${STATUS_STYLES[a.status] ?? ''}`}
@@ -272,6 +281,14 @@ export default async function AppointmentsPage({
                   <span className="block truncate opacity-75">{a.services?.name}</span>
                 </div>
               ))}
+              {(byDay.get(d.key) ?? []).length > 4 && (
+                <Link
+                  href={`/appointments/dashboard/appointments?w=${weekOffset}&day=${d.key}`}
+                  className="block rounded border border-slate-700 px-1.5 py-1 text-center text-[11px] font-medium text-slate-400 transition hover:border-emerald-400 hover:text-emerald-300"
+                >
+                  +{(byDay.get(d.key) ?? []).length - 4} more
+                </Link>
+              )}
             </div>
           </div>
         ))}
@@ -282,13 +299,21 @@ export default async function AppointmentsPage({
 
       {/* Week list with actions */}
       <div className="space-y-2">
-        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">
-          This week&apos;s appointments
-        </h2>
-        {appointments.length === 0 && (
-          <p className="text-slate-500 text-sm">No appointments this week.</p>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">{listHeading}</h2>
+          {selectedDay && (
+            <Link
+              href={`/appointments/dashboard/appointments?w=${weekOffset}`}
+              className="text-xs font-medium text-emerald-400 hover:text-emerald-300"
+            >
+              ← Show full week
+            </Link>
+          )}
+        </div>
+        {visibleAppointments.length === 0 && (
+          <p className="text-slate-500 text-sm">No appointments {selectedDay ? 'that day' : 'this week'}.</p>
         )}
-        {appointments.map((a) => (
+        {visibleAppointments.map((a) => (
           <div
             key={a.id}
             className="rounded-xl border border-slate-800 bg-slate-900 p-4 flex flex-wrap items-center justify-between gap-3"

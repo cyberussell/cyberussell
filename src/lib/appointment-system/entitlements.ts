@@ -17,7 +17,6 @@ export type FeatureFlag =
   | 'automated_reminders'
   | 'no_show_tracking'
   | 'revenue_reports'
-  | 'ai_receptionist'
 
 export interface PlanConfig {
   tier: PlanTier
@@ -37,7 +36,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     name: 'Free',
     priceMonthly: 0,
     tagline: 'Start accepting bookings.',
-    monthlyAppointments: 30,
+    monthlyAppointments: 100,
     providerLimit: 1,
     features: ['public_booking_page', 'customer_records', 'no_show_tracking'],
   },
@@ -46,8 +45,8 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     name: 'Basic',
     priceMonthly: 299,
     tagline: 'Simple online booking.',
-    monthlyAppointments: 100,
-    providerLimit: 1,
+    monthlyAppointments: 150,
+    providerLimit: 5,
     features: [
       'public_booking_page',
       'customer_records',
@@ -62,7 +61,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     priceMonthly: 699,
     tagline: 'Booking automation for growing businesses.',
     monthlyAppointments: null,
-    providerLimit: 5,
+    providerLimit: null,
     features: [
       'public_booking_page',
       'customer_records',
@@ -72,30 +71,11 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
       'messenger_booking_bot',
       'automated_reminders',
       'revenue_reports',
-    ],
-  },
-  ai_receptionist: {
-    tier: 'ai_receptionist',
-    name: 'AI Receptionist',
-    priceMonthly: 1499,
-    tagline: 'Your AI receptionist, available 24/7.',
-    monthlyAppointments: null,
-    providerLimit: 5,
-    features: [
-      'public_booking_page',
-      'customer_records',
-      'no_show_tracking',
-      'email_notifications',
-      'data_export',
-      'messenger_booking_bot',
-      'automated_reminders',
-      'revenue_reports',
-      'ai_receptionist',
     ],
   },
 }
 
-export const PLAN_ORDER: PlanTier[] = ['free', 'basic', 'pro', 'ai_receptionist']
+export const PLAN_ORDER: PlanTier[] = ['free', 'basic', 'pro']
 
 function planOf(business: Pick<Business, 'plan_tier'>): PlanConfig {
   return PLANS[business.plan_tier] ?? PLANS.free
@@ -112,13 +92,9 @@ export function getFeatureLimit(
   return planOf(business)[limit]
 }
 
-export function canUseAI(business: Pick<Business, 'plan_tier'>): boolean {
-  return hasFeature(business, 'ai_receptionist')
-}
-
 /** First tier (in upgrade order) that includes the feature — for upgrade prompts. */
 export function tierWithFeature(feature: FeatureFlag): PlanConfig {
-  const tier = PLAN_ORDER.find((p) => PLANS[p].features.includes(feature)) ?? 'ai_receptionist'
+  const tier = PLAN_ORDER.find((p) => PLANS[p].features.includes(feature)) ?? 'pro'
   return PLANS[tier]
 }
 

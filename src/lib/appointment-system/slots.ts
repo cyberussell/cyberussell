@@ -1,5 +1,11 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Availability, Service, Slot, Staff } from './types'
+import type { Availability, Business, BusinessHours, Service, Slot, Staff } from './types'
+
+/** True once the business has set at least one day of operating hours — gates whether it accepts any bookings at all. */
+export function hasConfiguredHours(business: Pick<Business, 'settings'>): boolean {
+  const hours = (business.settings as { hours?: BusinessHours }).hours
+  return Array.isArray(hours) && hours.some((d) => d !== null)
+}
 
 // Minutes of lead time required before a slot can be booked.
 const MIN_LEAD_MINUTES = 30
@@ -170,8 +176,54 @@ export interface BookingInput {
 }
 
 export type BookingResult =
-  | { ok: true; appointmentId: string }
+  | { ok: true; appointmentId: string; referenceCode: string }
   | { ok: false; reason: 'conflict' | 'error'; message: string }
+
+function generateReferenceCode(): string {
+  let code = ''
+  for (let i = 0; i < 6; i++) {
+    code += Math.floor(Math.random() * 10)
+  }
+  return code
+}
+
+/**
+ * True if this client already has a pending/confirmed appointment with this
+ * business on the same calendar day (business timezone) as `startsAtIso`.
+ * Used to stop a single customer from booking out an entire day's capacity
+ * on self-service channels (web/Messenger) — staff manual bookings bypass this.
+ */
+export async function hasSameDayBooking(
+  db: SupabaseClient,
+  businessId: string,
+  timezone: string,
+  startsAtIso: string,
+  client: { phone?: string; messengerPsid?: string }
+): Promise<boolean> {
+  if (!client.phone && !client.messengerPsid) return false
+
+  let clientQuery = db.from('clients').select('id').eq('business_id', businessId)
+  clientQuery = client.messengerPsid
+    ? clientQuery.eq('messenger_psid', client.messengerPsid)
+    : clientQuery.eq('phone', client.phone as string).is('messenger_psid', null)
+  const { data: existingClient } = await clientQuery.maybeSingle()
+  if (!existingClient) return false
+
+  const { y, m, d } = dateInTz(new Date(startsAtIso), timezone)
+  const dayStart = zonedToUtc(y, m, d, 0, 0, timezone)
+  const dayEnd = new Date(dayStart.getTime() + 24 * 3600_000)
+
+  const { count } = await db
+    .from('appointments')
+    .select('id', { count: 'exact', head: true })
+    .eq('business_id', businessId)
+    .eq('client_id', existingClient.id)
+    .in('status', ['pending', 'confirmed'])
+    .gte('starts_at', dayStart.toISOString())
+    .lt('starts_at', dayEnd.toISOString())
+
+  return (count ?? 0) > 0
+}
 
 // Insert an appointment; the DB exclusion constraint is the final guard
 // against double-booking under concurrency.
@@ -226,28 +278,36 @@ export async function bookAppointment(db: SupabaseClient, input: BookingInput): 
 
   const startsAt = new Date(input.startsAt)
   const endsAt = new Date(startsAt.getTime() + service.duration_min * 60_000)
-  const { data: appt, error } = await db
-    .from('appointments')
-    .insert({
-      business_id: input.businessId,
-      client_id: clientId,
-      staff_id: input.staffId,
-      service_id: input.serviceId,
-      starts_at: startsAt.toISOString(),
-      ends_at: endsAt.toISOString(),
-      status: 'confirmed',
-      source: input.source,
-      intake_note: input.intakeNote ?? '',
-    })
-    .select('id')
-    .single()
 
-  if (error) {
+  // Retry on the astronomically unlikely chance of a reference_code collision.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const referenceCode = generateReferenceCode()
+    const { data: appt, error } = await db
+      .from('appointments')
+      .insert({
+        business_id: input.businessId,
+        client_id: clientId,
+        staff_id: input.staffId,
+        service_id: input.serviceId,
+        starts_at: startsAt.toISOString(),
+        ends_at: endsAt.toISOString(),
+        status: 'confirmed',
+        source: input.source,
+        intake_note: input.intakeNote ?? '',
+        reference_code: referenceCode,
+      })
+      .select('id')
+      .single()
+
+    if (!error) return { ok: true, appointmentId: appt.id, referenceCode }
+
     // 23P01 = exclusion constraint violation → slot was taken concurrently
     if (error.code === '23P01') {
       return { ok: false, reason: 'conflict', message: 'That slot was just taken.' }
     }
+    // 23505 = unique violation — retry with a fresh code unless it's some other conflict.
+    if (error.code === '23505' && error.message.includes('reference_code')) continue
     return { ok: false, reason: 'error', message: error.message }
   }
-  return { ok: true, appointmentId: appt.id }
+  return { ok: false, reason: 'error', message: 'Could not generate a unique reference code — please try again.' }
 }

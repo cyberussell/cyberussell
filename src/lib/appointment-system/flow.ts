@@ -1,11 +1,10 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Business, Conversation, ConversationState, Service, Slot } from './types'
-import { getAvailableSlots, bookAppointment, formatSlotLabel } from './slots'
+import { getAvailableSlots, bookAppointment, formatSlotLabel, hasSameDayBooking, hasConfiguredHours } from './slots'
 import { sendText, sendButtons, sendQuickReplies } from './messenger'
-import { parseIntent } from './ai'
 import { logEvent } from './events'
-import { hasFeature, canUseAI, canCreateAppointment } from './entitlements'
+import { hasFeature, canCreateAppointment } from './entitlements'
 
 // Flow: menu → choosing_service → choosing_slot → (known client? book)
 //       → collecting_name → collecting_phone → book → confirmation.
@@ -38,6 +37,15 @@ export async function handleIncoming(
       psid,
       settings.closed_message ||
         `Hi po! ${business.name} is temporarily closed. Message na lang po kami ulit kapag bukas na. 🙏`
+    )
+    return
+  }
+
+  if (!hasConfiguredHours(business)) {
+    await sendText(
+      pageToken,
+      psid,
+      `Hi po! ${business.name} hasn't set up online booking hours yet. Please message us again soon. 🙏`
     )
     return
   }
@@ -145,58 +153,7 @@ async function handleText(
     } as ConversationState & { clientName?: string; clientPhone?: string })
   }
 
-  // Everything else: cheap AI classification, then back into the button flow.
-  // Free-text understanding is exclusive to the AI Receptionist plan; other
-  // plans fall through to the button menu below.
-  const services = await getActiveServices(db, business.id)
-  const result = canUseAI(business) ? await parseIntent(business, services, text) : null
-
-  if (result) {
-    const { parsed, usage } = result
-    await logEvent(db, business.id, 'ai_call', { psid, usage, intent: parsed.intent })
-
-    // Free-text symptom descriptions become the doctor's intake note.
-    if (parsed.intake_note) {
-      await setState(db, convo.id, { ...state, intakeNote: parsed.intake_note })
-      convo.state = { ...state, intakeNote: parsed.intake_note }
-    }
-
-    switch (parsed.intent) {
-      case 'book': {
-        const match = parsed.service_name ? matchService(services, parsed.service_name) : null
-        if (match) return showSlots(db, business, pageToken, psid, convo, match.id)
-        return showServices(db, business, pageToken, psid, convo)
-      }
-      case 'question': {
-        if (parsed.answer) {
-          await sendText(pageToken, psid, parsed.answer)
-          await sendButtons(pageToken, psid, 'May iba pa po ba kayong kailangan?', [
-            { title: '📅 Book appointment', payload: 'BOOK' },
-            { title: '💬 Talk to staff', payload: 'TALK_HUMAN' },
-          ])
-          return
-        }
-        return handoffToHuman(db, business, pageToken, psid, convo)
-      }
-      case 'human':
-        return handoffToHuman(db, business, pageToken, psid, convo)
-      case 'cancel':
-        // v1: cancellations go to staff.
-        return handoffToHuman(
-          db,
-          business,
-          pageToken,
-          psid,
-          convo,
-          'Sige po, ipapasa ko kayo sa staff namin para ma-ayos ang appointment ninyo. 🙏'
-        )
-      case 'greeting':
-      case 'other':
-        return showMainMenu(db, business, pageToken, psid, convo)
-    }
-  }
-
-  // AI unavailable → the flow still works via buttons.
+  // No free-text understanding — everything else falls back to the button menu.
   return showMainMenu(db, business, pageToken, psid, convo)
 }
 
@@ -333,6 +290,17 @@ async function finalizeBooking(
     )
   }
 
+  const sameDay = await hasSameDayBooking(db, business.id, business.timezone, state.slotStart, { messengerPsid: psid })
+  if (sameDay) {
+    await setState(db, convo.id, { step: 'idle' })
+    await sendText(
+      pageToken,
+      psid,
+      'May existing appointment na po kayo sa araw na iyon. Pumili po ng ibang araw, o i-tap ang "Talk to staff" kung kailangan niyo ng dagdag na booking. 🙏'
+    )
+    return
+  }
+
   const result = await bookAppointment(db, {
     businessId: business.id,
     serviceId: state.serviceId,
@@ -368,7 +336,7 @@ async function finalizeBooking(
   await sendText(
     pageToken,
     psid,
-    `Booked na po! ✅\n\n${service?.name ?? 'Appointment'}\n🗓️ ${label}\n📍 ${business.name}${business.address ? `, ${business.address}` : ''}\n\nSee you po! Magre-remind kami bago ang schedule ninyo.`
+    `Booked na po! ✅\n\n${service?.name ?? 'Appointment'}\n🗓️ ${label}\n📍 ${business.name}${business.address ? `, ${business.address}` : ''}\n\nSee you po! Magre-remind kami bago ang schedule ninyo.\n\nReference code: ${result.referenceCode}\nPara mag-cancel o mag-reschedule: https://www.cyberussell.com/appointments/manage/${result.referenceCode}`
   )
 }
 
@@ -435,13 +403,4 @@ async function getActiveServices(db: SupabaseClient, businessId: string): Promis
     .eq('active', true)
     .order('created_at')
   return (data ?? []) as Service[]
-}
-
-function matchService(services: Service[], guess: string): Service | null {
-  const g = guess.toLowerCase()
-  return (
-    services.find((s) => s.name.toLowerCase() === g) ??
-    services.find((s) => s.name.toLowerCase().includes(g) || g.includes(s.name.toLowerCase())) ??
-    null
-  )
 }

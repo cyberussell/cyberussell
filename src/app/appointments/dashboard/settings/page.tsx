@@ -1,10 +1,13 @@
 import Link from 'next/link'
+import QRCode from 'qrcode'
 import { CircleCheck } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import ChangePasswordForm from '@/components/appointment-system/ChangePasswordForm'
 import { PLANS, PLAN_ORDER } from '@/lib/appointment-system/entitlements'
-import { updateBusinessProfile, saveFbConnection, updateClosedNotice } from '../../actions'
+import { hasConfiguredHours } from '@/lib/appointment-system/slots'
+import { DAY_KEYS, DAY_LABELS, type BusinessHours } from '@/lib/appointment-system/types'
+import { updateBusinessProfile, saveFbConnection, updateClosedNotice, updateBusinessHours } from '../../actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,17 +22,21 @@ export default async function SettingsPage() {
   const { business } = await requireBusiness()
   const t = getTerms(business.business_types)
   const connected = Boolean(business.fb_page_id)
-  const settings = business.settings as { closed?: boolean; closed_message?: string }
+  const settings = business.settings as { closed?: boolean; closed_message?: string; hours?: BusinessHours }
+  const hours = settings.hours ?? DAY_KEYS.map(() => null)
+  const hoursConfigured = hasConfiguredHours(business)
   const trialDaysLeft = Math.max(
     0,
     Math.ceil((new Date(business.trial_ends_at).getTime() - Date.now()) / 86400_000)
   )
   const webhookUrl = 'https://www.cyberussell.com/appointments/api/messenger/webhook'
+  const bookingUrl = `https://www.cyberussell.com/appointments/${business.slug}`
+  const bookingQrDataUrl = await QRCode.toDataURL(bookingUrl, { width: 180, margin: 1 })
 
   return (
-    <div className="space-y-10 max-w-2xl">
+    <div className="max-w-5xl lg:columns-2 lg:gap-x-8">
       {/* Profile */}
-      <section className="space-y-4">
+      <section className="mb-10 space-y-4 break-inside-avoid">
         <h1 className="text-2xl font-bold">Business profile</h1>
         <form action={updateBusinessProfile} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-5">
           <Field label="Business name" name="name" defaultValue={business.name} required />
@@ -45,10 +52,27 @@ export default async function SettingsPage() {
             Save profile
           </button>
         </form>
+        <div className="flex items-center gap-4 rounded-xl border border-slate-800 bg-slate-900 p-5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={bookingQrDataUrl} alt="QR code to your public booking page" className="h-24 w-24 shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-slate-200">Your booking page QR code</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Print or display this so {t.clients} can scan straight to your booking page — no typing needed.
+            </p>
+            <a
+              href={bookingQrDataUrl}
+              download={`${business.slug}-booking-qr.png`}
+              className="mt-2 inline-block text-xs font-medium text-emerald-400 underline underline-offset-4 hover:text-emerald-300"
+            >
+              Download QR code
+            </a>
+          </div>
+        </div>
       </section>
 
       {/* Closed notice */}
-      <section className="space-y-4">
+      <section className="mb-10 space-y-4 break-inside-avoid">
         <div>
           <h2 className="text-xl font-bold">
             Business status{' '}
@@ -90,8 +114,63 @@ export default async function SettingsPage() {
         </form>
       </section>
 
+      {/* Business hours */}
+      <section className="mb-10 space-y-4 break-inside-avoid">
+        <div>
+          <h2 className="text-xl font-bold">
+            Business hours{' '}
+            <span
+              className={`ml-2 rounded-full px-3 py-1 text-xs align-middle ${
+                hoursConfigured ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'
+              }`}
+            >
+              {hoursConfigured ? 'Set' : 'Not set — booking page paused'}
+            </span>
+          </h2>
+          <p className="text-slate-400 text-sm mt-1">
+            Set which days you&apos;re open and your general hours. Until at least one day is set,
+            your public booking page won&apos;t accept online bookings. This doesn&apos;t change staff
+            Availability — it&apos;s a general "we&apos;re open" signal shown to {t.clients}.
+          </p>
+        </div>
+        <form action={updateBusinessHours} className="space-y-3 rounded-xl border border-slate-800 bg-slate-900 p-5">
+          {DAY_KEYS.map((key, i) => {
+            const day = hours[i]
+            return (
+              <div key={key} className="flex flex-wrap items-center gap-3">
+                <label className="flex w-32 items-center gap-2 text-sm text-slate-300">
+                  <input
+                    type="checkbox"
+                    name={`${key}_open`}
+                    defaultChecked={Boolean(day)}
+                    className="h-4 w-4 accent-emerald-500"
+                  />
+                  {DAY_LABELS[i]}
+                </label>
+                <input
+                  type="time"
+                  name={`${key}_start`}
+                  defaultValue={day?.open ?? '09:00'}
+                  className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-white focus:border-emerald-400 focus:outline-none"
+                />
+                <span className="text-slate-500 text-sm">to</span>
+                <input
+                  type="time"
+                  name={`${key}_end`}
+                  defaultValue={day?.close ?? '17:00'}
+                  className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-white focus:border-emerald-400 focus:outline-none"
+                />
+              </div>
+            )
+          })}
+          <button className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">
+            Save hours
+          </button>
+        </form>
+      </section>
+
       {/* Billing */}
-      <section className="space-y-4">
+      <section className="mb-10 space-y-4 break-inside-avoid">
         <h2 className="text-xl font-bold">Billing</h2>
         <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -148,7 +227,7 @@ export default async function SettingsPage() {
       </section>
 
       {/* Facebook connection */}
-      <section className="space-y-4">
+      <section className="mb-10 space-y-4 break-inside-avoid">
         <div>
           <h2 className="text-xl font-bold">
             Facebook Page connection{' '}
@@ -181,7 +260,7 @@ export default async function SettingsPage() {
       </section>
 
       {/* Password */}
-      <section className="space-y-4">
+      <section className="mb-10 space-y-4 break-inside-avoid">
         <h2 className="text-xl font-bold">Change password</h2>
         <ChangePasswordForm />
       </section>

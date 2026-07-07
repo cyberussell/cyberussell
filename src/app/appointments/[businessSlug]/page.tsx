@@ -3,6 +3,7 @@ import { MessageCircle, MapPin, Phone } from 'lucide-react'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
 import type { Business, Service } from '@/lib/appointment-system/types'
 import { getTerms } from '@/lib/appointment-system/terminology'
+import { hasConfiguredHours } from '@/lib/appointment-system/slots'
 import BookingWidget from '@/components/appointment-system/BookingWidget'
 
 export const dynamic = 'force-dynamic'
@@ -43,6 +44,8 @@ export default async function BusinessPublicPage({
     .eq('active', true)
 
   const closed = (business.settings as { closed?: boolean }).closed
+  const hoursConfigured = hasConfiguredHours(business)
+  const acceptingBookings = !closed && hoursConfigured
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
@@ -89,7 +92,16 @@ export default async function BusinessPublicPage({
           </div>
         )}
 
-        {business.fb_page_id && (
+        {!closed && !hoursConfigured && (
+          <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center backdrop-blur-xl">
+            <p className="font-semibold text-slate-300">Not accepting online bookings yet</p>
+            <p className="mt-1.5 text-sm text-slate-400">
+              {`This ${getTerms(business.business_types).business} hasn't set up its booking hours yet — please check back soon.`}
+            </p>
+          </div>
+        )}
+
+        {acceptingBookings && business.fb_page_id && (
           <a
             href={`https://m.me/${business.fb_page_id}`}
             target="_blank"
@@ -101,7 +113,7 @@ export default async function BusinessPublicPage({
           </a>
         )}
 
-        {!closed && (
+        {acceptingBookings && (
           <div className="mt-12">
             <p className="text-center text-xs font-semibold uppercase tracking-wider text-emerald-400/80">
               {business.fb_page_id ? 'Web booking' : 'Booking'}

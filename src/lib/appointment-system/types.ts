@@ -1,8 +1,13 @@
-export type PlanTier = 'free' | 'basic' | 'pro' | 'ai_receptionist'
+export type PlanTier = 'free' | 'basic' | 'pro'
 export type PlanStatus = 'trial' | 'active' | 'suspended'
 export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show'
 export type AppointmentSource = 'messenger' | 'web' | 'manual'
 export type BusinessType = 'medical' | 'dental' | 'spa' | 'salon' | 'law' | 'veterinary' | 'other'
+
+/** Business-wide open/close hours per weekday, index 0 = Sunday .. 6 = Saturday. null = closed that day. */
+export type BusinessHours = ({ open: string; close: string } | null)[]
+export const DAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
+export const DAY_LABELS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
 
 export interface Business {
   id: string
@@ -76,6 +81,7 @@ export interface Appointment {
   intake_note: string
   amount_paid: number
   paid_at: string | null
+  reference_code: string | null
   created_at: string
 }
 

@@ -14,7 +14,6 @@ const FEATURE_LABELS: Record<FeatureFlag, string> = {
   automated_reminders: 'Automated reminders',
   no_show_tracking: 'No-show tracking',
   revenue_reports: 'Revenue reports',
-  ai_receptionist: 'AI receptionist (24/7)',
 }
 
 export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig; isCurrent: boolean }) {
