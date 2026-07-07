@@ -1,6 +1,7 @@
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { PLANS, PLAN_ORDER } from '@/lib/appointment-system/entitlements'
 import BillingPlanCard from '@/components/appointment-system/BillingPlanCard'
+import PlanComparisonTable from '@/components/appointment-system/PlanComparisonTable'
 
 export const dynamic = 'force-dynamic'
 
@@ -66,6 +67,8 @@ export default async function BillingPage({
           <BillingPlanCard key={tier} plan={PLANS[tier]} isCurrent={tier === business.plan_tier} />
         ))}
       </div>
+
+      <PlanComparisonTable />
 
       <p className="text-xs text-slate-500">
         Prefer GCash or bank transfer? Message us directly and we&apos;ll flip your plan manually after payment.

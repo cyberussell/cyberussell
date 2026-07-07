@@ -8,6 +8,7 @@ import LandingNav from '@/components/appointment-system/landing/LandingNav'
 import TrackedLink from '@/components/appointment-system/landing/TrackedLink'
 import AiDemo from '@/components/appointment-system/landing/AiDemo'
 import RoiCalculator from '@/components/appointment-system/landing/RoiCalculator'
+import PlanComparisonTable from '@/components/appointment-system/PlanComparisonTable'
 
 export const metadata: Metadata = {
   title: 'Affordable Online Appointment Booking System for Small Businesses | Cyberussell',
@@ -69,22 +70,6 @@ const PLAN_CTA: Record<string, string> = {
   pro: 'Choose Pro',
 }
 
-type Cell = boolean | string
-const COMPARISON: { feature: string; cells: [Cell, Cell, Cell] }[] = [
-  { feature: 'Monthly appointments', cells: ['100', 'Unlimited', 'Unlimited'] },
-  { feature: 'Staff / providers', cells: ['1', '5', 'Unlimited'] },
-  { feature: 'Public booking page', cells: [true, true, true] },
-  { feature: 'Appointment calendar & dashboard', cells: [true, true, true] },
-  { feature: 'Customer records & history', cells: [true, true, true] },
-  { feature: 'Manual & walk-in bookings', cells: [true, true, true] },
-  { feature: 'Cancellation & rescheduling', cells: [true, true, true] },
-  { feature: 'No-show tracking', cells: [true, true, true] },
-  { feature: 'Email notifications', cells: [false, 'Soon', 'Soon'] },
-  { feature: 'Data export', cells: [false, false, 'Soon'] },
-  { feature: 'Messenger booking bot', cells: [false, false, true] },
-  { feature: 'Automated reminders', cells: [false, false, 'Soon'] },
-  { feature: 'Basic revenue reports', cells: [false, false, true] },
-]
 
 const FAQS: { q: string; a: string }[] = [
   { q: 'Do I need a website?', a: 'No. The system gives you a public booking page you can share anywhere — Facebook, Messenger, Instagram, TikTok, or Google Business Profile.' },
@@ -157,9 +142,6 @@ function SectionHeading({ eyebrow, title, sub }: { eyebrow?: string; title: stri
 
 function Check() {
   return <CheckIcon aria-label="Included" className="h-4 w-4 shrink-0 text-emerald-400" />
-}
-function Dash() {
-  return <span aria-label="Not included" className="text-slate-600">—</span>
 }
 
 // ── Page ─────────────────────────────────────────────────────────────────────
@@ -459,8 +441,8 @@ export default function AppointmentSystemLanding() {
                     className={`relative flex flex-col rounded-2xl p-5 ${popular ? 'as-glass-strong border-emerald-400/50 shadow-lg shadow-emerald-500/10' : 'as-glass'}`}
                   >
                     {popular && (
-                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-400 to-amber-300 px-3 py-0.5 text-[11px] font-bold text-slate-950">
-                        MOST POPULAR
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-400 to-amber-300 px-3 py-0.5 text-[11px] font-bold uppercase text-slate-950">
+                        Recommended
                       </span>
                     )}
                     <h3 className="font-semibold text-white">{plan.name}</h3>
@@ -493,46 +475,12 @@ export default function AppointmentSystemLanding() {
             </div>
 
             {/* Comparison table */}
-            <details className="group mt-10">
-              <summary className="as-glass mx-auto flex w-fit cursor-pointer items-center gap-2 rounded-xl px-5 py-2.5 text-sm text-slate-200 hover:bg-white/10 [&::-webkit-details-marker]:hidden">
-                Compare all features
-                <span className="transition group-open:rotate-180" aria-hidden>▾</span>
-              </summary>
-              <div className="mt-6 overflow-x-auto rounded-2xl border border-white/10">
-                <table className="w-full min-w-[640px] border-collapse text-sm">
-                  <caption className="sr-only">Feature comparison across plans</caption>
-                  <thead>
-                    <tr className="bg-white/[0.06] text-left">
-                      <th scope="col" className="px-4 py-3 font-semibold text-white">Feature</th>
-                      {PLAN_ORDER.map((tier) => (
-                        <th key={tier} scope="col" className={`px-4 py-3 text-center font-semibold ${tier === 'pro' ? 'text-emerald-300' : 'text-white'}`}>
-                          {PLANS[tier].name}
-                          <span className="block text-[11px] font-normal text-slate-400">
-                            {PLANS[tier].priceMonthly === 0 ? '₱0' : `₱${PLANS[tier].priceMonthly.toLocaleString('en-PH')}`}/mo
-                          </span>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {COMPARISON.map((row, i) => (
-                      <tr key={row.feature} className={i % 2 ? 'bg-white/[0.03]' : ''}>
-                        <th scope="row" className="px-4 py-2.5 text-left font-normal text-slate-300">{row.feature}</th>
-                        {row.cells.map((cell, j) => (
-                          <td key={j} className="px-4 py-2.5 text-center text-slate-300">
-                            {cell === true ? <span className="flex justify-center"><Check /></span> : cell === false ? <Dash /> : cell === 'Soon' ? <span className="rounded-full bg-amber-300/15 px-2 py-0.5 text-[11px] text-amber-300">Soon</span> : cell}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+            <div className="mt-10">
+              <PlanComparisonTable toggleClassName="as-glass mx-auto flex w-fit cursor-pointer items-center gap-2 rounded-xl px-5 py-2.5 text-sm text-slate-200 hover:bg-white/10 [&::-webkit-details-marker]:hidden" />
               <p className="mt-3 text-center text-xs text-slate-500">
-                Features marked &ldquo;Soon&rdquo; are on the roadmap and not yet available. Billing is currently
-                handled manually (GCash / bank transfer) — see Settings after signup.
+                Billing is currently handled manually (GCash / bank transfer) — see Settings after signup.
               </p>
-            </details>
+            </div>
           </section>
 
           {/* ── ROI calculator ── */}
