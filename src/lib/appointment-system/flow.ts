@@ -106,9 +106,13 @@ async function handlePayload(
     const serviceId = payload.slice('SERVICE_'.length)
     return showSlots(db, business, pageToken, psid, convo, serviceId)
   }
-  if (payload.startsWith('SLOT_')) {
-    // SLOT_{staffId}_{epochMs}
-    const rest = payload.slice('SLOT_'.length)
+  if (payload.startsWith('TIME_')) {
+    const startsAt = new Date(Number(payload.slice('TIME_'.length))).toISOString()
+    return onTimeChosen(db, business, pageToken, psid, convo, startsAt)
+  }
+  if (payload.startsWith('STAFF_')) {
+    // STAFF_{staffId}_{epochMs}
+    const rest = payload.slice('STAFF_'.length)
     const sep = rest.indexOf('_')
     const staffId = rest.slice(0, sep)
     const startsAt = new Date(Number(rest.slice(sep + 1))).toISOString()
@@ -206,12 +210,14 @@ async function showSlots(
   convo: Conversation,
   serviceId: string
 ): Promise<void> {
+  // Fetch more than we'll display so that duplicate times across multiple
+  // staff still leave enough distinct times to fill the quick-reply list.
   const slots = await getAvailableSlots(db, {
     businessId: business.id,
     timezone: business.timezone,
     serviceId,
     days: 7,
-    limit: 8,
+    limit: 24,
   })
   if (slots.length === 0) {
     await sendText(pageToken, psid, 'Pasensya na po, fully booked kami this week. 😔')
@@ -222,13 +228,67 @@ async function showSlots(
     return
   }
   await setState(db, convo.id, { ...convo.state, step: 'choosing_slot', serviceId })
+
+  // De-dupe by start time — staff is chosen as a separate optional step,
+  // only when more than one staff member is free at the chosen time.
+  const uniqueTimes: Slot[] = []
+  const seen = new Set<string>()
+  for (const s of slots) {
+    if (seen.has(s.startsAt)) continue
+    seen.add(s.startsAt)
+    uniqueTimes.push(s)
+  }
+
   await sendQuickReplies(
     pageToken,
     psid,
     'Eto po ang mga available na schedule — pili lang po: 🗓️',
-    slots.map((s: Slot) => ({
+    uniqueTimes.map((s) => ({
       title: s.label.slice(0, 20),
-      payload: `SLOT_${s.staffId}_${new Date(s.startsAt).getTime()}`,
+      payload: `TIME_${new Date(s.startsAt).getTime()}`,
+    }))
+  )
+}
+
+async function onTimeChosen(
+  db: SupabaseClient,
+  business: Business,
+  pageToken: string,
+  psid: string,
+  convo: Conversation,
+  startsAt: string
+): Promise<void> {
+  const serviceId = convo.state.serviceId
+  if (!serviceId) return showServices(db, business, pageToken, psid, convo)
+
+  const slots = await getAvailableSlots(db, {
+    businessId: business.id,
+    timezone: business.timezone,
+    serviceId,
+    days: 7,
+    limit: 100,
+  })
+  const candidates = slots.filter((s) => s.startsAt === startsAt)
+
+  if (candidates.length === 0) {
+    await sendText(pageToken, psid, 'Ay, kakakuha lang po ng slot na iyon. 😅 Eto po ang iba pang available:')
+    return showSlots(db, business, pageToken, psid, convo, serviceId)
+  }
+
+  // Only one staff member free at that time — no need to ask, book straight through.
+  if (candidates.length === 1) {
+    return onSlotChosen(db, business, pageToken, psid, convo, candidates[0].staffId, startsAt)
+  }
+
+  // Optional staff choice: more than one staff member is free at this time.
+  await setState(db, convo.id, { ...convo.state, step: 'choosing_staff', slotStart: startsAt })
+  await sendQuickReplies(
+    pageToken,
+    psid,
+    'Sino po ang gusto ninyong puntahan?',
+    candidates.map((s: Slot) => ({
+      title: s.staffName.slice(0, 20),
+      payload: `STAFF_${s.staffId}_${new Date(startsAt).getTime()}`,
     }))
   )
 }

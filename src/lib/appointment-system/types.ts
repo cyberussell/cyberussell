@@ -89,6 +89,7 @@ export type FlowStep =
   | 'idle'
   | 'choosing_service'
   | 'choosing_slot'
+  | 'choosing_staff'
   | 'collecting_name'
   | 'collecting_phone'
 
