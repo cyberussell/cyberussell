@@ -2,31 +2,28 @@
 
 **Date:** 2026-07-07
 **Product:** Appointment System
-**Feature:** Manage-booking discoverability, auth-page branding, reference code visibility, Messenger staff selection
+**Feature:** Manage-booking discoverability and auth-page branding
 
 ## Files Modified
 - `src/app/appointments/[businessSlug]/page.tsx`
 - `src/app/appointments/signup/page.tsx`
 - `src/app/appointments/login/page.tsx`
 - `src/components/appointment-system/AuthChrome.tsx` (new)
-- `src/app/appointments/dashboard/appointments/page.tsx`
-- `src/lib/appointment-system/flow.ts`
-- `src/lib/appointment-system/types.ts`
 
 ## Summary of Changes
-Four independent UX fixes requested by Russell from screenshots:
+Russell flagged four UX issues from screenshots in this session. Two shipped as originally scoped; the other two turned out to duplicate a parallel session's work that had already been merged to `main` via PR #5 (see below) — that work was kept and mine was dropped during the merge.
 
-1. **Manage-booking link on the public booking page** — added "Already booked? Manage your booking" under the business header, linking to `/appointments/manage` (the existing code-entry fallback page). Verified live.
-2. **Signup/login branding** — the auth pages had zero site branding (looked like a phishing/scam page per Russell's screenshot). Added a new shared `AuthHeader`/`AuthFooter` (`AuthChrome.tsx`) with a lightweight Cyberussell wordmark + "back to cyberussell.com" link in the header, and a copyright/attribution footer. Applied to both `signup/page.tsx` and `login/page.tsx` for consistency (Russell only flagged signup, but login uses the identical bare layout). Verified live, no console errors.
-3. **Reference code on dashboard appointment cards** — the week-view list in `dashboard/appointments/page.tsx` didn't show `reference_code` (added in migration `008_booking_reference.sql`, already used elsewhere: booking confirmation, manage-booking page). Added it to the Supabase select and rendered as a `#XXXXXX` chip next to the status badge. Verified live: old pre-migration rows correctly show no chip (reference_code is null), a fresh test booking showed `#889295` correctly, and the chip persists correctly after cancelling.
-4. **Messenger staff-name selection** — previously the bot silently auto-assigned whichever staff member's slot payload (`SLOT_{staffId}_{epochMs}`) happened to be in the quick-reply list, so the customer never explicitly picked/knew who they'd see. Reworked to mirror the web `BookingWidget`'s existing pattern: `showSlots` now dedupes by time (`TIME_{epochMs}` payload) instead of by (staff, time); a new `onTimeChosen` re-derives staff candidates for that exact time and either books directly if only one staff is free, or asks "Sino po ang gusto niyong provider?" via quick replies (`STAFF_{staffId}_{epochMs}`) when 2+ are free. Added `'choosing_staff'` to the `FlowStep` union in `types.ts`. Verified via `tsc --noEmit` (clean) and code review against the equivalent, already-verified web flow logic in `BookingWidget.tsx`; not verified against a live Messenger conversation (would require driving the actual Facebook Messenger webhook, out of scope for browser-based verification).
+1. **Manage-booking link on the public booking page** — added "Already booked? Manage your booking" under the business header on `[businessSlug]/page.tsx`, linking to the existing `/appointments/manage` code-entry page. Verified live.
+2. **Signup/login branding** — both auth pages had zero site branding, which Russell described as looking like a phishing/scam page. Added a new shared `AuthHeader`/`AuthFooter` (`AuthChrome.tsx`) — a lightweight Cyberussell wordmark + "back to cyberussell.com" link in the header, plus a copyright/attribution footer — applied to both `signup/page.tsx` and `login/page.tsx` for consistency. Verified live, no console errors.
+
+### Superseded during merge (not part of this checkpoint's surviving diff)
+Two more items from this session — showing the reference code on dashboard appointment cards, and asking for staff name during Messenger booking — were implemented locally, but `git push` was rejected because a parallel session had already built and merged near-identical (and more complete) versions of both via PR #5 (commits `4834133`, `9cc4937`, `e3aac52`, `7620358` — see checkpoint `appointment-system-mobile-nav-messenger-staff-v1.md`, which also includes a mobile nav dropdown fix, a week-view mobile overlap fix, and a full booking-details visual hierarchy applied across the dashboard, Messenger, and manage-booking page that this session's version didn't have). During the merge, the duplicate local implementations of both items were discarded in favor of the already-merged upstream versions to avoid clobbering reviewed work and to keep the richer feature set.
 
 ## Remaining Work
-- None of the 4 items have follow-up polish pending.
+None for items 1–2. For the superseded items, see `appointment-system-mobile-nav-messenger-staff-v1.md`'s own Remaining Work / Next Recommended Task.
 
 ## Known Issues
-- Item 4 (Messenger staff selection) is verified by type-check + code parity with the already-tested web flow, not by an end-to-end live Messenger conversation. If Russell wants full confidence, it should be tested against the real "Cyberussell Test Clinic" Facebook Page the next time Messenger is exercised.
-- Pre-existing, unrelated to this session: the silent-failure bug on plan-limit-gated server actions (see `docs/working-on.md` Notes) is still unfixed.
+None new. Pre-existing, unrelated to this session: the silent-failure bug on plan-limit-gated server actions (see `docs/working-on.md` Notes) is still unfixed.
 
 ## Next Recommended Task
-Resume Feature #5 (PayMongo) — still blocked on a public URL (Vercel deployment or ngrok tunnel) to register the webhook and obtain `APPOINTMENTS_PAYMONGO_WEBHOOK_SECRET`. Alternatively, if Russell wants to close the loop on this session's work, do a live Messenger test of the new staff-selection flow next time the Facebook test Page is available.
+Have Russell verify the mobile nav dropdown, week-view fix, and Messenger staff-choice flow live (per the other checkpoint's Next Recommended Task), then resume Feature #5 (PayMongo) — still blocked on a public URL to register the webhook and obtain `APPOINTMENTS_PAYMONGO_WEBHOOK_SECRET`.

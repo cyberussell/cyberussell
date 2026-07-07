@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MessageCircle, NotebookText } from 'lucide-react'
+import { Hash, MessageCircle, NotebookText, Phone, Tag, User } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import { formatSlotLabel, wallTimeToUtc } from '@/lib/appointment-system/slots'
@@ -194,7 +194,9 @@ export default async function AppointmentsPage({
 
   const { data: weekApptData } = await supabase
     .from('appointments')
-    .select('id, starts_at, status, source, intake_note, amount_paid, paid_at, reference_code, clients(full_name, phone), services(name, price), staff(name)')
+    .select(
+      'id, starts_at, status, source, intake_note, amount_paid, paid_at, reference_code, clients(full_name, phone), services(name, price), staff(name)'
+    )
     .eq('business_id', business.id)
     .gte('starts_at', weekStart.toISOString())
     .lt('starts_at', weekEnd.toISOString())
@@ -256,43 +258,45 @@ export default async function AppointmentsPage({
       </div>
 
       {/* Week calendar */}
-      <div className="grid grid-cols-7 gap-1 sm:gap-2 overflow-x-auto">
-        {days.map((d) => (
-          <div key={d.key} className="min-w-[90px]">
-            <div
-              className={`rounded-t-lg px-2 py-1.5 text-center text-xs font-semibold ${
-                d.isToday ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-900 text-slate-400'
-              }`}
-            >
-              {d.label} {d.dayNum}
+      <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:overflow-visible sm:px-0">
+        <div className="flex gap-1 sm:grid sm:grid-cols-7 sm:gap-2">
+          {days.map((d) => (
+            <div key={d.key} className="w-[104px] shrink-0 sm:w-auto">
+              <div
+                className={`rounded-t-lg px-2 py-1.5 text-center text-xs font-semibold ${
+                  d.isToday ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-900 text-slate-400'
+                }`}
+              >
+                {d.label} {d.dayNum}
+              </div>
+              <div
+                className={`min-h-[140px] space-y-1 rounded-b-lg border border-t-0 p-1 ${
+                  d.isToday ? 'border-emerald-500/30 bg-emerald-500/[0.03]' : 'border-slate-800 bg-slate-900/40'
+                }`}
+              >
+                {(byDay.get(d.key) ?? []).slice(0, 4).map((a) => (
+                  <div
+                    key={a.id}
+                    className={`rounded border px-1.5 py-1 text-[11px] leading-tight ${STATUS_STYLES[a.status] ?? ''}`}
+                    title={`${a.clients?.full_name} · ${a.services?.name} · ${a.staff?.name} (${a.status})`}
+                  >
+                    <span className="font-semibold">{timeInTz(a.starts_at, business.timezone)}</span>
+                    <span className="block truncate">{a.clients?.full_name || '—'}</span>
+                    <span className="block truncate opacity-75">{a.services?.name}</span>
+                  </div>
+                ))}
+                {(byDay.get(d.key) ?? []).length > 4 && (
+                  <Link
+                    href={`/appointments/dashboard/appointments?w=${weekOffset}&day=${d.key}`}
+                    className="block rounded border border-slate-700 px-1.5 py-1 text-center text-[11px] font-medium text-slate-400 transition hover:border-emerald-400 hover:text-emerald-300"
+                  >
+                    +{(byDay.get(d.key) ?? []).length - 4} more
+                  </Link>
+                )}
+              </div>
             </div>
-            <div
-              className={`min-h-[140px] space-y-1 rounded-b-lg border border-t-0 p-1 ${
-                d.isToday ? 'border-emerald-500/30 bg-emerald-500/[0.03]' : 'border-slate-800 bg-slate-900/40'
-              }`}
-            >
-              {(byDay.get(d.key) ?? []).slice(0, 4).map((a) => (
-                <div
-                  key={a.id}
-                  className={`rounded border px-1.5 py-1 text-[11px] leading-tight ${STATUS_STYLES[a.status] ?? ''}`}
-                  title={`${a.clients?.full_name} · ${a.services?.name} · ${a.staff?.name} (${a.status})`}
-                >
-                  <span className="font-semibold">{timeInTz(a.starts_at, business.timezone)}</span>
-                  <span className="block truncate">{a.clients?.full_name || '—'}</span>
-                  <span className="block truncate opacity-75">{a.services?.name}</span>
-                </div>
-              ))}
-              {(byDay.get(d.key) ?? []).length > 4 && (
-                <Link
-                  href={`/appointments/dashboard/appointments?w=${weekOffset}&day=${d.key}`}
-                  className="block rounded border border-slate-700 px-1.5 py-1 text-center text-[11px] font-medium text-slate-400 transition hover:border-emerald-400 hover:text-emerald-300"
-                >
-                  +{(byDay.get(d.key) ?? []).length - 4} more
-                </Link>
-              )}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Manual booking */}
@@ -319,32 +323,48 @@ export default async function AppointmentsPage({
             key={a.id}
             className="rounded-xl border border-slate-800 bg-slate-900 p-4 flex flex-wrap items-center justify-between gap-3"
           >
-            <div>
-              <p className="font-medium">
-                {formatSlotLabel(a.starts_at, business.timezone)}{' '}
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-white">
+                {formatSlotLabel(a.starts_at, business.timezone)}
                 <span
-                  className={`ml-2 rounded-full border px-2 py-0.5 text-xs ${STATUS_STYLES[a.status] ?? ''}`}
+                  className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[a.status] ?? ''}`}
                 >
                   {a.status}
                 </span>
-                {a.reference_code && (
-                  <span className="ml-2 rounded-full border border-slate-700 px-2 py-0.5 font-mono text-xs tracking-wider text-slate-400">
-                    #{a.reference_code}
-                  </span>
-                )}
               </p>
-              <p className="text-sm text-slate-400">
-                {a.clients?.full_name || 'Unknown'} · {a.services?.name} · {a.staff?.name} ·{' '}
+              {a.reference_code && (
+                <p className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                  <Hash className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  <span className="font-mono tracking-widest text-slate-400">{a.reference_code}</span>
+                </p>
+              )}
+              <p className="flex items-center gap-1.5 text-sm font-medium text-slate-200">
+                <User className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+                {a.clients?.full_name || 'Unknown'}
+              </p>
+              {a.clients?.phone && (
+                <p className="flex items-center gap-1.5 text-sm tracking-wide text-slate-400">
+                  <Phone className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+                  {a.clients.phone}
+                </p>
+              )}
+              <p className="flex items-center gap-1.5 text-sm text-emerald-300/90">
+                <Tag className="h-3.5 w-3.5 shrink-0 text-emerald-400/60" aria-hidden />
+                {a.services?.name}
+              </p>
+              <p className="flex items-center gap-1.5 text-xs text-slate-500">
+                with {a.staff?.name}
+                <span className="text-slate-700">·</span>
                 {a.source === 'messenger' ? (
                   <span className="inline-flex items-center gap-1">
-                    Messenger <MessageCircle className="h-3.5 w-3.5" aria-hidden />
+                    Messenger <MessageCircle className="h-3 w-3" aria-hidden />
                   </span>
                 ) : (
                   a.source
                 )}
               </p>
               {a.intake_note && (
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-emerald-300/80">
+                <p className="flex items-center gap-1.5 text-sm text-emerald-300/80">
                   <NotebookText className="h-3.5 w-3.5 shrink-0" aria-hidden />
                   {a.intake_note}
                 </p>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { CircleCheck, Loader2 } from 'lucide-react'
+import { CircleCheck, Loader2, Phone, Tag, User } from 'lucide-react'
 import type { Slot } from '@/lib/appointment-system/types'
 import MonthCalendar, { dateKeyInTz, timeInTz, dateLabelInTz } from './MonthCalendar'
 import { cancelBookingByCode, rescheduleBookingByCode } from '@/app/appointments/manage/actions'
@@ -21,6 +21,8 @@ export default function ManageBookingView({
   serviceId,
   serviceName,
   staffName,
+  clientName,
+  clientPhone,
   startsAtIso,
   status,
 }: {
@@ -31,6 +33,8 @@ export default function ManageBookingView({
   serviceId: string
   serviceName: string
   staffName: string
+  clientName?: string
+  clientPhone?: string
   startsAtIso: string
   status: string
 }) {
@@ -151,22 +155,38 @@ export default function ManageBookingView({
 
       {mode === 'view' && (
         <div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-sm">
-            <span className="text-slate-500">Booking</span>
-            <p className="mt-0.5 font-medium text-white">
-              {serviceName} — {currentLabel} with {staffName}
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 space-y-1.5">
+            <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-white">
+              {currentLabel}
+              <span
+                className={`rounded-full border px-2 py-0.5 text-xs font-medium ${
+                  status === 'cancelled'
+                    ? 'border-red-500/30 bg-red-500/10 text-red-300'
+                    : status === 'completed'
+                      ? 'border-slate-600/30 bg-slate-500/15 text-slate-400'
+                      : 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300'
+                }`}
+              >
+                {status}
+              </span>
             </p>
-            <span
-              className={`mt-2 inline-block rounded-full border px-2 py-0.5 text-xs ${
-                status === 'cancelled'
-                  ? 'border-red-500/30 bg-red-500/10 text-red-300'
-                  : status === 'completed'
-                    ? 'border-slate-600/30 bg-slate-500/15 text-slate-400'
-                    : 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300'
-              }`}
-            >
-              {status}
-            </span>
+            {clientName && (
+              <p className="flex items-center gap-1.5 text-sm font-medium text-slate-200">
+                <User className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+                {clientName}
+              </p>
+            )}
+            {clientPhone && (
+              <p className="flex items-center gap-1.5 text-sm tracking-wide text-slate-400">
+                <Phone className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+                {clientPhone}
+              </p>
+            )}
+            <p className="flex items-center gap-1.5 text-sm text-emerald-300/90">
+              <Tag className="h-3.5 w-3.5 shrink-0 text-emerald-400/60" aria-hidden />
+              {serviceName}
+            </p>
+            <p className="text-xs text-slate-500">with {staffName}</p>
           </div>
 
           {isActive ? (

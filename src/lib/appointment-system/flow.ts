@@ -210,12 +210,14 @@ async function showSlots(
   convo: Conversation,
   serviceId: string
 ): Promise<void> {
+  // Fetch more than we'll display so that duplicate times across multiple
+  // staff still leave enough distinct times to fill the quick-reply list.
   const slots = await getAvailableSlots(db, {
     businessId: business.id,
     timezone: business.timezone,
     serviceId,
     days: 7,
-    limit: 8,
+    limit: 24,
   })
   if (slots.length === 0) {
     await sendText(pageToken, psid, 'Pasensya na po, fully booked kami this week. 😔')
@@ -227,22 +229,23 @@ async function showSlots(
   }
   await setState(db, convo.id, { ...convo.state, step: 'choosing_slot', serviceId })
 
-  // Dedupe by start time — staff is only asked about if 2+ are actually free then.
-  const byTime = new Map<string, Slot[]>()
+  // De-dupe by start time — staff is chosen as a separate optional step,
+  // only when more than one staff member is free at the chosen time.
+  const uniqueTimes: Slot[] = []
+  const seen = new Set<string>()
   for (const s of slots) {
-    const list = byTime.get(s.startsAt) ?? []
-    list.push(s)
-    byTime.set(s.startsAt, list)
+    if (seen.has(s.startsAt)) continue
+    seen.add(s.startsAt)
+    uniqueTimes.push(s)
   }
-  const times = Array.from(byTime.entries()).sort(([a], [b]) => a.localeCompare(b))
 
   await sendQuickReplies(
     pageToken,
     psid,
     'Eto po ang mga available na schedule — pili lang po: 🗓️',
-    times.map(([startsAt, group]) => ({
-      title: group[0].label.slice(0, 20),
-      payload: `TIME_${new Date(startsAt).getTime()}`,
+    uniqueTimes.map((s) => ({
+      title: s.label.slice(0, 20),
+      payload: `TIME_${new Date(s.startsAt).getTime()}`,
     }))
   )
 }
@@ -255,38 +258,37 @@ async function onTimeChosen(
   convo: Conversation,
   startsAt: string
 ): Promise<void> {
-  const state = convo.state
-  if (!state.serviceId) {
-    return showServices(db, business, pageToken, psid, convo)
-  }
+  const serviceId = convo.state.serviceId
+  if (!serviceId) return showServices(db, business, pageToken, psid, convo)
 
   const slots = await getAvailableSlots(db, {
     businessId: business.id,
     timezone: business.timezone,
-    serviceId: state.serviceId,
+    serviceId,
     days: 7,
-    limit: 30,
+    limit: 100,
   })
   const candidates = slots.filter((s) => s.startsAt === startsAt)
+
   if (candidates.length === 0) {
     await sendText(pageToken, psid, 'Ay, kakakuha lang po ng slot na iyon. 😅 Eto po ang iba pang available:')
-    return showSlots(db, business, pageToken, psid, convo, state.serviceId)
+    return showSlots(db, business, pageToken, psid, convo, serviceId)
   }
 
-  const uniqueStaff = new Map(candidates.map((s) => [s.staffId, s]))
-  if (uniqueStaff.size <= 1) {
-    const only = candidates[0]
-    return onSlotChosen(db, business, pageToken, psid, convo, only.staffId, only.startsAt)
+  // Only one staff member free at that time — no need to ask, book straight through.
+  if (candidates.length === 1) {
+    return onSlotChosen(db, business, pageToken, psid, convo, candidates[0].staffId, startsAt)
   }
 
-  await setState(db, convo.id, { ...state, step: 'choosing_staff', slotStart: startsAt })
+  // Optional staff choice: more than one staff member is free at this time.
+  await setState(db, convo.id, { ...convo.state, step: 'choosing_staff', slotStart: startsAt })
   await sendQuickReplies(
     pageToken,
     psid,
-    'Sino po ang gusto niyong provider? 🙋',
-    Array.from(uniqueStaff.values()).map((s) => ({
+    'Sino po ang gusto ninyong puntahan?',
+    candidates.map((s: Slot) => ({
       title: s.staffName.slice(0, 20),
-      payload: `STAFF_${s.staffId}_${new Date(s.startsAt).getTime()}`,
+      payload: `STAFF_${s.staffId}_${new Date(startsAt).getTime()}`,
     }))
   )
 }
@@ -383,7 +385,10 @@ async function finalizeBooking(
     return
   }
 
-  const { data: service } = await db.from('services').select('name').eq('id', state.serviceId).single()
+  const [{ data: service }, { data: staff }] = await Promise.all([
+    db.from('services').select('name').eq('id', state.serviceId).single(),
+    db.from('staff').select('name').eq('id', state.slotStaffId).single(),
+  ])
   const label = formatSlotLabel(state.slotStart, business.timezone)
   await setState(db, convo.id, { step: 'idle' })
   await logEvent(db, business.id, 'booking_created', {
@@ -391,10 +396,12 @@ async function finalizeBooking(
     appointment_id: result.appointmentId,
     source: 'messenger',
   })
+  // Same info hierarchy as the dashboard/manage views: date & time first, then
+  // who's booked, how to reach them, what for, and with whom.
   await sendText(
     pageToken,
     psid,
-    `Booked na po! ✅\n\n${service?.name ?? 'Appointment'}\n🗓️ ${label}\n📍 ${business.name}${business.address ? `, ${business.address}` : ''}\n\nSee you po! Magre-remind kami bago ang schedule ninyo.\n\nReference code: ${result.referenceCode}\nPara mag-cancel o mag-reschedule: https://www.cyberussell.com/appointments/manage/${result.referenceCode}`
+    `Booked na po! ✅\n\n🗓️ ${label}\n🙋 ${state.clientName}\n📞 ${state.clientPhone}\n💼 ${service?.name ?? 'Appointment'}\n🧑‍⚕️ with ${staff?.name ?? 'our staff'}\n📍 ${business.name}${business.address ? `, ${business.address}` : ''}\n\nSee you po! Magre-remind kami bago ang schedule ninyo.\n\nReference code: ${result.referenceCode}\nPara mag-cancel o mag-reschedule: https://www.cyberussell.com/appointments/manage/${result.referenceCode}`
   )
 }
 
