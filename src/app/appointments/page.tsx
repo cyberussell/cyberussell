@@ -3,7 +3,7 @@ import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import { Check as CheckIcon, CircleX, Flower2, HandHeart, HeartPulse, Hospital, Scissors, Smile, Sparkles, Stethoscope } from 'lucide-react'
 import './landing.css'
-import { PLANS, PLAN_ORDER } from '@/lib/appointment-system/entitlements'
+import { PLANS, PLAN_ORDER, PLAN_BULLETS } from '@/lib/appointment-system/entitlements'
 import LandingNav from '@/components/appointment-system/landing/LandingNav'
 import TrackedLink from '@/components/appointment-system/landing/TrackedLink'
 import AiDemo from '@/components/appointment-system/landing/AiDemo'
@@ -32,37 +32,6 @@ export const metadata: Metadata = {
 }
 
 // ── Content data ─────────────────────────────────────────────────────────────
-
-const PLAN_BULLETS: Record<string, string[]> = {
-  free: [
-    '1 provider',
-    'Public booking page',
-    'Appointment calendar',
-    'Customer records',
-    'Services and pricing',
-    'Business hours, breaks & blocked dates',
-    'Cancellation and rescheduling',
-    'Manual and walk-in appointments',
-    'Up to 100 appointments / month',
-  ],
-  basic: [
-    'Everything in Free',
-    'Up to 5 staff / providers',
-    'Unlimited appointments',
-    'Email notifications (soon)',
-    'Expanded appointment statistics',
-    'Customer management tools',
-  ],
-  pro: [
-    'Everything in Basic',
-    'Unlimited staff / providers',
-    'Messenger booking bot',
-    'Automated reminders (soon)',
-    'Customer notes & no-show tracking',
-    'Basic revenue reports',
-    'Data export (soon)',
-  ],
-}
 
 const PLAN_CTA: Record<string, string> = {
   free: 'Start Free',

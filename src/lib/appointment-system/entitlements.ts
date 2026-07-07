@@ -71,6 +71,40 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
 
 export const PLAN_ORDER: PlanTier[] = ['free', 'basic', 'pro']
 
+// Marketing/UI bullet copy per plan — shown on both the public landing page
+// and the logged-in Billing tab. Single-sourced here so the two can never
+// show different feature lists for the same plan.
+export const PLAN_BULLETS: Record<PlanTier, string[]> = {
+  free: [
+    '1 provider',
+    'Public booking page',
+    'Appointment calendar',
+    'Customer records',
+    'Services and pricing',
+    'Business hours, breaks & blocked dates',
+    'Cancellation and rescheduling',
+    'Manual and walk-in appointments',
+    'Up to 100 appointments / month',
+  ],
+  basic: [
+    'Everything in Free',
+    'Up to 5 staff / providers',
+    'Unlimited appointments',
+    'Email notifications (soon)',
+    'Expanded appointment statistics',
+    'Customer management tools',
+  ],
+  pro: [
+    'Everything in Basic',
+    'Unlimited staff / providers',
+    'Messenger booking bot',
+    'Automated reminders (soon)',
+    'Customer notes & no-show tracking',
+    'Basic revenue reports',
+    'Data export (soon)',
+  ],
+}
+
 function planOf(business: Pick<Business, 'plan_tier'>): PlanConfig {
   return PLANS[business.plan_tier] ?? PLANS.free
 }

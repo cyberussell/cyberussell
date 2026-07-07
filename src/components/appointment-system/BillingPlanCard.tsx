@@ -3,18 +3,7 @@
 import { useActionState, useEffect } from 'react'
 import { Check } from 'lucide-react'
 import { initiateBillingCheckout, type BillingActionResult } from '@/app/appointments/actions'
-import type { FeatureFlag, PlanConfig } from '@/lib/appointment-system/entitlements'
-
-const FEATURE_LABELS: Record<FeatureFlag, string> = {
-  public_booking_page: 'Public booking page',
-  customer_records: 'Client records',
-  email_notifications: 'Email notifications',
-  data_export: 'Data export',
-  messenger_booking_bot: 'Messenger booking bot',
-  automated_reminders: 'Automated reminders',
-  no_show_tracking: 'No-show tracking',
-  revenue_reports: 'Revenue reports',
-}
+import { PLAN_BULLETS, type PlanConfig } from '@/lib/appointment-system/entitlements'
 
 export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig; isCurrent: boolean }) {
   const [state, formAction, pending] = useActionState<BillingActionResult, FormData>(initiateBillingCheckout, {})
@@ -23,11 +12,7 @@ export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig;
     if (state.checkoutUrl) window.location.href = state.checkoutUrl
   }, [state.checkoutUrl])
 
-  const included = [
-    plan.monthlyAppointments === null ? 'Unlimited appointments' : `${plan.monthlyAppointments} appointments/mo`,
-    plan.providerLimit === null ? 'Unlimited staff' : `${plan.providerLimit} staff member${plan.providerLimit === 1 ? '' : 's'}`,
-    ...plan.features.map((f) => FEATURE_LABELS[f]),
-  ]
+  const included = PLAN_BULLETS[plan.tier]
 
   return (
     <div
