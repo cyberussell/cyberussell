@@ -1,31 +1,156 @@
 'use client'
 
-import { useState } from 'react'
-import { CircleCheck } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { ArrowRight, ChevronLeft, ChevronRight, CircleCheck, Clock, Loader2 } from 'lucide-react'
 import type { Service, Slot } from '@/lib/appointment-system/types'
 
-type Step = 'service' | 'slot' | 'details' | 'done'
+type Step = 'service' | 'date' | 'time' | 'staff' | 'details' | 'done'
+
+const PROGRESS_STAGE: Record<Step, number> = { service: 0, date: 1, time: 1, staff: 1, details: 2, done: 3 }
+const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+const inputClass =
+  'w-full rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-sm text-white placeholder:text-slate-500 transition focus:border-emerald-400/50 focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-emerald-400/10'
+
+function dateKeyInTz(iso: string, timeZone: string): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(
+    new Date(iso)
+  )
+}
+
+function timeInTz(iso: string, timeZone: string): string {
+  return new Intl.DateTimeFormat('en-PH', { timeZone, hour: 'numeric', minute: '2-digit' }).format(new Date(iso))
+}
+
+function dateLabelInTz(dateKey: string, timeZone: string): string {
+  const [y, m, d] = dateKey.split('-').map(Number)
+  return new Intl.DateTimeFormat('en-PH', {
+    timeZone,
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(Date.UTC(y, m - 1, d, 12)))
+}
+
+interface TimeGroup {
+  startsAt: string
+  slots: Slot[]
+}
+
+function MonthCalendar({
+  cursor,
+  onNavigate,
+  availableDateKeys,
+  todayKey,
+  onPick,
+}: {
+  cursor: { year: number; month: number } // month is 0-indexed
+  onNavigate: (next: { year: number; month: number }) => void
+  availableDateKeys: Set<string>
+  todayKey: string
+  onPick: (dateKey: string) => void
+}) {
+  const { year, month } = cursor
+  const firstOfMonth = new Date(year, month, 1)
+  const firstDow = (firstOfMonth.getDay() + 6) % 7
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const weeks = Math.ceil((firstDow + daysInMonth) / 7)
+  const gridStart = new Date(year, month, 1 - firstDow)
+
+  const days = Array.from({ length: weeks * 7 }, (_, i) => {
+    const d = new Date(gridStart)
+    d.setDate(gridStart.getDate() + i)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    return {
+      key,
+      dayNum: d.getDate(),
+      isCurrentMonth: d.getMonth() === month,
+      isToday: key === todayKey,
+      isAvailable: availableDateKeys.has(key),
+    }
+  })
+
+  const monthLabel = firstOfMonth.toLocaleDateString('en-PH', { month: 'long', year: 'numeric' })
+  const isTodayMonth = todayKey.slice(0, 7) === `${year}-${String(month + 1).padStart(2, '0')}`
+
+  return (
+    <div>
+      <div className="mb-4 flex items-center justify-between">
+        <button
+          type="button"
+          disabled={isTodayMonth}
+          onClick={() => onNavigate({ year: month === 0 ? year - 1 : year, month: month === 0 ? 11 : month - 1 })}
+          className="rounded-lg p-1.5 text-slate-400 transition hover:bg-white/5 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden />
+        </button>
+        <p className="text-sm font-semibold text-white">{monthLabel}</p>
+        <button
+          type="button"
+          onClick={() => onNavigate({ year: month === 11 ? year + 1 : year, month: month === 11 ? 0 : month + 1 })}
+          className="rounded-lg p-1.5 text-slate-400 transition hover:bg-white/5 hover:text-white"
+        >
+          <ChevronRight className="h-4 w-4" aria-hidden />
+        </button>
+      </div>
+      <div className="grid grid-cols-7 gap-1.5">
+        {WEEKDAY_LABELS.map((l) => (
+          <div key={l} className="pb-1 text-center text-[11px] font-medium text-slate-500">
+            {l}
+          </div>
+        ))}
+        {days.map((d) => (
+          <button
+            key={d.key}
+            type="button"
+            disabled={!d.isAvailable}
+            onClick={() => onPick(d.key)}
+            className={`aspect-square rounded-lg border text-sm font-medium transition-all duration-150 ${
+              d.isAvailable
+                ? 'cursor-pointer border-white/10 bg-white/[0.02] text-white hover:-translate-y-0.5 hover:border-emerald-400/40 hover:bg-emerald-500/[0.08] hover:text-emerald-300'
+                : 'cursor-not-allowed border-transparent text-slate-700'
+            } ${d.isToday ? 'ring-1 ring-emerald-400/40' : ''} ${!d.isCurrentMonth ? 'opacity-40' : ''}`}
+          >
+            {d.dayNum}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function BookingWidget({
   businessSlug,
   services,
   businessNoun = 'clinic',
   showStaffNames = true,
+  timezone,
 }: {
   businessSlug: string
   services: Service[]
   businessNoun?: string
   showStaffNames?: boolean
+  timezone: string
 }) {
   const [step, setStep] = useState<Step>('service')
   const [serviceId, setServiceId] = useState<string | null>(null)
+  const [loadingServiceId, setLoadingServiceId] = useState<string | null>(null)
   const [slots, setSlots] = useState<Slot[]>([])
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [candidateSlots, setCandidateSlots] = useState<Slot[]>([])
   const [slot, setSlot] = useState<Slot | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const todayKey = useMemo(() => dateKeyInTz(new Date().toISOString(), timezone), [timezone])
+  const [monthCursor, setMonthCursor] = useState(() => {
+    const [y, m] = todayKey.split('-').map(Number)
+    return { year: y, month: m - 1 }
+  })
+
   async function pickService(id: string) {
     setServiceId(id)
+    setLoadingServiceId(id)
     setLoading(true)
     setError(null)
     try {
@@ -35,12 +160,54 @@ export default function BookingWidget({
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to load slots')
       setSlots(data.slots ?? [])
-      setStep('slot')
+      setStep('date')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
     } finally {
       setLoading(false)
+      setLoadingServiceId(null)
     }
+  }
+
+  const availableDateKeys = useMemo(() => {
+    const set = new Set<string>()
+    for (const s of slots) set.add(dateKeyInTz(s.startsAt, timezone))
+    return set
+  }, [slots, timezone])
+
+  function pickDate(dateKey: string) {
+    setSelectedDate(dateKey)
+    setStep('time')
+  }
+
+  const timesForSelectedDate = useMemo<TimeGroup[]>(() => {
+    if (!selectedDate) return []
+    const byTime = new Map<string, Slot[]>()
+    for (const s of slots) {
+      if (dateKeyInTz(s.startsAt, timezone) !== selectedDate) continue
+      const list = byTime.get(s.startsAt) ?? []
+      list.push(s)
+      byTime.set(s.startsAt, list)
+    }
+    return Array.from(byTime.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([startsAt, group]) => ({ startsAt, slots: group }))
+  }, [slots, selectedDate, timezone])
+
+  function pickTime(group: TimeGroup) {
+    const uniqueStaff = new Set(group.slots.map((s) => s.staffId))
+    if (uniqueStaff.size <= 1) {
+      setSlot(group.slots[0])
+      setStep('details')
+    } else {
+      setCandidateSlots(group.slots)
+      setStep('staff')
+    }
+  }
+
+  function pickStaff(s: Slot) {
+    setSlot(s)
+    setStep('details')
   }
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -80,81 +247,153 @@ export default function BookingWidget({
 
   if (services.length === 0) {
     return (
-      <p className="rounded-xl border border-slate-800 bg-slate-900 p-6 text-center text-sm text-slate-400">
+      <p className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center text-sm text-slate-400 shadow-[0_8px_30px_rgb(0,0,0,0.35)] backdrop-blur-xl">
         Online booking isn&apos;t set up yet — please message or call the {businessNoun} directly.
       </p>
     )
   }
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-      {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
+    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.35)] backdrop-blur-xl sm:p-8">
+      <div className="mb-6 flex items-center gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+              i <= PROGRESS_STAGE[step] ? 'bg-emerald-400' : 'bg-white/10'
+            }`}
+          />
+        ))}
+      </div>
+
+      {error && (
+        <p className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm text-red-300">
+          {error}
+        </p>
+      )}
 
       {step === 'service' && (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {services.map((s) => (
             <button
               key={s.id}
               onClick={() => pickService(s.id)}
               disabled={loading}
-              className="w-full rounded-lg border border-slate-700 px-4 py-3 text-left hover:border-emerald-400 transition disabled:opacity-50"
+              className="group flex w-full items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-400/40 hover:bg-white/[0.05] hover:shadow-lg hover:shadow-emerald-500/5 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
-              <span className="font-medium">{s.name}</span>
-              <span className="ml-2 text-sm text-slate-400">
-                {s.duration_min} min · ₱{Number(s.price).toFixed(0)}
-              </span>
+              <div className="min-w-0">
+                <p className="font-semibold text-white">{s.name}</p>
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-400">
+                  <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  {s.duration_min} min
+                  <span className="text-slate-600">·</span>
+                  <span className="font-medium text-slate-300">₱{Number(s.price).toLocaleString('en-PH')}</span>
+                </p>
+              </div>
+              {loadingServiceId === s.id ? (
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin text-emerald-400" aria-hidden />
+              ) : (
+                <ArrowRight
+                  className="h-4 w-4 shrink-0 text-slate-600 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-emerald-400"
+                  aria-hidden
+                />
+              )}
             </button>
           ))}
         </div>
       )}
 
-      {step === 'slot' && (
+      {step === 'date' && (
         <div>
-          <button onClick={() => setStep('service')} className="mb-3 text-xs text-slate-400 hover:text-white">
+          <button
+            onClick={() => setStep('service')}
+            className="mb-4 text-xs font-medium text-slate-500 transition hover:text-emerald-400"
+          >
             ← Change service
           </button>
-          {slots.length === 0 ? (
-            <p className="text-sm text-slate-400">No open slots in the next 2 weeks — please message the {businessNoun} directly.</p>
+          {availableDateKeys.size === 0 ? (
+            <p className="rounded-xl border border-white/10 bg-white/[0.02] p-5 text-center text-sm text-slate-400">
+              No open slots in the next 2 weeks — please message the {businessNoun} directly.
+            </p>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
-              {slots.map((s) => (
-                <button
-                  key={`${s.staffId}-${s.startsAt}`}
-                  onClick={() => {
-                    setSlot(s)
-                    setStep('details')
-                  }}
-                  className="rounded-lg border border-slate-700 px-3 py-2 text-sm hover:border-emerald-400 transition"
-                >
-                  {s.label}
-                  {showStaffNames && <span className="block text-xs text-slate-500">{s.staffName}</span>}
-                </button>
-              ))}
-            </div>
+            <MonthCalendar
+              cursor={monthCursor}
+              onNavigate={setMonthCursor}
+              availableDateKeys={availableDateKeys}
+              todayKey={todayKey}
+              onPick={pickDate}
+            />
           )}
         </div>
       )}
 
-      {step === 'details' && slot && (
-        <form onSubmit={submit} className="space-y-3">
+      {step === 'time' && selectedDate && (
+        <div>
           <button
-            type="button"
-            onClick={() => setStep('slot')}
-            className="text-xs text-slate-400 hover:text-white"
+            onClick={() => setStep('date')}
+            className="mb-4 text-xs font-medium text-slate-500 transition hover:text-emerald-400"
+          >
+            ← Change date
+          </button>
+          <p className="mb-4 text-sm font-medium text-slate-300">{dateLabelInTz(selectedDate, timezone)}</p>
+          <div className="grid grid-cols-3 gap-2.5">
+            {timesForSelectedDate.map((group) => (
+              <button
+                key={group.startsAt}
+                onClick={() => pickTime(group)}
+                className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-3 text-center text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-400/40 hover:bg-emerald-500/[0.06] hover:shadow-lg hover:shadow-emerald-500/5"
+              >
+                {timeInTz(group.startsAt, timezone)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {step === 'staff' && (
+        <div>
+          <button
+            onClick={() => setStep('time')}
+            className="mb-4 text-xs font-medium text-slate-500 transition hover:text-emerald-400"
           >
             ← Change time
           </button>
-          <p className="text-sm">
-            <span className="text-slate-400">Booking:</span> {slot.label}
-            {showStaffNames ? ` with ${slot.staffName}` : ''}
-          </p>
-          <input
-            name="fullName"
-            required
-            minLength={2}
-            placeholder="Full name"
-            className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none"
-          />
+          <p className="mb-4 text-sm font-medium text-slate-300">Who would you like to see?</p>
+          <div className="space-y-2.5">
+            {candidateSlots.map((s) => (
+              <button
+                key={s.staffId}
+                onClick={() => pickStaff(s)}
+                className="group flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-5 py-3.5 text-left font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-400/40 hover:bg-white/[0.05] hover:shadow-lg hover:shadow-emerald-500/5"
+              >
+                {s.staffName}
+                <ArrowRight
+                  className="h-4 w-4 shrink-0 text-slate-600 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-emerald-400"
+                  aria-hidden
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {step === 'details' && slot && (
+        <form onSubmit={submit} className="space-y-4">
+          <button
+            type="button"
+            onClick={() => setStep('time')}
+            className="text-xs font-medium text-slate-500 transition hover:text-emerald-400"
+          >
+            ← Change time
+          </button>
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-sm">
+            <span className="text-slate-500">Booking</span>
+            <p className="mt-0.5 font-medium text-white">
+              {slot.label}
+              {showStaffNames ? ` with ${slot.staffName}` : ''}
+            </p>
+          </div>
+          <input name="fullName" required minLength={2} placeholder="Full name" className={inputClass} />
           <input
             name="phone"
             type="tel"
@@ -164,29 +403,32 @@ export default function BookingWidget({
             maxLength={11}
             title="Enter an 11-digit mobile number starting with 09 (e.g. 09171234567)"
             placeholder="Mobile number (09XXXXXXXXX)"
-            className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none"
+            className={inputClass}
           />
           <textarea
             name="note"
             rows={2}
             placeholder={`Anything the ${businessNoun} should know? (optional)`}
-            className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none"
+            className={inputClass}
           />
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-emerald-500 py-2.5 font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50 transition"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-semibold text-slate-950 shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:bg-emerald-400 hover:shadow-emerald-500/30 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
           >
+            {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
             {loading ? 'Booking…' : 'Confirm booking'}
           </button>
         </form>
       )}
 
       {step === 'done' && (
-        <div className="py-6 text-center">
-          <CircleCheck className="mx-auto h-8 w-8 text-emerald-300" aria-hidden />
-          <p className="mt-2 font-semibold">You&apos;re booked!</p>
-          <p className="mt-1 text-sm text-slate-400">
+        <div className="py-8 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-400/30">
+            <CircleCheck className="h-7 w-7 text-emerald-300" aria-hidden />
+          </div>
+          <p className="mt-4 text-lg font-semibold text-white">You&apos;re booked!</p>
+          <p className="mt-1.5 text-sm text-slate-400">
             {slot?.label}
             {showStaffNames ? ` with ${slot?.staffName}` : ''}. See you!
           </p>
