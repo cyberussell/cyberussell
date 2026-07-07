@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MessageCircle, NotebookText, Phone, Tag, User } from 'lucide-react'
+import { Hash, MessageCircle, NotebookText, Phone, Tag, User } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import { formatSlotLabel, wallTimeToUtc } from '@/lib/appointment-system/slots'
@@ -28,6 +28,7 @@ interface ApptRow {
   intake_note: string
   amount_paid: number
   paid_at: string | null
+  reference_code: string | null
   clients: { full_name: string; phone: string } | null
   services: { name: string; price: number } | null
   staff: { name: string } | null
@@ -193,7 +194,9 @@ export default async function AppointmentsPage({
 
   const { data: weekApptData } = await supabase
     .from('appointments')
-    .select('id, starts_at, status, source, intake_note, amount_paid, paid_at, clients(full_name, phone), services(name, price), staff(name)')
+    .select(
+      'id, starts_at, status, source, intake_note, amount_paid, paid_at, reference_code, clients(full_name, phone), services(name, price), staff(name)'
+    )
     .eq('business_id', business.id)
     .gte('starts_at', weekStart.toISOString())
     .lt('starts_at', weekEnd.toISOString())
@@ -329,6 +332,12 @@ export default async function AppointmentsPage({
                   {a.status}
                 </span>
               </p>
+              {a.reference_code && (
+                <p className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                  <Hash className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  <span className="font-mono tracking-widest text-slate-400">{a.reference_code}</span>
+                </p>
+              )}
               <p className="flex items-center gap-1.5 text-sm font-medium text-slate-200">
                 <User className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
                 {a.clients?.full_name || 'Unknown'}
