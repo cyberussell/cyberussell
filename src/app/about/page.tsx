@@ -118,7 +118,7 @@ export default function AboutPage() {
             <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-6">
               <p className="font-sans text-[18px] font-bold text-white mb-3">The Logo</p>
               <p className="text-white/65 text-[15px] leading-[1.9]">
-                Every line represents a different journey. Some arrive with experience. Some arrive with curiosity. Some arrive with nothing but the willingness to learn. Cyberussell is where those paths weave together — connecting skills, technology, and opportunity into a future that each person can build.
+                It&apos;s a compass, not a clock. The needle only points forward, because there&apos;s no ROI in looking back at what you don&apos;t know yet. The ring is a C, for Cyberussell, left open on purpose — the path isn&apos;t finished, it&apos;s still being drawn, one skill and one online peso at a time. Orange, because figuring this out takes energy — not luck, not connections, just the willingness to move.
               </p>
             </div>
           </div>
