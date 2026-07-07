@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Hash, MessageCircle, NotebookText, Phone, Tag, User } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { CheckCircle2, Hash, MessageCircle, NotebookText, Phone, Tag, User, UserX, XCircle } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import { formatSlotLabel, wallTimeToUtc } from '@/lib/appointment-system/slots'
@@ -20,6 +21,15 @@ const STATUS_STYLES: Record<string, string> = {
   no_show: 'bg-red-500/15 text-red-300 border-red-500/30',
 }
 
+const ICON_BUTTON_CLASS =
+  'rounded-lg border border-slate-700 p-1.5 text-slate-300 hover:border-emerald-400 hover:text-emerald-300 transition'
+
+const STATUS_ACTIONS: { status: string; label: string; Icon: LucideIcon }[] = [
+  { status: 'completed', label: 'Completed', Icon: CheckCircle2 },
+  { status: 'no_show', label: 'No-show', Icon: UserX },
+  { status: 'cancelled', label: 'Cancelled', Icon: XCircle },
+]
+
 interface ApptRow {
   id: string
   starts_at: string
@@ -29,6 +39,7 @@ interface ApptRow {
   amount_paid: number
   paid_at: string | null
   reference_code: string | null
+  staff_id: string
   clients: { full_name: string; phone: string } | null
   services: { name: string; price: number } | null
   staff: { name: string } | null
@@ -68,11 +79,11 @@ function dominantStatus(statuses: string[]): MonthDay['dominant'] {
 export default async function AppointmentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ w?: string; m?: string; view?: string; day?: string }>
+  searchParams: Promise<{ w?: string; m?: string; view?: string; day?: string; staff?: string }>
 }) {
   const { supabase, business } = await requireBusiness()
   const t = getTerms(business.business_types)
-  const { w, m, view: viewParam, day: dayParam } = await searchParams
+  const { w, m, view: viewParam, day: dayParam, staff: staffParam } = await searchParams
   const view = viewParam === 'month' ? 'month' : 'week'
   const weekOffset = Number(w ?? 0) || 0
   const monthOffset = Number(m ?? 0) || 0
@@ -195,7 +206,7 @@ export default async function AppointmentsPage({
   const { data: weekApptData } = await supabase
     .from('appointments')
     .select(
-      'id, starts_at, status, source, intake_note, amount_paid, paid_at, reference_code, clients(full_name, phone), services(name, price), staff(name)'
+      'id, starts_at, status, source, intake_note, amount_paid, paid_at, reference_code, staff_id, clients(full_name, phone), services(name, price), staff(name)'
     )
     .eq('business_id', business.id)
     .gte('starts_at', weekStart.toISOString())
@@ -215,13 +226,42 @@ export default async function AppointmentsPage({
   })
 
   const selectedDay = dayParam && days.find((d) => d.key === dayParam)
-  const visibleAppointments = selectedDay ? (byDay.get(selectedDay.key) ?? []) : appointments
+  const dayOrWeekAppointments = selectedDay ? (byDay.get(selectedDay.key) ?? []) : appointments
+  const staffList = (staffRes.data ?? []) as Staff[]
+  const selectedStaffId = staffList.some((s) => s.id === staffParam) ? (staffParam as string) : null
+  const staffFiltered = selectedStaffId
+    ? dayOrWeekAppointments.filter((a) => a.staff_id === selectedStaffId)
+    : dayOrWeekAppointments
+  // "All staff" groups by provider name first, then time within each provider's list.
+  const visibleAppointments = selectedStaffId
+    ? staffFiltered
+    : [...staffFiltered].sort((a, b) => {
+        const byStaff = (a.staff?.name ?? '').localeCompare(b.staff?.name ?? '')
+        return byStaff !== 0 ? byStaff : a.starts_at.localeCompare(b.starts_at)
+      })
   const listHeading = selectedDay
     ? new Date(monday.getTime() + days.findIndex((d) => d.key === selectedDay.key) * 86400_000).toLocaleDateString(
         'en-PH',
         { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' }
       )
     : "This week's appointments"
+
+  function apptListHref(staffId: string | null): string {
+    const params = new URLSearchParams()
+    if (weekOffset !== 0) params.set('w', String(weekOffset))
+    if (selectedDay) params.set('day', selectedDay.key)
+    if (staffId) params.set('staff', staffId)
+    const qs = params.toString()
+    return `/appointments/dashboard/appointments${qs ? `?${qs}` : ''}`
+  }
+
+  function staffPillClass(active: boolean): string {
+    return `rounded-lg border px-2.5 py-1 text-xs font-medium transition ${
+      active
+        ? 'border-emerald-400 bg-emerald-500/10 text-emerald-300'
+        : 'border-slate-700 text-slate-300 hover:border-emerald-400'
+    }`
+  }
 
   return (
     <div className="space-y-8">
@@ -304,7 +344,7 @@ export default async function AppointmentsPage({
 
       {/* Week list with actions */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">{listHeading}</h2>
           {selectedDay && (
             <Link
@@ -315,62 +355,78 @@ export default async function AppointmentsPage({
             </Link>
           )}
         </div>
+        {staffList.length > 1 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Link href={apptListHref(null)} className={staffPillClass(!selectedStaffId)}>
+              All staff
+            </Link>
+            {staffList.map((s) => (
+              <Link key={s.id} href={apptListHref(s.id)} className={staffPillClass(selectedStaffId === s.id)}>
+                {s.name}
+              </Link>
+            ))}
+          </div>
+        )}
         {visibleAppointments.length === 0 && (
           <p className="text-slate-500 text-sm">No appointments {selectedDay ? 'that day' : 'this week'}.</p>
         )}
         {visibleAppointments.map((a) => (
           <div
             key={a.id}
-            className="rounded-xl border border-slate-800 bg-slate-900 p-4 flex flex-wrap items-center justify-between gap-3"
+            className="rounded-xl border border-slate-800 bg-slate-900 p-3 flex flex-wrap items-center justify-between gap-3"
           >
-            <div className="min-w-0 flex-1 space-y-1.5">
-              <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-white">
-                {formatSlotLabel(a.starts_at, business.timezone)}
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="text-base font-semibold text-white">
+                  {formatSlotLabel(a.starts_at, business.timezone)}
+                </span>
                 <span
                   className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[a.status] ?? ''}`}
                 >
                   {a.status}
                 </span>
-              </p>
-              {a.reference_code && (
-                <p className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                  <Hash className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                  <span className="font-mono tracking-widest text-slate-400">{a.reference_code}</span>
-                </p>
-              )}
-              <p className="flex items-center gap-1.5 text-sm font-medium text-slate-200">
-                <User className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
-                {a.clients?.full_name || 'Unknown'}
-              </p>
-              {a.clients?.phone && (
-                <p className="flex items-center gap-1.5 text-sm tracking-wide text-slate-400">
-                  <Phone className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
-                  {a.clients.phone}
-                </p>
-              )}
-              <p className="flex items-center gap-1.5 text-sm text-emerald-300/90">
-                <Tag className="h-3.5 w-3.5 shrink-0 text-emerald-400/60" aria-hidden />
-                {a.services?.name}
-              </p>
-              <p className="flex items-center gap-1.5 text-xs text-slate-500">
-                with {a.staff?.name}
-                <span className="text-slate-700">·</span>
-                {a.source === 'messenger' ? (
-                  <span className="inline-flex items-center gap-1">
-                    Messenger <MessageCircle className="h-3 w-3" aria-hidden />
+                {a.reference_code && (
+                  <span className="flex items-center gap-1 text-xs font-medium text-slate-500">
+                    <Hash className="h-3 w-3 shrink-0" aria-hidden />
+                    <span className="font-mono tracking-widest text-slate-400">{a.reference_code}</span>
                   </span>
-                ) : (
-                  a.source
                 )}
-              </p>
+              </div>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                <span className="flex items-center gap-1.5 font-medium text-slate-200">
+                  <User className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+                  {a.clients?.full_name || 'Unknown'}
+                </span>
+                {a.clients?.phone && (
+                  <span className="flex items-center gap-1.5 text-slate-400">
+                    <Phone className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+                    {a.clients.phone}
+                  </span>
+                )}
+                <span className="flex items-center gap-1.5 text-emerald-300/90">
+                  <Tag className="h-3.5 w-3.5 shrink-0 text-emerald-400/60" aria-hidden />
+                  {a.services?.name}
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-slate-500">
+                  with {a.staff?.name}
+                  <span className="text-slate-700">·</span>
+                  {a.source === 'messenger' ? (
+                    <span className="inline-flex items-center gap-1">
+                      Messenger <MessageCircle className="h-3 w-3" aria-hidden />
+                    </span>
+                  ) : (
+                    a.source
+                  )}
+                </span>
+              </div>
               {a.intake_note && (
-                <p className="flex items-center gap-1.5 text-sm text-emerald-300/80">
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-emerald-300/80">
                   <NotebookText className="h-3.5 w-3.5 shrink-0" aria-hidden />
                   {a.intake_note}
                 </p>
               )}
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
               {a.status !== 'cancelled' && (
                 <RecordPaymentForm
                   appointmentId={a.id}
@@ -391,12 +447,12 @@ export default async function AppointmentsPage({
               {(a.status === 'confirmed' || a.status === 'pending') && (
                 <>
                   <RescheduleForm appointmentId={a.id} />
-                  {['completed', 'no_show', 'cancelled'].map((s) => (
-                    <form key={s} action={updateAppointmentStatus}>
+                  {STATUS_ACTIONS.map(({ status, label, Icon }) => (
+                    <form key={status} action={updateAppointmentStatus}>
                       <input type="hidden" name="id" value={a.id} />
-                      <input type="hidden" name="status" value={s} />
-                      <button className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-emerald-400 transition">
-                        {s === 'no_show' ? 'No-show' : s[0].toUpperCase() + s.slice(1)}
+                      <input type="hidden" name="status" value={status} />
+                      <button type="submit" title={label} aria-label={label} className={ICON_BUTTON_CLASS}>
+                        <Icon className="h-4 w-4" aria-hidden />
                       </button>
                     </form>
                   ))}

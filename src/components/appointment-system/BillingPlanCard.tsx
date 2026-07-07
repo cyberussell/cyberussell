@@ -31,10 +31,15 @@ export default function BillingPlanCard({ plan, isCurrent }: { plan: PlanConfig;
 
   return (
     <div
-      className={`flex h-full flex-col rounded-xl border p-5 ${
+      className={`relative flex h-full flex-col rounded-xl border p-5 ${
         isCurrent ? 'border-emerald-500/40 bg-emerald-500/[0.03]' : 'border-slate-800 bg-slate-900'
       }`}
     >
+      {plan.tier === 'pro' && (
+        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-emerald-500 px-2.5 py-0.5 text-[11px] font-bold text-slate-950">
+          Recommended
+        </span>
+      )}
       <p className="font-semibold">{plan.name}</p>
       <p className="mt-1 text-2xl font-bold">
         ₱{plan.priceMonthly.toLocaleString('en-PH')}

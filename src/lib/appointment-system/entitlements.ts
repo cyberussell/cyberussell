@@ -45,15 +45,9 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     name: 'Basic',
     priceMonthly: 299,
     tagline: 'Simple online booking.',
-    monthlyAppointments: 150,
+    monthlyAppointments: null,
     providerLimit: 5,
-    features: [
-      'public_booking_page',
-      'customer_records',
-      'no_show_tracking',
-      'email_notifications',
-      'data_export',
-    ],
+    features: ['public_booking_page', 'customer_records', 'no_show_tracking', 'email_notifications'],
   },
   pro: {
     tier: 'pro',

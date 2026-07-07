@@ -47,20 +47,19 @@ const PLAN_BULLETS: Record<string, string[]> = {
   basic: [
     'Everything in Free',
     'Up to 5 staff / providers',
-    'Up to 150 appointments / month',
+    'Unlimited appointments',
     'Email notifications (soon)',
     'Expanded appointment statistics',
     'Customer management tools',
-    'Data export (soon)',
   ],
   pro: [
     'Everything in Basic',
     'Unlimited staff / providers',
-    'Unlimited appointments',
     'Messenger booking bot',
     'Automated reminders (soon)',
     'Customer notes & no-show tracking',
     'Basic revenue reports',
+    'Data export (soon)',
   ],
 }
 
@@ -72,7 +71,7 @@ const PLAN_CTA: Record<string, string> = {
 
 type Cell = boolean | string
 const COMPARISON: { feature: string; cells: [Cell, Cell, Cell] }[] = [
-  { feature: 'Monthly appointments', cells: ['100', '150', 'Unlimited'] },
+  { feature: 'Monthly appointments', cells: ['100', 'Unlimited', 'Unlimited'] },
   { feature: 'Staff / providers', cells: ['1', '5', 'Unlimited'] },
   { feature: 'Public booking page', cells: [true, true, true] },
   { feature: 'Appointment calendar & dashboard', cells: [true, true, true] },
@@ -81,7 +80,7 @@ const COMPARISON: { feature: string; cells: [Cell, Cell, Cell] }[] = [
   { feature: 'Cancellation & rescheduling', cells: [true, true, true] },
   { feature: 'No-show tracking', cells: [true, true, true] },
   { feature: 'Email notifications', cells: [false, 'Soon', 'Soon'] },
-  { feature: 'Data export', cells: [false, 'Soon', 'Soon'] },
+  { feature: 'Data export', cells: [false, false, 'Soon'] },
   { feature: 'Messenger booking bot', cells: [false, false, true] },
   { feature: 'Automated reminders', cells: [false, false, 'Soon'] },
   { feature: 'Basic revenue reports', cells: [false, false, true] },

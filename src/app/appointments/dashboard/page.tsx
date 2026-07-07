@@ -90,6 +90,15 @@ export default async function TodayPage() {
   const stats = [
     { label: 'Today', value: String(activeToday.length), sub: 'appointments left today' },
     { label: 'This week', value: String(weekRes.count ?? 0), sub: 'booked this week' },
+    ...(quota.limit !== null
+      ? [
+          {
+            label: 'This month',
+            value: String(Math.max(quota.limit - quota.used, 0)),
+            sub: `of ${quota.limit} appointments left · resets monthly`,
+          },
+        ]
+      : []),
     { label: 'Completed', value: String(completed), sub: 'last 30 days' },
     { label: 'No-show rate', value: `${noShowRate}%`, sub: `${noShows} no-shows in 30 days` },
     { label: `New ${t.clients}`, value: String(clientsRes.count ?? 0), sub: 'last 30 days' },

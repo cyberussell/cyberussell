@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useRef, useState } from 'react'
+import { CalendarClock } from 'lucide-react'
 import { rescheduleAppointment, type ActionResult } from '@/app/appointments/actions'
 
 export default function RescheduleForm({ appointmentId }: { appointmentId: string }) {
@@ -20,9 +21,11 @@ export default function RescheduleForm({ appointmentId }: { appointmentId: strin
     return (
       <button
         onClick={() => setOpen(true)}
-        className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300 transition"
+        title="Reschedule"
+        aria-label="Reschedule"
+        className="rounded-lg border border-slate-700 p-1.5 text-slate-300 hover:border-emerald-400 hover:text-emerald-300 transition"
       >
-        Reschedule
+        <CalendarClock className="h-4 w-4" aria-hidden />
       </button>
     )
   }
