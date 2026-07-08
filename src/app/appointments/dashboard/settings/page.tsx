@@ -4,7 +4,7 @@ import { CircleCheck } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import ChangePasswordForm from '@/components/appointment-system/ChangePasswordForm'
-import { PLANS, PLAN_ORDER } from '@/lib/appointment-system/entitlements'
+import { PLANS, PLAN_ORDER, hasFeature, tierWithFeature } from '@/lib/appointment-system/entitlements'
 import { hasConfiguredHours } from '@/lib/appointment-system/slots'
 import { DAY_KEYS, DAY_LABELS, type BusinessHours } from '@/lib/appointment-system/types'
 import { updateBusinessProfile, saveFbConnection, updateClosedNotice, updateBusinessHours } from '../../actions'
@@ -22,6 +22,7 @@ export default async function SettingsPage() {
   const { business } = await requireBusiness()
   const t = getTerms(business.business_types)
   const connected = Boolean(business.fb_page_id)
+  const hasMessengerBot = hasFeature(business, 'messenger_booking_bot')
   const settings = business.settings as { closed?: boolean; closed_message?: string; hours?: BusinessHours }
   const hours = settings.hours ?? DAY_KEYS.map(() => null)
   const hoursConfigured = hasConfiguredHours(business)
@@ -249,11 +250,33 @@ export default async function SettingsPage() {
             .
           </p>
         </div>
-        <form action={saveFbConnection} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <Field label="Facebook Page ID" name="fb_page_id" defaultValue={business.fb_page_id ?? ''} required />
-          <Field label="Page Access Token" name="fb_page_token" type="password" required />
+        {!hasMessengerBot && (
+          <div className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-200">
+            Messenger booking automation is available on the {tierWithFeature('messenger_booking_bot').name} plan
+            (₱{tierWithFeature('messenger_booking_bot').priceMonthly.toLocaleString('en-PH')}/mo).{' '}
+            <Link href="/appointments#pricing" className="font-semibold underline underline-offset-4">
+              Compare plans
+            </Link>
+            .
+          </div>
+        )}
+        <form
+          action={saveFbConnection}
+          className={`space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-5 ${!hasMessengerBot ? 'opacity-50' : ''}`}
+        >
+          <Field
+            label="Facebook Page ID"
+            name="fb_page_id"
+            defaultValue={business.fb_page_id ?? ''}
+            required
+            disabled={!hasMessengerBot}
+          />
+          <Field label="Page Access Token" name="fb_page_token" type="password" required disabled={!hasMessengerBot} />
           <p className="text-xs text-slate-500 break-all">Webhook URL for the Meta app: {webhookUrl}</p>
-          <button className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">
+          <button
+            disabled={!hasMessengerBot}
+            className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:hover:bg-emerald-500"
+          >
             Save connection
           </button>
         </form>
@@ -274,12 +297,14 @@ function Field({
   defaultValue,
   type = 'text',
   required,
+  disabled,
 }: {
   label: string
   name: string
   defaultValue?: string
   type?: string
   required?: boolean
+  disabled?: boolean
 }) {
   return (
     <label className="block">
@@ -289,7 +314,8 @@ function Field({
         type={type}
         defaultValue={defaultValue}
         required={required}
-        className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-emerald-400 focus:outline-none"
+        disabled={disabled}
+        className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-emerald-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
       />
     </label>
   )

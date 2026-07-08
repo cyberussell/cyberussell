@@ -23,6 +23,8 @@ export interface Business {
   trial_ends_at: string
   paymongo_checkout_session_id: string | null
   plan_renews_at: string | null
+  selected_plan_tier: PlanTier | null
+  first_login_at: string | null
   fb_page_id: string | null
   settings: Record<string, unknown>
   created_at: string

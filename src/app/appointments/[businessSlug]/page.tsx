@@ -81,7 +81,7 @@ export default async function BusinessPublicPage({
             </div>
           )}
           <a
-            href="/appointments/manage"
+            href={`/appointments/manage?from=${business.slug}`}
             className="mt-4 inline-block text-xs font-medium text-slate-500 underline underline-offset-4 transition hover:text-emerald-400"
           >
             Already booked? Manage your booking

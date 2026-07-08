@@ -7,7 +7,7 @@ import { createServerSupabase, createAdminSupabase } from '@/lib/appointment-sys
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { logEvent } from '@/lib/appointment-system/events'
 import { bookAppointment, wallTimeToUtc } from '@/lib/appointment-system/slots'
-import { canCreateAppointment, canAddProvider, PLANS } from '@/lib/appointment-system/entitlements'
+import { canCreateAppointment, canAddProvider, hasFeature, PLANS } from '@/lib/appointment-system/entitlements'
 import { createBillingCheckout } from '@/lib/appointment-system/paymongo'
 import { DAY_KEYS, type BusinessHours } from '@/lib/appointment-system/types'
 
@@ -48,6 +48,9 @@ export async function signUp(_prev: ActionResult, formData: FormData): Promise<A
   if (!parsed.success) return { error: 'Please fill in all fields (password: 8+ characters) and pick at least one business type.' }
   const { fullName, businessName, businessTypes, email, password } = parsed.data
 
+  const planRaw = formData.get('plan')
+  const selectedPlanTier = planRaw === 'free' || planRaw === 'basic' || planRaw === 'pro' ? planRaw : null
+
   const supabase = await createServerSupabase()
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -73,7 +76,7 @@ export async function signUp(_prev: ActionResult, formData: FormData): Promise<A
 
   const { error: businessError } = await admin
     .from('businesses')
-    .insert({ owner_id: data.user.id, name: businessName, slug, business_types: businessTypes })
+    .insert({ owner_id: data.user.id, name: businessName, slug, business_types: businessTypes, selected_plan_tier: selectedPlanTier })
   if (businessError) return { error: businessError.message }
 
   await logEvent(admin, null, 'business_signed_up', { business_name: businessName, slug })
@@ -88,8 +91,21 @@ export async function signIn(_prev: ActionResult, formData: FormData): Promise<A
   const email = String(formData.get('email') ?? '')
   const password = String(formData.get('password') ?? '')
   const supabase = await createServerSupabase()
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) return { error: 'Invalid email or password.' }
+
+  const admin = createAdminSupabase()
+  const { data: business } = await admin
+    .from('businesses')
+    .select('id, first_login_at, selected_plan_tier')
+    .eq('owner_id', data.user.id)
+    .maybeSingle()
+
+  if (business && !business.first_login_at) {
+    await admin.from('businesses').update({ first_login_at: new Date().toISOString() }).eq('id', business.id)
+    if (business.selected_plan_tier) redirect('/appointments/dashboard/billing')
+  }
+
   redirect('/appointments/dashboard')
 }
 
@@ -402,6 +418,16 @@ export async function updateClosedNotice(formData: FormData): Promise<void> {
   revalidatePath('/appointments/dashboard')
 }
 
+// Manually hides the dashboard's setup checklist even if not all steps are done.
+export async function dismissSetupChecklist(): Promise<void> {
+  const { supabase, business } = await requireBusiness()
+  await supabase
+    .from('businesses')
+    .update({ settings: { ...business.settings, setup_checklist_hidden: true } })
+    .eq('id', business.id)
+  revalidatePath('/appointments/dashboard')
+}
+
 // Business-wide operating hours — gates whether the business accepts any
 // online bookings at all. Does not constrain per-staff Availability.
 export async function updateBusinessHours(formData: FormData): Promise<void> {
@@ -448,6 +474,7 @@ export async function updateClientNotes(formData: FormData): Promise<void> {
 // the Meta developer console (dev-mode testers). OAuth flow comes with app review.
 export async function saveFbConnection(formData: FormData): Promise<void> {
   const { supabase, business } = await requireBusiness()
+  if (!hasFeature(business, 'messenger_booking_bot')) return
   const pageId = String(formData.get('fb_page_id') ?? '').trim()
   const pageToken = String(formData.get('fb_page_token') ?? '').trim()
   if (!pageId || !pageToken) return

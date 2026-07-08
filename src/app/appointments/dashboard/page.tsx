@@ -2,9 +2,10 @@ import Link from 'next/link'
 import { MessageCircle, NotebookText } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
-import { formatSlotLabel, wallTimeToUtc } from '@/lib/appointment-system/slots'
+import { formatSlotLabel, hasConfiguredHours, wallTimeToUtc } from '@/lib/appointment-system/slots'
 import RecordPaymentForm from '@/components/appointment-system/RecordPaymentForm'
 import UsageBanner from '@/components/appointment-system/UsageBanner'
+import SetupChecklist from '@/components/appointment-system/SetupChecklist'
 import { canCreateAppointment } from '@/lib/appointment-system/entitlements'
 import { updateAppointmentStatus } from '../actions'
 
@@ -40,7 +41,7 @@ export default async function TodayPage() {
 
   const quota = await canCreateAppointment(supabase, business)
 
-  const [todayRes, weekRes, completedRes, noShowRes, clientsRes, revenueRes] = await Promise.all([
+  const [todayRes, weekRes, completedRes, noShowRes, clientsRes, revenueRes, servicesCountRes, staffCountRes, availabilityCountRes] = await Promise.all([
     supabase
       .from('appointments')
       .select('*, clients(full_name, phone), services(name, price), staff(name)')
@@ -78,7 +79,44 @@ export default async function TodayPage() {
       .eq('business_id', business.id)
       .gt('amount_paid', 0)
       .gte('paid_at', last30.toISOString()),
+    supabase.from('services').select('id', { count: 'exact', head: true }).eq('business_id', business.id).eq('active', true),
+    supabase.from('staff').select('id', { count: 'exact', head: true }).eq('business_id', business.id).eq('active', true),
+    supabase.from('availability').select('id', { count: 'exact', head: true }).eq('business_id', business.id),
   ])
+
+  const settings = business.settings as { setup_checklist_hidden?: boolean }
+  const checklistSteps = [
+    {
+      label: 'Add your phone number and location',
+      description: 'Shown to clients on your public booking page.',
+      href: '/appointments/dashboard/settings',
+      done: Boolean(business.phone && business.address),
+    },
+    {
+      label: 'Add at least one service',
+      description: `${t.clients} pick from these when booking.`,
+      href: '/appointments/dashboard/services',
+      done: (servicesCountRes.count ?? 0) > 0,
+    },
+    {
+      label: 'Add at least one staff member',
+      description: `Who ${t.clients} can be booked with.`,
+      href: '/appointments/dashboard/staff',
+      done: (staffCountRes.count ?? 0) > 0,
+    },
+    {
+      label: "Set your staff's weekly schedule",
+      description: 'Open booking slots are generated from these hours.',
+      href: '/appointments/dashboard/availability',
+      done: (availabilityCountRes.count ?? 0) > 0,
+    },
+    {
+      label: 'Set your business hours',
+      description: "Required — the booking page won't accept any bookings until this is set.",
+      href: '/appointments/dashboard/settings',
+      done: hasConfiguredHours(business),
+    },
+  ]
 
   const todayAppts = todayRes.data ?? []
   const activeToday = todayAppts.filter((a) => a.status === 'pending' || a.status === 'confirmed')
@@ -121,6 +159,8 @@ export default async function TodayPage() {
         </Link>
       </div>
 
+      <SetupChecklist steps={checklistSteps} hidden={Boolean(settings.setup_checklist_hidden)} />
+
       <UsageBanner tier={business.plan_tier} used={quota.used} limit={quota.limit} />
 
       {/* Stat cards */}
@@ -142,21 +182,6 @@ export default async function TodayPage() {
         {todayAppts.length === 0 ? (
           <div className="rounded-xl border border-slate-800 bg-slate-900 p-8 text-center text-slate-400">
             <p>No appointments today.</p>
-            <p className="text-sm mt-2">
-              Set up{' '}
-              <Link href="/appointments/dashboard/services" className="text-emerald-400 underline">
-                services
-              </Link>
-              ,{' '}
-              <Link href="/appointments/dashboard/availability" className="text-emerald-400 underline">
-                availability
-              </Link>{' '}
-              and connect your{' '}
-              <Link href="/appointments/dashboard/settings" className="text-emerald-400 underline">
-                Facebook Page
-              </Link>{' '}
-              so {t.clients} can start booking.
-            </p>
           </div>
         ) : (
           <ul className="space-y-3">

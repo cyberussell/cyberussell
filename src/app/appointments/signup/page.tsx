@@ -1,13 +1,18 @@
 'use client'
 
-import { useActionState } from 'react'
+import { use, useActionState } from 'react'
 import Link from 'next/link'
 import { MailCheck } from 'lucide-react'
 import { signUp, type ActionResult } from '../actions'
 import { BUSINESS_TYPE_OPTIONS } from '@/lib/appointment-system/terminology'
 import { AuthHeader, AuthFooter } from '@/components/appointment-system/AuthChrome'
 
-export default function SignupPage() {
+export default function SignupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ plan?: string }>
+}) {
+  const { plan } = use(searchParams)
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(signUp, {})
   const confirmEmail = state.error === 'CONFIRM_EMAIL'
 
@@ -33,10 +38,11 @@ export default function SignupPage() {
           </div>
         ) : (
           <form action={formAction} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <input type="hidden" name="plan" value={plan ?? ''} />
             <Field label="Your name" name="fullName" placeholder="Dr. Maria Santos" />
             <Field label="Business name" name="businessName" placeholder="Bright Smiles Dental" />
             <fieldset className="block">
-              <legend className="text-sm text-slate-300">Business type (select all that apply)</legend>
+              <legend className="text-sm text-slate-300">Business type</legend>
               <div className="mt-1 grid grid-cols-2 gap-2">
                 {BUSINESS_TYPE_OPTIONS.map((opt) => (
                   <label
@@ -44,7 +50,7 @@ export default function SignupPage() {
                     className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white"
                   >
                     <input
-                      type="checkbox"
+                      type="radio"
                       name="businessTypes"
                       value={opt.value}
                       defaultChecked={opt.value === 'medical'}
