@@ -1,33 +1,35 @@
 # Current Work
 
-Current Product: Design System (cross-cutting, not one of the 7 products — see [docs/project-map.md](project-map.md))
+Current Product: Get Started Landing Page (cross-cutting marketing page, not one of the 7 products — see [docs/project-map.md](project-map.md))
 
-Current Feature: Build a Cyberussell design system covering (1) a code-based style guide page documenting existing color/typography/spacing tokens actually in use across the site, (2) a marketing asset kit (templates/specs for social content), (3) a brand guidelines doc (logo usage, voice, do's/don'ts).
+Current Feature: Standalone premium marketing/lead-gen landing page at `/get-started`, modeled on a Claude Design brief (ABC copywriting framework, Linear/Stripe/Vercel-quality polish) with a reference screenshot (BizNext template) for inspiration only — reusing the existing design system's tokens/patterns rather than the reference's visual language.
 
-Current Goal: Derive the system from what's ALREADY in use across the site (not invent new tokens) — audit main-site pages, Appointment System, and existing logo/brand assets first, then present a concrete plan before building.
+Current Goal: Ship a conversion-focused page with two CTAs (book a free consultation, request a free AI business audit), reusing existing infra (`/api/contact`, Services routes) instead of building new backend.
 
-Current Status: All three pieces built and verified, 2026-07-08.
-- **Audit phase done**: full inventory of existing colors (`--color-brandRed #E8373A`, `--color-brandYellow #FFD23F`, `--color-brandGreen #00C97A`, `--color-brandBlue #3B82F6`, navy scale in `src/app/globals.css`), typography (Syne display / Inter body, `src/app/layout.tsx`), logo assets (`public/logo.png`, `logo-icon.png`, `favicon.png` — compass mark story in `src/app/about/page.tsx`), spacing/radius conventions, and component patterns (buttons, badges, cards) — all derived from the actual codebase, not invented.
-- **Brand guidelines doc**: `docs/design-system/brand-guidelines.md` — logo usage rules, color palette meaning, typography rules, voice/tone (derived from actual site copy), do's/don'ts.
-- **Marketing asset kit**: `docs/design-system/marketing-assets.md` — canvas sizes per platform (9:16 TikTok/Reels default, IG feed, YouTube thumb, OG image), color/type rules for assets, 4 reusable template specs (fact/quote card, stat callout, cover slide, thumbnail), pre-publish checklist.
-- **Live style guide page**: `src/app/design-system/page.tsx` (new route, `noindex, nofollow`, unlinked from nav) — renders actual color swatches, live typography examples, button/badge/card examples, radius scale, all using the real brand tokens/classes, not mockups.
-- Verified: `npx tsc --noEmit` clean, `npx next build` succeeds (`○ /design-system` prerendered static), live-viewed in preview via screenshots (colors, typography, buttons, badges, cards, radius scale, section-heading pattern all confirmed rendering correctly), no console errors, `robots: noindex, nofollow` confirmed applied.
+Current Status: Built and verified, 2026-07-08.
+- **New route**: `src/app/get-started/page.tsx` — indexed (not noindex), full metadata/OG/Twitter card.
+- **New components** (`src/components/get-started/`): `GetStartedNav.tsx` (custom minimal nav — back arrow, wordmark, one CTA, no full site Navbar), `GetStartedHero.tsx`, `ProblemsSection.tsx`, `SolutionsSection.tsx` (links to existing `/services/[slug]` pages where a matching catalog entry exists, `/services/inquire?service=...` otherwise for SEO/Technical Solutions which have no dedicated catalog page), `ProcessSection.tsx`, `WhyCyberussellSection.tsx`, `AuditSection.tsx` (client, lead form), `GetStartedFAQ.tsx` (client, accordion), `GetStartedFinalCTA.tsx`.
+- Existing section components (`PainSection`, `FaqAccordion`, `FinalCTA` from Earn; `ServiceHero`/`ServiceCTA`/`ServiceFAQ` from Services) were evaluated but not reused as-is — all are hardcoded to their own product's copy/data types, not generic — new components instead match their exact visual conventions (navy scale, brand colors, Syne/Inter fonts, card/radius/button patterns).
+- **Consultation CTA reuses existing infra**: links to `/services/inquire?service=Free%20Consultation` (existing page + `/api/contact`), no new form built for this. **Audit CTA is the one new form**: `AuditSection.tsx` posts directly to the existing `POST /api/contact` with a distinct subject line — no API or DB changes.
+- Footer: reuses existing site-wide `Footer.tsx` (Russell confirmed default reuse over a custom one).
+- Verified: `npx tsc --noEmit` clean, `npx next build` succeeds (`○ /get-started` prerendered static — an earlier `ENOENT pages-manifest.json` build error was a stale/corrupted `.next` cache artifact unrelated to this page, resolved by a clean rebuild). Live-verified in preview: all 8 sections render correctly desktop + mobile, FAQ accordion toggles correctly, Solutions cards link out correctly, audit lead form validates and POSTs to `/api/contact` with the right payload (confirmed via network inspection — the actual Gmail SMTP send is slow/environment-limited in this sandbox, same shared infra as the already-shipped `/services/inquire` form, not a bug in new code). One real bug found and fixed: `GetStartedNav`'s "Book a Consultation" button wrapped and overflowed above the sticky header on mobile (375px) — shortened to "Book a Call" below the `sm:` breakpoint.
 
 Branch: main (working directly, no feature branch)
 
 ----------------------------------------
 
-## Allowed Files (Design System scope)
+## Allowed Files (Get Started Landing Page scope)
 
-- New design-system doc/page location TBD after research (likely `docs/design-system/` + possibly a `/design-system` or `/brand` route on the main site)
-- Read-only reference to existing files across all products during research (not edited)
-- Shared components (`Navbar.tsx`, `Footer.tsx`) may be READ for audit purposes but not modified without a separate, explicit go-ahead
+- `src/app/get-started/**`
+- `src/components/get-started/**`
+- Read-only reference to existing Services/Earn components, `/api/contact`, design tokens during research (not edited)
 
 ----------------------------------------
 
 ## Notes
 
-- This is a cross-cutting initiative, not one of the 7 products — normal single-product isolation rules are relaxed for research/reading, but editing should stay scoped to new design-system files unless Russell explicitly asks to update existing shared components to match.
+- This is a cross-cutting marketing page, not one of the 7 products — scoped strictly to new files under `get-started`; no shared components (`Navbar.tsx`, `Footer.tsx` itself, `/api/contact`) were modified, only reused/linked to.
+- Previous cross-cutting initiative, Design System (brand guidelines, marketing asset kit, `/design-system` style guide page), completed 2026-07-08 — see git history for that work.
 
 ----------------------------------------
 
