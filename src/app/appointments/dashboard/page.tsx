@@ -6,7 +6,7 @@ import { formatSlotLabel, hasConfiguredHours, wallTimeToUtc } from '@/lib/appoin
 import RecordPaymentForm from '@/components/appointment-system/RecordPaymentForm'
 import UsageBanner from '@/components/appointment-system/UsageBanner'
 import SetupChecklist from '@/components/appointment-system/SetupChecklist'
-import { canCreateAppointment } from '@/lib/appointment-system/entitlements'
+import { canCreateAppointment, PLANS } from '@/lib/appointment-system/entitlements'
 import { updateAppointmentStatus } from '../actions'
 
 export const dynamic = 'force-dynamic'
@@ -159,7 +159,15 @@ export default async function TodayPage() {
         </Link>
       </div>
 
-      <SetupChecklist steps={checklistSteps} hidden={Boolean(settings.setup_checklist_hidden)} />
+      <SetupChecklist
+        steps={checklistSteps}
+        hidden={Boolean(settings.setup_checklist_hidden)}
+        pendingPlanName={
+          business.selected_plan_tier && business.selected_plan_tier !== business.plan_tier
+            ? PLANS[business.selected_plan_tier].name
+            : null
+        }
+      />
 
       <UsageBanner tier={business.plan_tier} used={quota.used} limit={quota.limit} />
 

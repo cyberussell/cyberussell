@@ -9,7 +9,16 @@ interface ChecklistStep {
   done: boolean
 }
 
-export default function SetupChecklist({ steps, hidden }: { steps: ChecklistStep[]; hidden: boolean }) {
+export default function SetupChecklist({
+  steps,
+  hidden,
+  pendingPlanName,
+}: {
+  steps: ChecklistStep[]
+  hidden: boolean
+  /** Name of the plan the business picked at signup but hasn't paid for yet — null/undefined if none. */
+  pendingPlanName?: string | null
+}) {
   const doneCount = steps.filter((s) => s.done).length
   if (hidden || doneCount === steps.length) return null
 
@@ -26,6 +35,16 @@ export default function SetupChecklist({ steps, hidden }: { steps: ChecklistStep
           <button className="text-xs text-slate-500 transition hover:text-slate-300">Hide this</button>
         </form>
       </div>
+      {pendingPlanName && (
+        <p className="mt-3 text-sm text-slate-400">
+          You picked the <span className="font-medium text-emerald-300">{pendingPlanName}</span> plan at
+          signup — finish setup below, then{' '}
+          <Link href="/appointments/dashboard/billing" className="text-emerald-400 underline underline-offset-4">
+            visit Billing to activate it
+          </Link>
+          .
+        </p>
+      )}
       <ul className="mt-4 space-y-2">
         {steps.map((s) => (
           <li key={s.label}>

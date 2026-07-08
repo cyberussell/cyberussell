@@ -92,21 +92,49 @@ export async function signIn(_prev: ActionResult, formData: FormData): Promise<A
   const password = String(formData.get('password') ?? '')
   const supabase = await createServerSupabase()
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-  if (error) return { error: 'Invalid email or password.' }
+  if (error) {
+    if (error.code === 'email_not_confirmed') return { error: 'EMAIL_NOT_CONFIRMED' } // handled as info, not error, in the UI
+    return { error: 'Invalid email or password.' }
+  }
 
+  // First login is always routed to Today (the setup checklist lives there) — a
+  // business shouldn't be pushed toward payment before it can even take a booking.
+  // selected_plan_tier still gets surfaced as a nudge in the checklist itself.
   const admin = createAdminSupabase()
   const { data: business } = await admin
     .from('businesses')
-    .select('id, first_login_at, selected_plan_tier')
+    .select('id, first_login_at')
     .eq('owner_id', data.user.id)
     .maybeSingle()
 
   if (business && !business.first_login_at) {
     await admin.from('businesses').update({ first_login_at: new Date().toISOString() }).eq('id', business.id)
-    if (business.selected_plan_tier) redirect('/appointments/dashboard/billing')
   }
 
   redirect('/appointments/dashboard')
+}
+
+// Called directly from the login page via useTransition (not through useActionState/a
+// <form> action) — it lives on the same form as signIn, and two useActionState hooks
+// bound to one <form> unreliably route to the wrong action on submit.
+export async function resendConfirmation(email: string): Promise<ActionResult> {
+  const trimmed = email.trim()
+  if (!trimmed) return { error: 'Enter your email above first, then resend.' }
+  const supabase = await createServerSupabase()
+  const { error } = await supabase.auth.resend({ type: 'signup', email: trimmed })
+  if (error) return { error: 'Could not resend — please try again in a moment.' }
+  return {}
+}
+
+export async function requestPasswordReset(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const email = String(formData.get('email') ?? '').trim()
+  if (!email) return { error: 'Enter your email address.' }
+  const supabase = await createServerSupabase()
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://www.cyberussell.com/appointments/reset-password',
+  })
+  if (error) return { error: 'Could not send reset link — please try again in a moment.' }
+  return { error: 'SENT' } // handled as info, not error, in the UI
 }
 
 export async function signOut(): Promise<void> {

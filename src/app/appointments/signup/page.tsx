@@ -33,7 +33,10 @@ export default function SignupPage({
             <MailCheck className="mx-auto mb-2 h-8 w-8 text-emerald-300" aria-hidden />
             <p className="text-emerald-300 font-medium">Check your email</p>
             <p className="text-slate-300 text-sm mt-2">
-              We sent a confirmation link. After confirming, <Link href="/appointments/login" className="underline text-emerald-300">log in here</Link>.
+              We sent a confirmation link to your email. You must confirm it before you can log in —
+              after confirming, <Link href="/appointments/login" className="underline text-emerald-300">log in here</Link>.
+              Didn&apos;t get it? You can resend it from the{' '}
+              <Link href="/appointments/login" className="underline text-emerald-300">login page</Link>.
             </p>
           </div>
         ) : (

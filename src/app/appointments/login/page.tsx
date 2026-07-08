@@ -1,12 +1,23 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState, useTransition } from 'react'
 import Link from 'next/link'
-import { signIn, type ActionResult } from '../actions'
+import { signIn, resendConfirmation, type ActionResult } from '../actions'
 import { AuthHeader, AuthFooter } from '@/components/appointment-system/AuthChrome'
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(signIn, {})
+  const [email, setEmail] = useState('')
+  const [resendPending, startResendTransition] = useTransition()
+  const [resendResult, setResendResult] = useState<ActionResult | null>(null)
+  const needsConfirmation = state.error === 'EMAIL_NOT_CONFIRMED'
+
+  function handleResend() {
+    setResendResult(null)
+    startResendTransition(async () => {
+      setResendResult(await resendConfirmation(email))
+    })
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-950">
@@ -23,6 +34,8 @@ export default function LoginPage() {
               name="email"
               type="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:border-emerald-400 focus:outline-none"
             />
           </label>
@@ -34,8 +47,32 @@ export default function LoginPage() {
               required
               className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:border-emerald-400 focus:outline-none"
             />
+            <Link href="/appointments/forgot-password" className="mt-1 inline-block text-xs text-emerald-400 hover:underline">
+              Forgot password?
+            </Link>
           </label>
-          {state.error && <p className="text-sm text-red-400">{state.error}</p>}
+          {state.error && !needsConfirmation && <p className="text-sm text-red-400">{state.error}</p>}
+          {needsConfirmation && (
+            <div className="rounded-lg border border-amber-400/30 bg-amber-500/10 p-3 text-sm text-amber-200">
+              <p>
+                Please confirm your email before logging in — check your inbox for the confirmation link
+                we sent when you signed up.
+              </p>
+              {resendResult && !resendResult.error ? (
+                <p className="mt-2 text-emerald-300">Confirmation email resent — check your inbox.</p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resendPending}
+                  className="mt-2 font-medium underline underline-offset-4 hover:text-amber-100 disabled:opacity-50"
+                >
+                  {resendPending ? 'Resending…' : "Didn't get it? Resend confirmation email"}
+                </button>
+              )}
+              {resendResult?.error && <p className="mt-2 text-red-400">{resendResult.error}</p>}
+            </div>
+          )}
           <button
             type="submit"
             disabled={pending}
