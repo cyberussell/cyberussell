@@ -1,5 +1,38 @@
 # Current Work
 
+Current Product: Design System (cross-cutting, not one of the 7 products — see [docs/project-map.md](project-map.md))
+
+Current Feature: Build a Cyberussell design system covering (1) a code-based style guide page documenting existing color/typography/spacing tokens actually in use across the site, (2) a marketing asset kit (templates/specs for social content), (3) a brand guidelines doc (logo usage, voice, do's/don'ts).
+
+Current Goal: Derive the system from what's ALREADY in use across the site (not invent new tokens) — audit main-site pages, Appointment System, and existing logo/brand assets first, then present a concrete plan before building.
+
+Current Status: All three pieces built and verified, 2026-07-08.
+- **Audit phase done**: full inventory of existing colors (`--color-brandRed #E8373A`, `--color-brandYellow #FFD23F`, `--color-brandGreen #00C97A`, `--color-brandBlue #3B82F6`, navy scale in `src/app/globals.css`), typography (Syne display / Inter body, `src/app/layout.tsx`), logo assets (`public/logo.png`, `logo-icon.png`, `favicon.png` — compass mark story in `src/app/about/page.tsx`), spacing/radius conventions, and component patterns (buttons, badges, cards) — all derived from the actual codebase, not invented.
+- **Brand guidelines doc**: `docs/design-system/brand-guidelines.md` — logo usage rules, color palette meaning, typography rules, voice/tone (derived from actual site copy), do's/don'ts.
+- **Marketing asset kit**: `docs/design-system/marketing-assets.md` — canvas sizes per platform (9:16 TikTok/Reels default, IG feed, YouTube thumb, OG image), color/type rules for assets, 4 reusable template specs (fact/quote card, stat callout, cover slide, thumbnail), pre-publish checklist.
+- **Live style guide page**: `src/app/design-system/page.tsx` (new route, `noindex, nofollow`, unlinked from nav) — renders actual color swatches, live typography examples, button/badge/card examples, radius scale, all using the real brand tokens/classes, not mockups.
+- Verified: `npx tsc --noEmit` clean, `npx next build` succeeds (`○ /design-system` prerendered static), live-viewed in preview via screenshots (colors, typography, buttons, badges, cards, radius scale, section-heading pattern all confirmed rendering correctly), no console errors, `robots: noindex, nofollow` confirmed applied.
+
+Branch: main (working directly, no feature branch)
+
+----------------------------------------
+
+## Allowed Files (Design System scope)
+
+- New design-system doc/page location TBD after research (likely `docs/design-system/` + possibly a `/design-system` or `/brand` route on the main site)
+- Read-only reference to existing files across all products during research (not edited)
+- Shared components (`Navbar.tsx`, `Footer.tsx`) may be READ for audit purposes but not modified without a separate, explicit go-ahead
+
+----------------------------------------
+
+## Notes
+
+- This is a cross-cutting initiative, not one of the 7 products — normal single-product isolation rules are relaxed for research/reading, but editing should stay scoped to new design-system files unless Russell explicitly asks to update existing shared components to match.
+
+----------------------------------------
+
+# Paused: Appointment System (resume here when Design System work is done)
+
 Current Product: Appointment System
 
 Current Feature: 5-part feature batch — (1) business type multi-select ✅ done, (2) booking page staff-name/phone validation, (3) month-view calendar, (4) Google Maps address, (5) PayMongo (SaaS billing + end-customer payments incl. subscriptions)
