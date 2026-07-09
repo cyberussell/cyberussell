@@ -102,6 +102,14 @@ export default function Pricing() {
         </div>
 
         <ComparisonTable />
+
+        <p className="mx-auto mt-6 max-w-3xl text-center font-[family-name:var(--font-inter)] text-[13px] italic leading-[1.7] text-white/45">
+          *After the first year: Your website remains yours. All the codes and access will be
+          given to you during the deployment. To keep it online, you&apos;ll only need to renew
+          your domain name and web hosting annually. We can handle the renewal for you or
+          transfer everything to your own accounts upon request. Or you may want to avail our
+          reduced and very affordable monthly price for managing your website.
+        </p>
       </div>
     </section>
   );
