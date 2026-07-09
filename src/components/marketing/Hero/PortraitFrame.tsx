@@ -22,7 +22,7 @@ export default function PortraitFrame() {
   return (
     <motion.div
       style={{ x, y }}
-      className="relative order-1 w-[320px] sm:w-[380px] md:w-[480px] lg:w-[560px] xl:order-2 xl:w-[600px]"
+      className="relative order-1 w-[320px] sm:w-[380px] md:w-[480px] lg:w-[560px] xl:order-2 xl:w-[490px]"
     >
       {/* Warm key light from behind */}
       <div

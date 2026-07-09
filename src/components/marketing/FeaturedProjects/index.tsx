@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import cyberussell from "@/data/portfolio/cyberussell.json";
@@ -5,6 +7,26 @@ import appointmentSystem from "@/data/portfolio/appointment-system.json";
 import hireworkers from "@/data/portfolio/hireworkers.json";
 
 const PROJECTS = [cyberussell, appointmentSystem, hireworkers];
+
+// Cover images specific to this page only — the shared portfolio JSON's
+// `coverImage` (used by /portfolio and /portfolio/[slug]) is left untouched.
+// Mapped by card position: 1.png = Cyberussell, 2.png = Appointment System,
+// 3.png = HireWorkers.work — drop the file into public/build-with-us/ to
+// override a card's image; checked on the server so there's no client-side
+// flash of a broken image.
+const COVER_OVERRIDES: Record<string, string> = {
+  cyberussell: "/build-with-us/1.png",
+  "appointment-system": "/build-with-us/2.png",
+  hireworkers: "/build-with-us/3.png",
+};
+
+function resolveCoverImage(slug: string, fallback: string): string {
+  const overridePath = COVER_OVERRIDES[slug];
+  if (overridePath && fs.existsSync(path.join(process.cwd(), "public", overridePath))) {
+    return overridePath;
+  }
+  return fallback;
+}
 
 export default function FeaturedProjects() {
   return (
@@ -33,7 +55,7 @@ export default function FeaturedProjects() {
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#111118]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={project.coverImage}
+                  src={resolveCoverImage(project.slug, project.coverImage)}
                   alt={project.title}
                   className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
