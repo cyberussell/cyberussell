@@ -1,5 +1,9 @@
 # Current Work
 
+**Quick fix (2026-07-10), committed and pushed to `main` (`56bdf24`), deploy triggers automatically via the host's git integration (no in-repo deploy script found):** Services page (`src/app/services/page.tsx`) bottom CTA's secondary button renamed from "View Cyberussell" (linked to `/`) to "Build With Us" (linked to `/build-with-us`). Verified live via a production build + `next start` (the dev server was hitting an iCloud-Drive-sync race against Turbopack's persistent cache in `.next` — unrelated to this change, worked around by building once instead of running dev). Note: a concurrent session committed `66a5d14` (Hero/Pricing fixes on the Build With Us page) and has unrelated in-progress uncommitted work in `src/components/demo/appointment-system/Footer.tsx` — left untouched per the one-product-at-a-time rule.
+
+----------------------------------------
+
 Current Product: Get Started Landing Page (cross-cutting marketing page, not one of the 7 products — see [docs/project-map.md](project-map.md))
 
 Current Feature: Standalone premium marketing/lead-gen landing page at `/get-started`, modeled on a Claude Design brief (ABC copywriting framework, Linear/Stripe/Vercel-quality polish) with a reference screenshot (BizNext template) for inspiration only — reusing the existing design system's tokens/patterns rather than the reference's visual language.
