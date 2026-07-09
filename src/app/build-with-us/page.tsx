@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/marketing/Hero";
 import OurProcess from "@/components/marketing/OurProcess";
 import FeaturedProjects from "@/components/marketing/FeaturedProjects";
+import Pricing from "@/components/marketing/Pricing";
+import PricingPromoBanner from "@/components/marketing/PricingPromoBanner";
 import FAQ from "@/components/marketing/FAQ";
 import FinalCTA from "@/components/marketing/FinalCTA";
 
@@ -25,8 +27,10 @@ export default function BuildWithUsPage() {
       <Navbar />
       <main className="min-h-screen bg-[#07070B]">
         <Hero />
-        <OurProcess />
         <FeaturedProjects />
+        <OurProcess />
+        <Pricing />
+        <PricingPromoBanner />
         <FAQ />
         <FinalCTA />
       </main>
