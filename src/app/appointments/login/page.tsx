@@ -24,8 +24,11 @@ export default function LoginPage() {
       <AuthHeader />
       <main className="flex flex-1 items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        <Link href="/appointments" className="block text-center text-2xl font-bold text-white mb-8">
-          Appointment <span className="text-emerald-400">System</span>
+        <Link href="/appointments" className="mb-8 flex flex-col items-center text-center">
+          <img src="/appointment-logo.png" alt="" className="mb-3 h-14 w-14 rounded-2xl object-cover" />
+          <span className="text-2xl font-bold text-white">
+            Appointment <span className="text-emerald-400">System</span>
+          </span>
         </Link>
         <form action={formAction} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-6">
           <label className="block">

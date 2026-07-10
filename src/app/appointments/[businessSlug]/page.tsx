@@ -8,13 +8,6 @@ import BookingWidget from '@/components/appointment-system/BookingWidget'
 
 export const dynamic = 'force-dynamic'
 
-function getInitials(name: string): string {
-  const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 0) return '?'
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return (words[0][0] + words[1][0]).toUpperCase()
-}
-
 // Public business page: Messenger is the primary CTA; the web form is the
 // fallback for clients arriving from Google instead of Facebook.
 export default async function BusinessPublicPage({
@@ -60,9 +53,11 @@ export default async function BusinessPublicPage({
 
       <div className="mx-auto max-w-2xl px-4 py-16 sm:py-20">
         <header className="text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-lg font-bold text-slate-950 shadow-lg shadow-emerald-500/20 sm:h-20 sm:w-20 sm:text-xl">
-            {getInitials(business.name)}
-          </div>
+          <img
+            src="/appointment-logo.png"
+            alt=""
+            className="mx-auto h-16 w-16 rounded-2xl object-cover shadow-lg shadow-emerald-500/20 sm:h-20 sm:w-20"
+          />
           <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">{business.name}</h1>
           {(business.address || business.phone) && (
             <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-sm text-slate-400">

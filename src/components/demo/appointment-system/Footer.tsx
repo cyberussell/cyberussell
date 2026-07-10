@@ -1,4 +1,3 @@
-import { CalendarCheck2 } from "lucide-react";
 import { PRODUCT, TECH_STACK } from "./data";
 
 export default function Footer() {
@@ -6,9 +5,7 @@ export default function Footer() {
     <footer className="bg-[#0B1220] px-6 md:px-10 pt-16 pb-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-2 mb-6">
-          <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#3B5BFF] to-[#14B8A6] flex items-center justify-center">
-            <CalendarCheck2 size={18} className="text-white" />
-          </span>
+          <img src="/appointment-logo.png" alt="" className="w-9 h-9 rounded-xl object-cover" />
           <span className="font-sans text-[18px] font-extrabold text-white">{PRODUCT.name}</span>
         </div>
 
@@ -25,7 +22,10 @@ export default function Footer() {
             <span className="font-bold text-white/70">This is a fictional concept.</span> Appointment System was designed and
             built exclusively for the Cyberussell portfolio to demonstrate UX, UI, front-end, and full-stack
             engineering capability. It is not a live product, and no signup, payment, or scheduling on this page is
-            real.
+            real. This concept grew into a real product —{" "}
+            <a href="https://www.cyberussell.com/appointments" className="text-[#5EEAD4] hover:text-white transition-colors">
+              see the Appointment System live →
+            </a>
           </p>
         </div>
 

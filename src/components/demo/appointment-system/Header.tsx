@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, CalendarCheck2 } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { NAV_LINKS, PRODUCT } from "./data";
 
 export default function Header() {
@@ -27,9 +27,7 @@ export default function Header() {
     >
       <div className="max-w-6xl mx-auto px-6 md:px-10 h-[76px] flex items-center justify-between">
         <a href="#top" className="flex items-center gap-2">
-          <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#3B5BFF] to-[#14B8A6] flex items-center justify-center">
-            <CalendarCheck2 size={18} className="text-white" />
-          </span>
+          <img src="/appointment-logo.png" alt="" className="w-9 h-9 rounded-xl object-cover" />
           <span className="font-sans text-[19px] font-extrabold text-[#0B1220] tracking-tight">{PRODUCT.name}</span>
         </a>
 

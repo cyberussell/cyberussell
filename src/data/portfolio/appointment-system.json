@@ -2,12 +2,12 @@
   "slug": "appointment-system",
   "title": "Appointment System",
   "client": "Concept Project",
-  "tagline": "Modern appointment scheduling for healthcare and legal professionals.",
+  "tagline": "Modern appointment scheduling for clinics, salons, spas, and other appointment-based businesses.",
   "category": "Web App",
   "date": "2026-07-04",
   "timeline": "Concept sprint",
   "coverImage": "/portfolio/appointment-system/cover.svg",
-  "icon": "/portfolio/appointment-system/icon.png",
+  "icon": "/appointment-logo.png",
   "gallery": [],
   "liveUrl": "/demo/appointment-system",
   "liveProduct": {
@@ -27,7 +27,7 @@
     "Resend",
     "Vercel"
   ],
-  "overview": "Appointment System is a fictional SaaS concept built to show what a modern, agency-grade scheduling platform looks like for doctors, dentists, and lawyers — from progressive onboarding and multi-office booking to a full productivity-style dashboard, at the same design quality bar as Linear, Notion, Stripe Dashboard, Vercel, Calendly, and Raycast.",
+  "overview": "Appointment System is a fictional SaaS concept built to show what a modern, agency-grade scheduling platform looks like for clinics, salons, spas, law offices, and vet clinics — from progressive onboarding and multi-office booking to a full productivity-style dashboard, at the same design quality bar as Linear, Notion, Stripe Dashboard, Vercel, Calendly, and Raycast.",
   "problem": "Traditional booking systems are stuck in the past: too many configuration screens before a professional can take a single booking, scheduling logic that breaks once there's more than one office, clunky mobile experiences, double bookings from the lack of real-time availability checks, and dashboards so complicated that front-desk staff need training just to read them.",
   "solution": "Designed and built a complete concept spanning a five-step progressive onboarding wizard, a calendar-first booking workflow with real-time availability and office-based scheduling, a productivity-grade dashboard with today's appointments, quick actions, and an appointment-details drawer, plus a fully responsive mobile experience — all wrapped in a minimal, spacious blue-and-teal design system.",
   "results": "A polished, end-to-end SaaS concept covering 10+ interface concepts, 25+ reusable components, 5 core user flows, and 20+ responsive screens — used as proof of capability for prospective SaaS and web app clients considering a Cyberussell build.",
