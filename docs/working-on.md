@@ -1,5 +1,9 @@
 # Current Work
 
+**Quick fix (2026-07-10), not yet committed:** Portfolio page (`/portfolio`, part of the Services product) — swapped the project-card icons for the Cyberussell and HireWorkers entries. `src/data/portfolio/cyberussell.json` and `src/data/portfolio/hireworkers.json` `icon` fields now point at `public/cyberussell logo.png` and `public/hireworker-logo.png` (both pre-existing in `public/`, provided by Russell) instead of the old `public/portfolio/<slug>/icon.png` files. No other files touched (`src/app/portfolio/page.tsx` unmodified — it already reads `project.icon` generically). Verified live in preview via `next dev`: both new logos render correctly in their project cards (confirmed via network requests returning 200 and DOM inspection of the `<img>` elements).
+
+----------------------------------------
+
 **Quick fix (2026-07-10), committed and pushed to `main` (`56bdf24`), deploy triggers automatically via the host's git integration (no in-repo deploy script found):** Services page (`src/app/services/page.tsx`) bottom CTA's secondary button renamed from "View Cyberussell" (linked to `/`) to "Build With Us" (linked to `/build-with-us`). Verified live via a production build + `next start` (the dev server was hitting an iCloud-Drive-sync race against Turbopack's persistent cache in `.next` — unrelated to this change, worked around by building once instead of running dev). Note: a concurrent session committed `66a5d14` (Hero/Pricing fixes on the Build With Us page) and has unrelated in-progress uncommitted work in `src/components/demo/appointment-system/Footer.tsx` — left untouched per the one-product-at-a-time rule.
 
 ----------------------------------------

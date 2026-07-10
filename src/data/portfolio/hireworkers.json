@@ -7,7 +7,7 @@
   "date": "2026-07-04",
   "timeline": "Ongoing",
   "coverImage": "/portfolio/hireworkers/cover.svg",
-  "icon": "/portfolio/hireworkers/icon.png",
+  "icon": "/hireworker-logo.png",
   "gallery": [],
   "liveUrl": "https://hireworkers.work",
   "techStack": ["Next.js", "TypeScript", "Tailwind CSS"],
