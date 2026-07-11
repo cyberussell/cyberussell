@@ -14,7 +14,7 @@ export default function LandingNav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#050816]/90 backdrop-blur-md border-b border-white/[0.08]">
+    <header className="sticky top-0 z-50 bg-[#08111F]/90 backdrop-blur-md border-b border-white/[0.08]">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 md:px-10 py-4" aria-label="Main">
         <Link href="/laundry-management-system" className="font-sans text-[17px] font-bold text-white tracking-tight">
           Laundry Management <span className="text-[#38BDF8]">System</span>

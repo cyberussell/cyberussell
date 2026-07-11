@@ -65,10 +65,10 @@ function PlanCard({ plan, index }: { plan: Plan; index: number }) {
       whileInView="show"
       viewport={{ once: true }}
       custom={index}
-      className={`relative overflow-hidden rounded-[24px] p-8 flex flex-col h-full ${
+      className={`relative rounded-[24px] p-8 flex flex-col h-full ${
         plan.highlight
-          ? "bg-gradient-to-b from-[#162033]/70 to-[#0B1120]/70 backdrop-blur-md border-2 border-[#38BDF8]/50 shadow-[0_0_40px_rgba(56,189,248,0.15)]"
-          : "bg-[#162033]/40 backdrop-blur-md border border-[#38BDF8]/10"
+          ? "bg-gradient-to-b from-[#0F172A]/70 to-[#0B1120]/70 backdrop-blur-md border-2 border-[#38BDF8]/50 shadow-[0_0_40px_rgba(56,189,248,0.15)]"
+          : "bg-[#0F172A]/40 backdrop-blur-md border border-[#38BDF8]/10"
       }`}
     >
       {plan.highlight && (

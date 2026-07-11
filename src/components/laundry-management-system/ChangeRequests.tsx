@@ -42,7 +42,7 @@ export default function ChangeRequests() {
           whileInView="show"
           viewport={{ once: true }}
           custom={0}
-          className="bg-[#162033]/40 backdrop-blur-md border border-[#38BDF8]/10 rounded-2xl p-7"
+          className="bg-[#0F172A]/40 backdrop-blur-md border border-[#38BDF8]/10 rounded-2xl p-7"
         >
           <h3 className="font-sans text-[15px] font-bold text-white mb-5">Included</h3>
           <ul className="flex flex-col gap-3">
@@ -61,7 +61,7 @@ export default function ChangeRequests() {
           whileInView="show"
           viewport={{ once: true }}
           custom={1}
-          className="bg-[#162033]/40 backdrop-blur-md border border-[#38BDF8]/10 rounded-2xl p-7"
+          className="bg-[#0F172A]/40 backdrop-blur-md border border-[#38BDF8]/10 rounded-2xl p-7"
         >
           <h3 className="font-sans text-[15px] font-bold text-white mb-5">Not Included</h3>
           <ul className="flex flex-col gap-3">

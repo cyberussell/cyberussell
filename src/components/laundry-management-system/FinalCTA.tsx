@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { CornerBubbleAccent } from "./Atmosphere";
+import { CornerBubbleAccent, FoamDivider } from "./Atmosphere";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -17,7 +17,7 @@ export default function FinalCTA() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="relative rounded-[24px] overflow-hidden bg-gradient-to-br from-[#111827] to-[#050816] border border-[#38BDF8]/15 px-8 md:px-14 py-16 md:py-20 text-center"
+        className="relative rounded-[24px] overflow-hidden bg-gradient-to-br from-[#0F172A] to-[#08111F] border border-[#38BDF8]/15 px-8 md:px-14 py-16 md:py-20 text-center"
       >
         <CornerBubbleAccent />
         <h2 className="font-sans text-[28px] md:text-[42px] font-bold text-white mb-4 leading-tight max-w-2xl mx-auto">
@@ -43,6 +43,8 @@ export default function FinalCTA() {
           </a>
         </div>
       </motion.div>
+
+      <FoamDivider seed={103} count={90} height={140} className="mt-4" />
     </section>
   );
 }

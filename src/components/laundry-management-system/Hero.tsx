@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { HeroBubbleCluster } from "./Atmosphere";
+import { HeroBubbleCluster, FoamDivider } from "./Atmosphere";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -73,6 +73,10 @@ export default function Hero() {
             View Laundry Portfolio <ArrowRight size={16} />
           </a>
         </motion.div>
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0">
+        <FoamDivider seed={101} count={80} height={130} />
       </div>
     </section>
   );

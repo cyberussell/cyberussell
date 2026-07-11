@@ -46,7 +46,7 @@ function FeatureCard({ item, index }: { item: (typeof FEATURES)[0]; index: numbe
       whileInView="show"
       viewport={{ once: true, margin: "-40px" }}
       custom={index}
-      className="relative overflow-hidden bg-[#162033]/50 backdrop-blur-md border border-[#38BDF8]/10 hover:border-[#38BDF8]/30 rounded-2xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_0_30px_rgba(56,189,248,0.12)]"
+      className="relative overflow-hidden bg-[#0F172A]/50 backdrop-blur-md border border-[#38BDF8]/10 hover:border-[#38BDF8]/30 rounded-2xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_0_30px_rgba(56,189,248,0.12)]"
     >
       <div
         aria-hidden

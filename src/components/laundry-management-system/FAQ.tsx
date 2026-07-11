@@ -38,7 +38,7 @@ export default function FAQ() {
               whileInView="show"
               viewport={{ once: true }}
               custom={i}
-              className="bg-[#162033]/40 backdrop-blur-md border border-[#38BDF8]/10 rounded-2xl overflow-hidden"
+              className="bg-[#0F172A]/40 backdrop-blur-md border border-[#38BDF8]/10 rounded-2xl overflow-hidden"
             >
               <button
                 type="button"
