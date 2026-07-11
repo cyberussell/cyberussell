@@ -1,0 +1,55 @@
+'use client'
+
+import { useActionState } from 'react'
+import Link from 'next/link'
+import { createBusiness, type ActionResult } from '../../actions'
+import { AuthHeader, AuthFooter } from '@/components/laundry-management-system/AuthChrome'
+
+export default function CreateBusinessPage() {
+  const [state, formAction, pending] = useActionState<ActionResult, FormData>(createBusiness, {})
+
+  return (
+    <div className="flex min-h-screen flex-col bg-[#050816]">
+      <AuthHeader />
+      <main className="flex flex-1 items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          <Link href="/laundry-management-system" className="block text-center text-2xl font-bold text-white mb-2">
+            Laundry <span className="text-[#38BDF8]">Management System</span>
+          </Link>
+          <p className="text-center text-white/40 mb-8 text-sm">
+            Tell us about your laundry business — you can add more branches later.
+          </p>
+          <form action={formAction} className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
+            <Field label="Business name" name="name" placeholder="Aling Maria Laundry Shop" />
+            <Field label="Phone" name="phone" placeholder="0917 123 4567" />
+            <Field label="Address" name="address" placeholder="123 Rizal St, Quezon City" />
+            {state.error && <p className="text-sm text-red-400">{state.error}</p>}
+            <button
+              type="submit"
+              disabled={pending}
+              className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 font-semibold text-white hover:brightness-110 hover:shadow-[0_0_20px_rgba(56,189,248,0.35)] disabled:opacity-50 transition-all"
+            >
+              {pending ? 'Setting up your business…' : 'Continue'}
+            </button>
+          </form>
+        </div>
+      </main>
+      <AuthFooter />
+    </div>
+  )
+}
+
+function Field({ label, name, placeholder }: { label: string; name: string; placeholder?: string }) {
+  return (
+    <label className="block">
+      <span className="text-sm text-white/60">{label}</span>
+      <input
+        name={name}
+        type="text"
+        required
+        placeholder={placeholder}
+        className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-white/30 focus:border-[#38BDF8] focus:outline-none"
+      />
+    </label>
+  )
+}

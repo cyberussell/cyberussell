@@ -1,5 +1,94 @@
 # Current Work
 
+**Atmosphere v2 — cinematic bubble/particle/glass system, code done, live-verified (2026-07-11):**
+
+Current Product: Laundry Management System (LMS) — landing page only (`/laundry-management-system`), per Russell's explicit scope for this batch.
+
+Current Feature: Replaced the simple v1 `Bubbles.tsx` decoration (previous batch, see below) with a full cinematic water/glass atmosphere per Russell's detailed reference-image brief: glassmorphism, depth-of-field layering, particle system, radial light gradients, scroll parallax, and subtle mouse reactivity — built in HTML/CSS/Framer Motion only, no images/SVGs.
+
+Current Status: Done.
+- **`Bubbles.tsx` deleted, replaced by `src/components/laundry-management-system/Atmosphere.tsx`** — a from-scratch architecture, not an incremental edit:
+  - Seeded PRNG (`mulberry32`) generates all bubble/particle configs deterministically, so server-rendered and hydrated client output match exactly (avoids the hydration-mismatch that plain `Math.random()` in render would cause, and avoids a post-mount pop-in).
+  - `GlassBubbleField` — configurable field of glass bubbles (radial-gradient reflection, white border, inner/outer glow) with 3 depth-of-field presets composed in `AtmosphereBackground`: back (11 bubbles, 15–42px, opacity 5–10%, strong 26px blur, 26–40s drift), mid (9 bubbles, 38–85px, opacity 15–30%, 8px blur), front (7 bubbles, 90–220px, opacity 35–60%, crisp/no blur, real `backdrop-filter` glass refraction, highlight + secondary-highlight + twinkling sparkle children, mouse-reactive). `edgeBias` lets some bubbles poke past the viewport edge, cropped by `overflow-hidden`, per the brief.
+  - `ParticleField` — 55 tiny (1–3px) dots, low opacity, ~30% twinkling.
+  - `LightWash` — 4 layered radial gradients in the brief's exact blues (`#38BDF8`/`#60A5FA`/`#93C5FD`/`#BFDBFE`), all under 10% opacity, with a very slow ambient scale breathe.
+  - `AtmosphereBackground` (default export) — one `position: fixed` full-viewport layer holding all of the above, rendered once in `page.tsx` so the same atmosphere is visible behind every section as the page scrolls (the "connected instead of per-section" requirement) — `main`'s old flat `bg-[#050816]` was removed since the fixed layer now supplies the base color. Each depth layer gets its own scroll-driven `useTransform` offset (back/mid/front move at different rates) for true parallax depth, still GPU-cheap (2–3 scroll-linked transforms total, not per-bubble).
+  - `MouseAtmosphereProvider` + `useAtmosphereMouse` — one rAF-throttled `window` mousemove listener feeding a shared Framer Motion context; only the crisp/foreground bubbles subscribe (via a separate `InteractiveBubble` wrapper so the 20 non-interactive bubbles never pay for a spring), producing a gentle whole-field tilt-toward-cursor rather than expensive per-bubble proximity physics — a deliberate performance simplification of the brief's "nearby bubbles react," flagged below.
+  - `HeroBubbleCluster` — a denser local field (18 bubbles across all 3 depths, foreground interactive) placed inside `Hero.tsx` itself (scrolls with the section) for the "richest bubble field behind the hero text" requirement, plus a new subtle radial dark scrim behind the text block for legibility.
+  - `CornerBubbleAccent` — a small 3-bubble crisp cluster reused in `FinalCTA.tsx`, replacing the old single corner bubble, still cropped by the panel's edge for depth.
+- **Performance deliberately scaled down from literal spec** (the brief's own performance section asked for this): "dozens" of bubbles → 27 total in the global layer (not "dozens" meaning 40+), "hundreds" of particles → 55. All animation is `transform`/`opacity` only (GPU-composited), scroll-parallax uses just 3 motion values total, and mouse-reactivity is opt-in per bubble rather than global.
+- Verified: `npx tsc --noEmit` clean, zero leftover imports of the deleted `Bubbles.tsx`. Live-verified in preview (shared dev server, port 3001): hero renders the full glass-bubble field with visible highlights/sparkles and legible text; scrolling through Features → How It Works → Pricing confirms the fixed atmosphere shows through continuously between cards/sections (screenshot-compared); FinalCTA's corner cluster crops correctly at the panel edge; mobile (375px) hero confirmed legible and premium, not cluttered; no console errors.
+
+**Known simplification vs. the brief:** mouse "reactivity" is a single shared cursor-position tilt applied to all interactive (foreground) bubbles, not true per-bubble proximity detection — chosen for performance (avoids O(n) distance math on every mousemove across dozens of bubbles) while still reading as "elegant, subtle" per Russell's own instruction not to overdo it. Flagged in case Russell wants genuine proximity-based reaction instead.
+
+**Next recommended task:** none required — this batch is complete and scoped exactly to the landing page as requested. If wanted later: extend the same `Atmosphere.tsx` system to the login/signup/onboarding/dashboard pages for full-product consistency (currently only the v1 flat blue theme from the previous batch, no bubble atmosphere).
+
+----------------------------------------
+
+**Color theme redesign — yellow to blue/glass, code done, live-verified (2026-07-11):**
+
+Current Product: Laundry Management System (LMS) — see [docs/project-map.md](project-map.md) §8
+
+Current Feature: Full visual identity redesign of the marketing landing page + auth flow per Russell's brief (clean water/soap/bubbles/premium SaaS direction, inspired by Stripe/Linear/Vercel). Removed all yellow (`#FFD23F`) accents, replaced with a blue palette (`#2563EB`/`#38BDF8`/`#60A5FA`), added glassmorphism cards and subtle floating-bubble decorations.
+
+Current Status: Done.
+- **New component**: `src/components/laundry-management-system/Bubbles.tsx` — reusable decorative layer (3 variants: `hero`/`ambient`/`corner`), absolutely-positioned blurred gradient circles with a slow CSS float animation defined via a scoped inline `<style>` tag (kept self-contained in this component rather than touching the site-wide `globals.css`, which is out of LMS scope).
+- **Backgrounds**: `#0A0A14` → `#050816` across the landing page and all auth pages; Hero's radial glow changed from yellow to a layered blue/cyan radial gradient.
+- **All 9 landing components + `AuthChrome.tsx`** (`LandingNav`, `Hero`, `Features`, `HowItWorks`, `Pricing`, `ChangeRequests`, `FAQ`, `FinalCTA`): yellow badges/labels/icons/checkmarks → `#38BDF8`; primary buttons → `#2563EB → #38BDF8` gradient with white text, hover lift + soft glow; cards → `bg-[#162033]/40-50` + `backdrop-blur-md` + `border-[#38BDF8]/10-30` (was flat `#111118` + white border); Pricing's highlighted plan and Features cards each got a small corner bubble glow; Hero and FinalCTA got the floating `Bubbles` layer.
+- **Scope decision, confirmed by Russell via clarifying question**: included the login/signup/onboarding/dashboard app pages (`src/app/laundry-management-system/{login,signup,onboarding/business,dashboard}/page.tsx`) in the same pass, not just the linked marketing page — these shared `AuthChrome.tsx` and the same yellow tokens, so leaving them yellow would have made the auth flow visually inconsistent with the landing page.
+- **Not touched**: `Footer.tsx` (shared site-wide component, still yellow-branded — out of scope, correctly left alone) and any non-LMS product.
+- Verified: `grep` confirms zero `FFD23F`/`0A0A14` references remain anywhere in LMS scope. `npx tsc --noEmit` clean. Live-verified in preview (shared dev server, port 3001): Hero, Features, Pricing, FAQ, FinalCTA sections all render the new theme correctly on desktop; mobile (375px) hero confirmed; login page confirmed (gradient button, blue "System" wordmark, blue focus states). Bubble layer confirmed present and animating via DOM inspection (7 bubble divs + keyframe found on the landing page).
+
+**Next recommended task:** Spot-check the signup/onboarding pages live (not just code-reviewed) with a real flow, and decide whether the shared `Footer.tsx`'s yellow branding at the bottom of this page should get an LMS-specific override eventually, or stays as the intentional site-wide default.
+
+----------------------------------------
+
+**Owner signup/login/onboarding loop built and live-verified (2026-07-11):**
+
+Current Product: Laundry Management System (LMS) — new 8th product, see [docs/project-map.md](project-map.md) §8
+
+Current Feature: Auth/tenant foundation — Russell created the dedicated Supabase project, shared the keys, and ran `001_init.sql` against it. Built the owner signup → email confirmation → login → create-business → dashboard loop, mirroring the Appointment System's isolation pattern (own Supabase project, own auth, own lib/component namespace). Not a feature of Cyberussell.com and not client-specific — a reusable commercial product any laundry business can subscribe to.
+
+Current Goal: Get the real app (auth, multi-tenant DB, 3 role dashboards) working end-to-end. Owner path is done; staff and customer paths are not started.
+
+Current Status:
+- Confirmed `src/app/laundry-management-system/page.tsx` (marketing landing page, built earlier/concurrently) is the real product's front door, not a demo — unrelated to the fictional `src/data/portfolio/laundry-management-system.json` / `/demo/laundryflow` portfolio case study (Services product), which stays untouched, out of scope for LMS work.
+- Documented the full architecture in `docs/project-map.md` §8.
+- **Env vars added** to `.env.local` and `.env.example`: `NEXT_PUBLIC_LMS_SUPABASE_URL`, `NEXT_PUBLIC_LMS_SUPABASE_ANON_KEY`, `LMS_SUPABASE_SERVICE_ROLE_KEY` (fresh `LMS_` prefix, deliberately not reusing the Appointment System's stale `BOOKLYPRO_` naming).
+- **`laundry-management-system/migrations/001_init.sql`** written and applied: `profiles` (role: owner/staff/customer, auto-created via `handle_new_user` trigger on `auth.users` insert), `businesses` (tenant root, owner-linked), `branches` (pricing is per-branch per the landing page), `staff_members` (links a staff profile to a business + optional branch), `customers` (business-scoped customer list, `profile_id` set once a customer creates an account). Full RLS: owner has full access to everything under their business; staff (`is_business_staff()` helper) can read branches and manage customers; customers can read only their own record. Deliberately scoped to tenant/auth only — no orders/services/inventory tables yet, that's later feature work.
+- **`laundry-management-system/SETUP.md`** written, mirroring `appointment-system/SETUP.md`.
+- **`src/lib/laundry-management-system/`** scaffolded: `supabase.ts`, `supabase-server.ts` (session client + service-role admin client), `types.ts`, `auth.ts` (`getSessionUser`, `requireOwnerBusiness` → redirects to `/laundry-management-system/login` or `/laundry-management-system/onboarding/business`, `requireStaffAccess` → resolves a staff member's business via `staff_members`). All mirror the Appointment System's `src/lib/appointment-system/` file-for-file.
+- **Owner auth flow built** (decisions: email confirmation required from day one; signup is account-only — email + password, business details collected in a separate onboarding step):
+  - `src/app/laundry-management-system/actions.ts` — `signUp`, `signIn` (detects `email_not_confirmed`), `resendConfirmation`, `signOut`, `createBusiness` (slug auto-generated + deduped).
+  - `src/app/laundry-management-system/signup/page.tsx`, `login/page.tsx`, `onboarding/business/page.tsx`, `dashboard/page.tsx` (stub — shows business name + logout, no real dashboard content yet).
+  - `src/components/laundry-management-system/AuthChrome.tsx` — `AuthHeader`/`AuthFooter`, styled with the landing page's brand tokens (`#0A0A14` bg, `#FFD23F` accent), not the Appointment System's slate/emerald scheme.
+- `npx tsc --noEmit` clean. **Live-verified against the real Supabase project** (shared dev server on port 3001, another session's): signed up a real test account (`+lmstest@gmail.com`) → got the "check your email" state → attempted login before confirming → correctly showed the amber "please confirm your email" banner with a working resend button. **Not verified:** the confirmed-login → create-business → dashboard leg (needs a real confirmed email, no inbox access in this sandbox) and the staff/customer roles (not built yet — `requireStaffAccess` exists in `auth.ts` but nothing calls it).
+
+**Next recommended task:** Russell clicks the confirmation link for `russell.a.parayno+lmstest@gmail.com` and logs in to confirm the create-business → dashboard leg works, then decide what the "Setup Wizard" step (branches, first service, invite staff) actually needs before building it — that's also where the orders/services/inventory schema (deferred out of `001_init.sql`) gets designed.
+
+**Next recommended task:** Russell runs `laundry-management-system/migrations/001_init.sql` in the new Supabase project's SQL Editor, then decide the owner signup flow (`/laundry-management-system/signup`) — form fields, whether email confirmation is required before dashboard access — before building it.
+
+----------------------------------------
+
+## Allowed Files (Laundry Management System scope)
+
+- `src/app/laundry-management-system/**`
+- `src/components/laundry-management-system/**`
+- `src/lib/laundry-management-system/**`
+- `laundry-management-system/**` (migrations + SETUP.md)
+- Its own future `laundry-management-system/migrations/**` (separate Supabase project, not yet created)
+- Do NOT touch: `src/data/portfolio/laundry-management-system.json`, `src/app/demo/laundryflow/**`, or any other product's files (Services/Portfolio, Appointment System, etc.)
+
+----------------------------------------
+
+**Laundry Management System landing page (cross-cutting marketing page, same category as Get Started), built and verified (2026-07-11), not yet committed:** New standalone SaaS landing page at `/laundry-management-system` per Russell's brief — hero (headline/subheadline/pricing badge/CTA), 12-feature icon grid, 4-step "how it works" timeline, 2 pricing cards (Essential ₱399/mo, Professional ₱699/mo with "Most Popular" badge), change-request scope checklist, FAQ accordion, final CTA. New files: `src/app/laundry-management-system/page.tsx` + 7 components in `src/components/laundry-management-system/`. Matches the existing design system (`#0A0A14`/`#FFD23F`, Syne/Inter, `framer-motion` fadeUp/fadeIn) read from `src/app/services/page.tsx`; reuses standard `Navbar`/`Footer` and the existing `/services/inquire?service=...` + `/api/contact` infra for all quote CTAs (no new backend). See checkpoint `laundry-management-system-landing-page-v1.md` for full detail.
+
+**Side effect, approved by Russell via clarifying question:** renamed the LaundryFlow portfolio entry's slug `laundryflow` → `laundry-management-system` (`src/data/portfolio/laundry-management-system.json`, `public/portfolio/laundry-management-system/`, `src/lib/portfolio/data.ts` import) so the brief's `/portfolio/laundry-management-system` CTA target resolves instead of 404ing. `src/app/demo/laundryflow/**` and its components were deliberately left untouched (separate demo showcase, `liveUrl` still points there).
+
+Verified: `npx tsc --noEmit` and `npx next build` both clean (`/laundry-management-system` prerenders static, `/portfolio/laundry-management-system` in the SSG paths for `/portfolio/[slug]`, `/demo/laundryflow` unaffected). Live-verified in preview: full page content/order/links correct on desktop and mobile (375px), FAQ accordion opens/closes correctly, all "Request a Quote" links point to `/services/inquire?service=...` with the right plan-specific labels, renamed portfolio slug resolves with correct content, old `/portfolio/laundryflow` now 404s as expected.
+
+----------------------------------------
+
 **Portfolio concept, LaundryFlow (Services/Portfolio product), committed and deployed (2026-07-11):** `/demo/laundryflow` went through three full design iterations in one session before landing on the current build: (1) a generic SaaS landing page, (2) a "reveal" concept with an illustrated/CSS hero and dashboard mockups, (3) a bold single-flat-color ad-poster direction (Russell's reference screenshot), which itself was further simplified and polished in follow-up rounds after this note was last written.
 
 **Current build:** 5 components — `Header` (transparent/absolute nav over the hero), `Hero` (full-bleed photo of a woman overwhelmed by a laundry pile, `hero-pile.png` — provided directly by Russell, not stock photography — with a flat `bg-black/50` scrim for text legibility, no fade gradient; bold poster headline "TOO MUCH LAUNDRY? WE'VE GOT YOU!" in white, white highlight box, 3 icon feature rows, full-width CTA), `Pricing` (cream panel — bold price grid, trust badges, 3 quick-action buttons, then a blue banner panel with an oversized "We treat your clothes like our own." headline (`text-[42px] md:text-[46px] font-black`, ~3x its original size per Russell's explicit ask) and a rotating testimonial carousel with colored initials avatars per reviewer), `Footer` (dark bar — tagline, "Schedule a Pickup" button, phone numbers, address, branch-tag row, copyright/demo-attribution line), `CTA` (dark reveal panel — "A Cyberussell Concept" glass panel over a photo, explains this is a portfolio demo). Section order: Header → Hero → Pricing → Footer → CTA (Footer intentionally placed *before* the reveal panel per Russell's request).
