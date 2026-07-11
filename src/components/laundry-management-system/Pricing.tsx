@@ -130,6 +130,9 @@ export default function Pricing() {
       <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-14">
         <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0369A1] uppercase tracking-[3px]">Pricing</span>
         <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-[#0B1B33] mt-2">Simple, Transparent Pricing</h2>
+        <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#0B1B33]/55 mt-4 max-w-lg mx-auto">
+          One flat monthly rate per branch — no enterprise contracts, no per-transaction fees, no hidden costs.
+        </p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">

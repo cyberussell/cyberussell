@@ -2,7 +2,8 @@
 
 import { useActionState, useState, useTransition } from 'react'
 import Link from 'next/link'
-import { signIn, resendConfirmation, type ActionResult } from '../actions'
+import { signIn, resendConfirmation } from '../actions/auth'
+import type { ActionResult } from '../actions/shared'
 import { AuthHeader, AuthFooter } from '@/components/laundry-management-system/AuthChrome'
 
 export default function LoginPage() {

@@ -3,7 +3,8 @@
 import { useActionState } from 'react'
 import Link from 'next/link'
 import { MailCheck } from 'lucide-react'
-import { requestPasswordReset, type ActionResult } from '../actions'
+import { requestPasswordReset } from '../actions/auth'
+import type { ActionResult } from '../actions/shared'
 import { AuthHeader, AuthFooter } from '@/components/laundry-management-system/AuthChrome'
 
 export default function ForgotPasswordPage() {

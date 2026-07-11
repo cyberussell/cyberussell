@@ -15,6 +15,7 @@ const FAQS = [
   { q: "Do customers need to install an app?", a: "No. Customers simply book online and receive a QR Code." },
   { q: "Can staff use mobile phones?", a: "Yes. The system is fully responsive and works on phones, tablets, and desktops." },
   { q: "How are monthly change requests handled?", a: "Change requests cover minor website and system updates. Larger feature requests are quoted separately." },
+  { q: "Why isn't this a free app?", a: "Free laundry apps are usually generic templates with no dedicated support. Your subscription includes a professional website, hosting, ongoing maintenance, and monthly change requests — a real system built and supported for your business, not a shared app." },
 ];
 
 export default function FAQ() {

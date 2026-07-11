@@ -2,8 +2,10 @@
 
 import { useActionState } from 'react'
 import Link from 'next/link'
-import { createBusiness, type ActionResult } from '../../actions'
+import { createBusiness } from '../../actions/tenant'
+import { CURRENCIES, type ActionResult } from '../../actions/shared'
 import { AuthHeader, AuthFooter } from '@/components/laundry-management-system/AuthChrome'
+import BusinessHoursInput from '@/components/laundry-management-system/BusinessHoursInput'
 
 export default function CreateBusinessPage() {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(createBusiness, {})
@@ -21,8 +23,36 @@ export default function CreateBusinessPage() {
           </p>
           <form action={formAction} className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
             <Field label="Business name" name="name" placeholder="Aling Maria Laundry Shop" />
-            <Field label="Phone" name="phone" placeholder="0917 123 4567" />
+            <Field label="Branch name" name="branchName" placeholder="Main Branch" />
+            <Field label="Contact number" name="phone" placeholder="0917 123 4567" />
             <Field label="Address" name="address" placeholder="123 Rizal St, Quezon City" />
+            <div className="grid grid-cols-2 gap-3">
+              <label className="block">
+                <span className="text-sm text-white/60">Currency</span>
+                <select
+                  name="currency"
+                  defaultValue="PHP"
+                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white focus:border-[#38BDF8] focus:outline-none"
+                >
+                  {CURRENCIES.map((c) => (
+                    <option key={c} value={c} className="bg-[#0A0A14]">
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-sm text-white/60">Timezone</span>
+                <input
+                  name="timezone"
+                  type="text"
+                  required
+                  defaultValue="Asia/Manila"
+                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white focus:border-[#38BDF8] focus:outline-none"
+                />
+              </label>
+            </div>
+            <BusinessHoursInput name="businessHours" />
             {state.error && <p className="text-sm text-red-400">{state.error}</p>}
             <button
               type="submit"

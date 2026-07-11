@@ -3,16 +3,8 @@
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { createServerSupabase } from '@/lib/laundry-management-system/supabase-server'
-
-export type ActionResult = { error?: string }
-
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 50)
-}
+import type { UserRole } from '@/lib/laundry-management-system/modules/auth/types'
+import { type ActionResult } from './shared'
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 
@@ -50,16 +42,29 @@ export async function signUp(_prev: ActionResult, formData: FormData): Promise<A
   return { error: 'CONFIRM_EMAIL' } // handled as info, not error, in the UI
 }
 
+const ROLE_REDIRECT: Record<UserRole, string> = {
+  owner: '/laundry-management-system/dashboard',
+  staff: '/laundry-management-system/staff/dashboard',
+  customer: '/laundry-management-system/customer/dashboard',
+}
+
 export async function signIn(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const email = String(formData.get('email') ?? '')
   const password = String(formData.get('password') ?? '')
   const supabase = await createServerSupabase()
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) {
     if (error.code === 'email_not_confirmed') return { error: 'EMAIL_NOT_CONFIRMED' } // handled as info, not error, in the UI
     return { error: 'Invalid email or password.' }
   }
-  redirect('/laundry-management-system/dashboard')
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', data.user.id)
+    .single()
+  const role = (profile?.role as UserRole | undefined) ?? 'owner'
+  redirect(ROLE_REDIRECT[role])
 }
 
 // Called directly from the login page via useTransition (not through useActionState/a
@@ -89,38 +94,4 @@ export async function signOut(): Promise<void> {
   const supabase = await createServerSupabase()
   await supabase.auth.signOut()
   redirect('/laundry-management-system/login')
-}
-
-// ── Onboarding ───────────────────────────────────────────────────────────────
-
-const createBusinessSchema = z.object({
-  name: z.string().min(2).max(80),
-  phone: z.string().min(1).max(30),
-  address: z.string().min(1).max(200),
-})
-
-export async function createBusiness(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
-  const parsed = createBusinessSchema.safeParse({
-    name: formData.get('name'),
-    phone: formData.get('phone'),
-    address: formData.get('address'),
-  })
-  if (!parsed.success) return { error: 'Please fill in your business name, phone, and address.' }
-  const { name, phone, address } = parsed.data
-
-  const supabase = await createServerSupabase()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) redirect('/laundry-management-system/login')
-
-  let slug = slugify(name)
-  if (slug.length < 3) slug = `laundry-${slug}`
-  const { count } = await supabase.from('businesses').select('id', { count: 'exact', head: true }).eq('slug', slug)
-  if (count && count > 0) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`
-
-  const { error } = await supabase.from('businesses').insert({ owner_id: user.id, name, slug, phone, address })
-  if (error) return { error: error.message }
-
-  redirect('/laundry-management-system/dashboard')
 }
