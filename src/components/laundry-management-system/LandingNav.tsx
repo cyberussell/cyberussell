@@ -14,10 +14,10 @@ export default function LandingNav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#08111F]/90 backdrop-blur-md border-b border-white/[0.08]">
+    <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-[#0B1B33]/10">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 md:px-10 py-4" aria-label="Main">
-        <Link href="/laundry-management-system" className="font-sans text-[17px] font-bold text-white tracking-tight">
-          Laundry Management <span className="text-[#38BDF8]">System</span>
+        <Link href="/laundry-management-system" className="font-sans text-[17px] font-bold text-[#0B1B33] tracking-tight">
+          Laundry Management <span className="text-[#0284C7]">System</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-7">
@@ -25,7 +25,7 @@ export default function LandingNav() {
             <a
               key={l.href}
               href={l.href}
-              className="font-[family-name:var(--font-inter)] text-[13.5px] text-white/60 hover:text-white transition-colors"
+              className="font-[family-name:var(--font-inter)] text-[13.5px] text-[#0B1B33]/65 hover:text-[#0B1B33] transition-colors"
             >
               {l.label}
             </a>
@@ -35,7 +35,7 @@ export default function LandingNav() {
         <div className="hidden md:flex items-center gap-4">
           <Link
             href="/laundry-management-system/login"
-            className="font-[family-name:var(--font-inter)] text-[13.5px] font-medium text-white/60 hover:text-white transition-colors"
+            className="font-[family-name:var(--font-inter)] text-[13.5px] font-medium text-[#0B1B33]/65 hover:text-[#0B1B33] transition-colors"
           >
             Sign In
           </Link>
@@ -49,7 +49,7 @@ export default function LandingNav() {
 
         <button
           type="button"
-          className="md:hidden rounded-lg p-2 text-white/70 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38BDF8]"
+          className="md:hidden rounded-lg p-2 text-[#0B1B33]/70 hover:bg-[#0B1B33]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38BDF8]"
           aria-expanded={open}
           aria-controls="lms-mobile-menu"
           aria-label={open ? "Close menu" : "Open menu"}
@@ -62,14 +62,14 @@ export default function LandingNav() {
       </nav>
 
       {open && (
-        <div id="lms-mobile-menu" className="md:hidden border-t border-white/[0.08] px-6 pb-5 pt-2">
+        <div id="lms-mobile-menu" className="md:hidden border-t border-[#0B1B33]/10 px-6 pb-5 pt-2">
           <div className="flex flex-col gap-1">
             {LINKS.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 font-[family-name:var(--font-inter)] text-[14px] text-white/70 hover:bg-white/[0.06]"
+                className="rounded-lg px-3 py-2.5 font-[family-name:var(--font-inter)] text-[14px] text-[#0B1B33]/70 hover:bg-[#0B1B33]/5"
               >
                 {l.label}
               </a>
@@ -77,7 +77,7 @@ export default function LandingNav() {
             <Link
               href="/laundry-management-system/login"
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-2.5 font-[family-name:var(--font-inter)] text-[14px] text-white/70 hover:bg-white/[0.06]"
+              className="rounded-lg px-3 py-2.5 font-[family-name:var(--font-inter)] text-[14px] text-[#0B1B33]/70 hover:bg-[#0B1B33]/5"
             >
               Sign In
             </Link>

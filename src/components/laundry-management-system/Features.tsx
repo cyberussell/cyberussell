@@ -46,17 +46,17 @@ function FeatureCard({ item, index }: { item: (typeof FEATURES)[0]; index: numbe
       whileInView="show"
       viewport={{ once: true, margin: "-40px" }}
       custom={index}
-      className="relative overflow-hidden bg-[#0F172A]/50 backdrop-blur-md border border-[#38BDF8]/10 hover:border-[#38BDF8]/30 rounded-2xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_0_30px_rgba(56,189,248,0.12)]"
+      className="relative overflow-hidden bg-white/70 backdrop-blur-md border border-[#38BDF8]/20 hover:border-[#38BDF8]/40 rounded-2xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-[2px] shadow-sm hover:shadow-[0_0_30px_rgba(56,189,248,0.18)]"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute -top-4 -right-4 w-16 h-16 rounded-full bg-[#38BDF8]/20 blur-xl"
       />
       <div className="w-11 h-11 rounded-xl bg-[#2563EB]/15 border border-[#38BDF8]/25 flex items-center justify-center">
-        <Icon size={19} className="text-[#38BDF8]" strokeWidth={1.6} />
+        <Icon size={19} className="text-[#2563EB]" strokeWidth={1.6} />
       </div>
-      <h3 className="font-sans text-[15px] font-bold text-white">{item.title}</h3>
-      <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">{item.desc}</p>
+      <h3 className="font-sans text-[15px] font-bold text-[#0B1B33]">{item.title}</h3>
+      <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#0B1B33]/55 leading-[1.7]">{item.desc}</p>
     </motion.div>
   );
 }
@@ -65,8 +65,8 @@ export default function Features() {
   return (
     <section id="features" className="px-6 md:px-10 py-20 max-w-5xl mx-auto scroll-mt-24">
       <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-14">
-        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#38BDF8] uppercase tracking-[3px]">Features</span>
-        <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-white mt-2">
+        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0369A1] uppercase tracking-[3px]">Features</span>
+        <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-[#0B1B33] mt-2">
           Everything You Need to Run Your Laundry Business
         </h2>
       </motion.div>

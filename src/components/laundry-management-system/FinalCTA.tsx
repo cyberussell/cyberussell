@@ -17,7 +17,7 @@ export default function FinalCTA() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="relative rounded-[24px] overflow-hidden bg-gradient-to-br from-[#0F172A] to-[#08111F] border border-[#38BDF8]/15 px-8 md:px-14 py-16 md:py-20 text-center"
+        className="relative rounded-[24px] overflow-hidden bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] border border-white/20 px-8 md:px-14 py-16 md:py-20 text-center"
       >
         <CornerBubbleAccent />
         <h2 className="font-sans text-[28px] md:text-[42px] font-bold text-white mb-4 leading-tight max-w-2xl mx-auto">
@@ -37,7 +37,7 @@ export default function FinalCTA() {
           </a>
           <a
             href="/services/inquire?service=Laundry+Management+System"
-            className="inline-flex items-center justify-center gap-2 bg-white/[0.08] hover:bg-white/[0.12] border border-[#38BDF8]/15 hover:border-[#38BDF8]/30 transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
+            className="inline-flex items-center justify-center gap-2 bg-white/[0.08] hover:bg-white/[0.12] border border-white/25 hover:border-white/40 transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
           >
             Start Now
           </a>

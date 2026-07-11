@@ -67,8 +67,8 @@ function PlanCard({ plan, index }: { plan: Plan; index: number }) {
       custom={index}
       className={`relative rounded-[24px] p-8 flex flex-col h-full ${
         plan.highlight
-          ? "bg-gradient-to-b from-[#0F172A]/70 to-[#0B1120]/70 backdrop-blur-md border-2 border-[#38BDF8]/50 shadow-[0_0_40px_rgba(56,189,248,0.15)]"
-          : "bg-[#0F172A]/40 backdrop-blur-md border border-[#38BDF8]/10"
+          ? "bg-white backdrop-blur-md border-2 border-[#38BDF8]/60 shadow-[0_10px_40px_rgba(56,189,248,0.18)]"
+          : "bg-white/70 backdrop-blur-md border border-[#38BDF8]/20 shadow-sm"
       }`}
     >
       {plan.highlight && (
@@ -83,15 +83,15 @@ function PlanCard({ plan, index }: { plan: Plan; index: number }) {
         </span>
       )}
 
-      <h3 className="font-sans text-[20px] font-bold text-white mb-1">{plan.name}</h3>
+      <h3 className="font-sans text-[20px] font-bold text-[#0B1B33] mb-1">{plan.name}</h3>
 
       <div className="flex items-baseline gap-2 mb-1">
-        <span className="font-sans text-[36px] font-bold text-white">{plan.price}</span>
+        <span className="font-sans text-[36px] font-bold text-[#0B1B33]">{plan.price}</span>
       </div>
-      <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-white/40 uppercase tracking-[1.5px] mb-4">
+      <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0B1B33]/45 uppercase tracking-[1.5px] mb-4">
         {plan.label}
       </span>
-      <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 mb-6">{plan.setup}</p>
+      <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#0B1B33]/55 mb-6">{plan.setup}</p>
 
       <ul className="flex flex-col gap-3 mb-8 flex-1">
         {plan.features.map((feature) => {
@@ -100,10 +100,10 @@ function PlanCard({ plan, index }: { plan: Plan; index: number }) {
             <li
               key={feature}
               className={`flex items-start gap-2.5 font-[family-name:var(--font-inter)] text-[13.5px] leading-[1.6] ${
-                isHeader ? "text-white/40 font-bold uppercase tracking-[0.5px] text-[11px] mt-1" : "text-white/70"
+                isHeader ? "text-[#0B1B33]/45 font-bold uppercase tracking-[0.5px] text-[11px] mt-1" : "text-[#0B1B33]/75"
               }`}
             >
-              {!isHeader && <Check size={15} className="text-[#38BDF8] shrink-0 mt-[2px]" />}
+              {!isHeader && <Check size={15} className="text-[#2563EB] shrink-0 mt-[2px]" />}
               {feature}
             </li>
           );
@@ -115,7 +115,7 @@ function PlanCard({ plan, index }: { plan: Plan; index: number }) {
         className={`inline-flex items-center justify-center gap-2 font-[family-name:var(--font-inter)] font-bold text-[15px] px-6 py-3.5 rounded-xl transition-all hover:-translate-y-[2px] ${
           plan.highlight
             ? "bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:brightness-110 hover:shadow-[0_0_24px_rgba(56,189,248,0.4)] text-white"
-            : "bg-white/[0.08] hover:bg-white/[0.12] border border-[#38BDF8]/15 hover:border-[#38BDF8]/30 text-white"
+            : "bg-white hover:bg-[#F0F9FF] border border-[#2563EB]/25 hover:border-[#2563EB]/40 text-[#0B1B33] shadow-sm"
         }`}
       >
         Start Now <ArrowRight size={16} />
@@ -128,8 +128,8 @@ export default function Pricing() {
   return (
     <section id="pricing" className="px-6 md:px-10 py-20 max-w-5xl mx-auto scroll-mt-24">
       <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-14">
-        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#38BDF8] uppercase tracking-[3px]">Pricing</span>
-        <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-white mt-2">Simple, Transparent Pricing</h2>
+        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0369A1] uppercase tracking-[3px]">Pricing</span>
+        <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-[#0B1B33] mt-2">Simple, Transparent Pricing</h2>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">

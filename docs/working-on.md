@@ -1,5 +1,24 @@
 # Current Work
 
+**Soap suds theme v4 — full pivot to light sky/cloud illustration style, code done, live-verified (2026-07-11):**
+
+Current Product: Laundry Management System (LMS) — landing page only (`/laundry-management-system`), same scope as prior visual batches.
+
+Current Feature: Russell shared a reference image (light blue sky background, white/pale-blue two-tone cloud band along the bottom edge, scattered thin white-outline bubble line-art) and asked to fully replace the dark navy "premium glass" theme (v3, previous entry below) with this brighter, illustrated soap-bubble look — confirmed via clarifying questions: whole landing page (not just Hero), recreated in code (no raster image), and a full pivot (not an addition alongside the dark theme).
+
+Current Status: Done.
+- **`Atmosphere.tsx` restructured, not just recolored**: base background is now a light sky-blue gradient (`#8FD8EC → #B7E8F5 → #DFF4FB`) instead of dark navy. `BubbleVisual` changed from glossy glass-gradient orbs to thin white line-art circle outlines (`1.5–2px` white border, faint fill, small highlight crescent on foreground/"crisp" bubbles only) to match the reference's bubble style. `LightWash` repurposed from blue radial washes to soft white glow blobs (reads as distant cloud/sun highlights on the new light bg). `ParticleField` (twinkling dust motes) removed entirely — didn't fit the flatter illustrated style and had no remaining purpose.
+- **`FoamDivider` rebuilt as a two-tone `CloudLayer` system**: each divider now renders a pale-blue cloud layer (`#B9E9F6`) peeking above a white cloud layer (`#FFFFFF`), each built from ~16 large overlapping circles along a jittered baseline plus a solid fill rect beneath (reads as one continuous lumpy cloud silhouette, not scattered dots), with a scatter of small line-art bubbles floating in the gap above — recreating the reference's cloud-band look. Kept the same exported signature (`seed`/`count`/`height`/`className`) so `Hero.tsx`, `HowItWorks.tsx`, and `FinalCTA.tsx` needed zero call-site changes.
+- **All 7 landing components + `LandingNav.tsx` recolored dark-on-navy → dark-on-light**: `text-white` → `text-[#0B1B33]` (dark navy ink) at matched opacity tiers, `bg-[#0F172A]/*` translucent dark cards → `bg-white/70`(or `/80`, or solid `bg-white` for the highlighted pricing card) translucent light cards with `shadow-sm`, dividers/borders `border-white/[0.08]` → `border-[#0B1B33]/10`, eyebrow/label accent color `text-[#38BDF8]` → `text-[#0369A1]` (darker, AA-contrast-safe on white/light-blue), standalone icon glyphs (not on a tinted chip) darkened to `#2563EB` for contrast. Primary gradient CTA buttons (`#2563EB → #38BDF8`, white text) unchanged — already worked on light backgrounds. Secondary/ghost buttons flipped from `bg-white/[0.08] ... text-white` (illegible on light bg) to `bg-white border-[#2563EB]/25 text-[#0B1B33]`.
+- **`FinalCTA.tsx`'s panel deliberately kept as a bold saturated color block** rather than flipped to match the light page body — changed from a dark navy gradient to a bold blue gradient (`#2563EB → #0EA5E9`), keeping all of its existing white text/ghost-button styling as-is (still fully legible against the new blue, not navy) — a common pattern of a light page ending in one bold-color CTA banner, and it minimized unnecessary edits to that file.
+- **Hero's dark radial text-legibility scrim removed** (`bg-[radial-gradient(...rgba(5,8,22,0.55)...)]`) — no longer needed now that the background is light and text is dark.
+- **Shared `Footer.tsx` deliberately left untouched** (Russell confirmed via clarifying question) — still the site-wide dark-themed footer, same out-of-scope rule as prior batches.
+- Verified: `npx tsc --noEmit` clean, zero console errors on a fresh load. Live-verified in preview (desktop + mobile 375px): Hero's cloud divider and bubble field closely match the reference image's look; Features/Pricing/ChangeRequests/FAQ cards all render dark text on light cards correctly; HowItWorks icon tiles and step connectors correct; FinalCTA renders as a bold blue banner with white text; mobile hamburger menu renders correctly on white bg; all foam/cloud dividers at their 3 transition points render without gaps or overlap glitches.
+
+**Next recommended task:** none required — this batch is complete and matches Russell's reference image. If wanted later: extend this same light sky/cloud theme to the auth flow pages (login/signup/onboarding/dashboard), which still only have the original flat blue theme from the first batch.
+
+----------------------------------------
+
 **Soap suds theme v3 — organic foam dividers replace dense atmosphere, code done, live-verified (2026-07-11):**
 
 Current Product: Laundry Management System (LMS) — landing page only (`/laundry-management-system`), same scope as the two prior visual batches.

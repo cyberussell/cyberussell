@@ -23,8 +23,8 @@ export default function FAQ() {
   return (
     <section id="faq" className="px-6 md:px-10 py-20 max-w-2xl mx-auto scroll-mt-24">
       <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-14">
-        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#38BDF8] uppercase tracking-[3px]">FAQ</span>
-        <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-white mt-2">Frequently Asked Questions</h2>
+        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0369A1] uppercase tracking-[3px]">FAQ</span>
+        <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-[#0B1B33] mt-2">Frequently Asked Questions</h2>
       </motion.div>
 
       <div className="flex flex-col gap-3">
@@ -38,7 +38,7 @@ export default function FAQ() {
               whileInView="show"
               viewport={{ once: true }}
               custom={i}
-              className="bg-[#0F172A]/40 backdrop-blur-md border border-[#38BDF8]/10 rounded-2xl overflow-hidden"
+              className="bg-white/70 backdrop-blur-md border border-[#38BDF8]/20 rounded-2xl overflow-hidden shadow-sm"
             >
               <button
                 type="button"
@@ -46,15 +46,15 @@ export default function FAQ() {
                 className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
                 aria-expanded={isOpen}
               >
-                <span className="font-sans text-[14.5px] font-bold text-white">{faq.q}</span>
+                <span className="font-sans text-[14.5px] font-bold text-[#0B1B33]">{faq.q}</span>
                 <ChevronDown
                   size={18}
-                  className={`text-white/40 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                  className={`text-[#0B1B33]/40 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
                 />
               </button>
               {isOpen && (
                 <div className="px-6 pb-5">
-                  <p className="font-[family-name:var(--font-inter)] text-[13.5px] text-white/55 leading-[1.8]">{faq.a}</p>
+                  <p className="font-[family-name:var(--font-inter)] text-[13.5px] text-[#0B1B33]/60 leading-[1.8]">{faq.a}</p>
                 </div>
               )}
             </motion.div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useRef, type CSSProperties, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from "react";
 import { motion, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 
 function mulberry32(seed: number) {
@@ -109,11 +109,8 @@ function generateBubbles(
   }));
 }
 
-const GLASS_GRADIENT =
-  "radial-gradient(circle at 30% 25%, rgba(255,255,255,0.85), rgba(224,242,254,0.20) 22%, rgba(34,211,238,0.16) 48%, rgba(56,189,248,0.14) 68%, rgba(37,99,235,0.10) 86%, transparent 100%)";
-
-function BubbleVisual({ b, blur, crisp }: { b: Bubble; blur: number; crisp: boolean }) {
-  const sparkleRng = mulberry32(b.id + 97);
+// Thin white line-art bubble outline, matching the soap-bubble illustration reference.
+function BubbleVisual({ b, crisp }: { b: Bubble; crisp: boolean }) {
   return (
     <motion.div
       className="rounded-full"
@@ -121,67 +118,46 @@ function BubbleVisual({ b, blur, crisp }: { b: Bubble; blur: number; crisp: bool
         width: b.size,
         height: b.size,
         opacity: b.opacity,
-        filter: blur ? `blur(${blur}px)` : undefined,
-        backdropFilter: crisp ? "blur(6px)" : undefined,
-        WebkitBackdropFilter: crisp ? "blur(6px)" : undefined,
-        border: "1px solid rgba(255,255,255,0.25)",
-        background: GLASS_GRADIENT,
-        boxShadow: crisp
-          ? "inset 0 0 18px rgba(255,255,255,0.15), inset 0 -10px 16px rgba(37,99,235,0.15), 0 0 24px rgba(34,211,238,0.12)"
-          : undefined,
+        border: `${crisp ? 2 : 1.5}px solid rgba(255,255,255,0.9)`,
+        background: crisp
+          ? "radial-gradient(circle at 32% 28%, rgba(255,255,255,0.35), rgba(255,255,255,0.04) 55%, transparent 75%)"
+          : "rgba(255,255,255,0.05)",
       }}
       animate={{
         y: [0, -b.driftY, 0],
         x: [0, b.driftX, 0],
         rotate: [-b.rotate, b.rotate, -b.rotate],
-        scale: [0.98, 1.03, 0.98],
+        scale: [0.98, 1.02, 0.98],
       }}
       transition={{ duration: b.duration, delay: b.delay, repeat: Infinity, ease: "easeInOut" }}
     >
       {crisp && (
-        <>
-          <div
-            className="absolute rounded-full bg-white/70 blur-[2px]"
-            style={{
-              width: round(b.size * 0.22),
-              height: round(b.size * 0.22),
-              top: round(b.size * 0.14),
-              left: round(b.size * 0.18),
-            }}
-          />
-          <div
-            className="absolute rounded-full bg-white/40"
-            style={{
-              width: round(b.size * 0.08),
-              height: round(b.size * 0.08),
-              bottom: round(b.size * 0.2),
-              right: round(b.size * 0.22),
-            }}
-          />
-          <motion.div
-            className="absolute rounded-full bg-white"
-            style={{ width: 2, height: 2, top: round(b.size * 0.5), left: round(b.size * 0.7) }}
-            animate={{ opacity: [0.85, 0.1, 0.85] }}
-            transition={{ duration: lerp(sparkleRng, 2, 4), repeat: Infinity }}
-          />
-        </>
+        <div
+          className="absolute rounded-full bg-white/70 blur-[2px]"
+          style={{
+            width: round(b.size * 0.22),
+            height: round(b.size * 0.12),
+            top: round(b.size * 0.16),
+            left: round(b.size * 0.2),
+          }}
+        />
       )}
     </motion.div>
   );
 }
 
-function StaticBubble({ b, blur, crisp }: { b: Bubble; blur: number; crisp: boolean }) {
+function StaticBubble({ b, crisp }: { b: Bubble; crisp: boolean }) {
   return (
     <div
       className="absolute"
       style={{ left: `${b.left}%`, top: `${b.top}%`, marginLeft: round(-b.size / 2), marginTop: round(-b.size / 2) }}
     >
-      <BubbleVisual b={b} blur={blur} crisp={crisp} />
+      <BubbleVisual b={b} crisp={crisp} />
     </div>
   );
 }
 
-function InteractiveBubble({ b, blur, crisp }: { b: Bubble; blur: number; crisp: boolean }) {
+function InteractiveBubble({ b, crisp }: { b: Bubble; crisp: boolean }) {
   const mouse = useAtmosphereMouse();
   const shiftX = useTransform(mouse.x, (v) => v * 10);
   const shiftY = useTransform(mouse.y, (v) => v * 10);
@@ -200,7 +176,7 @@ function InteractiveBubble({ b, blur, crisp }: { b: Bubble; blur: number; crisp:
         y: springY,
       }}
     >
-      <BubbleVisual b={b} blur={blur} crisp={crisp} />
+      <BubbleVisual b={b} crisp={crisp} />
     </motion.div>
   );
 }
@@ -211,7 +187,6 @@ function GlassBubbleField({
   sizeRange,
   opacityRange,
   durationRange,
-  blur = 0,
   crisp = false,
   interactive = false,
   edgeBias = false,
@@ -221,7 +196,6 @@ function GlassBubbleField({
   sizeRange: [number, number];
   opacityRange: [number, number];
   durationRange: [number, number];
-  blur?: number;
   crisp?: boolean;
   interactive?: boolean;
   edgeBias?: boolean;
@@ -234,60 +208,7 @@ function GlassBubbleField({
   return (
     <>
       {bubbles.map((b) => (
-        <Bubble key={b.id} b={b} blur={blur} crisp={crisp} />
-      ))}
-    </>
-  );
-}
-
-type Particle = {
-  id: number;
-  size: number;
-  left: number;
-  top: number;
-  opacity: number;
-  duration: number;
-  delay: number;
-  twinkle: boolean;
-};
-
-function generateParticles(seed: number, count: number): Particle[] {
-  const rng = mulberry32(seed);
-  return Array.from({ length: count }, (_, i) => ({
-    id: i,
-    size: lerp(rng, 1, 3),
-    left: lerp(rng, 0, 100),
-    top: lerp(rng, 0, 100),
-    opacity: lerp(rng, 0.05, 0.2),
-    duration: lerp(rng, 6, 14),
-    delay: lerp(rng, 0, 6),
-    twinkle: rng() < 0.3,
-  }));
-}
-
-function ParticleField({ seed, count }: { seed: number; count: number }) {
-  const particles = useMemo(() => generateParticles(seed, count), [seed, count]);
-  return (
-    <>
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          className="absolute rounded-full bg-white"
-          style={{
-            width: p.size,
-            height: p.size,
-            left: `${p.left}%`,
-            top: `${p.top}%`,
-            opacity: p.opacity,
-            filter: "blur(0.5px)",
-          }}
-          animate={
-            p.twinkle
-              ? { y: [0, -18, 0], opacity: [p.opacity, p.opacity * 0.15, p.opacity] }
-              : { y: [0, -18, 0] }
-          }
-          transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: "easeInOut" }}
-        />
+        <Bubble key={b.id} b={b} crisp={crisp} />
       ))}
     </>
   );
@@ -299,13 +220,12 @@ function LightWash() {
       className="absolute inset-0"
       style={{
         backgroundImage: [
-          "radial-gradient(ellipse 60% 50% at 15% 10%, rgba(34,211,238,0.07), transparent 70%)",
-          "radial-gradient(ellipse 50% 40% at 85% 15%, rgba(56,189,248,0.07), transparent 70%)",
-          "radial-gradient(ellipse 55% 45% at 30% 85%, rgba(125,211,252,0.06), transparent 70%)",
-          "radial-gradient(ellipse 45% 55% at 90% 90%, rgba(224,242,254,0.05), transparent 70%)",
+          "radial-gradient(ellipse 55% 40% at 20% 12%, rgba(255,255,255,0.35), transparent 70%)",
+          "radial-gradient(ellipse 45% 35% at 82% 18%, rgba(255,255,255,0.28), transparent 70%)",
+          "radial-gradient(ellipse 50% 40% at 35% 82%, rgba(255,255,255,0.18), transparent 70%)",
         ].join(", "),
       }}
-      animate={{ scale: [1, 1.06, 1] }}
+      animate={{ scale: [1, 1.05, 1] }}
       transition={{ duration: 50, repeat: Infinity, ease: "easeInOut" }}
     />
   );
@@ -321,30 +241,26 @@ export default function AtmosphereBackground() {
     <div aria-hidden className="fixed inset-0 -z-20 overflow-hidden">
       <div
         className="absolute inset-0"
-        style={{ background: "linear-gradient(180deg, #08111F 0%, #0F172A 50%, #08111F 100%)" }}
+        style={{ background: "linear-gradient(180deg, #8FD8EC 0%, #B7E8F5 55%, #DFF4FB 100%)" }}
       />
       <LightWash />
       <motion.div className="absolute inset-0" style={{ y: yBack }}>
-        <GlassBubbleField seed={1} count={3} sizeRange={[20, 48]} opacityRange={[0.05, 0.1]} durationRange={[28, 40]} blur={22} edgeBias />
+        <GlassBubbleField seed={1} count={5} sizeRange={[18, 40]} opacityRange={[0.35, 0.55]} durationRange={[28, 40]} edgeBias />
       </motion.div>
       <motion.div className="absolute inset-0" style={{ y: yMid }}>
-        <GlassBubbleField seed={2} count={2} sizeRange={[45, 90]} opacityRange={[0.12, 0.22]} durationRange={[20, 28]} blur={8} />
+        <GlassBubbleField seed={2} count={4} sizeRange={[36, 70]} opacityRange={[0.45, 0.65]} durationRange={[20, 28]} />
       </motion.div>
       <motion.div className="absolute inset-0" style={{ y: yFront }}>
         <GlassBubbleField
           seed={3}
-          count={2}
-          sizeRange={[90, 170]}
-          opacityRange={[0.25, 0.4]}
+          count={3}
+          sizeRange={[60, 110]}
+          opacityRange={[0.55, 0.8]}
           durationRange={[16, 22]}
-          blur={0}
           crisp
           interactive
         />
       </motion.div>
-      <div className="absolute inset-0">
-        <ParticleField seed={4} count={16} />
-      </div>
     </div>
   );
 }
@@ -352,15 +268,14 @@ export default function AtmosphereBackground() {
 export function HeroBubbleCluster() {
   return (
     <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
-      <GlassBubbleField seed={11} count={2} sizeRange={[14, 30]} opacityRange={[0.1, 0.18]} durationRange={[18, 24]} blur={8} />
-      <GlassBubbleField seed={12} count={2} sizeRange={[36, 64]} opacityRange={[0.18, 0.3]} durationRange={[15, 20]} blur={3} />
+      <GlassBubbleField seed={11} count={4} sizeRange={[14, 30]} opacityRange={[0.4, 0.6]} durationRange={[18, 24]} />
+      <GlassBubbleField seed={12} count={3} sizeRange={[34, 60]} opacityRange={[0.5, 0.7]} durationRange={[15, 20]} />
       <GlassBubbleField
         seed={13}
         count={2}
-        sizeRange={[70, 130]}
-        opacityRange={[0.32, 0.5]}
+        sizeRange={[64, 110]}
+        opacityRange={[0.6, 0.85]}
         durationRange={[14, 18]}
-        blur={0}
         crisp
         interactive
       />
@@ -371,71 +286,64 @@ export function HeroBubbleCluster() {
 export function CornerBubbleAccent() {
   return (
     <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
-      <GlassBubbleField seed={21} count={2} sizeRange={[50, 110]} opacityRange={[0.25, 0.4]} durationRange={[14, 20]} blur={0} crisp />
+      <GlassBubbleField seed={21} count={3} sizeRange={[40, 90]} opacityRange={[0.35, 0.55]} durationRange={[14, 20]} crisp />
     </div>
   );
 }
 
-type FoamPiece = {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  opacity: number;
-  animated: boolean;
-  duration: number;
-  delay: number;
-};
+type BandBubble = { id: number; x: number; y: number; size: number; opacity: number };
 
-function generateFoam(seed: number, count: number): FoamPiece[] {
+function generateBandBubbles(seed: number, count: number): BandBubble[] {
   const rng = mulberry32(seed);
-  const waveFreq = lerp(rng, 2.2, 3.4);
-  const waveAmp = lerp(rng, 10, 26);
-  return Array.from({ length: count }, (_, i) => {
-    const x = Math.min(99, Math.max(1, (i / count) * 100 + lerp(rng, -1.8, 1.8)));
-    const wave = Math.sin((x / 100) * Math.PI * waveFreq) * waveAmp;
-    const jitter = lerp(rng, -16, 16);
-    return {
-      id: i,
-      x,
-      y: wave + jitter,
-      size: lerp(rng, 5, 40),
-      opacity: lerp(rng, 0.22, 0.7),
-      animated: rng() < 0.32,
-      duration: lerp(rng, 14, 26),
-      delay: lerp(rng, 0, 10),
-    };
-  });
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    x: lerp(rng, 2, 98),
+    y: lerp(rng, 4, 42),
+    size: lerp(rng, 8, 26),
+    opacity: lerp(rng, 0.45, 0.85),
+  }));
 }
 
-const FOAM_GRADIENT =
-  "radial-gradient(circle at 35% 30%, rgba(255,255,255,0.9), rgba(224,242,254,0.28) 30%, rgba(34,211,238,0.18) 60%, rgba(37,99,235,0.12) 100%)";
+type CloudBump = { x: number; r: number; yJitter: number };
 
-function FoamCircle({ f, bandHeight }: { f: FoamPiece; bandHeight: number }) {
-  const baseline = bandHeight * 0.55;
-  const style: CSSProperties = {
-    position: "absolute",
-    left: `${f.x}%`,
-    top: round(baseline - f.y - f.size / 2),
-    marginLeft: round(-f.size / 2),
-    width: f.size,
-    height: f.size,
-    opacity: f.opacity,
-    borderRadius: "9999px",
-    border: "1px solid rgba(255,255,255,0.3)",
-    background: FOAM_GRADIENT,
-    boxShadow: "inset 0 0 6px rgba(255,255,255,0.25), inset 0 -4px 8px rgba(37,99,235,0.15)",
-  };
-  if (!f.animated) return <div style={style} />;
+function generateCloudBumps(seed: number): CloudBump[] {
+  const rng = mulberry32(seed);
+  const n = 16;
+  return Array.from({ length: n }, (_, i) => ({
+    x: (i / (n - 1)) * 108 - 4,
+    r: lerp(rng, 26, 46),
+    yJitter: lerp(rng, -6, 6),
+  }));
+}
+
+function CloudLayer({ seed, color, bumpScale, baseline }: { seed: number; color: string; bumpScale: number; baseline: number }) {
+  const bumps = useMemo(() => generateCloudBumps(seed), [seed]);
   return (
-    <motion.div
-      style={style}
-      animate={{ y: [0, -10, 0], opacity: [f.opacity, Math.min(1, f.opacity * 1.35), f.opacity] }}
-      transition={{ duration: f.duration, delay: f.delay, repeat: Infinity, ease: "easeInOut" }}
-    />
+    <div className="absolute inset-0">
+      <div className="absolute inset-x-0 bottom-0" style={{ top: baseline, background: color }} />
+      {bumps.map((bump, i) => {
+        const r = bump.r * bumpScale;
+        return (
+          <div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              left: `${bump.x}%`,
+              top: round(baseline - r * 0.9 + bump.yJitter),
+              width: r * 2,
+              height: r * 2,
+              marginLeft: round(-r),
+              background: color,
+            }}
+          />
+        );
+      })}
+    </div>
   );
 }
 
+// Layered soap-cloud band: a pale blue cloud layer peeking above a white cloud layer,
+// with a scatter of line-art bubbles floating in the gap above them.
 export function FoamDivider({
   seed,
   count = 80,
@@ -447,29 +355,33 @@ export function FoamDivider({
   height?: number;
   className?: string;
 }) {
-  const foam = useMemo(() => generateFoam(seed, count), [seed, count]);
+  const bubbleCount = Math.max(4, Math.round(count / 12));
+  const bubbles = useMemo(() => generateBandBubbles(seed + 900, bubbleCount), [seed, bubbleCount]);
+
   return (
     <div
       aria-hidden
       className={`relative w-full overflow-hidden pointer-events-none select-none ${className}`}
-      style={{
-        height,
-        maskImage: "linear-gradient(to bottom, transparent, black 35%, black 65%, transparent)",
-        WebkitMaskImage: "linear-gradient(to bottom, transparent, black 35%, black 65%, transparent)",
-      }}
+      style={{ height }}
     >
-      <motion.div
-        className="absolute inset-0"
-        style={{
-          background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%)",
-          backgroundSize: "250% 100%",
-        }}
-        animate={{ backgroundPositionX: ["0%", "100%"] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-      />
-      {foam.map((f) => (
-        <FoamCircle key={f.id} f={f} bandHeight={height} />
+      {bubbles.map((b) => (
+        <div
+          key={b.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${b.x}%`,
+            top: `${b.y}%`,
+            width: b.size,
+            height: b.size,
+            opacity: b.opacity,
+            border: "1.5px solid rgba(255,255,255,0.85)",
+            marginLeft: round(-b.size / 2),
+            marginTop: round(-b.size / 2),
+          }}
+        />
       ))}
+      <CloudLayer seed={seed} color="#B9E9F6" bumpScale={1.1} baseline={height * 0.4} />
+      <CloudLayer seed={seed + 1} color="#FFFFFF" bumpScale={0.82} baseline={height * 0.56} />
     </div>
   );
 }
