@@ -15,8 +15,11 @@ export default function SignupPage() {
       <AuthHeader />
       <main className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <Link href="/laundry-management-system" className="block text-center text-2xl font-bold text-white mb-2">
-            Laundry <span className="text-[#38BDF8]">Management System</span>
+          <Link href="/laundry-management-system" className="mb-2 flex flex-col items-center text-center">
+            <img src="/lms-logo.png" alt="" className="mb-3 h-14 w-14 rounded-2xl object-cover" />
+            <span className="text-2xl font-bold text-white">
+              Laundry <span className="text-[#38BDF8]">Management System</span>
+            </span>
           </Link>
           <p className="text-center text-white/40 mb-8 text-sm">
             Create your business account to get started.

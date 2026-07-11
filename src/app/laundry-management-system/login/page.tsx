@@ -50,6 +50,9 @@ export default function LoginPage() {
                 required
                 className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white focus:border-[#38BDF8] focus:outline-none"
               />
+              <Link href="/laundry-management-system/forgot-password" className="mt-1 inline-block text-xs text-[#38BDF8] hover:underline">
+                Forgot password?
+              </Link>
             </label>
             {state.error && !needsConfirmation && <p className="text-sm text-red-400">{state.error}</p>}
             {needsConfirmation && (

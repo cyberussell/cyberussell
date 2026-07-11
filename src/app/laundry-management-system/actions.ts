@@ -71,6 +71,17 @@ export async function resendConfirmation(email: string): Promise<ActionResult> {
   return {}
 }
 
+export async function requestPasswordReset(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const email = String(formData.get('email') ?? '').trim()
+  if (!email) return { error: 'Enter your email address.' }
+  const supabase = await createServerSupabase()
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://www.cyberussell.com/laundry-management-system/reset-password',
+  })
+  if (error) return { error: 'Could not send reset link — please try again in a moment.' }
+  return { error: 'SENT' } // handled as info, not error, in the UI
+}
+
 export async function signOut(): Promise<void> {
   const supabase = await createServerSupabase()
   await supabase.auth.signOut()

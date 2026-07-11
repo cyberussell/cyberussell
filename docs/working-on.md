@@ -1,5 +1,22 @@
 # Current Work
 
+**Forgot-password flow + email templates (2026-07-11), code done, live-verified, not yet committed:**
+
+Current Product: Laundry Management System (LMS)
+
+Current Feature: Russell asked for the "forgot password" email template, then for the actual code — LMS had no password-reset flow at all before this (unlike Appointment System, which already had one). Built by mirroring Appointment System's already-verified `forgot-password`/`reset-password` pattern exactly, styled with LMS's current dark blue/glass auth theme (`#050816` bg, `#2563EB → #38BDF8` gradient button, `#38BDF8` accent — not the newer light sky/cloud theme, since the auth pages haven't been migrated to that yet).
+
+Current Status: Done.
+- **`requestPasswordReset` action added** to `src/app/laundry-management-system/actions.ts`, mirroring the Appointment System's action 1:1 (`supabase.auth.resetPasswordForEmail`, `redirectTo: 'https://www.cyberussell.com/laundry-management-system/reset-password'`, `'SENT'` sentinel pattern).
+- **New routes**: `src/app/laundry-management-system/forgot-password/page.tsx` (request form) and `reset-password/page.tsx` (listens for Supabase's `PASSWORD_RECOVERY` event, same as Appointment System's proven implementation — no `getSession()` fallback, same 4s expiry timeout).
+- **"Forgot password?" link added** under the password field on `login/page.tsx`.
+- **Two email template HTML files** added under `email-templates/` (Supabase dashboard paste-in, not code): `laundry-management-system/email-templates/reset-password.html` (light sky-blue theme, matching the *current live landing-page* theme per Russell's explicit choice — the pre-existing `confirm-signup.html` in the same folder is still old dark navy/yellow, flagged as stale, not updated) and `appointment-system/email-templates/reset-password.html` (built first, before Russell clarified he meant LMS — kept since it's a valid, correctly-branded template for Appointment System too, which already has a working forgot-password flow with only an unbranded default Supabase email).
+- `npx tsc --noEmit` clean. **Live-verified**: login page's new link, `/forgot-password` page (renders correctly), and `/reset-password`'s "invalid or expired link" state (screenshot-confirmed) all work. **Found and diagnosed a real blocker, not a code bug**: submitting the forgot-password form returns "Could not send reset link". Traced via a temporary debug log (removed after) to a raw `curl` against the LMS Supabase project's `/auth/v1/recover` endpoint, which returned `500 unexpected_failure — "Error sending recovery email"`. Network connectivity to the project itself is fine (confirmed via a fast `401` on `/auth/v1/health`) — this is a Supabase project-level email/SMTP configuration issue on the **LMS** project specifically, not a code bug and not a redirect-URL allowlist issue.
+
+**Next recommended task:** Russell needs to configure email sending on the LMS Supabase project (Authentication → Emails, add custom SMTP or check the built-in provider's rate limit/status) before the reset-link email can actually send — the code path is correct and ready. Once fixed, do the real end-to-end test (request reset → click real emailed link → set new password). Commit this batch (currently uncommitted, sitting alongside the unrelated deploy-fix commit below from a concurrent session). Also decide whether to rebrand `laundry-management-system/email-templates/confirm-signup.html` to the current light theme so both LMS email templates match.
+
+----------------------------------------
+
 **Deploy fix — LMS dashboard build failure (2026-07-11), committed and pushed:**
 
 Current Product: Laundry Management System (LMS) — `dashboard/page.tsx` only.
