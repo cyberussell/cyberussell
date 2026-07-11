@@ -1,5 +1,15 @@
 # Current Work
 
+**Deploy fix — LMS dashboard build failure (2026-07-11), committed and pushed:**
+
+Current Product: Laundry Management System (LMS) — `dashboard/page.tsx` only.
+
+Russell pushed the soap-suds v4 + login-logo batches (below) and the Vercel build failed: `Error occurred prerendering page "/laundry-management-system/dashboard" ... LMS Supabase env vars missing`. Root cause: `DashboardPage` is an async Server Component that calls `requireOwnerBusiness()` (Supabase + `cookies()`) directly in render, with no `export const dynamic = 'force-dynamic'` — so Next attempted to statically prerender it at build time, and `getLmsEnv()` threw before the render ever reached `cookies()` (which would otherwise have marked the route dynamic and skipped prerendering). The Appointment System's equivalent dashboard page already has this exact export; LMS's was just missing it. Fixed by adding the same `export const dynamic = 'force-dynamic'` to `src/app/laundry-management-system/dashboard/page.tsx`. Verified by running a local production build (`npx next build`) with `NEXT_PUBLIC_LMS_SUPABASE_URL`/`NEXT_PUBLIC_LMS_SUPABASE_ANON_KEY`/`LMS_SUPABASE_SERVICE_ROLE_KEY` explicitly blanked out (reproducing Vercel's exact failure condition) — build now succeeds and the route shows as `ƒ` (dynamic) instead of crashing. Committed (`2a4ee49`) and pushed to `main` to re-trigger the deploy.
+
+**Note — found unrelated in-progress work in the working tree, not touched:** a "forgot password" flow for LMS appears to be under active development (uncommitted changes to `actions.ts`, `login/page.tsx`'s "Forgot password?" link, new `forgot-password/` and `reset-password/` routes, `laundry-management-system/email-templates/reset-password.html`, plus `appointment-system/email-templates/`) — left entirely alone since it wasn't part of this task and looks like a concurrent session's work in progress.
+
+----------------------------------------
+
 **Soap suds theme v4 — full pivot to light sky/cloud illustration style, code done, live-verified (2026-07-11):**
 
 Current Product: Laundry Management System (LMS) — landing page only (`/laundry-management-system`), same scope as prior visual batches.
