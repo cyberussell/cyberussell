@@ -33,7 +33,10 @@ export async function signUp(_prev: ActionResult, formData: FormData): Promise<A
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { role: 'owner' } },
+    options: {
+      data: { role: 'owner' },
+      emailRedirectTo: 'https://www.cyberussell.com/laundry-management-system/login',
+    },
   })
   if (error) return { error: error.message }
   if (!data.user) return { error: 'Signup failed — please try again.' }
