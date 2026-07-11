@@ -24,8 +24,11 @@ export default function LoginPage() {
       <AuthHeader />
       <main className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <Link href="/laundry-management-system" className="mb-8 block text-center text-2xl font-bold text-white">
-            Laundry <span className="text-[#38BDF8]">Management System</span>
+          <Link href="/laundry-management-system" className="mb-8 flex flex-col items-center text-center">
+            <img src="/lms-logo.png" alt="" className="mb-3 h-14 w-14 rounded-2xl object-cover" />
+            <span className="text-2xl font-bold text-white">
+              Laundry <span className="text-[#38BDF8]">Management System</span>
+            </span>
           </Link>
           <form action={formAction} className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
             <label className="block">
