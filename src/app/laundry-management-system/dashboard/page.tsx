@@ -1,6 +1,8 @@
 import { requireOwnerBusiness } from '@/lib/laundry-management-system/auth'
 import { signOut } from '../actions'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const { business } = await requireOwnerBusiness()
 
