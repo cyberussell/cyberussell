@@ -272,9 +272,9 @@ export default function ServicesPage() {
             <div className="absolute inset-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80"
-                alt="Two professionals collaborating in a bright modern office"
-                className="w-full h-full object-cover"
+                src="/services/cta-photo.jpg"
+                alt="Russell Parayno at his desk"
+                className="w-full h-full object-cover scale-x-[-1]"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A14]/95 via-[#0A0A14]/80 to-[#0A0A14]/60" />
