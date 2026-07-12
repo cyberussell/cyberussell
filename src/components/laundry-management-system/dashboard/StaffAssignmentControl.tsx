@@ -1,8 +1,7 @@
 'use client'
 
-import { useActionState } from 'react'
 import { assignOrderStaff } from '@/app/laundry-management-system/actions/orders'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { StaffMember } from '@/lib/laundry-management-system/modules/staff/types'
 import AssignedStaffSelect from './AssignedStaffSelect'
 
@@ -15,11 +14,10 @@ export default function StaffAssignmentControl({
   currentStaffId: string | null
   staff: (StaffMember & { profile: { full_name: string } | null })[]
 }) {
-  const [state, formAction, pending] = useActionState<ActionResult, FormData>(assignOrderStaff, {})
-  const saved = state.error === 'SAVED'
+  const { dispatch, pending, error } = useServerAction(assignOrderStaff, ['SAVED'], 'Staff assigned.')
 
   return (
-    <form action={formAction} className="flex items-end gap-2">
+    <form action={dispatch} className="flex items-end gap-2">
       <input type="hidden" name="orderId" value={orderId} />
       <div className="flex-1">
         <AssignedStaffSelect staff={staff} defaultValue={currentStaffId ?? ''} label="Assigned Staff" />
@@ -31,8 +29,7 @@ export default function StaffAssignmentControl({
       >
         {pending ? 'Saving…' : 'Save'}
       </button>
-      {state.error && !saved && <p className="text-xs text-red-500">{state.error}</p>}
-      {saved && <p className="text-xs text-emerald-600">Saved</p>}
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </form>
   )
 }

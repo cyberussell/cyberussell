@@ -14,7 +14,7 @@ export default async function StaffDeliveryPage() {
   return (
     <div>
       <PageHeader title="Delivery Management" subtitle="Assign drivers and track deliveries." />
-      {hasFeature(business, 'delivery_management') ? (
+      {hasFeature(business, 'feature_pickup_delivery') ? (
         <DeliveryQueueTable
           orders={await getDeliveryQueue(supabase, business.id)}
           drivers={await listActiveDrivers(supabase, business.id)}
@@ -22,7 +22,7 @@ export default async function StaffDeliveryPage() {
           orderBasePath="/laundry-management-system/staff/dashboard/orders"
         />
       ) : (
-        <UpgradePrompt feature="delivery_management" label="Delivery Management" />
+        <UpgradePrompt feature="feature_pickup_delivery" label="Delivery Management" />
       )}
     </div>
   )

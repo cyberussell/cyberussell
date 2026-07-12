@@ -1,3 +1,4 @@
+import { Toaster } from 'sonner'
 import { requireCustomerAccess } from '@/lib/laundry-management-system/modules/auth/queries'
 import CustomerBottomNav from '@/components/laundry-management-system/customer/CustomerBottomNav'
 
@@ -10,6 +11,7 @@ export default async function CustomerDashboardLayout({ children }: { children: 
     <div className="min-h-screen bg-[#F3F8FF] pb-24">
       <div className="mx-auto max-w-md px-4 pb-6 pt-6">{children}</div>
       <CustomerBottomNav />
+      <Toaster position="top-center" richColors />
     </div>
   )
 }

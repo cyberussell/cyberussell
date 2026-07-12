@@ -3,9 +3,9 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useActionState } from 'react'
+import { toast } from 'sonner'
 import { schedulePickup, markPickedUp } from '@/app/laundry-management-system/actions/orders'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { OrderWithDriver } from '@/lib/laundry-management-system/modules/orders/types'
 import type { Driver } from '@/lib/laundry-management-system/modules/drivers/types'
 import Card from './Card'
@@ -19,11 +19,10 @@ function toDatetimeLocal(iso: string | null): string {
 }
 
 function PickupScheduleForm({ order }: { order: OrderWithDriver }) {
-  const [state, formAction, pending] = useActionState<ActionResult, FormData>(schedulePickup, {})
-  const saved = state.error === 'SAVED'
+  const { dispatch, pending, error } = useServerAction(schedulePickup, ['SAVED'], 'Pickup schedule saved.')
 
   return (
-    <form action={formAction} className="flex flex-wrap items-end gap-2">
+    <form action={dispatch} className="flex flex-wrap items-end gap-2">
       <input type="hidden" name="orderId" value={order.id} />
       <label className="block">
         <span className="text-xs text-slate-500">Pickup address</span>
@@ -50,7 +49,7 @@ function PickupScheduleForm({ order }: { order: OrderWithDriver }) {
       >
         {pending ? 'Saving…' : 'Save'}
       </button>
-      {saved && <p className="text-xs text-emerald-600">Saved</p>}
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </form>
   )
 }
@@ -71,9 +70,14 @@ export default function PickupQueueTable({
   function handleMarkPickedUp(orderId: string) {
     setMarkingId(orderId)
     startTransition(async () => {
-      await markPickedUp(orderId)
+      const result = await markPickedUp(orderId)
       setMarkingId(null)
-      router.refresh()
+      if (result.error) {
+        toast.error(result.error)
+      } else {
+        toast.success('Marked as picked up.')
+        router.refresh()
+      }
     })
   }
 

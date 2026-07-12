@@ -2,11 +2,6 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { StaffMember } from './types'
 
-// Essential plan cap. Professional plan (not built yet) would lift this. Lives
-// here rather than actions/staff.ts because a 'use server' file may only
-// export async functions — a plain const export there breaks the whole module.
-export const STAFF_ACCOUNT_LIMIT = 3
-
 export async function listStaff(supabase: SupabaseClient, businessId: string) {
   const { data } = await supabase
     .from('staff_members')

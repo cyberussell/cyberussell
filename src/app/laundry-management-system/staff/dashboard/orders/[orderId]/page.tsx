@@ -22,7 +22,7 @@ export default async function StaffOrderDetailPage({ params }: { params: Promise
       staff={[]}
       canReassignStaff={false}
       receiptHref={`/laundry-management-system/orders/${order.id}/receipt`}
-      showPriorityToggle={hasFeature(business, 'priority_queue')}
+      showPriorityToggle={hasFeature(business, 'feature_priority_queue')}
     />
   )
 }

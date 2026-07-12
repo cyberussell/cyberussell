@@ -27,9 +27,9 @@ function buildNavItems(
   return [
     { label: 'Dashboard', href: basePath, icon: LayoutDashboard, permission: 'view_dashboard' },
     { label: 'Orders', href: `${basePath}/orders`, icon: ClipboardList, permission: 'view_assigned_orders' },
-    { label: 'Pickup', href: `${basePath}/pickup`, icon: PackageCheck, permission: 'manage_pickup', feature: 'pickup_management' },
-    { label: 'Delivery', href: `${basePath}/delivery`, icon: Truck, permission: 'manage_delivery', feature: 'delivery_management' },
-    { label: 'Priority Queue', href: `${basePath}/priority-queue`, icon: Zap, permission: 'view_priority_queue', feature: 'priority_queue' },
+    { label: 'Pickup', href: `${basePath}/pickup`, icon: PackageCheck, permission: 'manage_pickup', feature: 'feature_pickup_delivery' },
+    { label: 'Delivery', href: `${basePath}/delivery`, icon: Truck, permission: 'manage_delivery', feature: 'feature_pickup_delivery' },
+    { label: 'Priority Queue', href: `${basePath}/priority-queue`, icon: Zap, permission: 'view_priority_queue', feature: 'feature_priority_queue' },
     { label: 'Customers', href: `${basePath}/customers`, icon: Users, permission: 'view_customers' },
     { label: 'Inventory', href: `${basePath}/inventory`, icon: Boxes, permission: 'manage_inventory' },
     { label: 'Staff', href: `${basePath}/staff`, icon: UserCog, permission: 'manage_staff' },

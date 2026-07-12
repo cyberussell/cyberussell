@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import { Lock } from 'lucide-react'
-import { tierWithFeature, type FeatureFlag } from '@/lib/laundry-management-system/modules/billing/entitlements'
+import { planWithFeature, type FeatureFlag } from '@/lib/laundry-management-system/modules/billing/entitlements'
 import Card from './Card'
 
 // Shown in place of a gated page's real content when the business's plan
 // doesn't include the feature — one component, reused by every Professional
 // page instead of each one building its own locked-state screen.
 export default function UpgradePrompt({ feature, label }: { feature: FeatureFlag; label: string }) {
-  const plan = tierWithFeature(feature)
+  const plan = planWithFeature(feature)
 
   return (
     <Card className="mx-auto max-w-lg p-10 text-center">

@@ -1,7 +1,7 @@
 import { requireOwnerBusiness } from '@/lib/laundry-management-system/modules/auth/queries'
-import { listStaff, STAFF_ACCOUNT_LIMIT } from '@/lib/laundry-management-system/modules/staff/queries'
+import { listStaff } from '@/lib/laundry-management-system/modules/staff/queries'
 import { listBranches } from '@/lib/laundry-management-system/modules/tenant/queries'
-import { hasFeature } from '@/lib/laundry-management-system/modules/billing/entitlements'
+import { getLimit } from '@/lib/laundry-management-system/modules/billing/entitlements'
 import PageHeader from '@/components/laundry-management-system/dashboard/PageHeader'
 import DataTable, { type DataTableColumn } from '@/components/laundry-management-system/dashboard/DataTable'
 import Card from '@/components/laundry-management-system/dashboard/Card'
@@ -13,8 +13,9 @@ export default async function StaffPage() {
   const { supabase, business } = await requireOwnerBusiness()
   const [staff, branches] = await Promise.all([listStaff(supabase, business.id), listBranches(supabase, business.id)])
   const activeCount = staff.filter((m) => m.active).length
-  const unlimited = hasFeature(business, 'unlimited_staff')
-  const atLimit = !unlimited && activeCount >= STAFF_ACCOUNT_LIMIT
+  const staffLimit = getLimit(business, 'staffAccounts')
+  const unlimited = staffLimit === null
+  const atLimit = !unlimited && activeCount >= staffLimit
 
   const columns: DataTableColumn<(typeof staff)[number]>[] = [
     { header: 'Name', cell: (m) => m.profile?.full_name || 'Pending invite' },
@@ -36,13 +37,13 @@ export default async function StaffPage() {
         subtitle={
           unlimited
             ? `${activeCount} staff member${activeCount === 1 ? '' : 's'} — unlimited on the Professional plan.`
-            : `${activeCount} of ${STAFF_ACCOUNT_LIMIT} staff accounts used on the Essential plan.`
+            : `${activeCount} of ${staffLimit} staff accounts used on the Essential plan.`
         }
       />
       <DataTable columns={columns} rows={staff} emptyMessage="No staff yet — invite your first team member below." />
       {atLimit ? (
         <Card className="p-6 text-sm text-slate-500">
-          You&apos;ve reached the Essential plan&apos;s limit of {STAFF_ACCOUNT_LIMIT} staff accounts. Deactivate a staff
+          You&apos;ve reached the Essential plan&apos;s limit of {staffLimit} staff accounts. Deactivate a staff
           member to free up a slot, or upgrade to the Professional plan for unlimited staff.
         </Card>
       ) : (

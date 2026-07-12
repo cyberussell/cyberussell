@@ -14,14 +14,14 @@ export default async function PickupPage() {
   return (
     <div>
       <PageHeader title="Pickup Management" subtitle="Orders waiting to be picked up from the customer." />
-      {hasFeature(business, 'pickup_management') ? (
+      {hasFeature(business, 'feature_pickup_delivery') ? (
         <PickupQueueTable
           orders={await getPickupQueue(supabase, business.id)}
           drivers={await listActiveDrivers(supabase, business.id)}
           orderBasePath="/laundry-management-system/dashboard/orders"
         />
       ) : (
-        <UpgradePrompt feature="pickup_management" label="Pickup Management" />
+        <UpgradePrompt feature="feature_pickup_delivery" label="Pickup Management" />
       )}
     </div>
   )

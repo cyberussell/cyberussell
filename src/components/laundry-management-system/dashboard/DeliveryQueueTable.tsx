@@ -1,9 +1,8 @@
 'use client'
 
-import { useActionState } from 'react'
 import Link from 'next/link'
 import { scheduleDelivery } from '@/app/laundry-management-system/actions/orders'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { OrderWithDriver } from '@/lib/laundry-management-system/modules/orders/types'
 import type { Driver } from '@/lib/laundry-management-system/modules/drivers/types'
 import { formatCurrency } from '@/lib/laundry-management-system/format'
@@ -19,11 +18,10 @@ function toDatetimeLocal(iso: string | null): string {
 }
 
 function DeliveryScheduleForm({ orderId, deliveryScheduledAt }: { orderId: string; deliveryScheduledAt: string | null }) {
-  const [state, formAction, pending] = useActionState<ActionResult, FormData>(scheduleDelivery, {})
-  const saved = state.error === 'SAVED'
+  const { dispatch, pending, error } = useServerAction(scheduleDelivery, ['SAVED'], 'Delivery schedule saved.')
 
   return (
-    <form action={formAction} className="flex items-end gap-2">
+    <form action={dispatch} className="flex items-end gap-2">
       <input type="hidden" name="orderId" value={orderId} />
       <label className="block">
         <span className="text-xs text-slate-500">Delivery time</span>
@@ -41,7 +39,7 @@ function DeliveryScheduleForm({ orderId, deliveryScheduledAt }: { orderId: strin
       >
         {pending ? 'Saving…' : 'Save'}
       </button>
-      {saved && <p className="text-xs text-emerald-600">Saved</p>}
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </form>
   )
 }

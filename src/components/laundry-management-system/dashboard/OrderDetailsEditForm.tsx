@@ -1,10 +1,13 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { updateOrderDetails } from '@/app/laundry-management-system/actions/orders'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { updateDetailsSchema, type UpdateDetailsInput } from '@/lib/laundry-management-system/modules/orders/schema'
+import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Order } from '@/lib/laundry-management-system/modules/orders/types'
 import Card from './Card'
+import FormField, { inputClass } from './FormField'
 
 function toDateInputValue(iso: string | null): string {
   if (!iso) return ''
@@ -12,63 +15,59 @@ function toDateInputValue(iso: string | null): string {
 }
 
 export default function OrderDetailsEditForm({ order }: { order: Order }) {
-  const [state, formAction, pending] = useActionState<ActionResult, FormData>(updateOrderDetails, {})
-  const saved = state.error === 'SAVED'
+  const { dispatch, pending, error, successMessage } = useServerAction(updateOrderDetails, ['SAVED'], 'Order details saved.')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UpdateDetailsInput>({
+    resolver: zodResolver(updateDetailsSchema),
+    defaultValues: {
+      orderId: order.id,
+      weightKg: order.weight_kg ?? '',
+      expectedCompletionAt: toDateInputValue(order.expected_completion_at),
+      paymentStatus: order.payment_status,
+      notes: order.notes,
+    },
+  })
+
+  function onSubmit(values: UpdateDetailsInput) {
+    const formData = new FormData()
+    formData.set('orderId', values.orderId)
+    formData.set('weightKg', String(values.weightKg ?? ''))
+    formData.set('expectedCompletionAt', values.expectedCompletionAt ?? '')
+    formData.set('paymentStatus', values.paymentStatus)
+    formData.set('notes', values.notes ?? '')
+    dispatch(formData)
+  }
 
   return (
     <Card className="p-5">
       <h2 className="mb-3 font-semibold text-[#0B1B33]">Order Details</h2>
-      <form action={formAction} className="space-y-4">
-        <input type="hidden" name="orderId" value={order.id} />
-
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <input type="hidden" {...register('orderId')} />
         <div className="grid grid-cols-2 gap-3">
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Weight (kg)</span>
-            <input
-              name="weightKg"
-              type="number"
-              min="0"
-              step="0.1"
-              defaultValue={order.weight_kg ?? ''}
-              placeholder="0.0"
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] placeholder:text-slate-400 focus:border-[#38BDF8] focus:outline-none"
-            />
-          </label>
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Expected Completion</span>
-            <input
-              name="expectedCompletionAt"
-              type="date"
-              defaultValue={toDateInputValue(order.expected_completion_at)}
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-            />
-          </label>
+          <FormField label="Weight (kg)" error={errors.weightKg?.message}>
+            <input {...register('weightKg')} type="number" min="0" step="0.1" placeholder="0.0" className={inputClass} />
+          </FormField>
+          <FormField label="Expected Completion" error={errors.expectedCompletionAt?.message}>
+            <input {...register('expectedCompletionAt')} type="date" className={inputClass} />
+          </FormField>
         </div>
 
-        <label className="block">
-          <span className="text-sm font-medium text-slate-600">Payment Status</span>
-          <select
-            name="paymentStatus"
-            defaultValue={order.payment_status}
-            className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-          >
+        <FormField label="Payment Status" error={errors.paymentStatus?.message}>
+          <select {...register('paymentStatus')} className={inputClass}>
             <option value="unpaid">Unpaid</option>
             <option value="paid">Paid</option>
           </select>
-        </label>
+        </FormField>
 
-        <label className="block">
-          <span className="text-sm font-medium text-slate-600">Notes</span>
-          <textarea
-            name="notes"
-            rows={3}
-            defaultValue={order.notes}
-            className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-          />
-        </label>
+        <FormField label="Notes" error={errors.notes?.message}>
+          <textarea {...register('notes')} rows={3} className={inputClass} />
+        </FormField>
 
-        {state.error && !saved && <p className="text-sm text-red-500">{state.error}</p>}
-        {saved && <p className="text-sm text-emerald-600">Saved!</p>}
+        {error && <p className="text-sm text-red-500">{error}</p>}
+        {successMessage && <p className="text-sm text-emerald-600">Saved!</p>}
 
         <button
           type="submit"

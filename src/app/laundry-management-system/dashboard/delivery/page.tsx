@@ -12,11 +12,11 @@ export const dynamic = 'force-dynamic'
 export default async function DeliveryPage() {
   const { supabase, business, role } = await requirePagePermission('manage_delivery')
 
-  if (!hasFeature(business, 'delivery_management')) {
+  if (!hasFeature(business, 'feature_pickup_delivery')) {
     return (
       <div>
         <PageHeader title="Delivery Management" subtitle="Assign drivers and track deliveries." />
-        <UpgradePrompt feature="delivery_management" label="Delivery Management" />
+        <UpgradePrompt feature="feature_pickup_delivery" label="Delivery Management" />
       </div>
     )
   }

@@ -23,7 +23,7 @@ export default async function NewOrderPage() {
         branches={branches}
         customers={customers}
         staff={staff}
-        enablePickupRequest={hasFeature(business, 'pickup_management')}
+        enablePickupRequest={hasFeature(business, 'feature_pickup_delivery')}
       />
     </div>
   )

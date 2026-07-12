@@ -1,17 +1,12 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { z } from 'zod'
 import { createServerSupabase, createAdminSupabase } from '@/lib/laundry-management-system/supabase-server'
-import { countActiveStaff, STAFF_ACCOUNT_LIMIT } from '@/lib/laundry-management-system/modules/staff/queries'
-import { hasFeature } from '@/lib/laundry-management-system/modules/billing/entitlements'
+import { countActiveStaff } from '@/lib/laundry-management-system/modules/staff/queries'
+import { getLimit, PLANS } from '@/lib/laundry-management-system/modules/billing/entitlements'
+import { inviteStaffSchema } from '@/lib/laundry-management-system/modules/staff/schema'
+import type { PlanTier } from '@/lib/laundry-management-system/modules/tenant/types'
 import type { ActionResult } from './shared'
-
-const inviteStaffSchema = z.object({
-  email: z.string().email(),
-  title: z.string().max(60).optional().default(''),
-  branchId: z.string().uuid().optional().or(z.literal('')),
-})
 
 export async function inviteStaff(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = inviteStaffSchema.safeParse({
@@ -35,10 +30,12 @@ export async function inviteStaff(_prev: ActionResult, formData: FormData): Prom
     .maybeSingle()
   if (!business) return { error: 'Business not found.' }
 
-  if (!hasFeature(business, 'unlimited_staff')) {
+  const staffLimit = getLimit(business, 'staffAccounts')
+  if (staffLimit !== null) {
     const activeStaffCount = await countActiveStaff(supabase, business.id)
-    if (activeStaffCount >= STAFF_ACCOUNT_LIMIT) {
-      return { error: `Staff limit reached (${STAFF_ACCOUNT_LIMIT}/${STAFF_ACCOUNT_LIMIT} on the Essential plan).` }
+    if (activeStaffCount >= staffLimit) {
+      const planName = PLANS[business.plan_tier as PlanTier].name
+      return { error: `Staff limit reached (${staffLimit}/${staffLimit} on the ${planName} plan).` }
     }
   }
 

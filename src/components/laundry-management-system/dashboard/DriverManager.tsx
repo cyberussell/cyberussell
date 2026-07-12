@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Pencil, Trash2, Plus, Check, X } from 'lucide-react'
+import { toast } from 'sonner'
 import { createDriver, updateDriver, deleteDriver } from '@/app/laundry-management-system/actions/drivers'
 import type { Driver } from '@/lib/laundry-management-system/modules/drivers/types'
 import Card from './Card'
@@ -26,7 +27,12 @@ export default function DriverManager({ drivers }: { drivers: Driver[] }) {
     formData.set('phone', newDriver.phone)
     formData.set('vehicleInfo', newDriver.vehicleInfo)
     startTransition(async () => {
-      await createDriver({}, formData)
+      const result = await createDriver({}, formData)
+      if (result.error) {
+        toast.error(result.error)
+        return
+      }
+      toast.success('Driver added.')
       setNewDriver({ name: '', phone: '', vehicleInfo: '' })
       router.refresh()
     })
@@ -34,7 +40,12 @@ export default function DriverManager({ drivers }: { drivers: Driver[] }) {
 
   function handleDelete(id: string) {
     startTransition(async () => {
-      await deleteDriver(id)
+      const result = await deleteDriver(id)
+      if (result.error) {
+        toast.error(result.error)
+        return
+      }
+      toast.success('Driver deleted.')
       router.refresh()
     })
   }
@@ -151,7 +162,12 @@ function DriverRow({
     formData.set('vehicleInfo', draft.vehicleInfo)
     formData.set('active', String(draft.active))
     startTransition(async () => {
-      await updateDriver({}, formData)
+      const result = await updateDriver({}, formData)
+      if (result.error) {
+        toast.error(result.error)
+        return
+      }
+      toast.success('Driver updated.')
       onSaved()
     })
   }
@@ -184,10 +200,15 @@ function DriverRow({
         </td>
         <td className="px-4 py-2">
           <div className="flex items-center gap-1.5">
-            <button onClick={handleSave} disabled={pending} className="rounded-md p-1.5 text-emerald-600 hover:bg-emerald-50 disabled:opacity-50">
+            <button
+              onClick={handleSave}
+              disabled={pending}
+              aria-label="Save changes"
+              className="rounded-md p-1.5 text-emerald-600 hover:bg-emerald-50 disabled:opacity-50"
+            >
               <Check className="h-4 w-4" />
             </button>
-            <button onClick={onCancel} className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100">
+            <button onClick={onCancel} aria-label="Cancel editing" className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -208,10 +229,18 @@ function DriverRow({
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-1.5">
-          <button onClick={onEdit} className="rounded-md p-1.5 text-slate-400 hover:bg-[#F0F6FF] hover:text-[#2563EB]">
+          <button
+            onClick={onEdit}
+            aria-label={`Edit ${driver.name}`}
+            className="rounded-md p-1.5 text-slate-400 hover:bg-[#F0F6FF] hover:text-[#2563EB]"
+          >
             <Pencil className="h-4 w-4" />
           </button>
-          <button onClick={onDelete} className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500">
+          <button
+            onClick={onDelete}
+            aria-label={`Delete ${driver.name}`}
+            className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500"
+          >
             <Trash2 className="h-4 w-4" />
           </button>
         </div>

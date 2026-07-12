@@ -1,34 +1,46 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { inviteStaff } from '@/app/laundry-management-system/actions/staff'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { inviteStaffSchema, type InviteStaffInput } from '@/lib/laundry-management-system/modules/staff/schema'
+import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Branch } from '@/lib/laundry-management-system/modules/tenant/types'
 import Card from '@/components/laundry-management-system/dashboard/Card'
-
-const fieldClass =
-  'mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none'
+import FormField, { inputClass } from '@/components/laundry-management-system/dashboard/FormField'
 
 export default function StaffInviteForm({ branches }: { branches: Branch[] }) {
-  const [state, formAction, pending] = useActionState<ActionResult, FormData>(inviteStaff, {})
-  const invited = state.error === 'INVITED'
+  const { dispatch, pending, error, successMessage } = useServerAction(inviteStaff, ['INVITED'], 'Invite sent.')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<InviteStaffInput>({
+    resolver: zodResolver(inviteStaffSchema),
+    defaultValues: { email: '', title: '', branchId: '' },
+  })
+
+  function onSubmit(values: InviteStaffInput) {
+    const formData = new FormData()
+    formData.set('email', values.email)
+    formData.set('title', values.title ?? '')
+    formData.set('branchId', values.branchId ?? '')
+    dispatch(formData)
+  }
 
   return (
     <Card className="p-6">
-      <form action={formAction} className="space-y-3">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         <h2 className="font-semibold text-[#0B1B33]">Invite staff</h2>
-        <label className="block">
-          <span className="text-sm font-medium text-slate-600">Email</span>
-          <input name="email" type="email" required className={fieldClass} />
-        </label>
-        <label className="block">
-          <span className="text-sm font-medium text-slate-600">Title (optional)</span>
-          <input name="title" type="text" placeholder="Front desk" className={fieldClass} />
-        </label>
+        <FormField label="Email" error={errors.email?.message}>
+          <input {...register('email')} type="email" className={inputClass} />
+        </FormField>
+        <FormField label="Title" optional error={errors.title?.message}>
+          <input {...register('title')} type="text" placeholder="Front desk" className={inputClass} />
+        </FormField>
         {branches.length > 0 && (
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Branch (optional)</span>
-            <select name="branchId" defaultValue="" className={fieldClass}>
+          <FormField label="Branch" optional error={errors.branchId?.message}>
+            <select {...register('branchId')} className={inputClass}>
               <option value="">Any branch</option>
               {branches.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -36,10 +48,10 @@ export default function StaffInviteForm({ branches }: { branches: Branch[] }) {
                 </option>
               ))}
             </select>
-          </label>
+          </FormField>
         )}
-        {state.error && !invited && <p className="text-sm text-red-500">{state.error}</p>}
-        {invited && <p className="text-sm text-emerald-600">Invite sent.</p>}
+        {error && <p className="text-sm text-red-500">{error}</p>}
+        {successMessage && <p className="text-sm text-emerald-600">Invite sent.</p>}
         <button
           type="submit"
           disabled={pending}

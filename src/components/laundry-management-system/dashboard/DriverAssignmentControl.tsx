@@ -1,8 +1,7 @@
 'use client'
 
-import { useActionState } from 'react'
 import { assignOrderDriver } from '@/app/laundry-management-system/actions/orders'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Driver } from '@/lib/laundry-management-system/modules/drivers/types'
 import DriverSelect from './DriverSelect'
 
@@ -18,11 +17,10 @@ export default function DriverAssignmentControl({
   currentDriverId: string | null
   drivers: Driver[]
 }) {
-  const [state, formAction, pending] = useActionState<ActionResult, FormData>(assignOrderDriver, {})
-  const saved = state.error === 'SAVED'
+  const { dispatch, pending, error } = useServerAction(assignOrderDriver, ['SAVED'], 'Driver assigned.')
 
   return (
-    <form action={formAction} className="flex items-end gap-2">
+    <form action={dispatch} className="flex items-end gap-2">
       <input type="hidden" name="orderId" value={orderId} />
       <div className="min-w-[10rem] flex-1">
         <DriverSelect drivers={drivers} defaultValue={currentDriverId ?? ''} />
@@ -34,8 +32,7 @@ export default function DriverAssignmentControl({
       >
         {pending ? 'Saving…' : 'Save'}
       </button>
-      {state.error && !saved && <p className="text-xs text-red-500">{state.error}</p>}
-      {saved && <p className="text-xs text-emerald-600">Saved</p>}
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </form>
   )
 }

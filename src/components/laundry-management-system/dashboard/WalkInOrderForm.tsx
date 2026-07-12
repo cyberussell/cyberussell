@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { useActionState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { createWalkInOrder } from '@/app/laundry-management-system/actions/orders'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { createOrderSchema, type CreateOrderInput } from '@/lib/laundry-management-system/modules/orders/schema'
+import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Branch } from '@/lib/laundry-management-system/modules/tenant/types'
 import type { Customer } from '@/lib/laundry-management-system/modules/customer/types'
 import type { StaffMember } from '@/lib/laundry-management-system/modules/staff/types'
 import Card from './Card'
-import AssignedStaffSelect from './AssignedStaffSelect'
+import FormField, { inputClass } from './FormField'
 
 const SERVICE_PRESETS = ['Wash & Fold', 'Dry Clean', 'Wash & Iron', 'Iron Only', 'Comforter/Bulky']
 
@@ -23,55 +24,83 @@ export default function WalkInOrderForm({
   staff?: (StaffMember & { profile: { full_name: string } | null })[]
   enablePickupRequest?: boolean
 }) {
-  const [state, formAction, pending] = useActionState<ActionResult, FormData>(createWalkInOrder, {})
-  const [pickupRequested, setPickupRequested] = useState(false)
+  const { dispatch, pending, error } = useServerAction(createWalkInOrder)
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<CreateOrderInput>({
+    resolver: zodResolver(createOrderSchema),
+    defaultValues: {
+      branchId: branches.length === 1 ? branches[0].id : '',
+      customerId: '',
+      assignedStaffId: '',
+      walkInName: '',
+      walkInPhone: '',
+      serviceLabel: '',
+      amount: 0,
+      weightKg: '',
+      expectedCompletionAt: '',
+      paymentStatus: 'unpaid',
+      notes: '',
+      pickupRequested: false,
+      pickupAddress: '',
+      pickupScheduledAt: '',
+    },
+  })
+  const pickupRequested = watch('pickupRequested')
+
+  function onSubmit(values: CreateOrderInput) {
+    const formData = new FormData()
+    formData.set('branchId', values.branchId)
+    formData.set('customerId', values.customerId ?? '')
+    formData.set('assignedStaffId', values.assignedStaffId ?? '')
+    formData.set('walkInName', values.walkInName ?? '')
+    formData.set('walkInPhone', values.walkInPhone ?? '')
+    formData.set('serviceLabel', values.serviceLabel)
+    formData.set('amount', String(values.amount))
+    formData.set('weightKg', String(values.weightKg ?? ''))
+    formData.set('expectedCompletionAt', values.expectedCompletionAt ?? '')
+    formData.set('paymentStatus', values.paymentStatus ?? 'unpaid')
+    formData.set('notes', values.notes ?? '')
+    if (values.pickupRequested) {
+      formData.set('pickupRequested', 'true')
+      formData.set('pickupAddress', values.pickupAddress ?? '')
+      formData.set('pickupScheduledAt', values.pickupScheduledAt ?? '')
+    }
+    dispatch(formData)
+  }
 
   return (
     <Card className="max-w-xl p-6">
-      <form action={formAction} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {branches.length > 1 ? (
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Branch</span>
-            <select
-              name="branchId"
-              required
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-            >
+          <FormField label="Branch" error={errors.branchId?.message}>
+            <select {...register('branchId')} className={inputClass}>
               {branches.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.name}
                 </option>
               ))}
             </select>
-          </label>
+          </FormField>
         ) : (
-          <input type="hidden" name="branchId" value={branches[0]?.id ?? ''} />
+          <input type="hidden" {...register('branchId')} />
         )}
 
-        <label className="block">
-          <span className="text-sm font-medium text-slate-600">Service Type</span>
-          <input
-            name="serviceLabel"
-            list="service-presets"
-            required
-            placeholder="Wash & Fold"
-            className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] placeholder:text-slate-400 focus:border-[#38BDF8] focus:outline-none"
-          />
+        <FormField label="Service Type" error={errors.serviceLabel?.message}>
+          <input {...register('serviceLabel')} list="service-presets" placeholder="Wash & Fold" className={inputClass} />
           <datalist id="service-presets">
             {SERVICE_PRESETS.map((s) => (
               <option key={s} value={s} />
             ))}
           </datalist>
-        </label>
+        </FormField>
 
         {customers.length > 0 && (
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Link to existing customer (optional)</span>
-            <select
-              name="customerId"
-              defaultValue=""
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-            >
+          <FormField label="Link to existing customer" optional error={errors.customerId?.message}>
+            <select {...register('customerId')} className={inputClass}>
               <option value="">None — anonymous walk-in</option>
               {customers.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -83,124 +112,81 @@ export default function WalkInOrderForm({
             <span className="mt-1 block text-xs text-slate-400">
               Linking lets this customer track the order in their own account.
             </span>
-          </label>
+          </FormField>
         )}
 
-        {staff.length > 0 && <AssignedStaffSelect staff={staff} />}
+        {staff.length > 0 && (
+          <FormField label="Assigned Staff" optional error={errors.assignedStaffId?.message}>
+            <select {...register('assignedStaffId')} className={inputClass}>
+              <option value="">Unassigned</option>
+              {staff.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.profile?.full_name || 'Staff member'}
+                  {s.title ? ` — ${s.title}` : ''}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        )}
 
         <div className="grid grid-cols-2 gap-3">
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Amount</span>
-            <input
-              name="amount"
-              type="number"
-              min="0"
-              step="0.01"
-              required
-              placeholder="0.00"
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] placeholder:text-slate-400 focus:border-[#38BDF8] focus:outline-none"
-            />
-          </label>
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Weight (kg, optional)</span>
-            <input
-              name="weightKg"
-              type="number"
-              min="0"
-              step="0.1"
-              placeholder="0.0"
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] placeholder:text-slate-400 focus:border-[#38BDF8] focus:outline-none"
-            />
-          </label>
+          <FormField label="Amount" error={errors.amount?.message}>
+            <input {...register('amount')} type="number" min="0" step="0.01" placeholder="0.00" className={inputClass} />
+          </FormField>
+          <FormField label="Weight (kg)" optional error={errors.weightKg?.message}>
+            <input {...register('weightKg')} type="number" min="0" step="0.1" placeholder="0.0" className={inputClass} />
+          </FormField>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Expected Completion (optional)</span>
-            <input
-              name="expectedCompletionAt"
-              type="date"
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-            />
-          </label>
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Payment Status</span>
-            <select
-              name="paymentStatus"
-              defaultValue="unpaid"
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-            >
+          <FormField label="Expected Completion" optional error={errors.expectedCompletionAt?.message}>
+            <input {...register('expectedCompletionAt')} type="date" className={inputClass} />
+          </FormField>
+          <FormField label="Payment Status" error={errors.paymentStatus?.message}>
+            <select {...register('paymentStatus')} className={inputClass}>
               <option value="unpaid">Unpaid</option>
               <option value="paid">Paid</option>
             </select>
-          </label>
+          </FormField>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Customer name (optional)</span>
-            <input
-              name="walkInName"
-              type="text"
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-            />
-          </label>
-          <label className="block">
-            <span className="text-sm font-medium text-slate-600">Phone (optional)</span>
-            <input
-              name="walkInPhone"
-              type="text"
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-            />
-          </label>
+          <FormField label="Customer name" optional error={errors.walkInName?.message}>
+            <input {...register('walkInName')} type="text" className={inputClass} />
+          </FormField>
+          <FormField label="Phone" optional error={errors.walkInPhone?.message}>
+            <input {...register('walkInPhone')} type="text" className={inputClass} />
+          </FormField>
         </div>
 
         {enablePickupRequest && (
           <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3">
             <label className="flex items-center gap-2 text-sm font-medium text-slate-600">
               <input
+                {...register('pickupRequested')}
                 type="checkbox"
-                name="pickupRequested"
-                value="true"
-                checked={pickupRequested}
-                onChange={(e) => setPickupRequested(e.target.checked)}
                 className="h-4 w-4 rounded border-blue-200 text-[#2563EB] focus:ring-[#38BDF8]"
               />
               Customer needs pickup
             </label>
-            {pickupRequested && (
+            {Boolean(pickupRequested) && (
               <div className="mt-3 grid grid-cols-2 gap-3">
-                <label className="block">
-                  <span className="text-sm font-medium text-slate-600">Pickup address</span>
-                  <input
-                    name="pickupAddress"
-                    type="text"
-                    className="mt-1 w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-sm font-medium text-slate-600">Scheduled pickup</span>
-                  <input
-                    name="pickupScheduledAt"
-                    type="datetime-local"
-                    className="mt-1 w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-                  />
-                </label>
+                <FormField label="Pickup address" error={errors.pickupAddress?.message}>
+                  <input {...register('pickupAddress')} type="text" className={`${inputClass} bg-white`} />
+                </FormField>
+                <FormField label="Scheduled pickup" error={errors.pickupScheduledAt?.message}>
+                  <input {...register('pickupScheduledAt')} type="datetime-local" className={`${inputClass} bg-white`} />
+                </FormField>
               </div>
             )}
           </div>
         )}
 
-        <label className="block">
-          <span className="text-sm font-medium text-slate-600">Notes (optional)</span>
-          <textarea
-            name="notes"
-            rows={2}
-            className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
-          />
-        </label>
+        <FormField label="Notes" optional error={errors.notes?.message}>
+          <textarea {...register('notes')} rows={2} className={inputClass} />
+        </FormField>
 
-        {state.error && <p className="text-sm text-red-500">{state.error}</p>}
+        {error && <p className="text-sm text-red-500">{error}</p>}
 
         <button
           type="submit"

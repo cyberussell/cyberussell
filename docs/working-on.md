@@ -1,5 +1,74 @@
 # Current Work
 
+**LMS Production Readiness — Phase 8d: UX & Reliability Polish (2026-07-12) — code done, tsc clean, live verification NOT completed:**
+
+Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-ux-reliability-v1.md` for full detail.
+
+Current Feature: Continuing the phase 8 production-readiness roadmap — loading/error states, toast notifications, optimistic updates, and an accessibility pass. Dark mode (also listed under 8d in the original roadmap) was explicitly deferred — confirmed with Russell that real dark-mode support means re-theming ~40 already-built pages (zero `dark:` variants exist anywhere today), which would reverse phase 8a's decision to apply the redesign bar only to new components going forward.
+
+Current Status: Code complete, `npx tsc --noEmit` clean. **Live browser verification was not completed** — the Browser tool's model-safety classifier went down mid-session and stayed down after repeated retries; Russell chose to close this pass out on tsc-clean + a manual code re-read rather than wait it out.
+- **Loading/error states**: one shared `DashboardSkeleton`/`DashboardErrorFallback` pair backs `loading.tsx`/`error.tsx` at each of the 3 dashboard layout levels (owner/staff/customer) — sufficient since a `loading.tsx` at a layout level already covers every nested route under it that doesn't define its own.
+- **Toasts**: `sonner`'s `<Toaster/>` scoped to the 3 LMS dashboard layouts specifically (not the site-wide root layout LMS shares with the rest of cyberussell.com — a global toaster would've leaked into other products). Wired into `useServerAction` itself (free win for every form using the hook) via a new `toastSuccessMessage` param; 4 more forms (`DriverAssignmentControl`, `StaffAssignmentControl`, pickup/delivery schedule forms) migrated onto the hook to get toasts too, removing their hand-rolled `state.error === 'SAVED'` boilerplate in the process. Real bug fixed as a side effect: `InventoryManager`'s silent-failure gap (flagged, unfixed since phase 6) is now fixed by the same toast wiring.
+- **Optimistic updates**, scoped to exactly what the roadmap named ("status/priority/driver"): `OrderStatusControl` and `PriorityToggle` now use real `useOptimistic` (the latter had a genuine UX lag before — button didn't flip until refresh). Driver assignment intentionally skipped — after the hook migration its pending-disabled state already covers the only visual feedback it has, nothing left to optimize.
+- **Accessibility**: `aria-label`s added to every previously-unlabeled icon-only button (edit/delete/save/cancel in Inventory/Driver managers, the receipt print link, the status `<select>`) and to the search inputs (mirroring their placeholder, since placeholder-only inputs are a real screen-reader anti-pattern).
+- Manual code re-read in place of live verification confirmed: all 4 migrated actions match `useServerAction`'s expected signature; every new toast call checks `result.error` first; both `useOptimistic` calls happen inside `startTransition` and revert correctly via `router.refresh()`.
+
+**Next recommended task:** Do a live browser pass on this phase's changes (loading skeletons, a forced error, toasts on real mutations, optimistic status/priority flips, a screen-reader spot check) once the Browser tool's classifier issue is confirmed clear — ideally before or alongside starting phase 8e (Supabase Storage + business logo upload, real receipt PDF via `@react-pdf/renderer`).
+
+----------------------------------------
+
+**LMS Production Readiness — Phase 8c: Data Layer (2026-07-12) — fully done and verified live:**
+
+Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-data-layer-v1.md` for full detail.
+
+Current Feature: Continuing the phase 8 production-readiness roadmap — pagination, search, sorting, and richer filtering across Orders, Customers, and Inventory.
+
+Current Status: Done.
+- **`DataTable`** gained optional column-header sorting and built-in pagination (15 rows/page) — additive only, no existing call site needed to change.
+- **New `OrdersTable`** (client component) consolidates ~90 lines of duplicated filter/table markup between the owner and staff Orders pages, adds a fuzzy search box (order #/customer/service), and — confirmed with Russell before building — moves status/"Mine" filtering from server-side URL params (full page reload) to client-side filtering over a single full fetch, matching the pattern `CustomerSearchTable`/`InventoryManager` already used. Trade-off: filtered order views are no longer bookmarkable via URL.
+- **New `FilterPills`/`TableSearchInput`** reusable primitives replace hand-rolled pill/search markup previously duplicated across Orders (owner+staff) and Inventory.
+- **Inventory scoped down on purpose** (confirmed with Russell): search + `FilterPills` added, but no pagination/sorting — its category-grouped, inline-editable table doesn't fit a flat sortable/paginated shape, and category grouping already keeps lists manageable at typical SMB sizes.
+- **Verification friction, not a product bug**: the dev server was shared with another concurrently running chat session in the same repo, causing the test browser sessions to get silently logged out mid-verification several times (unrelated to this phase's code, which never touches auth). Worked around by seeding/cleaning up test data directly via the Admin/REST API and re-logging in immediately before each browser check.
+- Verified live end-to-end with a throwaway owner + staff account (business, branch, 3 customers, 20 orders across all 9 statuses, 6 inventory items across all 4 categories, seeded via REST): pagination ("Page 1 of 2, 20 total"), search (narrows to exact matches on Orders/Customers/Inventory), column sorting (Amount, Name), status `FilterPills` (composes correctly with active sort), and the staff Mine/All-Staff toggle (1 assigned order vs. all 20) all confirmed working with zero console errors. All test data deleted afterward; REST cross-check confirms only the two pre-existing unrelated businesses from other sessions remain. `npx tsc --noEmit` clean (aside from pre-existing, unrelated stale `.next/types` artifact conflicts from the concurrent session).
+
+**Next recommended task:** Continue with phase 8d (UX & reliability polish: loading/error states per route, toast notifications via `sonner`, optimistic updates, accessibility pass, dark-mode wiring) per the "foundation first" roadmap.
+
+----------------------------------------
+
+**LMS Production Readiness — Phase 8b: Reusable Form Foundation (2026-07-12) — fully done and verified live:**
+
+Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-form-foundation-v1.md` for full detail.
+
+Current Feature: Continuing the phase 8 production-readiness roadmap ("foundation first" order, agreed in phase 8a) — added React Hook Form + Zod, two reusable primitives (`FormField`, `useServerAction`), and migrated 4 representative forms (`StaffInviteForm`, `AddCustomerForm`, `OrderDetailsEditForm`, `WalkInOrderForm` — the flagship, most complex form in the product) to prove the pattern before rolling it out to the rest.
+
+Current Status: Done.
+- **Shared Zod schemas extracted** (`modules/{staff,customer,orders}/schema.ts`) so the exact same validation rules run on both the client (via `zodResolver`, instant feedback) and the server (unchanged `.safeParse`, still the source of truth) — previously each Server Action's schema was invisible to its form, which only got basic HTML5 validation.
+- **`FormField`** (label+error wrapper + shared `inputClass`) and **`useServerAction`** (wraps `useActionState`, splits real errors from info sentinels like `'SAVED'`) are the two new reusable primitives; deliberately not a full input-kit — RHF's `register()` already does the real work.
+- **Deliberately scoped to 4 forms, not all 19** components using this pattern — the rest are catalogued in the checkpoint as either "not worth migrating" (single-field forms like the staff/driver assignment controls) or "good follow-up candidates" (BusinessProfileForm, BranchDetailsForm, onboarding, auth pages, InventoryManager, DriverManager).
+- **A mid-session Bash safety-classifier outage blocked live verification temporarily** — every mutating command was rejected for a while, then recovered; retried successfully afterward.
+- **Real bug found live and fixed**: every migrated form threw a React console error on submit ("useActionState was called outside of a transition") because `useServerAction` returned the raw `useActionState` dispatch, which needs a transition when called manually from RHF's `handleSubmit` (not a native form action). Fixed by having the hook wrap its own `startTransition` internally — one shared fix, not four per-form patches. Confirmed fixed by cross-referencing the browser console's timeline: all pre-fix errors were timestamped before the hot-reload, zero new ones after it.
+- Verified live end-to-end with a throwaway owner account (Admin API create/onboard/flip to Professional/delete, including its 2 staff invites, all cascade-confirmed via REST): `AddCustomerForm` and `StaffInviteForm` both blocked invalid submissions client-side with zero network requests and succeeded when valid; `WalkInOrderForm` (tested on the Professional-flipped account) correctly revealed its pickup sub-section via `watch()` and created a real order with `pickup_requested: true` and the exact address, confirmed via direct DB check; `OrderDetailsEditForm` saved weight/payment status/notes, all three confirmed persisted via direct DB check.
+
+**Next recommended task:** Continue with phase 8c (data layer: pagination/search/sort/filter) per the roadmap — or keep migrating the remaining forms listed in the checkpoint using the pattern this phase established.
+
+----------------------------------------
+
+**LMS Production Readiness — Phase 8a: Feature-Flag Architecture (2026-07-12) — done, roadmap for 8b-8g documented:**
+
+Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-feature-flag-architecture-v1.md` for full detail.
+
+Current Feature: Russell handed over a large "production readiness" spec (~20 workstreams: skeletons, error boundaries, toasts, optimistic updates, pagination/search/filter/sort, responsive/accessibility/dark-mode, Supabase Storage + image uploads, receipt PDF, audit logs, proper TypeScript, reusable hooks/components/forms with React Hook Form + Zod, Vercel perf) plus a "Stripe/Linear/Notion-level" design bar. Agreed via clarifying questions to split into phases: this pass (8a) implements the one architectural change Russell called out as needing to happen first — decoupling plans from features — everything else is documented as a roadmap (8b-8g) for follow-up sessions.
+
+Current Status: Done.
+- **Confirmed via clarifying questions before starting**: feature flags stay code-config (not DB-driven plan/feature tables), matching the Appointment System's proven `entitlements.ts` pattern; the premium visual redesign bar applies to new components going forward, not a retroactive re-theme of ~40 already-built pages; image uploads (later) = business logo only; receipt PDF (later) = `@react-pdf/renderer`; roadmap order = foundation first.
+- **Rewrote `modules/billing/entitlements.ts`**: `FeatureFlag` now enumerates the *entire* feature surface (`feature_order_tracking`, `feature_customer_database`, `feature_inventory`, `feature_receipt_printing`, `feature_qr_lookup`, `feature_pickup_delivery`, `feature_priority_queue`, `feature_advanced_reports`), not just the 4 old Professional-only booleans. A new `PlanLimits` concept (`staffAccounts: number | null`) replaces the old boolean `unlimited_staff` flag — a cap is a number, not a switch. Professional's feature list is built by spreading Essential's, so the baseline list exists in exactly one place. `pickup_management`/`delivery_management` (two flags) consolidated into one `feature_pickup_delivery`, matching Russell's own example naming.
+- **Audited first**: confirmed every gating call site already went through `hasFeature()` (never `plan_tier === 'professional'` directly), so this was a clean, contained rewrite of one module plus ~25 mechanical call-site renames, not a scattered refactor.
+- Verified live with two throwaway owner accounts (Essential + Professional via REST flip, both deleted after): zero behavior change confirmed — same PRO badges/upgrade prompts/staff cap on Essential, same unlocked pages/unlimited staff on Professional, exactly as phase 7 left it. `tsc` clean throughout.
+
+**Next recommended task:** Scope and execute phase 8b (reusable foundation: React Hook Form + Zod, shared form primitives, migrate existing ad-hoc forms) — the next item in the "foundation first" roadmap. Full 8b-8g roadmap is in the checkpoint.
+
+----------------------------------------
+
 **LMS Professional Plan Feature-Flag System (phase 7) — fully done and verified live (2026-07-12):**
 
 Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-professional-plan-v1.md` for full detail.

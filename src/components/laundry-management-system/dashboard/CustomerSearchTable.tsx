@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Search } from 'lucide-react'
 import type { Customer } from '@/lib/laundry-management-system/modules/customer/types'
 import DataTable, { type DataTableColumn } from './DataTable'
+import TableSearchInput from './TableSearchInput'
 
 export default function CustomerSearchTable({ customers, basePath }: { customers: Customer[]; basePath: string }) {
   const [query, setQuery] = useState('')
@@ -12,6 +12,7 @@ export default function CustomerSearchTable({ customers, basePath }: { customers
   const columns: DataTableColumn<Customer>[] = [
     {
       header: 'Name',
+      sortValue: (c) => c.full_name.toLowerCase(),
       cell: (c) => (
         <Link href={`${basePath}/${c.id}`} className="font-medium text-[#2563EB] hover:underline">
           {c.full_name}
@@ -20,7 +21,11 @@ export default function CustomerSearchTable({ customers, basePath }: { customers
     },
     { header: 'Phone', cell: (c) => c.phone || '—' },
     { header: 'Email', cell: (c) => c.email || '—' },
-    { header: 'Added', cell: (c) => <span className="text-slate-500">{new Date(c.created_at).toLocaleDateString()}</span> },
+    {
+      header: 'Added',
+      sortValue: (c) => c.created_at,
+      cell: (c) => <span className="text-slate-500">{new Date(c.created_at).toLocaleDateString()}</span>,
+    },
   ]
 
   const filtered = useMemo(() => {
@@ -33,15 +38,8 @@ export default function CustomerSearchTable({ customers, basePath }: { customers
 
   return (
     <div>
-      <div className="relative mb-4 max-w-sm">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name, phone, or email…"
-          className="w-full rounded-lg border border-blue-100 bg-white py-2 pl-9 pr-3 text-sm text-[#0B1B33] placeholder:text-slate-400 focus:border-[#38BDF8] focus:outline-none"
-        />
+      <div className="mb-4">
+        <TableSearchInput value={query} onChange={setQuery} placeholder="Search by name, phone, or email…" />
       </div>
       <DataTable
         columns={columns}

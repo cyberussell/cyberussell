@@ -13,14 +13,14 @@ export default async function PriorityQueuePage() {
   return (
     <div>
       <PageHeader title="Priority Queue" subtitle="Active orders, rush jobs first." />
-      {hasFeature(business, 'priority_queue') ? (
+      {hasFeature(business, 'feature_priority_queue') ? (
         <PriorityQueueTable
           orders={await getPriorityQueue(supabase, business.id)}
           currency={business.currency}
           orderBasePath="/laundry-management-system/dashboard/orders"
         />
       ) : (
-        <UpgradePrompt feature="priority_queue" label="Priority Queue" />
+        <UpgradePrompt feature="feature_priority_queue" label="Priority Queue" />
       )}
     </div>
   )

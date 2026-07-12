@@ -7,6 +7,7 @@ import { requireActionPermission } from './permission'
 import { isValidTransition } from '@/lib/laundry-management-system/modules/orders/stateMachine'
 import type { OrderStatus } from '@/lib/laundry-management-system/modules/orders/types'
 import { hasFeature } from '@/lib/laundry-management-system/modules/billing/entitlements'
+import { createOrderSchema, updateDetailsSchema } from '@/lib/laundry-management-system/modules/orders/schema'
 
 const ORDER_STATUSES = [
   'received',
@@ -19,25 +20,6 @@ const ORDER_STATUSES = [
   'completed',
   'cancelled',
 ] as const
-
-const PAYMENT_STATUSES = ['unpaid', 'paid'] as const
-
-const createOrderSchema = z.object({
-  branchId: z.string().uuid(),
-  customerId: z.string().uuid().optional().or(z.literal('')),
-  assignedStaffId: z.string().uuid().optional().or(z.literal('')),
-  walkInName: z.string().max(80).optional().default(''),
-  walkInPhone: z.string().max(30).optional().default(''),
-  serviceLabel: z.string().min(1).max(80),
-  amount: z.coerce.number().min(0),
-  weightKg: z.coerce.number().min(0).optional().or(z.literal('')),
-  expectedCompletionAt: z.string().optional().or(z.literal('')),
-  paymentStatus: z.enum(PAYMENT_STATUSES).optional().default('unpaid'),
-  notes: z.string().max(500).optional().default(''),
-  pickupRequested: z.coerce.boolean().optional().default(false),
-  pickupAddress: z.string().max(200).optional().default(''),
-  pickupScheduledAt: z.string().optional().or(z.literal('')),
-})
 
 // A row-level guard on top of the role-level permission check: staff may only
 // act on orders assigned to them ("staff only sees assigned orders" extends to
@@ -94,7 +76,7 @@ export async function createWalkInOrder(_prev: ActionResult, formData: FormData)
   // Pickup request fields only take effect on Professional — silently ignored
   // (not an error) if a stale form somehow submits them on Essential, since the
   // checkbox itself is only rendered when the feature is available.
-  const canRequestPickup = pickupRequested && hasFeature(business, 'pickup_management')
+  const canRequestPickup = pickupRequested && hasFeature(business, 'feature_pickup_delivery')
 
   const { error } = await supabase.from('orders').insert({
     business_id: business.id,
@@ -168,14 +150,6 @@ export async function updateOrderStatus(_prev: ActionResult, formData: FormData)
 
   return {}
 }
-
-const updateDetailsSchema = z.object({
-  orderId: z.string().uuid(),
-  weightKg: z.coerce.number().min(0).optional().or(z.literal('')),
-  expectedCompletionAt: z.string().optional().or(z.literal('')),
-  paymentStatus: z.enum(PAYMENT_STATUSES),
-  notes: z.string().max(500).optional().default(''),
-})
 
 // Weight/payment/notes/ETA edits — staff can only touch orders assigned to
 // them, same row-level rule as status updates.
@@ -269,7 +243,7 @@ export async function schedulePickup(_prev: ActionResult, formData: FormData): P
   const { session, denied } = await requireActionPermission('manage_pickup')
   if (denied) return denied
   const { supabase, business } = session
-  if (!hasFeature(business, 'pickup_management')) return { error: 'Pickup Management is a Professional plan feature.' }
+  if (!hasFeature(business, 'feature_pickup_delivery')) return { error: 'Pickup Management is a Professional plan feature.' }
 
   const { error } = await supabase
     .from('orders')
@@ -288,7 +262,7 @@ export async function markPickedUp(orderId: string): Promise<ActionResult> {
   const { session, denied } = await requireActionPermission('manage_pickup')
   if (denied) return denied
   const { supabase, business } = session
-  if (!hasFeature(business, 'pickup_management')) return { error: 'Pickup Management is a Professional plan feature.' }
+  if (!hasFeature(business, 'feature_pickup_delivery')) return { error: 'Pickup Management is a Professional plan feature.' }
 
   const { error } = await supabase
     .from('orders')
@@ -316,7 +290,7 @@ export async function scheduleDelivery(_prev: ActionResult, formData: FormData):
   const { session, denied } = await requireActionPermission('manage_delivery')
   if (denied) return denied
   const { supabase, business } = session
-  if (!hasFeature(business, 'delivery_management')) return { error: 'Delivery Management is a Professional plan feature.' }
+  if (!hasFeature(business, 'feature_pickup_delivery')) return { error: 'Delivery Management is a Professional plan feature.' }
 
   const { error } = await supabase
     .from('orders')
@@ -350,7 +324,7 @@ export async function assignOrderDriver(_prev: ActionResult, formData: FormData)
   const { session, denied } = await requireActionPermission('manage_delivery')
   if (denied) return denied
   const { supabase, business } = session
-  if (!hasFeature(business, 'delivery_management')) return { error: 'Driver assignment is a Professional plan feature.' }
+  if (!hasFeature(business, 'feature_pickup_delivery')) return { error: 'Driver assignment is a Professional plan feature.' }
 
   const { error } = await supabase
     .from('orders')
@@ -378,7 +352,7 @@ export async function setOrderPriority(_prev: ActionResult, formData: FormData):
   const { session, denied } = await requireActionPermission('update_order_status')
   if (denied) return denied
   const { supabase, business } = session
-  if (!hasFeature(business, 'priority_queue')) return { error: 'Priority Queue is a Professional plan feature.' }
+  if (!hasFeature(business, 'feature_priority_queue')) return { error: 'Priority Queue is a Professional plan feature.' }
 
   const { error } = await supabase
     .from('orders')

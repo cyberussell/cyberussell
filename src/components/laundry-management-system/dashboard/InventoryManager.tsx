@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Pencil, Trash2, Plus, Check, X } from 'lucide-react'
+import { toast } from 'sonner'
 import {
   createInventoryItem,
   updateInventoryItem,
@@ -11,6 +12,8 @@ import {
 import type { InventoryCategory, InventoryItem } from '@/lib/laundry-management-system/modules/inventory/types'
 import { INVENTORY_CATEGORIES, INVENTORY_CATEGORY_LABELS, groupByCategory } from '@/lib/laundry-management-system/modules/inventory/categories'
 import Card from './Card'
+import FilterPills from './FilterPills'
+import TableSearchInput from './TableSearchInput'
 
 const inputClass =
   'w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none'
@@ -22,6 +25,7 @@ export default function InventoryManager({ items }: { items: InventoryItem[] }) 
   const [pending, startTransition] = useTransition()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [view, setView] = useState<View>('all')
+  const [query, setQuery] = useState('')
   const [newItem, setNewItem] = useState({
     name: '',
     unit: 'pcs',
@@ -40,7 +44,12 @@ export default function InventoryManager({ items }: { items: InventoryItem[] }) 
     formData.set('lowStockThreshold', newItem.lowStockThreshold)
     formData.set('category', newItem.category)
     startTransition(async () => {
-      await createInventoryItem({}, formData)
+      const result = await createInventoryItem({}, formData)
+      if (result.error) {
+        toast.error(result.error)
+        return
+      }
+      toast.success('Item added.')
       setNewItem({ name: '', unit: 'pcs', quantity: '0', lowStockThreshold: '0', category: 'other' })
       router.refresh()
     })
@@ -48,14 +57,26 @@ export default function InventoryManager({ items }: { items: InventoryItem[] }) 
 
   function handleDelete(id: string) {
     startTransition(async () => {
-      await deleteInventoryItem(id)
+      const result = await deleteInventoryItem(id)
+      if (result.error) {
+        toast.error(result.error)
+        return
+      }
+      toast.success('Item deleted.')
       router.refresh()
     })
   }
 
   const lowStockItems = items.filter((item) => item.quantity <= item.low_stock_threshold)
-  const visibleItems = view === 'restock' ? lowStockItems : items
-  const groups = groupByCategory(visibleItems)
+  const q = query.trim().toLowerCase()
+  const searchedItems = q
+    ? (view === 'restock' ? lowStockItems : items).filter(
+        (item) => item.name.toLowerCase().includes(q) || INVENTORY_CATEGORY_LABELS[item.category].toLowerCase().includes(q)
+      )
+    : view === 'restock'
+      ? lowStockItems
+      : items
+  const groups = groupByCategory(searchedItems)
 
   return (
     <div className="space-y-4">
@@ -125,27 +146,16 @@ export default function InventoryManager({ items }: { items: InventoryItem[] }) 
       </Card>
 
       {items.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setView('all')}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-              view === 'all'
-                ? 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white'
-                : 'border border-blue-100 bg-white text-slate-500 hover:border-[#38BDF8]/40'
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setView('restock')}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-              view === 'restock'
-                ? 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white'
-                : 'border border-blue-100 bg-white text-slate-500 hover:border-[#38BDF8]/40'
-            }`}
-          >
-            Needs Restocking{lowStockItems.length > 0 ? ` (${lowStockItems.length})` : ''}
-          </button>
+        <div className="space-y-3">
+          <TableSearchInput value={query} onChange={setQuery} placeholder="Search by name or category…" />
+          <FilterPills
+            options={[
+              { label: 'All', value: 'all' as View },
+              { label: `Needs Restocking${lowStockItems.length > 0 ? ` (${lowStockItems.length})` : ''}`, value: 'restock' as View },
+            ]}
+            active={view}
+            onChange={setView}
+          />
         </div>
       )}
 
@@ -153,9 +163,13 @@ export default function InventoryManager({ items }: { items: InventoryItem[] }) 
         <Card className="p-10 text-center">
           <p className="text-sm text-slate-400">No inventory items yet — add your first one above.</p>
         </Card>
-      ) : view === 'restock' && lowStockItems.length === 0 ? (
+      ) : searchedItems.length === 0 ? (
         <Card className="p-10 text-center">
-          <p className="text-sm text-slate-400">Everything is well-stocked — nothing needs restocking right now.</p>
+          <p className="text-sm text-slate-400">
+            {q
+              ? 'No items match your search.'
+              : 'Everything is well-stocked — nothing needs restocking right now.'}
+          </p>
         </Card>
       ) : (
         groups.map((group) => (
@@ -232,7 +246,12 @@ function InventoryRow({
     formData.set('lowStockThreshold', draft.lowStockThreshold)
     formData.set('category', draft.category)
     startTransition(async () => {
-      await updateInventoryItem({}, formData)
+      const result = await updateInventoryItem({}, formData)
+      if (result.error) {
+        toast.error(result.error)
+        return
+      }
+      toast.success('Item updated.')
       onSaved()
     })
   }
@@ -279,10 +298,15 @@ function InventoryRow({
         </td>
         <td className="px-4 py-2">
           <div className="flex items-center gap-1.5">
-            <button onClick={handleSave} disabled={pending} className="rounded-md p-1.5 text-emerald-600 hover:bg-emerald-50 disabled:opacity-50">
+            <button
+              onClick={handleSave}
+              disabled={pending}
+              aria-label="Save changes"
+              className="rounded-md p-1.5 text-emerald-600 hover:bg-emerald-50 disabled:opacity-50"
+            >
               <Check className="h-4 w-4" />
             </button>
-            <button onClick={onCancel} className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100">
+            <button onClick={onCancel} aria-label="Cancel editing" className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -303,10 +327,18 @@ function InventoryRow({
       <td className="px-4 py-3 text-slate-500">{item.low_stock_threshold}</td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-1.5">
-          <button onClick={onEdit} className="rounded-md p-1.5 text-slate-400 hover:bg-[#F0F6FF] hover:text-[#2563EB]">
+          <button
+            onClick={onEdit}
+            aria-label={`Edit ${item.name}`}
+            className="rounded-md p-1.5 text-slate-400 hover:bg-[#F0F6FF] hover:text-[#2563EB]"
+          >
             <Pencil className="h-4 w-4" />
           </button>
-          <button onClick={onDelete} className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500">
+          <button
+            onClick={onDelete}
+            aria-label={`Delete ${item.name}`}
+            className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500"
+          >
             <Trash2 className="h-4 w-4" />
           </button>
         </div>

@@ -78,10 +78,10 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
 
       {period ? (
         <BasicReport supabaseBusiness={business} period={period} supabase={supabase} />
-      ) : hasFeature(business, 'advanced_reports') ? (
+      ) : hasFeature(business, 'feature_advanced_reports') ? (
         <AdvancedReport tab={tabParam as AdvancedTab} supabase={supabase} businessId={business.id} currency={business.currency} />
       ) : (
-        <UpgradePrompt feature="advanced_reports" label="Advanced Reports" />
+        <UpgradePrompt feature="feature_advanced_reports" label="Advanced Reports" />
       )}
     </div>
   )

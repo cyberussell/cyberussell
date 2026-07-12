@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { createServerSupabase, createAdminSupabase } from '@/lib/laundry-management-system/supabase-server'
 import { requireOwnerBusiness, requireCustomerAccess } from '@/lib/laundry-management-system/modules/auth/queries'
+import { addCustomerSchema } from '@/lib/laundry-management-system/modules/customer/schema'
 import type { ActionResult } from './shared'
 
 const customerSignUpSchema = z.object({
@@ -52,13 +53,6 @@ export async function customerSignUp(_prev: ActionResult, formData: FormData): P
 
   return { error: 'CONFIRM_EMAIL' } // handled as info, not error, in the UI
 }
-
-const addCustomerSchema = z.object({
-  fullName: z.string().min(1).max(80),
-  phone: z.string().min(1).max(30),
-  email: z.string().email().optional().or(z.literal('')),
-  notes: z.string().max(500).optional().default(''),
-})
 
 // Owner-side manual add — no auth account, just a customers row (profile_id stays null
 // until/unless this person later self-registers with a matching business).
