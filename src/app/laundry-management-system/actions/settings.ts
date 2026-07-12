@@ -68,3 +68,41 @@ export async function updateBranchDetails(_prev: ActionResult, formData: FormDat
 
   return { error: 'SAVED' } // handled as info, not error, in the UI
 }
+
+const LOGO_MAX_BYTES = 2 * 1024 * 1024
+const LOGO_EXTENSIONS: Record<string, string> = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/webp': 'webp',
+}
+
+export async function uploadBusinessLogo(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const file = formData.get('logo')
+  if (!(file instanceof File) || file.size === 0) return { error: 'Choose an image to upload.' }
+  const extension = LOGO_EXTENSIONS[file.type]
+  if (!extension) return { error: 'Logo must be a PNG, JPEG, or WebP image.' }
+  if (file.size > LOGO_MAX_BYTES) return { error: 'Logo must be under 2MB.' }
+
+  const { supabase, business } = await requireOwnerBusiness()
+
+  // One logo per business — clear whatever's already in this business's
+  // folder first so a format change (e.g. png -> jpg) doesn't leave the old
+  // file behind under a different extension.
+  const { data: existing } = await supabase.storage.from('business-logos').list(business.id)
+  if (existing && existing.length > 0) {
+    await supabase.storage.from('business-logos').remove(existing.map((f) => `${business.id}/${f.name}`))
+  }
+
+  const path = `${business.id}/logo.${extension}`
+  const { error: uploadError } = await supabase.storage.from('business-logos').upload(path, file, { contentType: file.type })
+  if (uploadError) return { error: uploadError.message }
+
+  const { data: publicUrl } = supabase.storage.from('business-logos').getPublicUrl(path)
+  // Cache-bust so the new logo shows immediately even though the path is identical to the old one.
+  const logoUrl = `${publicUrl.publicUrl}?v=${Date.now()}`
+
+  const { error: updateError } = await supabase.from('businesses').update({ logo_url: logoUrl }).eq('id', business.id)
+  if (updateError) return { error: updateError.message }
+
+  return { error: 'SAVED' } // handled as info, not error, in the UI
+}

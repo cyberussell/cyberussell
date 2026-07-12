@@ -14,6 +14,7 @@ export interface Business {
   plan_status: PlanStatus
   trial_ends_at: string
   settings: Record<string, unknown>
+  logo_url: string | null
   created_at: string
 }
 

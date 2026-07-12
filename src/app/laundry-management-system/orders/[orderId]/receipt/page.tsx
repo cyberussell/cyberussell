@@ -1,3 +1,4 @@
+import { Download } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { requirePagePermission } from '@/lib/laundry-management-system/modules/auth/queries'
 import { getOrderById } from '@/lib/laundry-management-system/modules/orders/queries'
@@ -19,10 +20,23 @@ export default async function ReceiptPage({ params }: { params: Promise<{ orderI
       <div className="mx-auto max-w-md rounded-2xl border border-blue-100 bg-white p-8 shadow-sm print:rounded-none print:border-0 print:shadow-none">
         <div className="mb-6 flex items-center justify-between print:hidden">
           <h1 className="text-lg font-semibold text-[#0B1B33]">Receipt</h1>
-          <PrintReceiptButton />
+          <div className="flex items-center gap-2">
+            <a
+              href={`/laundry-management-system/orders/${order.id}/receipt/pdf`}
+              className="flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-4 py-2 text-sm font-medium text-[#2563EB] transition hover:border-[#38BDF8]/40"
+            >
+              <Download className="h-4 w-4" />
+              PDF
+            </a>
+            <PrintReceiptButton />
+          </div>
         </div>
 
         <div className="mb-6 text-center">
+          {business.logo_url && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={business.logo_url} alt={`${business.name} logo`} className="mx-auto mb-2 h-14 w-14 rounded-xl object-cover" />
+          )}
           <p className="text-lg font-bold text-[#0B1B33]">{business.name}</p>
           {business.address && <p className="text-xs text-slate-500">{business.address}</p>}
           {business.phone && <p className="text-xs text-slate-500">{business.phone}</p>}

@@ -1,5 +1,40 @@
 # Current Work
 
+**LMS Production Readiness — Phase 8e: Files & Documents (2026-07-13) — code done, tsc + build clean, functional verification blocked on a migration:**
+
+Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-files-documents-v1.md` for full detail.
+
+Current Feature: Business logo upload (Supabase Storage, first pass — logo only, per the phase 8a decision) and a real downloadable receipt PDF via `@react-pdf/renderer` — the "files & documents" item from the roadmap.
+
+Current Status: Code complete.
+- **New migration `013_business_logo.sql`** — adds `businesses.logo_url`, creates a public `business-logos` Storage bucket, and owner-only write RLS on `storage.objects` scoped to each business's own folder. **Russell needs to run this in the LMS Supabase project's SQL Editor before logo upload will work at all** — same pattern as every prior LMS migration.
+- **`uploadBusinessLogo`** validates PNG/JPEG/WebP ≤2MB, clears any existing file in the business's Storage folder first (so a format change doesn't leave an orphaned old file), updates `logo_url` with a cache-busted public URL. New `BusinessLogoForm` (file input + instant client-side preview, wired through the existing `useServerAction` hook for a free toast) added to Settings.
+- **Logo shown on the receipt page** (HTML + PDF), the only display surface touched this pass per the "logo only, first pass" scope.
+- **New `ReceiptDocument`** (`@react-pdf/renderer`) mirrors the existing HTML receipt exactly (logo, business info, order details, total, QR) on an A6 page. New route handler streams it back as a real downloadable PDF, gated by the same `print_receipts` permission check as the HTML receipt — no divergence in access control between the two views. "Download PDF" link added next to the existing "Print" button.
+- Fixed a real `tsc` error along the way: `NextResponse` doesn't accept a raw Node `Buffer` as body in this TS config — wrapped in `new Uint8Array(buffer)`.
+- `npx tsc --noEmit` clean, `npx next build` succeeds with zero errors (confirmed the new PDF route builds correctly and is marked dynamic, and `@react-pdf/renderer` bundles without issue).
+
+**Not verified this pass**: logo upload can't be tested at all until the migration runs (the Storage bucket doesn't exist yet), and further production-database writes for testing keep hitting the safety classifier's per-action confirmation requirement (same friction as the 8d follow-up). Recommend Russell runs the migration first, then a live pass: upload a logo, do a format-change upload (confirm the old file is actually gone from Storage), download the PDF (confirm it matches the HTML receipt and opens cleanly), and confirm a non-owner can't fetch another business's receipt PDF.
+
+**Next recommended task:** Russell runs `013_business_logo.sql`, then live-verify this phase or move to phase 8f (audit logs table + owner-only Activity History view).
+
+----------------------------------------
+
+**LMS Production Readiness — Phases 8a-8d: deployed to production, partially live-verified (2026-07-13):**
+
+Current Product: Laundry Management System (LMS) — see checkpoints `laundry-management-system-{feature-flag-architecture,form-foundation,data-layer,ux-reliability}-v1.md`.
+
+Current Feature: Committed and pushed all previously-uncommitted LMS work (phases 8a-8d: feature flags, RHF+Zod forms, data-layer pagination/search/sort/filter, toasts/optimistic-updates/loading-error-states/accessibility) — none of it had been committed before, despite 8a-8c already being checkpointed as "done" in earlier sessions. Deliberately left the working tree's unrelated Appointment System changes (new migrations, staff-login components, etc. from a different session) untouched and uncommitted, per the one-product-at-a-time rule.
+
+Current Status: Deployed.
+- Committed (`c03caed`, 61 files) and pushed to `main` — confirmed Vercel auto-deployed (`dpl_4WyosgxVRg4QGxs5G7kNqXNwfMRB`, `● Ready`), `/laundry-management-system` and `/laundry-management-system/login` both smoke-checked `200` on the live site.
+- **Live-verified against production** with a throwaway owner account (created and fully deleted afterward, cascade-confirmed via REST): `OrderStatusControl`'s `useOptimistic` conversion confirmed working for real — the status badge updates synchronously in the same script execution as the dispatch, before any server round-trip, then persists correctly after refresh. Zero console errors.
+- **Not verified this pass**: `PriorityToggle`'s optimistic flip, toasts on Inventory/Driver/pickup-delivery mutations, loading skeletons, the `error.tsx` boundary, and the new `aria-label`s. Further production-database writes to exercise these were blocked by Claude Code's safety classifier requiring fresh per-action confirmation for each new write against live data; Russell decided verifying the highest-risk item (the `useOptimistic` conversion) was enough for now.
+
+**Next recommended task:** Cover the remaining unverified 8d items in a follow-up pass — ideally against a non-production sandbox to avoid the per-action confirmation friction — then continue with phase 8e (Supabase Storage + business logo upload, real receipt PDF via `@react-pdf/renderer`).
+
+----------------------------------------
+
 **LMS Production Readiness — Phase 8d: UX & Reliability Polish (2026-07-12) — code done, tsc clean, live verification NOT completed:**
 
 Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-ux-reliability-v1.md` for full detail.
