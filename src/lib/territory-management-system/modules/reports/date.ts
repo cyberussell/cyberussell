@@ -3,7 +3,7 @@
 // from its bucket on any server not running in UTC — every boundary here is computed
 // consistently from the congregation's IANA timezone instead, once, in one place.
 
-import { todayInTimezone } from '../assignment/date'
+import { safeTimezone, todayInTimezone } from '../assignment/date'
 
 export interface DateRange {
   start: string // inclusive, YYYY-MM-DD
@@ -41,7 +41,7 @@ function toIsoDate(d: Date): string {
 }
 
 function timezoneOffsetString(timezone: string, atDate: Date): string {
-  const parts = new Intl.DateTimeFormat('en-US', { timeZone: timezone, timeZoneName: 'shortOffset' }).formatToParts(atDate)
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: safeTimezone(timezone), timeZoneName: 'shortOffset' }).formatToParts(atDate)
   const offsetPart = parts.find((p) => p.type === 'timeZoneName')?.value ?? 'GMT+0'
   const match = offsetPart.match(/GMT([+-]\d{1,2})(?::?(\d{2}))?/)
   if (!match) return '+00:00'

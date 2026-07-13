@@ -20,8 +20,10 @@ export async function signIn(_prev: ActionResult, formData: FormData): Promise<A
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) return { error: 'Invalid email or password.' }
 
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle()
-  const role = (profile?.role as UserRole | undefined) ?? 'admin'
+  const { data: profile, error: profileError } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle()
+  if (profileError || !profile) return { error: 'Could not load your account. Please try again.' }
+
+  const role = profile.role as UserRole
   redirect(ROLE_REDIRECT[role])
 }
 
