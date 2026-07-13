@@ -3,14 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Map, ClipboardList, QrCode, BarChart3, Settings as SettingsIcon, LogOut, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Map, ClipboardList, BarChart3, Settings as SettingsIcon, LogOut, Menu, X } from 'lucide-react'
 import { signOut } from '@/app/territory-management-system/actions/auth'
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/territory-management-system/dashboard', icon: LayoutDashboard },
   { label: 'Territories', href: '/territory-management-system/dashboard/territories', icon: Map },
   { label: 'Contact Records', href: '/territory-management-system/dashboard/records', icon: ClipboardList },
-  { label: 'Assignments', href: '/territory-management-system/dashboard/assignments', icon: QrCode },
   { label: 'Reports', href: '/territory-management-system/dashboard/reports', icon: BarChart3 },
   { label: 'Settings', href: '/territory-management-system/dashboard/settings', icon: SettingsIcon },
 ]

@@ -145,15 +145,6 @@ export async function deleteBatch(supabase: SupabaseClient, batchId: string): Pr
   if (error) throw error
 }
 
-export async function listBatches(supabase: SupabaseClient, congregationId: string): Promise<AssignmentBatch[]> {
-  const { data } = await supabase
-    .from('assignment_batches')
-    .select('*')
-    .eq('congregation_id', congregationId)
-    .order('assignment_date', { ascending: false })
-  return (data ?? []) as AssignmentBatch[]
-}
-
 export async function getBatchForDate(
   supabase: SupabaseClient,
   congregationId: string,
