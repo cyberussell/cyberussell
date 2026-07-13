@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { ImageIcon } from 'lucide-react'
 import { uploadBusinessLogo } from '@/app/laundry-management-system/actions/settings'
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
@@ -21,9 +22,13 @@ export default function BusinessLogoForm({ business }: { business: Business }) {
       <h2 className="mb-4 font-semibold text-[#0B1B33]">Business logo</h2>
       <form action={dispatch} className="flex items-end gap-4">
         <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-blue-100 bg-[#F8FBFF]">
-          {preview || business.logo_url ? (
+          {preview ? (
+            // A blob: URL from the just-selected file — next/image doesn't support
+            // blob URLs, so the live pre-upload preview stays a plain <img>.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={preview ?? business.logo_url ?? ''} alt="Business logo" className="h-full w-full object-cover" />
+            <img src={preview} alt="Business logo" className="h-full w-full object-cover" />
+          ) : business.logo_url ? (
+            <Image src={business.logo_url} alt="Business logo" width={64} height={64} className="h-full w-full object-cover" />
           ) : (
             <ImageIcon className="h-6 w-6 text-slate-300" />
           )}

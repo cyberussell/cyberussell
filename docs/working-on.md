@@ -1,6 +1,25 @@
 # Current Work
 
-**LMS Production Readiness — Phase 8f: Audit Logs (2026-07-13) — code done, tsc + build clean, blocked on a migration:**
+**LMS Production Readiness — Phase 8g: Performance (2026-07-13) — fully done, this closes out the entire phase 8 roadmap:**
+
+Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-performance-v1.md` for full detail.
+
+Current Feature: Image optimization + a bundle/rendering audit — the final item of the production-readiness roadmap (8a-8g).
+
+Current Status: Done.
+- **Scoped from real evidence, not guesswork**: started from the actual `next build` route list, a repo-wide grep for raw `<img>` tags and `force-dynamic` usage, and a check of which files import the heaviest libraries (`@react-pdf/renderer`, `qrcode`) — rather than inventing dynamic-import busywork without real bundle numbers.
+- **Real fix**: `/lms-logo.png` (776KB, 1254×1254) was served raw at 56×56 on login/signup — converted to `next/image`. Live-verified in the browser: the optimizer now serves a 128w variant at **2.9KB**, a 99.6% reduction.
+- **`next.config.ts` gained `images.remotePatterns`** (`*.supabase.co/storage/v1/object/public/**`) so the user-uploaded business logo can also go through `next/image` — converted its two display spots (receipt page, Settings' "current logo" thumbnail); the live blob: preview during upload correctly stays a plain `<img>`. Verified the pattern actually works (not just doesn't error) by hitting `/_next/image` with a real Supabase URL and confirming "upstream response is invalid" (file genuinely missing) rather than a hostname-rejection error.
+- **Two audits came back clean, reported rather than forced into unnecessary changes**: confirmed the heavy libraries never reach the client bundle (already `server-only`/route-handler-only); confirmed all 33 `force-dynamic` LMS pages are already correctly dynamic due to their own auth/cookie checks, so removing the export wouldn't change anything.
+- `npx tsc --noEmit` clean, `npx next build` succeeds with zero errors, zero console errors in live browser verification.
+
+**This closes out phase 8 (8a-8g) entirely** — feature flags, RHF+Zod forms, data-layer pagination/search/sort/filter, UX/reliability polish, files & documents, audit logs, and performance. No further roadmap items remain; future work would be new feature requests.
+
+**Next recommended task:** None from this roadmap. Commit/push/deploy this phase, then wait for Russell's next request.
+
+----------------------------------------
+
+**LMS Production Readiness — Phase 8f: Audit Logs (2026-07-13) — code done, tsc + build clean, migration run:**
 
 Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-audit-logs-v1.md` for full detail.
 

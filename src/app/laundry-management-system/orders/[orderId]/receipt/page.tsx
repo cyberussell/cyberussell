@@ -1,4 +1,5 @@
 import { Download } from 'lucide-react'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { requirePagePermission } from '@/lib/laundry-management-system/modules/auth/queries'
 import { getOrderById } from '@/lib/laundry-management-system/modules/orders/queries'
@@ -34,8 +35,13 @@ export default async function ReceiptPage({ params }: { params: Promise<{ orderI
 
         <div className="mb-6 text-center">
           {business.logo_url && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={business.logo_url} alt={`${business.name} logo`} className="mx-auto mb-2 h-14 w-14 rounded-xl object-cover" />
+            <Image
+              src={business.logo_url}
+              alt={`${business.name} logo`}
+              width={56}
+              height={56}
+              className="mx-auto mb-2 h-14 w-14 rounded-xl object-cover"
+            />
           )}
           <p className="text-lg font-bold text-[#0B1B33]">{business.name}</p>
           {business.address && <p className="text-xs text-slate-500">{business.address}</p>}

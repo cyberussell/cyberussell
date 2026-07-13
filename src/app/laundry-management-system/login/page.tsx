@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useState, useTransition } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { signIn, resendConfirmation } from '../actions/auth'
 import type { ActionResult } from '../actions/shared'
@@ -26,7 +27,7 @@ export default function LoginPage() {
       <main className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <Link href="/laundry-management-system" className="mb-8 flex flex-col items-center text-center">
-            <img src="/lms-logo.png" alt="" className="mb-3 h-14 w-14 rounded-2xl object-cover" />
+            <Image src="/lms-logo.png" alt="" width={56} height={56} priority className="mb-3 h-14 w-14 rounded-2xl object-cover" />
             <span className="text-2xl font-bold text-white">
               Laundry <span className="text-[#38BDF8]">Management System</span>
             </span>

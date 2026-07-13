@@ -9,6 +9,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      // Covers any Supabase project's public storage URLs (LMS business
+      // logos, etc.) without hardcoding one project ref.
+      { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },
+    ],
+  },
   async redirects() {
     return [
       {
