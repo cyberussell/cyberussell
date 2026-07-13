@@ -3,14 +3,9 @@
 import { logVisitAction } from '@/app/territory-management-system/actions/records'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import { VISIT_RESULT_LABELS, VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
+import { nowLocalDatetime } from '@/lib/territory-management-system/modules/records/localTime'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
-
-function nowLocalDatetime() {
-  const d = new Date()
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
-  return d.toISOString().slice(0, 16)
-}
 
 export default function VisitLogForm({ recordId }: { recordId: string }) {
   const { dispatch, pending, error, successMessage } = useServerAction(logVisitAction, ['SAVED'], 'Visit logged.')
@@ -25,7 +20,7 @@ export default function VisitLogForm({ recordId }: { recordId: string }) {
             <input name="visitedAt" type="datetime-local" required defaultValue={nowLocalDatetime()} className={inputClass} />
           </FormField>
           <FormField label="Result">
-            <select name="result" required defaultValue="visited" className={inputClass}>
+            <select name="result" required defaultValue="initial_visit" className={inputClass}>
               {VISIT_RESULTS.map((r) => (
                 <option key={r} value={r}>
                   {VISIT_RESULT_LABELS[r]}

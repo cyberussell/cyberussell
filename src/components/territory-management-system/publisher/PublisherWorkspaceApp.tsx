@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Download, Plus } from 'lucide-react'
 import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
@@ -38,6 +38,11 @@ export default function PublisherWorkspaceApp({
   const [syncing, setSyncing] = useState(false)
   const [mapUrls, setMapUrls] = useState<Record<string, string>>({})
   const online = useOnlineStatus()
+  // Several call sites can each decide "we're online, sync now" in quick succession (a form
+  // submit's own trigger, plus the reconnect effect) — without this, two overlapping
+  // flushQueue() runs could both pick up the same still-queued item and submit it twice. A
+  // ref survives across renders without retriggering effects, unlike state.
+  const syncingRef = useRef(false)
 
   const refreshQueue = useCallback(async () => {
     setQueue(await listQueue(partnershipToken))
@@ -77,12 +82,20 @@ export default function PublisherWorkspaceApp({
   }, [territoryIdsKey])
 
   const handleSync = useCallback(async () => {
+    if (syncingRef.current) return
+    syncingRef.current = true
     setSyncing(true)
-    const result = await flushQueue(partnershipToken)
-    await refreshQueue()
-    setSyncing(false)
-    if (result.synced > 0) toast.success(`${result.synced} item(s) synced.`)
-    if (result.failed > 0) toast.error(`${result.failed} item(s) failed to sync — see the pending list below.`)
+    try {
+      const result = await flushQueue(partnershipToken)
+      await refreshQueue()
+      if (result.synced > 0) toast.success(`${result.synced} item(s) synced.`)
+      if (result.failed > 0) toast.error(`${result.failed} item(s) failed to sync — see the pending list below.`)
+      // result.stillPending (a connectivity blip, not a rejection) is deliberately silent —
+      // it'll retry automatically next time, no need to alarm the publisher over it.
+    } finally {
+      syncingRef.current = false
+      setSyncing(false)
+    }
   }, [partnershipToken, refreshQueue])
 
   // Automatic synchronization the moment connectivity returns.
@@ -137,7 +150,8 @@ export default function PublisherWorkspaceApp({
       <div className="mx-auto max-w-lg space-y-6">
         <SyncStatusBar
           online={online}
-          pendingCount={queue.filter((q) => q.status !== 'syncing').length}
+          pendingCount={queue.filter((q) => q.status === 'pending').length}
+          failedCount={queue.filter((q) => q.status === 'failed').length}
           syncing={syncing}
           onSync={handleSync}
         />
@@ -175,7 +189,11 @@ export default function PublisherWorkspaceApp({
 
             <div>
               <h2 className="mb-3 font-semibold text-[#0B1B33]">Assigned Records</h2>
-              <AssignedRecordsList records={workspace.records} onSelect={(recordId) => setView({ name: 'detail', recordId })} />
+              <AssignedRecordsList
+                records={workspace.records}
+                failedRecordIds={new Set(queue.filter((q) => q.status === 'failed' && q.payload.recordId).map((q) => q.payload.recordId))}
+                onSelect={(recordId) => setView({ name: 'detail', recordId })}
+              />
             </div>
 
             {territoryStructures.length > 0 && (

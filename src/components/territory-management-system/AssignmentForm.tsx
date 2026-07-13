@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { createAssignmentAction } from '@/app/territory-management-system/actions/assignments'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
+import { DEFAULT_MAX_PER_PARTNERSHIP } from '@/lib/territory-management-system/modules/assignment/engine'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
@@ -83,8 +84,8 @@ export default function AssignmentForm({
         </FormField>
         <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">
           {eligibleTotal} approved record{eligibleTotal === 1 ? '' : 's'} available across the selected territories —
-          up to {partnershipCount * 6} will be assigned ({partnershipCount} partnership{partnershipCount === 1 ? '' : 's'}{' '}
-          × 6 max).
+          up to {partnershipCount * DEFAULT_MAX_PER_PARTNERSHIP} will be assigned ({partnershipCount} partnership
+          {partnershipCount === 1 ? '' : 's'} × {DEFAULT_MAX_PER_PARTNERSHIP} max).
           {eligibleTotal > 0 && eligibleTotal < partnershipCount && (
             <p className="mt-1 font-medium text-red-500">Not enough records for {partnershipCount} partnerships.</p>
           )}

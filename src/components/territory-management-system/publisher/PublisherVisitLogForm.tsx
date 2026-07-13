@@ -2,14 +2,9 @@
 
 import { useState } from 'react'
 import { VISIT_RESULT_LABELS, VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
+import { nowLocalDatetime } from '@/lib/territory-management-system/modules/records/localTime'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
-
-function nowLocalDatetime() {
-  const d = new Date()
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
-  return d.toISOString().slice(0, 16)
-}
 
 export default function PublisherVisitLogForm({
   onLogVisit,

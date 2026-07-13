@@ -75,7 +75,13 @@ export default function DataTable<T extends { id: string }>({
         <thead className="border-b border-blue-100/60 bg-[#F8FBFF]">
           <tr>
             {columns.map((col) => (
-              <th key={col.header} className="whitespace-nowrap px-4 py-3 font-medium text-slate-500">
+              <th
+                key={col.header}
+                className="whitespace-nowrap px-4 py-3 font-medium text-slate-500"
+                aria-sort={
+                  col.sortValue && sort?.header === col.header ? (sort.direction === 'asc' ? 'ascending' : 'descending') : undefined
+                }
+              >
                 {col.sortValue ? (
                   <button onClick={() => toggleSort(col)} className="inline-flex items-center gap-1 hover:text-[#2563EB]">
                     {col.header}
@@ -118,6 +124,7 @@ export default function DataTable<T extends { id: string }>({
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
+              aria-label="Previous page"
               className="rounded-md border border-blue-100 p-1.5 text-slate-500 hover:border-[#38BDF8]/40 hover:text-[#2563EB] disabled:opacity-40"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -125,6 +132,7 @@ export default function DataTable<T extends { id: string }>({
             <button
               onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
               disabled={currentPage === pageCount}
+              aria-label="Next page"
               className="rounded-md border border-blue-100 p-1.5 text-slate-500 hover:border-[#38BDF8]/40 hover:text-[#2563EB] disabled:opacity-40"
             >
               <ChevronRight className="h-4 w-4" />

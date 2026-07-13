@@ -91,11 +91,29 @@ export async function updateTerritoryMapImage(
   if (error) throw error
 }
 
+// RLS alone only checks that the caller is an admin of `congregation_id` on the row being
+// written — it never verifies a client-supplied territoryId/sectionId actually belongs to
+// that congregation. Without this, a tampered hidden form field could plant a section/block
+// under another congregation's territory (still invisible to the attacker thanks to RLS on
+// read, but real data corruption). Every insert that accepts a client-supplied parent id
+// checks ownership first, mirroring the pattern already required for the publisher flow
+// (which has no RLS to fall back on at all).
+async function assertTerritoryOwnership(supabase: SupabaseClient, congregationId: string, territoryId: string): Promise<void> {
+  const { data } = await supabase.from('territories').select('id').eq('congregation_id', congregationId).eq('id', territoryId).maybeSingle()
+  if (!data) throw new Error('Territory not found.')
+}
+
+async function assertSectionOwnership(supabase: SupabaseClient, congregationId: string, sectionId: string): Promise<void> {
+  const { data } = await supabase.from('territory_sections').select('id').eq('congregation_id', congregationId).eq('id', sectionId).maybeSingle()
+  if (!data) throw new Error('Section not found.')
+}
+
 export async function addSection(
   supabase: SupabaseClient,
   congregationId: string,
   territoryId: string
 ): Promise<TerritorySection> {
+  await assertTerritoryOwnership(supabase, congregationId, territoryId)
   const { count } = await supabase
     .from('territory_sections')
     .select('id', { count: 'exact', head: true })
@@ -121,6 +139,8 @@ export async function addBlock(
   territoryId: string,
   sectionId: string
 ): Promise<TerritoryBlock> {
+  await assertTerritoryOwnership(supabase, congregationId, territoryId)
+  await assertSectionOwnership(supabase, congregationId, sectionId)
   const { count } = await supabase
     .from('territory_blocks')
     .select('id', { count: 'exact', head: true })

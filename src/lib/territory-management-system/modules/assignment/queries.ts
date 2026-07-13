@@ -77,7 +77,20 @@ export async function createAssignment(
   congregationId: string,
   input: { territoryIds: string[]; partnershipCount: number; assignmentDate: string }
 ): Promise<CreateAssignmentResult | AssignmentError> {
-  const eligibleRecordIds = await fetchEligibleRecordIds(supabase, congregationId, input.territoryIds)
+  // The territory checkboxes are ordinary client-editable form values — confirm every
+  // selected id actually belongs to this congregation before it's written into
+  // assignment_batch_territories, same "don't trust a client-supplied parent id" rule as
+  // territory/queries.ts's addSection/addBlock.
+  const { data: ownedTerritories } = await supabase
+    .from('territories')
+    .select('id')
+    .eq('congregation_id', congregationId)
+    .in('id', input.territoryIds)
+  const ownedIds = new Set((ownedTerritories ?? []).map((t) => t.id as string))
+  const territoryIds = input.territoryIds.filter((id) => ownedIds.has(id))
+  if (territoryIds.length === 0) return { error: 'Select at least one valid territory.' }
+
+  const eligibleRecordIds = await fetchEligibleRecordIds(supabase, congregationId, territoryIds)
   const plan = calculateAssignment(eligibleRecordIds, input.partnershipCount)
   if (isAssignmentError(plan)) return plan
 
@@ -94,7 +107,7 @@ export async function createAssignment(
   const batchId = batch.id as string
 
   const { error: territoriesError } = await supabase.from('assignment_batch_territories').insert(
-    input.territoryIds.map((territoryId) => ({ congregation_id: congregationId, batch_id: batchId, territory_id: territoryId }))
+    territoryIds.map((territoryId) => ({ congregation_id: congregationId, batch_id: batchId, territory_id: territoryId }))
   )
   if (territoriesError) return { error: territoriesError.message }
 

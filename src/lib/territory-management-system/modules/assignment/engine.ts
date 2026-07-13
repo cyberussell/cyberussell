@@ -17,7 +17,7 @@ export interface AssignmentError {
   error: string
 }
 
-const DEFAULT_MAX_PER_PARTNERSHIP = 6
+export const DEFAULT_MAX_PER_PARTNERSHIP = 6
 
 // Records are always assigned sequentially, in the exact order they're passed in — never
 // shuffled or randomized. Partnership 1 fills first (up to maxPerPartnership), then

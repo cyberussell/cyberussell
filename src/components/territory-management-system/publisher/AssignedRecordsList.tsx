@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react'
+import { AlertTriangle, Check } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
@@ -7,9 +7,15 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 // the network to render.
 export default function AssignedRecordsList({
   records,
+  failedRecordIds,
   onSelect,
 }: {
   records: PartnershipRecordDetail[]
+  // completed_at is set optimistically the moment a visit is logged, before it's actually
+  // confirmed synced — if that sync later comes back rejected (not just delayed), a plain
+  // checkmark would misrepresent it as done. Surface those separately so the publisher knows
+  // to open the record and see what went wrong.
+  failedRecordIds: Set<string>
   onSelect: (recordId: string) => void
 }) {
   if (records.length === 0) {
@@ -35,7 +41,11 @@ export default function AssignedRecordsList({
               {r.record.do_not_call ? ' · Do Not Call' : ''}
             </p>
           </div>
-          {r.completed_at ? (
+          {failedRecordIds.has(r.record.id) ? (
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500" title="Sync failed — open to see why">
+              <AlertTriangle className="h-3.5 w-3.5" />
+            </span>
+          ) : r.completed_at ? (
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
               <Check className="h-4 w-4" />
             </span>

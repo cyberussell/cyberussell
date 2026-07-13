@@ -1,5 +1,21 @@
 # Current Work
 
+**Territory Management System — Production Readiness Audit (2026-07-13) — code done, tsc + build clean, blocked on Supabase provisioning:**
+
+Current Product: Territory Management System (TMS) — see checkpoint `territory-management-production-audit-v1.md` for full detail.
+
+Current Feature: A full code-level production audit of the entire product, per Russell's request. **Recovery note, important context**: this session started from a different Claude account whose usage had run out mid-build — the actual code (assignment engine, QR-based publisher workflow, offline IndexedDB sync, group-leader dashboard, reports) existed only as *uncommitted* changes in a sibling worktree (`territory-management-foundation-6a5bc9`) and was never checkpointed past phase 1. It was found via `.claude/projects/` transcript folders (filesystem-level, not tied to the Claude account) and copied into this branch, then committed as a baseline (`c7f4808`) before the audit began — see checkpoint `territory-management-foundation-v1.md` for the original (partial, phase-1-only) documentation of what was built.
+
+Current Status: Code complete.
+- Read every screen, Server Action, query module, and all 3 migrations end-to-end. Fixed every real issue found: 4 cross-tenant data-integrity gaps (admin write paths that trusted a client-supplied territory/section/block id without verifying it belonged to the caller's own congregation — RLS caught the congregation_id but not the nested parent id), 1 timezone-validation gap, 1 raw-Postgres-error leak, 2 stale business-rule bugs (a leftover pre-migration-002 visit-result value used as a form default and in a color-style map, both silently wrong for 3 of 6 real result values), 2 offline-sync correctness bugs (a re-entrancy race that could double-submit a queued item, and network failures being conflated with genuine server rejections), 2 sync UX gaps (pending/failed counts conflated; a false "done" checkmark on records with a failed sync), a completely missing `loading.tsx`/`error.tsx` pattern across the whole product, 3 accessibility gaps in the shared `DataTable`/`FilterPills` primitives, and 2 duplicate-code spots.
+- `npx tsc --noEmit` and `npx next build` both clean after every fix.
+
+**Not verified this pass**: still blocked on Supabase provisioning (no TMS project exists yet) — everything DB-backed was verified by code tracing, not live-clicked. Full detail on what's still outstanding is in the checkpoint.
+
+**Next recommended task:** Russell provisions the TMS Supabase project and runs all 3 migrations in order, then a full live pass (ideally including a real airplane-mode test of the offline queue) — see the checkpoint's "Next Recommended Task" for the exact sequence.
+
+----------------------------------------
+
 **Territory Management System — Foundation + Administrator Module (2026-07-13) — code done, tsc + build clean, blocked on Supabase provisioning:**
 
 Current Product: Territory Management System (TMS) — brand-new 9th product, first session. See checkpoint `territory-management-foundation-v1.md` for full detail.

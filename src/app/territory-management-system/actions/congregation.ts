@@ -22,6 +22,11 @@ export async function updateCongregationAction(_prev: ActionResult, formData: Fo
       timezone: parsed.data.timezone,
     })
   } catch (e) {
+    // Postgres unique_violation on congregations.congregation_number — translate the raw
+    // constraint error into something an admin can actually act on.
+    if (e && typeof e === 'object' && 'code' in e && e.code === '23505') {
+      return { error: 'That congregation number is already in use.' }
+    }
     return { error: e instanceof Error ? e.message : 'Could not update congregation settings.' }
   }
 

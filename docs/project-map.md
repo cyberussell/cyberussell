@@ -270,37 +270,44 @@ Last generated: 2026-07-13 (added product #9, Territory Management System — fo
 
 ---
 
-## 9. Territory Management System (TMS) — foundation + Administrator module built, blocked on Supabase provisioning
+## 9. Territory Management System (TMS) — audited for production, blocked on Supabase provisioning
 
-**Purpose:** Standalone multi-congregation SaaS for organizing, assigning, and tracking territory work during field ministry — architecturally modeled on the Appointment System/LMS: own Supabase project, own auth, own middleware-free page-level auth gating, own lib/component namespace, fully isolated from Cyberussell.com and the other products. This pass builds the tenant foundation (congregations) and the complete Administrator module (Territory Management + Territory Records). No publisher-facing role/tables yet.
+**Purpose:** Standalone multi-congregation SaaS for organizing, assigning, and tracking territory work during field ministry — architecturally modeled on the Appointment System/LMS: own Supabase project, own auth, own middleware-free page-level auth gating, own lib/component namespace, fully isolated from Cyberussell.com and the other products. Covers the tenant foundation (congregations), the full Administrator module (territories/sections/blocks, records, CSV import/export), an assignment engine with a QR-based publisher workflow (offline-capable, IndexedDB-backed sync), a read-only Group Leader role/dashboard, and Reports.
 
-**Status as of 2026-07-13:** Code complete (`tsc`/`next build` clean), login page live-verified in preview (desktop + mobile, zero console errors). Everything DB-backed is unverified — blocked on Russell provisioning the dedicated Supabase project and running the migration; see checkpoint `territory-management-foundation-v1.md`.
+**Status as of 2026-07-13:** Code complete and audited (`tsc`/`next build` clean). Login page live-verified in preview; everything DB-backed is unverified by browser — blocked on Russell provisioning the dedicated Supabase project and running all 3 migrations. See checkpoints `territory-management-foundation-v1.md` (original build, phase 1 only) and `territory-management-production-audit-v1.md` (full-product audit + fixes).
 
 **Main routes:**
-- `/territory-management-system/login` (only auth route — no public signup this pass, provisioning is manual)
-- `/territory-management-system/dashboard` (+ `/territories`, `/territories/new`, `/territories/[territoryId]`, `/records`, `/records/[recordId]`, `/settings`)
+- `/territory-management-system/login` (only auth route — no public signup, provisioning is manual)
+- `/territory-management-system/dashboard` (+ `/territories`, `/territories/new`, `/territories/[territoryId]`, `/records`, `/records/[recordId]`, `/assignments`, `/assignments/new`, `/assignments/[batchId]`, `/reports`, `/settings`) — Administrator role
+- `/territory-management-system/group-leader/dashboard` — read-only Group Leader role, today's assignment + visit-result stats
+- `/territory-management-system/assignment/[batchToken]` (+ `/progress`, `/[partnershipToken]`) — public, unauthenticated, QR-scanned publisher routes; the opaque token is the only credential
 
 **Main page entry files:**
 - `src/app/territory-management-system/login/page.tsx`
 - `src/app/territory-management-system/dashboard/layout.tsx`, `.../dashboard/page.tsx`, and one `page.tsx` per dashboard sub-route listed above
-- `src/app/territory-management-system/actions/{auth,territories,records,congregation,shared}.ts` — Server Actions used for all dashboard mutations
+- `src/app/territory-management-system/group-leader/dashboard/layout.tsx`, `.../page.tsx`
+- `src/app/territory-management-system/assignment/[batchToken]/page.tsx`, `.../progress/page.tsx`, `.../[partnershipToken]/page.tsx`
+- `src/app/territory-management-system/actions/{auth,territories,records,congregation,assignments,publisher,shared}.ts` — Server Actions used for all mutations (admin actions run session-scoped/RLS-enforced; publisher actions run on the service-role client and independently re-validate the opaque token + congregation ownership of every referenced id, since there's no RLS to fall back on)
 
 **Primary components** (`src/components/territory-management-system/`):
-- `dashboard/` primitives: `DashboardSidebar` (mobile-responsive with a slide-in drawer), `Card`, `PageHeader`, `StatCard`, `DataTable` (sort + pagination), `FilterPills`, `TableSearchInput`, `FormField`, `ConfirmDeleteButton`
-- `LoginForm`, `TerritoryForm`, `TerritoryDetailsForm`, `TerritoryMapUpload`, `TerritoryMapViewer`, `SectionBlockTree`, `TerritoriesTable`, `RecordForm`, `RecordEditForm`, `RecordsTable`, `RecordApprovalActions`, `VisitHistoryList`, `VisitLogForm`, `CsvImportDialog`, `CsvExportButton`, `ApprovalBadge`, `CongregationSettingsForm`
+- `dashboard/` primitives: `DashboardSidebar` (mobile-responsive slide-in drawer), `Card`, `PageHeader`, `StatCard`, `DataTable` (sort + pagination), `FilterPills`, `TableSearchInput`, `FormField`, `ConfirmDeleteButton`, `DashboardSkeleton`/`DashboardErrorFallback` (shared `loading.tsx`/`error.tsx` content)
+- Admin: `LoginForm`, `TerritoryForm`, `TerritoryDetailsForm`, `TerritoryMapUpload`, `TerritoryMapViewer`, `SectionBlockTree`, `TerritoriesTable`, `RecordForm`, `RecordEditForm`, `RecordsTable`, `RecordApprovalActions`, `VisitHistoryList`, `VisitLogForm`, `CsvImportDialog`, `CsvExportButton`, `ApprovalBadge`, `CongregationSettingsForm`, `AssignmentForm`, `AssignmentSummary`, `PartnershipList`, `ReportsView`
+- Publisher (`publisher/`): `PublisherWorkspaceApp` (the offline-first app shell — everything after initial load is in-memory view state, no page navigation), `SyncStatusBar`, `PartnershipCard`, `PartnershipRenameForm`, `AssignedRecordsList`, `PublisherRecordDetailView`, `PublisherRecordForm`, `PublisherVisitLogForm`
 
 **APIs used:**
-- `GET /territory-management-system/dashboard/records/export` — `src/app/territory-management-system/dashboard/records/export/route.ts` — streams a CSV of records (optionally scoped to one territory via `?territoryId=`)
-- Everything else (auth, territories, sections/blocks, records, visits, congregation settings) goes through **Server Actions** in `src/app/territory-management-system/actions/*.ts` — not API routes, same pattern as the Appointment System.
+- `GET /territory-management-system/dashboard/records/export` — streams a CSV of records (optionally scoped via `?territoryId=`)
+- Everything else goes through **Server Actions**, not API routes, same pattern as the Appointment System.
 
 **Database tables** (dedicated Supabase project, `territory-management-system/migrations/`):
-- `001_init.sql`: `profiles`, `congregations`, `territories`, `territory_sections`, `territory_blocks`, `territory_records`, `territory_record_visits` — RLS scoped to congregation ownership via a flat `congregation_id` denormalized onto every tenant table (deliberate choice to avoid the RLS-recursion bug class LMS hit twice). Also: `create_territory_structure()` RPC (atomic section/block auto-generation), `tms_section_label()` helper, and a `territory-maps` Storage bucket with owner-only write RLS.
+- `001_init.sql`: `profiles`, `congregations`, `territories`, `territory_sections`, `territory_blocks`, `territory_records`, `territory_record_visits` — RLS scoped to congregation ownership via a flat `congregation_id` denormalized onto every tenant table (deliberate choice to avoid the RLS-recursion bug class LMS hit twice). Also `create_territory_structure()` RPC, `tms_section_label()` helper, `territory-maps` Storage bucket.
+- `002_assignment_engine.sql`: `assignment_batches`, `assignment_batch_territories`, `partnerships`, `partnership_records` — the QR/token-based publisher assignment schema (128-bit opaque tokens, no RLS for the public path by design — enforced in application code instead). Also widens the visit-result set and adds `plus_code` to records.
+- `003_group_leader_and_reports.sql`: adds the `group_leader` profile role + read-only RLS policies across every table.
 
-**Library files** (`src/lib/territory-management-system/`): `supabase.ts`, `supabase-server.ts`, `hooks/useServerAction.ts`, `modules/{auth,congregation,territory,records,dashboard}/*` (queries, zod schemas, types; `territory/labels.ts` is the section/block label generator, mirrored by the SQL `tms_section_label()` function; `records/csv.ts` is the CSV export/import serializer built on `papaparse`).
+**Library files** (`src/lib/territory-management-system/`): `supabase.ts`, `supabase-server.ts`, `hooks/useServerAction.ts`, `modules/{auth,congregation,territory,records,dashboard,assignment,reports,offline}/*`. `assignment/engine.ts` is a pure, DB-free sequential-assignment calculator; `assignment/qr.ts` generates the batch QR code; `offline/{db,queue,sync,download,useOnlineStatus}.ts` is the IndexedDB-backed offline sync layer for the publisher workspace (`idb` dependency).
 
-**Major dependencies:** `@supabase/supabase-js`, `@supabase/ssr`, `zod`, `papaparse` (new this pass — CSV import parsing), `lucide-react`, `sonner`.
+**Major dependencies:** `@supabase/supabase-js`, `@supabase/ssr`, `zod`, `papaparse` (CSV import), `qrcode` (assignment QR codes), `idb` (offline IndexedDB wrapper), `lucide-react`, `sonner`.
 
-**Not yet created:** Supabase project, env vars (`NEXT_PUBLIC_TMS_SUPABASE_URL`, `NEXT_PUBLIC_TMS_SUPABASE_ANON_KEY`, `TMS_SUPABASE_SERVICE_ROLE_KEY`), and therefore no live-verified DB flow yet. Publisher-facing role/module not started. See `territory-management-system/SETUP.md` for the provisioning steps.
+**Not yet created:** Supabase project, env vars (`NEXT_PUBLIC_TMS_SUPABASE_URL`, `NEXT_PUBLIC_TMS_SUPABASE_ANON_KEY`, `TMS_SUPABASE_SERVICE_ROLE_KEY`), and therefore no live-verified DB flow yet. See `territory-management-system/SETUP.md` for the provisioning steps.
 
 ---
 

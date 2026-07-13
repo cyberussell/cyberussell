@@ -23,6 +23,17 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
   if (!parsed.success) return { error: 'Please fill in the required fields.' }
 
   const { supabase, congregation } = await requireAdmin()
+
+  // RLS only checks that congregation_id on the new row belongs to the caller — it never
+  // verifies the territoryId/sectionId/blockId in the (client-editable) hidden form fields
+  // actually belong to that same congregation. Confirm the whole chain resolves within the
+  // admin's own territory tree before writing, same check already required for the
+  // publisher's equivalent (RLS-free) path in actions/publisher.ts.
+  const territory = await getTerritoryStructure(supabase, congregation.id, parsed.data.territoryId)
+  const section = territory?.sections.find((s) => s.id === parsed.data.sectionId)
+  const block = section?.blocks.find((b) => b.id === parsed.data.blockId)
+  if (!territory || !section || !block) return { error: 'Invalid territory, section, or block.' }
+
   try {
     await recordQueries.createRecord(supabase, congregation.id, parsed.data)
   } catch (e) {
