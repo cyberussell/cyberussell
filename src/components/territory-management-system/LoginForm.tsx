@@ -1,10 +1,11 @@
 'use client'
 
+import Link from 'next/link'
 import { useActionState } from 'react'
 import { signIn } from '@/app/territory-management-system/actions/auth'
 import type { ActionResult } from '@/app/territory-management-system/actions/shared'
 
-export default function LoginForm({ notProvisioned }: { notProvisioned: boolean }) {
+export default function LoginForm({ notice }: { notice?: string }) {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(signIn, {})
 
   return (
@@ -40,11 +41,10 @@ export default function LoginForm({ notProvisioned }: { notProvisioned: boolean 
               className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
             />
           </label>
-          {notProvisioned && !state.error && (
-            <p className="text-sm text-amber-600">
-              Your account isn&apos;t linked to a congregation yet — contact your administrator.
-            </p>
-          )}
+          <Link href="/territory-management-system/forgot-password" className="block text-right text-sm text-[#2563EB] hover:underline">
+            Forgot password?
+          </Link>
+          {notice && !state.error && <p className="text-sm text-amber-600">{notice}</p>}
           {state.error && <p className="text-sm text-red-500">{state.error}</p>}
           <button
             type="submit"

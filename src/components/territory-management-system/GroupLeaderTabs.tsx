@@ -17,22 +17,36 @@ import {
 } from 'lucide-react'
 import type { BatchStats } from '@/lib/territory-management-system/modules/reports/queries'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
+import { deleteGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
 import StatCard from '@/components/territory-management-system/dashboard/StatCard'
+import Card from '@/components/territory-management-system/dashboard/Card'
+import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'
 import PartnershipList from '@/components/territory-management-system/PartnershipList'
+import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
 
-type Tab = 'dashboard' | 'results' | 'progress'
+type Tab = 'home' | 'dashboard' | 'results' | 'progress'
 
 const TABS: { id: Tab; label: string }[] = [
+  { id: 'home', label: 'Home' },
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'results', label: 'Visit Results' },
-  { id: 'progress', label: 'Ministry Partner Progress' },
+  { id: 'progress', label: 'Ministry Partner' },
 ]
 
-// The QR code and Regenerate Assignment stay put on the page (the two things a Group Leader
-// actually needs to act on) — everything else lives behind this fixed tab bar instead of one
-// long scroll, per Russell's request.
-export default function GroupLeaderTabs({ stats }: { stats: BatchStats }) {
-  const [tab, setTab] = useState<Tab>('dashboard')
+export default function GroupLeaderTabs({
+  batchId,
+  qrDataUrl,
+  publicUrl,
+  activeTerritories,
+  stats,
+}: {
+  batchId: string
+  qrDataUrl: string
+  publicUrl: string
+  activeTerritories: { id: string; name: string; approvedCount: number }[]
+  stats: BatchStats
+}) {
+  const [tab, setTab] = useState<Tab>('home')
   const base = 'flex-1 rounded-xl px-2 py-3 text-center text-sm font-semibold leading-tight transition'
   const active = 'bg-[#2563EB] text-white'
   const inactive = 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
@@ -49,6 +63,31 @@ export default function GroupLeaderTabs({ stats }: { stats: BatchStats }) {
           </button>
         ))}
       </nav>
+
+      {tab === 'home' && (
+        <div className="space-y-8">
+          <Card className="relative flex flex-col items-center gap-3 p-6 text-center">
+            <ConfirmDeleteButton
+              action={deleteGroupLeaderAssignmentAction.bind(null, batchId)}
+              confirmMessage="Delete today's assignment? Publishers who scanned the QR code will lose access."
+              ariaLabel="Delete Assignment"
+              className="absolute right-4 top-4 text-red-400 hover:text-red-600"
+            />
+            <h2 className="font-semibold text-[#0B1B33]">Assignment QR Code</h2>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={qrDataUrl} alt="Assignment QR code" className="h-40 w-40" />
+            <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
+              {publicUrl}
+            </a>
+            <p className="text-xs text-slate-400">Valid for today only — a new one is needed tomorrow.</p>
+          </Card>
+
+          <div className="mx-auto max-w-md text-center">
+            <h2 className="mb-4 font-semibold text-[#0B1B33]">Regenerate Assignment</h2>
+            <AssignmentForm territories={activeTerritories} hasExistingBatch={true} />
+          </div>
+        </div>
+      )}
 
       {tab === 'dashboard' && (
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">

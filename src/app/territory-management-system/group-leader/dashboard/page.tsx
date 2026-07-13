@@ -4,10 +4,7 @@ import { listTerritories } from '@/lib/territory-management-system/modules/terri
 import { getBatchStats } from '@/lib/territory-management-system/modules/reports/queries'
 import { getAssignmentBatchQrDataUrl, getAssignmentBatchUrl } from '@/lib/territory-management-system/modules/assignment/qr'
 import { todayInTimezone } from '@/lib/territory-management-system/modules/assignment/date'
-import { deleteGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
 import PageHeader from '@/components/territory-management-system/dashboard/PageHeader'
-import Card from '@/components/territory-management-system/dashboard/Card'
-import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'
 import GroupLeaderTabs from '@/components/territory-management-system/GroupLeaderTabs'
 import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
 
@@ -44,35 +41,12 @@ export default async function GroupLeaderDashboardPage() {
   const publicUrl = getAssignmentBatchUrl(batch.access_token)
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Today's Assignment"
-        subtitle={today}
-        action={
-          <ConfirmDeleteButton
-            action={deleteGroupLeaderAssignmentAction.bind(null, batch.id)}
-            confirmMessage="Delete today's assignment? Publishers who scanned the QR code will lose access."
-            label="Delete Assignment"
-          />
-        }
-      />
-
-      <Card className="flex flex-col items-center gap-3 p-6 text-center">
-        <h2 className="font-semibold text-[#0B1B33]">Assignment QR Code</h2>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={qrDataUrl} alt="Assignment QR code" className="h-40 w-40" />
-        <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
-          {publicUrl}
-        </a>
-        <p className="text-xs text-slate-400">Valid for today only — a new one is needed tomorrow.</p>
-      </Card>
-
-      <div>
-        <h2 className="mb-4 font-semibold text-[#0B1B33]">Regenerate Assignment</h2>
-        <AssignmentForm territories={activeTerritories} hasExistingBatch={true} />
-      </div>
-
-      <GroupLeaderTabs stats={stats} />
-    </div>
+    <GroupLeaderTabs
+      batchId={batch.id}
+      qrDataUrl={qrDataUrl}
+      publicUrl={publicUrl}
+      activeTerritories={activeTerritories}
+      stats={stats}
+    />
   )
 }

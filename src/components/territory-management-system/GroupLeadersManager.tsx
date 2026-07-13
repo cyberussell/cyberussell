@@ -1,0 +1,161 @@
+'use client'
+
+import { useEffect, useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { UserPlus } from 'lucide-react'
+import type { GroupLeaderProfile } from '@/lib/territory-management-system/modules/groupLeaders/queries'
+import {
+  deleteGroupLeaderAction,
+  inviteGroupLeaderAction,
+  restoreGroupLeaderAccessAction,
+  revokeGroupLeaderAccessAction,
+} from '@/app/territory-management-system/actions/group-leaders'
+import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
+import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
+import Card from '@/components/territory-management-system/dashboard/Card'
+import DataTable from '@/components/territory-management-system/dashboard/DataTable'
+
+const SIX_MONTHS_MS = 1000 * 60 * 60 * 24 * 30 * 6
+
+// Rendered straight from the initialGroupLeaders prop (no local copy) — every mutation below
+// calls router.refresh() on success, which re-runs the parent Server Component and passes a
+// fresh array down, same as ConfirmDeleteButton's redirect-based pattern elsewhere in this
+// product achieves, just without a full navigation.
+export default function GroupLeadersManager({ initialGroupLeaders }: { initialGroupLeaders: GroupLeaderProfile[] }) {
+  const router = useRouter()
+  const [pendingId, setPendingId] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
+  const { dispatch, pending: invitePending, error, successMessage } = useServerAction(inviteGroupLeaderAction, ['SAVED'], 'Invite sent.')
+
+  useEffect(() => {
+    if (successMessage) router.refresh()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [successMessage])
+
+  function runAction(id: string, action: (id: string) => Promise<{ error?: string }>, confirmMessage: string, successToast: string) {
+    if (!window.confirm(confirmMessage)) return
+    setPendingId(id)
+    startTransition(async () => {
+      const result = await action(id)
+      setPendingId(null)
+      if (result.error) toast.error(result.error)
+      else {
+        toast.success(successToast)
+        router.refresh()
+      }
+    })
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card className="p-6">
+        <h2 className="mb-4 font-semibold text-[#0B1B33]">Invite Group Leader</h2>
+        <form action={dispatch} key={successMessage ?? 'invite-form'} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <FormField label="First name">
+            <input name="firstName" required maxLength={60} className={inputClass} />
+          </FormField>
+          <FormField label="Last name">
+            <input name="lastName" required maxLength={60} className={inputClass} />
+          </FormField>
+          <FormField label="Email">
+            <input name="email" type="email" required className={inputClass} />
+          </FormField>
+          {error && <p className="text-sm text-red-500 sm:col-span-3">{error}</p>}
+          <button
+            type="submit"
+            disabled={invitePending}
+            className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50 sm:col-span-3"
+          >
+            <UserPlus className="h-4 w-4" />
+            {invitePending ? 'Sending Invite…' : 'Send Invite'}
+          </button>
+        </form>
+      </Card>
+
+      <DataTable
+        columns={[
+          { header: 'Name', cell: (g) => g.full_name || '—', sortValue: (g) => g.full_name },
+          { header: 'Email', cell: (g) => g.email ?? '—' },
+          {
+            header: 'Invited',
+            cell: (g) => new Date(g.created_at).toLocaleDateString('en-US', { dateStyle: 'medium' }),
+            sortValue: (g) => g.created_at,
+          },
+          {
+            header: 'Status',
+            cell: (g) => (
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                    g.revoked_at ? 'bg-slate-100 text-slate-500' : 'bg-emerald-50 text-emerald-600'
+                  }`}
+                >
+                  {g.revoked_at ? 'Revoked' : 'Active'}
+                </span>
+                {Date.now() - new Date(g.created_at).getTime() >= SIX_MONTHS_MS && (
+                  <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-600">6+ months</span>
+                )}
+              </div>
+            ),
+          },
+          {
+            header: 'Actions',
+            cell: (g) => {
+              const isOld = Date.now() - new Date(g.created_at).getTime() >= SIX_MONTHS_MS
+              const rowPending = isPending && pendingId === g.id
+              return (
+                <div className="flex flex-wrap items-center gap-3">
+                  {g.revoked_at ? (
+                    <button
+                      type="button"
+                      disabled={rowPending}
+                      onClick={() => runAction(g.id, restoreGroupLeaderAccessAction, `Restore access for ${g.full_name}?`, 'Access restored.')}
+                      className="text-sm font-medium text-[#2563EB] hover:underline disabled:opacity-50"
+                    >
+                      Restore Access
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={rowPending}
+                      onClick={() =>
+                        runAction(
+                          g.id,
+                          revokeGroupLeaderAccessAction,
+                          `Revoke access for ${g.full_name}? They will be immediately logged out and unable to log back in.`,
+                          'Access revoked.'
+                        )
+                      }
+                      className="text-sm font-medium text-amber-600 hover:underline disabled:opacity-50"
+                    >
+                      Revoke Access
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    disabled={!isOld || rowPending}
+                    title={isOld ? undefined : 'Only entries at least 6 months old can be deleted.'}
+                    onClick={() =>
+                      runAction(
+                        g.id,
+                        deleteGroupLeaderAction,
+                        `Permanently delete ${g.full_name} from Group Leader history? This cannot be undone.`,
+                        'Deleted.'
+                      )
+                    }
+                    className="text-sm font-medium text-red-500 hover:underline disabled:opacity-40 disabled:hover:no-underline"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )
+            },
+          },
+        ]}
+        rows={initialGroupLeaders}
+        emptyMessage="No Group Leaders invited yet."
+      />
+    </div>
+  )
+}

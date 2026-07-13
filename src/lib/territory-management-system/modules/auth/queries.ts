@@ -19,10 +19,14 @@ async function requireRole(role: UserRole): Promise<RoleSession> {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role, congregation_id')
+    .select('role, congregation_id, revoked_at')
     .eq('id', user.id)
     .maybeSingle()
   if (!profile || profile.role !== role) redirect('/territory-management-system/login')
+  // Defense in depth: the account itself is also banned server-side the moment access is
+  // revoked (see revokeGroupLeaderAccess), but a session token issued just before that could
+  // otherwise still pass auth.getUser() until it naturally expires.
+  if (profile.revoked_at) redirect('/territory-management-system/login?error=revoked')
   if (!profile.congregation_id) redirect('/territory-management-system/login?error=not_provisioned')
 
   const { data: congregation } = await supabase
