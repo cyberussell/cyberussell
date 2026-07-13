@@ -11,6 +11,7 @@ import { enqueue, listQueue } from '@/lib/territory-management-system/modules/of
 import { flushQueue } from '@/lib/territory-management-system/modules/offline/sync'
 import { useOnlineStatus } from '@/lib/territory-management-system/modules/offline/useOnlineStatus'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
+import PublisherTopMenu from './PublisherTopMenu'
 import SyncStatusBar from './SyncStatusBar'
 import PartnershipRenameForm from './PartnershipRenameForm'
 import AssignedRecordsList from './AssignedRecordsList'
@@ -23,10 +24,12 @@ type View = { name: 'list' } | { name: 'detail'; recordId: string } | { name: 'a
 // in-memory view-state changes here, never a new Next.js page navigation — that's what makes
 // the rest of the day's session work with zero network once this has mounted once online.
 export default function PublisherWorkspaceApp({
+  batchToken,
   partnershipToken,
   initialWorkspace,
   territoryStructures,
 }: {
+  batchToken: string
   partnershipToken: string
   initialWorkspace: PartnershipWorkspace
   territoryStructures: TerritoryStructure[]
@@ -141,6 +144,10 @@ export default function PublisherWorkspaceApp({
     if (online) handleSync()
   }
 
+  function scrollToVisitForm() {
+    document.getElementById('record-a-visit-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const selected = view.name === 'detail' ? (workspace.records.find((r) => r.record.id === view.recordId) ?? null) : null
   const pendingVisitsForSelected =
     view.name === 'detail' ? queue.filter((q) => q.type === 'visit' && q.payload.recordId === view.recordId) : []
@@ -148,6 +155,13 @@ export default function PublisherWorkspaceApp({
   return (
     <div className="min-h-screen bg-[#F3F8FF] px-4 py-8">
       <div className="mx-auto max-w-lg space-y-6">
+        <PublisherTopMenu
+          batchToken={batchToken}
+          view={view.name}
+          onGoToRecords={() => setView({ name: 'list' })}
+          onGoToVisitForm={scrollToVisitForm}
+        />
+
         <SyncStatusBar
           online={online}
           pendingCount={queue.filter((q) => q.status === 'pending').length}
@@ -213,7 +227,6 @@ export default function PublisherWorkspaceApp({
           <PublisherRecordDetailView
             assigned={selected}
             pendingVisits={pendingVisitsForSelected}
-            onBack={() => setView({ name: 'list' })}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
           />
         )}

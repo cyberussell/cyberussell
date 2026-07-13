@@ -41,10 +41,11 @@ async function getVisitResultCounts(
 ): Promise<Record<VisitResult, number>> {
   let query = supabase
     .from('territory_record_visits')
-    .select('result')
+    .select('record_id, result, visited_at')
     .eq('congregation_id', congregationId)
     .gte('visited_at', rangeStart)
     .lt('visited_at', rangeEnd)
+    .order('visited_at', { ascending: false })
   if (territoryIds) {
     const recordIds = await recordIdsForTerritories(supabase, congregationId, territoryIds)
     if (recordIds.length === 0) return emptyResultCounts()
@@ -53,7 +54,14 @@ async function getVisitResultCounts(
 
   const { data } = await query
   const counts = emptyResultCounts()
-  for (const row of (data ?? []) as { result: VisitResult }[]) {
+  // A record can be visited more than once in the range (e.g. re-visited later the same day) —
+  // only its most recent visit should count toward the breakdown, so one record never
+  // contributes more than once. Rows are ordered newest-first, so the first time a given
+  // record_id is seen here is already its latest result.
+  const seenRecordIds = new Set<string>()
+  for (const row of (data ?? []) as { record_id: string; result: VisitResult; visited_at: string }[]) {
+    if (seenRecordIds.has(row.record_id)) continue
+    seenRecordIds.add(row.record_id)
     counts[row.result] = (counts[row.result] ?? 0) + 1
   }
   return counts

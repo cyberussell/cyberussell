@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { createAdminSupabase } from '@/lib/territory-management-system/supabase-server'
 import { getPartnershipByToken } from '@/lib/territory-management-system/modules/assignment/queries'
 import { getTerritoryStructure } from '@/lib/territory-management-system/modules/territory/queries'
@@ -26,13 +25,11 @@ export default async function PartnershipWorkspacePage({
   const validStructures = territoryStructures.filter((s): s is TerritoryStructure => s !== null)
 
   return (
-    <div className="bg-[#F3F8FF] px-4 pt-4">
-      <div className="mx-auto max-w-lg">
-        <Link href={`/territory-management-system/assignment/${batchToken}`} className="text-sm text-[#2563EB] hover:underline">
-          ← All Ministry Partners
-        </Link>
-      </div>
-      <PublisherWorkspaceApp partnershipToken={partnershipToken} initialWorkspace={partnership} territoryStructures={validStructures} />
-    </div>
+    <PublisherWorkspaceApp
+      batchToken={batchToken}
+      partnershipToken={partnershipToken}
+      initialWorkspace={partnership}
+      territoryStructures={validStructures}
+    />
   )
 }

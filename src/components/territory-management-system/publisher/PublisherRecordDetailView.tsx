@@ -1,3 +1,4 @@
+import { MapPin } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
@@ -6,28 +7,34 @@ import VisitResultBadge from '@/components/territory-management-system/VisitResu
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherVisitLogForm from './PublisherVisitLogForm'
 
+// Full-card tone driven by the record's latest logged visit result — a glance-level warning
+// (Do Not Call) or good-news highlight (Bible Study) that's more visible than a small badge
+// alone. Deliberately its own local mapping rather than records/schema.ts's shared
+// VISIT_RESULT_STYLES (that one backs badge pills everywhere else and stays violet for Bible
+// Study there) — this card's full-panel treatment is a distinct, one-off UX request.
+function cardToneClass(latestResult: string | undefined): string {
+  if (latestResult === 'do_not_call') return 'border-red-300 bg-red-50'
+  if (latestResult === 'bible_study') return 'border-emerald-300 bg-emerald-50'
+  return 'border-blue-100/60 bg-white'
+}
+
 export default function PublisherRecordDetailView({
   assigned,
   pendingVisits,
-  onBack,
   onLogVisit,
 }: {
   assigned: PartnershipRecordDetail
   pendingVisits: SyncQueueItem[]
-  onBack: () => void
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
 }) {
   const mapsUrl = assigned.record.plus_code
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assigned.record.plus_code)}`
     : null
+  const latestResult = assigned.visits[0]?.result
 
   return (
     <div className="space-y-6">
-      <button type="button" onClick={onBack} className="text-sm text-[#2563EB] hover:underline">
-        ← Back to Records
-      </button>
-
-      <Card className="p-6">
+      <div className={`rounded-2xl border p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)] ${cardToneClass(latestResult)}`}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h1 className="font-semibold text-[#0B1B33]">
             {assigned.record.address}
@@ -46,14 +53,17 @@ export default function PublisherRecordDetailView({
             href={mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-block text-sm font-medium text-[#2563EB] hover:underline"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] hover:border-[#38BDF8]/40 hover:bg-blue-50"
           >
-            Open in Google Maps →
+            <MapPin className="h-4 w-4" />
+            Open in Google Maps
           </a>
         )}
-      </Card>
+      </div>
 
-      <PublisherVisitLogForm onLogVisit={onLogVisit} />
+      <div id="record-a-visit-form">
+        <PublisherVisitLogForm onLogVisit={onLogVisit} />
+      </div>
 
       {pendingVisits.length > 0 && (
         <div>
