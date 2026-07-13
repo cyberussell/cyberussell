@@ -26,6 +26,16 @@ const nextConfig: NextConfig = {
         destination: "/portfolio/appointment-system",
         permanent: true,
       },
+      {
+        source: "/tms",
+        destination: "/territory-management-system/login",
+        permanent: true,
+      },
+      {
+        source: "/tms/:path*",
+        destination: "/territory-management-system/:path*",
+        permanent: true,
+      },
     ];
   },
   async headers() {
