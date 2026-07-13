@@ -64,7 +64,7 @@ function SectionCard({
           </form>
           <ConfirmDeleteButton
             action={() => deleteSectionAction(section.id, territoryId)}
-            confirmMessage={`Delete Section ${section.label} and all its blocks? Any records inside will be deleted too.`}
+            confirmMessage={`Delete Section ${section.label} and all its blocks? Any contact records inside will be deleted too.`}
             label="Delete section"
           />
         </div>
@@ -81,7 +81,7 @@ function SectionCard({
               Block {block.label}
               <ConfirmDeleteButton
                 action={() => deleteBlockAction(block.id, territoryId)}
-                confirmMessage={`Delete Block ${block.label}? Any records inside will be deleted too.`}
+                confirmMessage={`Delete Block ${block.label}? Any contact records inside will be deleted too.`}
                 ariaLabel={`Delete Block ${block.label}`}
                 className="text-slate-400 hover:text-red-500"
               />

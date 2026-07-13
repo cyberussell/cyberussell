@@ -31,7 +31,7 @@ export default function PartnershipList({ partnerships }: { partnerships: Partne
               />
             </div>
             <p className="mt-2 text-xs text-slate-400">
-              {p.completedCount} of {p.recordCount} records completed
+              {p.completedCount} of {p.recordCount} contact records completed
               {p.recordCount - p.completedCount > 0 ? ` · ${p.recordCount - p.completedCount} remaining` : ''}
             </p>
           </Card>

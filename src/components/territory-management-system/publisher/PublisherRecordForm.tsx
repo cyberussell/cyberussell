@@ -62,7 +62,7 @@ export default function PublisherRecordForm({
 
   return (
     <Card className="p-6">
-      <h2 className="mb-1 font-semibold text-[#0B1B33]">Add a New Territory Record</h2>
+      <h2 className="mb-1 font-semibold text-[#0B1B33]">Add a New Contact Record</h2>
       <p className="mb-4 text-xs text-slate-500">Submitted for admin review — it won&apos;t appear on today&apos;s assignment.</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

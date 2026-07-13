@@ -56,7 +56,7 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
   if (!partnership) return { error: 'This partnership link is no longer valid.' }
 
   const owns = await partnershipHasRecord(supabase, partnership.id, parsed.data.recordId)
-  if (!owns) return { error: 'This record is not assigned to your partnership.' }
+  if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
 
   try {
     await logVisit(supabase, partnership.congregation_id, {
@@ -119,7 +119,7 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
       source: 'publisher',
     })
   } catch (e) {
-    return { error: e instanceof Error ? e.message : 'Could not add the record.' }
+    return { error: e instanceof Error ? e.message : 'Could not add the contact record.' }
   }
 
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)

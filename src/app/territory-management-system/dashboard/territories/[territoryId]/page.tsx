@@ -33,7 +33,7 @@ export default async function TerritoryDetailPage({ params }: { params: Promise<
             <CsvExportButton href={`/territory-management-system/dashboard/records/export?territoryId=${territory.id}`} />
             <ConfirmDeleteButton
               action={() => deleteTerritoryAction(territory.id)}
-              confirmMessage={`Delete ${territory.name}? This deletes all its sections, blocks, and records.`}
+              confirmMessage={`Delete ${territory.name}? This deletes all its sections, blocks, and contact records.`}
               label="Delete Territory"
             />
           </div>
@@ -50,7 +50,7 @@ export default async function TerritoryDetailPage({ params }: { params: Promise<
       <RecordForm territory={territory} />
 
       <div>
-        <h2 className="mb-4 font-semibold text-[#0B1B33]">Records in this Territory</h2>
+        <h2 className="mb-4 font-semibold text-[#0B1B33]">Contact Records in this Territory</h2>
         <RecordsTable records={records} />
       </div>
     </div>

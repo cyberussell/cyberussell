@@ -137,7 +137,7 @@ export default function PublisherWorkspaceApp({
     await enqueue(partnershipToken, 'addRecord', { partnershipToken, ...payload })
     await refreshQueue()
     setView({ name: 'list' })
-    toast.success('Record queued for submission.')
+    toast.success('Contact record queued for submission.')
     if (online) handleSync()
   }
 
@@ -188,7 +188,7 @@ export default function PublisherWorkspaceApp({
             )}
 
             <div>
-              <h2 className="mb-3 font-semibold text-[#0B1B33]">Assigned Records</h2>
+              <h2 className="mb-3 font-semibold text-[#0B1B33]">Assigned Contact Records</h2>
               <AssignedRecordsList
                 records={workspace.records}
                 failedRecordIds={new Set(queue.filter((q) => q.status === 'failed' && q.payload.recordId).map((q) => q.payload.recordId))}
@@ -203,7 +203,7 @@ export default function PublisherWorkspaceApp({
                 className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-medium text-[#2563EB] hover:border-[#38BDF8]/40"
               >
                 <Plus className="h-4 w-4" />
-                Add a New Territory Record
+                Add a New Contact Record
               </button>
             )}
           </>

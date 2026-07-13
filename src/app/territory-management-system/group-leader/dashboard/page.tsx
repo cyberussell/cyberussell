@@ -45,11 +45,11 @@ export default async function GroupLeaderDashboardPage() {
           </a>
         </Card>
         <div className="grid grid-cols-2 gap-4 lg:col-span-2 lg:grid-cols-3">
-          <StatCard icon={ClipboardList} label="Total Records" value={stats.totalRecords} />
-          <StatCard icon={CheckCircle2} label="Records Completed" value={stats.completedRecords} />
-          <StatCard icon={Clock} label="Remaining Records" value={stats.remainingRecords} />
+          <StatCard icon={ClipboardList} label="Total Contact Records" value={stats.totalRecords} />
+          <StatCard icon={CheckCircle2} label="Contact Records Completed" value={stats.completedRecords} />
+          <StatCard icon={Clock} label="Remaining Contact Records" value={stats.remainingRecords} />
           <StatCard icon={Percent} label="Completion" value={`${stats.completionPct}%`} />
-          <StatCard icon={FilePlus} label="New Records Submitted" value={stats.newRecordsSubmitted} />
+          <StatCard icon={FilePlus} label="New Contact Records Submitted" value={stats.newRecordsSubmitted} />
         </div>
       </div>
 

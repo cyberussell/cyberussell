@@ -61,7 +61,7 @@ export default function RecordsTable({ records }: { records: TerritoryRecordWith
           { header: 'Actions', cell: (r) => <RecordActions record={r} /> },
         ]}
         rows={filtered}
-        emptyMessage="No records match your filters."
+        emptyMessage="No contact records match your filters."
       />
     </div>
   )
@@ -92,8 +92,8 @@ function RecordActions({ record }: { record: TerritoryRecordWithLocation }) {
       )}
       <ConfirmDeleteButton
         action={() => deleteRecordAction(record.id)}
-        confirmMessage={`Delete the record at ${record.address}? This also deletes its visit history.`}
-        ariaLabel={`Delete record at ${record.address}`}
+        confirmMessage={`Delete the contact record at ${record.address}? This also deletes its visit history.`}
+        ariaLabel={`Delete contact record at ${record.address}`}
         className="text-slate-400 hover:text-red-500"
       />
     </div>

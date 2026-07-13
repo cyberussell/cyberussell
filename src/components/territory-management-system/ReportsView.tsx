@@ -24,11 +24,11 @@ export default function ReportsView({ daily, weekly, monthly }: { daily: ReportS
       <FilterPills options={PERIODS} active={period} onChange={setPeriod} />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <StatCard icon={ClipboardList} label="Total Records" value={stats.totalRecords} />
+        <StatCard icon={ClipboardList} label="Total Contact Records" value={stats.totalRecords} />
         <StatCard icon={CheckCircle2} label="Completed" value={stats.completedRecords} />
         <StatCard icon={Clock} label="Remaining" value={stats.remainingRecords} />
         <StatCard icon={Percent} label="Completion" value={`${stats.completionPct}%`} />
-        <StatCard icon={FilePlus} label="New Records Submitted" value={stats.newRecordsSubmitted} />
+        <StatCard icon={FilePlus} label="New Contact Records Submitted" value={stats.newRecordsSubmitted} />
       </div>
 
       <div>

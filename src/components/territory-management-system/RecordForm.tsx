@@ -18,7 +18,7 @@ export default function RecordForm({ territory }: { territory: TerritoryStructur
 
   return (
     <Card className="p-6">
-      <h2 className="mb-4 font-semibold text-[#0B1B33]">Add a Record</h2>
+      <h2 className="mb-4 font-semibold text-[#0B1B33]">Add a Contact Record</h2>
       {/* Remounting on success clears the uncontrolled address/unit/etc. fields for the next entry. */}
       <form action={dispatch} className="space-y-4" key={successMessage ?? 'form'}>
         <input type="hidden" name="territoryId" value={territory.id} />

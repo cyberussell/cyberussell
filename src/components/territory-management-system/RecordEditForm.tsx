@@ -11,7 +11,7 @@ export default function RecordEditForm({ record }: { record: TerritoryRecordWith
 
   return (
     <Card className="p-6">
-      <h2 className="mb-4 font-semibold text-[#0B1B33]">Edit Record</h2>
+      <h2 className="mb-4 font-semibold text-[#0B1B33]">Edit Contact Record</h2>
       <form action={dispatch} className="space-y-4">
         <input type="hidden" name="recordId" value={record.id} />
         <FormField label="Address">

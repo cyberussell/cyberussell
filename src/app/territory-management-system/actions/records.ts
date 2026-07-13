@@ -37,7 +37,7 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
   try {
     await recordQueries.createRecord(supabase, congregation.id, parsed.data)
   } catch (e) {
-    return { error: e instanceof Error ? e.message : 'Could not create the record.' }
+    return { error: e instanceof Error ? e.message : 'Could not create the contact record.' }
   }
 
   revalidatePath('/territory-management-system/dashboard/records')
@@ -62,7 +62,7 @@ export async function updateRecordAction(_prev: ActionResult, formData: FormData
   try {
     await recordQueries.updateRecord(supabase, recordId, updates)
   } catch (e) {
-    return { error: e instanceof Error ? e.message : 'Could not update the record.' }
+    return { error: e instanceof Error ? e.message : 'Could not update the contact record.' }
   }
 
   revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)

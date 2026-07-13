@@ -23,7 +23,7 @@ export default function PartnershipCard({ partnership, batchToken }: { partnersh
         <div className="h-full rounded-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8]" style={{ width: `${pct}%` }} />
       </div>
       <p className="mt-1.5 text-xs text-slate-400">
-        {partnership.completedCount} of {partnership.recordCount} records completed
+        {partnership.completedCount} of {partnership.recordCount} contact records completed
       </p>
     </Link>
   )

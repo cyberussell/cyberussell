@@ -23,12 +23,12 @@ export default async function DashboardPage() {
           <StatCard icon={Map} label="Territories" value={stats.territoryCount} />
           <StatCard icon={LayoutGrid} label="Sections" value={stats.sectionCount} />
           <StatCard icon={LayoutGrid} label="Blocks" value={stats.blockCount} />
-          <StatCard icon={ClipboardList} label="Records" value={stats.recordCount} />
+          <StatCard icon={ClipboardList} label="Contact Records" value={stats.recordCount} />
           <StatCard
             icon={Clock}
             label="Pending Approval"
             value={stats.pendingRecordCount}
-            hint={stats.pendingRecordCount > 0 ? 'Review in Records' : undefined}
+            hint={stats.pendingRecordCount > 0 ? 'Review in Contact Records' : undefined}
           />
           <StatCard icon={QrCode} label="Assignments Generated" value={stats.assignmentBatchCount} />
           <StatCard icon={CheckCircle2} label="Visits Logged" value={stats.visitsLoggedCount} />

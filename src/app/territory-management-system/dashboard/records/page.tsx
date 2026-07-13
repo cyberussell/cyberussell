@@ -11,7 +11,7 @@ export default async function RecordsPage() {
   return (
     <div>
       <PageHeader
-        title="Territory Records"
+        title="Contact Records"
         subtitle="Search, filter, and review every address across all territories."
         action={<CsvExportButton href="/territory-management-system/dashboard/records/export" />}
       />

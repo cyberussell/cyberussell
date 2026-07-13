@@ -46,7 +46,7 @@ export default function TerritoriesTable({ territories }: { territories: Territo
           },
           { header: 'Sections', cell: (t) => t.section_count, sortValue: (t) => t.section_count },
           { header: 'Blocks', cell: (t) => t.block_count, sortValue: (t) => t.block_count },
-          { header: 'Records', cell: (t) => t.record_count, sortValue: (t) => t.record_count },
+          { header: 'Contact Records', cell: (t) => t.record_count, sortValue: (t) => t.record_count },
         ]}
         rows={filtered}
         emptyMessage="No territories match your search."

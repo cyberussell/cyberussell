@@ -16,7 +16,7 @@ export default function RecordApprovalActions({ recordId }: { recordId: string }
   }
 
   function handleReject() {
-    if (!window.confirm('Reject and delete this pending record?')) return
+    if (!window.confirm('Reject and delete this pending contact record?')) return
     startTransition(async () => {
       await rejectRecordAction(recordId)
       router.push('/territory-management-system/dashboard/records')

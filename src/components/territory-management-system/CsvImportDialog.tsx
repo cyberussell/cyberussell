@@ -54,7 +54,7 @@ export default function CsvImportDialog({ territoryId }: { territoryId: string }
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-semibold text-[#0B1B33]">Import Records from CSV</h2>
+              <h2 className="font-semibold text-[#0B1B33]">Import Contact Records from CSV</h2>
               <button onClick={handleClose} aria-label="Close" className="text-slate-400 hover:text-slate-600">
                 <X className="h-5 w-5" />
               </button>
@@ -72,7 +72,7 @@ export default function CsvImportDialog({ territoryId }: { territoryId: string }
             />
             {result && (
               <div className="mb-4 space-y-2 rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm">
-                <p className="font-medium text-[#0B1B33]">{result.imported} record(s) imported as pending.</p>
+                <p className="font-medium text-[#0B1B33]">{result.imported} contact record(s) imported as pending.</p>
                 {result.errors.length > 0 && (
                   <ul className="max-h-40 list-disc space-y-1 overflow-y-auto pl-4 text-red-500">
                     {result.errors.map((err, i) => (

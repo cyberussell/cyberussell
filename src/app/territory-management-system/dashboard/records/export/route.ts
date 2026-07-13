@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   return new NextResponse(csv, {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',
-      'Content-Disposition': `attachment; filename="territory-records-${new Date().toISOString().slice(0, 10)}.csv"`,
+      'Content-Disposition': `attachment; filename="contact-records-${new Date().toISOString().slice(0, 10)}.csv"`,
     },
   })
 }
