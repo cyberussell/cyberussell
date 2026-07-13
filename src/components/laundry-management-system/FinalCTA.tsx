@@ -28,7 +28,7 @@ export default function FinalCTA() {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <a
-            href="https://www.cyberussell.com/portfolio/laundry-management-system"
+            href="https://www.cyberussell.com/portfolio/lms"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_24px_rgba(56,189,248,0.4)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"

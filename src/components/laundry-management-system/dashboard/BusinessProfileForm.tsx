@@ -1,9 +1,9 @@
 'use client'
 
 import { useActionState } from 'react'
-import { updateBusinessProfile } from '@/app/laundry-management-system/actions/settings'
-import { CURRENCIES } from '@/app/laundry-management-system/actions/shared'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { updateBusinessProfile } from '@/app/lms/actions/settings'
+import { CURRENCIES } from '@/app/lms/actions/shared'
+import type { ActionResult } from '@/app/lms/actions/shared'
 import type { Business } from '@/lib/laundry-management-system/modules/tenant/types'
 import Card from './Card'
 

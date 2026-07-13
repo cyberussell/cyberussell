@@ -64,7 +64,7 @@ export default function Hero() {
 
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}>
           <a
-            href="https://www.cyberussell.com/portfolio/laundry-management-system"
+            href="https://www.cyberussell.com/portfolio/lms"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_24px_rgba(56,189,248,0.4)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-8 py-4 rounded-xl"

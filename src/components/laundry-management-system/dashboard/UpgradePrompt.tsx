@@ -20,7 +20,7 @@ export default function UpgradePrompt({ feature, label }: { feature: FeatureFlag
         {' '}and everything else included at that tier.
       </p>
       <Link
-        href="/laundry-management-system#pricing"
+        href="/lms#pricing"
         className="mt-5 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
       >
         See {plan.name} plan pricing

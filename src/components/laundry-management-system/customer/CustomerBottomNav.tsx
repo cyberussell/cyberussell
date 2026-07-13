@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation'
 import { Home, ClipboardList, User } from 'lucide-react'
 
 const TABS = [
-  { label: 'Home', href: '/laundry-management-system/customer/dashboard', icon: Home },
-  { label: 'Orders', href: '/laundry-management-system/customer/dashboard/orders', icon: ClipboardList },
-  { label: 'Profile', href: '/laundry-management-system/customer/dashboard/profile', icon: User },
+  { label: 'Home', href: '/lms/customer/dashboard', icon: Home },
+  { label: 'Orders', href: '/lms/customer/dashboard/orders', icon: ClipboardList },
+  { label: 'Profile', href: '/lms/customer/dashboard/profile', icon: User },
 ]
 
 export default function CustomerBottomNav() {
@@ -18,7 +18,7 @@ export default function CustomerBottomNav() {
       <div className="mx-auto flex max-w-md items-center justify-around px-2 py-1.5">
         {TABS.map((tab) => {
           const active =
-            tab.href === '/laundry-management-system/customer/dashboard'
+            tab.href === '/lms/customer/dashboard'
               ? pathname === tab.href
               : pathname.startsWith(tab.href)
           return (

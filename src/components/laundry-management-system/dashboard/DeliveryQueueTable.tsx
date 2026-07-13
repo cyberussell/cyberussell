@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { scheduleDelivery } from '@/app/laundry-management-system/actions/orders'
+import { scheduleDelivery } from '@/app/lms/actions/orders'
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { OrderWithDriver } from '@/lib/laundry-management-system/modules/orders/types'
 import type { Driver } from '@/lib/laundry-management-system/modules/drivers/types'

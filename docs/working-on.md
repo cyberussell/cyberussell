@@ -1,5 +1,24 @@
 # Current Work
 
+**LMS — Shortened the product URL from /laundry-management-system to /lms (2026-07-14):**
+
+Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-url-rename-v1.md` for full detail.
+
+Current Feature: Russell asked to shorten the URL. Confirmed scope first: the whole product moves (not just the marketing page), and the internal `src/lib`/`src/components` folder names stay as `laundry-management-system` (not user-facing, would double the change for no benefit).
+
+Current Status: Done, verified live, not yet committed/pushed.
+- `git mv` all 57 route files from `src/app/laundry-management-system/` to `src/app/lms/` — confirmed via `git status` that all 57 are tracked as renames, history preserved.
+- Bulk-updated every internal reference across 101 total files touched, using a script that carefully distinguished `@/app/laundry-management-system` (the folder that moved → `@/app/lms`) from `@/lib/laundry-management-system`/`@/components/laundry-management-system` (deliberately kept, protected from the replacement so they weren't wrongly mangled) and from literal URL-path strings (→ `/lms`).
+- Updated the 3 hardcoded absolute auth-email redirect URLs, the QR code lookup URL generator, and the marketing page's canonical/OG metadata — none of these get caught by import-path tooling.
+- **Added permanent 301/308 redirects** (`/laundry-management-system` → `/lms`, exact + wildcard) in `next.config.ts` — essential, not cosmetic: already-sent staff-invite/password-reset emails and already-printed receipt QR codes point at the old absolute URL.
+- Updated one line in the Portfolio product's case-study data (a cross-reference link to the real product) — its own separate `/portfolio/laundry-management-system` route/slug was correctly left alone.
+- `docs/project-map.md` already had an accurate top-level caveat about this move from an earlier pass; no further doc changes needed.
+- `npx tsc --noEmit` and `npx next build` both clean — all 33 LMS routes build under `/lms/*`. Live-verified with a throwaway account: full login → onboarding → dashboard flow stays on `/lms/*` throughout, sidebar navigation confirmed, receipt/PDF routes reachable at the new path, and the old-path redirects confirmed via direct `curl` (real `308`s, wildcard correctly preserves the rest of the path). Zero console errors. All test data cleaned up and cross-checked via REST.
+
+**Next recommended task:** Commit and push this rename.
+
+----------------------------------------
+
 **LMS — Found and fixed a real production regression while closing out 8d/8f verification gaps (2026-07-13):**
 
 Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-8d-8f-verification-v1.md` for full detail.
@@ -17,13 +36,14 @@ Current Status: Bug found and fixed, not yet committed/pushed.
 
 ----------------------------------------
 
-**Appointment System — Pricing Compliance Audit + Milestones 1-7 (2026-07-13) — see checkpoint `appointment-system-pricing-enforcement-v1.md` for full detail:**
+**Appointment System — Pricing Compliance Audit + All 9 Milestones (2026-07-14) — see checkpoint `appointment-system-pricing-enforcement-v1.md` for full detail:**
 
 Current Product: Appointment System.
 
-Current Feature: Russell asked for a full audit of whether the published pricing plans (Free/Basic/Pro) are actually enforced throughout the app, run in strict phases (1: Architecture Audit, 2: Feature Verification, 3: Product Validation, 4: UX Review, 5: consolidated 9-milestone implementation plan), then asked for Milestones 1-7 to be implemented.
+Current Feature: Russell asked for a full audit of whether the published pricing plans (Free/Basic/Pro) are actually enforced throughout the app, run in strict phases (1: Architecture Audit, 2: Feature Verification, 3: Product Validation, 4: UX Review, 5: consolidated 9-milestone implementation plan), then asked for the full 9-milestone plan to be implemented.
 
-Current Status: Milestones 1-7 of 9 done, live-verified against the real Supabase project. Milestones 8 (Testing) and 9 (Launch Readiness re-score) remain.
+Current Status: All 9 milestones done, plus both known UX rough edges from the re-score fixed in a follow-up pass. Milestone 8 ran a full structured live QA pass (Free/Basic/Pro/upgrade/downgrade/mobile) against the real Supabase project using one throwaway business cycled through all 3 tiers — zero new bugs found (a first, compared to every prior milestone catching at least one live bug). Milestone 9 re-scored launch readiness from ~55/100 to ~88/100 (now conservative since both flagged UX gaps are fixed). Full scoring breakdown and QA detail in the checkpoint.
+- **Follow-up fix (2026-07-14)**: (1) `requireBusiness()` now tells a staff member hitting an owner-only URL apart from a genuinely unprovisioned account — redirects to a new clean `/appointments/not-authorized` page instead of misleadingly sending them to signup; (2) added a "Resend invite" action/button for staff logins, safe to call repeatedly since Supabase itself rejects it once the invite's been accepted (no new schema needed). Both live-verified with throwaway data, including catching and fixing a wrong error-string match (`'already registered'` vs. the real `'already been registered'`) live rather than assuming it worked. All throwaway data deleted and cross-verified afterward. `npx tsc --noEmit` clean.
 - **Phase 1 found a Critical security gap**: the `businesses` RLS policy was row-level only, so any owner could `PATCH` their own `plan_tier`/`plan_status` directly via the REST API and grant themselves a paid plan for free. Fixed in Milestone 1 via column-level grants (`011_protect_billing_columns.sql`).
 - **Phase 2 found `hasFeature()` was only ever checked for the Messenger bot** — every other declared plan feature was decorative, and "Breaks & Blocked Dates" / "Reports" were advertised but didn't exist.
 - **Milestones 2-5 built real, tested, RLS-verified features**: Staff Login Accounts (full invite → accept → role-aware sign-in → parallel staff dashboard at `/appointments/staff/dashboard/*`), Breaks & Blocked Dates (actually wired into slot generation, not just a form), Email Notifications (owner gets emailed on new self-service bookings — scoped this way since customers never provide an email anywhere in this product), Basic Reporting (real revenue chart + service breakdown, genuine Free-tier preview mode instead of a blank/denied page). **Deliberately stopped mid-Milestone-5 per Russell's instruction** — Waitlist, Calendar Sync, Deposits, SMS+Email Reminders, Advanced Reporting & Data Export, White Label, Recurring Appointments, Packages, and Memberships are NOT built.
@@ -33,7 +53,7 @@ Current Status: Milestones 1-7 of 9 done, live-verified against the real Supabas
 - **Every feature was live-verified** with throwaway Supabase accounts (created and fully deleted after each pass), not just `tsc`/code review — including actually completing a staff invite, logging in as that staff member, and using the real staff dashboard end-to-end.
 - **Mid-session incident, resolved cleanly**: a concurrent session (working on the LMS side of this repo) ran an interactive rebase and stashed all of this session's uncommitted work to get a clean tree. Work paused immediately rather than touching shared git state; once the other session's rebase finished, the stash returned intact and was verified byte-for-byte before resuming.
 
-**Next recommended task:** Milestone 8 — run the Phase 5 plan's full QA checklist (Free/Basic/Pro/Upgrade/Downgrade/Booking/Messenger/Reports/Limits/Billing/Mobile/Desktop) as one structured pass, then Milestone 9 to re-score launch readiness. Full context lives in the checkpoint — a new session does not need the original 5-phase conversation to continue.
+**Next recommended task:** All 9 milestones plus both known UX rough edges are done — nothing outstanding from this plan. If continuing on this product: (1) build one of the deferred Milestone 5 features (Deposits has the most schema already in place, migration 015); (2) a real non-simulated PayMongo test-card checkout and an actual Gmail inbox check for the booking-notification email, both unexercised even after the simulated webhook test.
 
 ----------------------------------------
 

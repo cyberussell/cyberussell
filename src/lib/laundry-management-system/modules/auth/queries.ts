@@ -31,14 +31,14 @@ export async function requireOwnerBusiness() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) redirect('/laundry-management-system/login')
+  if (!user) redirect('/lms/login')
 
   const { data: business } = await supabase
     .from('businesses')
     .select('*')
     .eq('owner_id', user.id)
     .maybeSingle()
-  if (!business) redirect('/laundry-management-system/onboarding/business')
+  if (!business) redirect('/lms/onboarding/business')
 
   return { supabase, user, business: business as Business }
 }
@@ -50,7 +50,7 @@ export async function requireStaffAccess() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) redirect('/laundry-management-system/login')
+  if (!user) redirect('/lms/login')
 
   const { data: staffMember } = await supabase
     .from('staff_members')
@@ -58,7 +58,7 @@ export async function requireStaffAccess() {
     .eq('profile_id', user.id)
     .eq('active', true)
     .maybeSingle()
-  if (!staffMember) redirect('/laundry-management-system/login')
+  if (!staffMember) redirect('/lms/login')
 
   const { business, ...staff } = staffMember as StaffMember & { business: Business }
   return { supabase, user, staff: staff as StaffMember, business }
@@ -72,7 +72,7 @@ export async function requireBusinessSession(): Promise<BusinessSession> {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) redirect('/laundry-management-system/login')
+  if (!user) redirect('/lms/login')
 
   const { data: business } = await supabase
     .from('businesses')
@@ -89,7 +89,7 @@ export async function requireBusinessSession(): Promise<BusinessSession> {
     .eq('profile_id', user.id)
     .eq('active', true)
     .maybeSingle()
-  if (!staffMember) redirect('/laundry-management-system/login')
+  if (!staffMember) redirect('/lms/login')
 
   const { business: staffBusiness, ...staff } = staffMember as StaffMember & { business: Business }
   return { supabase, userId: user.id, business: staffBusiness, role: 'staff', staff: staff as StaffMember }
@@ -104,8 +104,8 @@ export async function requirePagePermission(permission: Permission, fallback?: s
     redirect(
       fallback ??
         (session.role === 'owner'
-          ? '/laundry-management-system/dashboard'
-          : '/laundry-management-system/staff/dashboard')
+          ? '/lms/dashboard'
+          : '/lms/staff/dashboard')
     )
   }
   return session
@@ -118,13 +118,13 @@ export async function requireCustomerAccess() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) redirect('/laundry-management-system/login')
+  if (!user) redirect('/lms/login')
 
   const { data: customerRows } = await supabase
     .from('customers')
     .select('*, business:businesses(*)')
     .eq('profile_id', user.id)
-  if (!customerRows || customerRows.length === 0) redirect('/laundry-management-system/login')
+  if (!customerRows || customerRows.length === 0) redirect('/lms/login')
 
   const customers = customerRows as (Customer & { business: Business })[]
   return { supabase, user, customers }

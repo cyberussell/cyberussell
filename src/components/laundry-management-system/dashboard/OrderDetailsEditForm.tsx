@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { updateOrderDetails } from '@/app/laundry-management-system/actions/orders'
+import { updateOrderDetails } from '@/app/lms/actions/orders'
 import { updateDetailsSchema, type UpdateDetailsInput } from '@/lib/laundry-management-system/modules/orders/schema'
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Order } from '@/lib/laundry-management-system/modules/orders/types'

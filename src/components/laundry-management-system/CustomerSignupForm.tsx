@@ -3,8 +3,8 @@
 import { useActionState } from 'react'
 import Link from 'next/link'
 import { MailCheck } from 'lucide-react'
-import { customerSignUp } from '@/app/laundry-management-system/actions/customer'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { customerSignUp } from '@/app/lms/actions/customer'
+import type { ActionResult } from '@/app/lms/actions/shared'
 import { AuthHeader, AuthFooter } from '@/components/laundry-management-system/AuthChrome'
 
 export default function CustomerSignupForm({ businessName, slug }: { businessName: string; slug: string }) {
@@ -16,7 +16,7 @@ export default function CustomerSignupForm({ businessName, slug }: { businessNam
       <AuthHeader />
       <main className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <Link href="/laundry-management-system" className="block text-center text-2xl font-bold text-white mb-2">
+          <Link href="/lms" className="block text-center text-2xl font-bold text-white mb-2">
             Laundry <span className="text-[#38BDF8]">Management System</span>
           </Link>
           <p className="text-center text-white/40 mb-8 text-sm">
@@ -29,7 +29,7 @@ export default function CustomerSignupForm({ businessName, slug }: { businessNam
               <p className="text-[#38BDF8] font-medium">Check your email</p>
               <p className="text-white/60 text-sm mt-2">
                 We sent a confirmation link to your email. Confirm it, then{' '}
-                <Link href="/laundry-management-system/login" className="underline text-[#38BDF8]">
+                <Link href="/lms/login" className="underline text-[#38BDF8]">
                   log in here
                 </Link>
                 .
@@ -52,7 +52,7 @@ export default function CustomerSignupForm({ businessName, slug }: { businessNam
               </button>
               <p className="text-center text-sm text-white/40">
                 Already have an account?{' '}
-                <Link href="/laundry-management-system/login" className="text-[#38BDF8] hover:underline">
+                <Link href="/lms/login" className="text-[#38BDF8] hover:underline">
                   Log in
                 </Link>
               </p>

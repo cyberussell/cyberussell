@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { inviteStaff } from '@/app/laundry-management-system/actions/staff'
+import { inviteStaff } from '@/app/lms/actions/staff'
 import { inviteStaffSchema, type InviteStaffInput } from '@/lib/laundry-management-system/modules/staff/schema'
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Branch } from '@/lib/laundry-management-system/modules/tenant/types'

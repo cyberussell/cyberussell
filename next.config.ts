@@ -43,6 +43,16 @@ const nextConfig: NextConfig = {
         destination: "/territory-management-system/:path*",
         permanent: true,
       },
+      {
+        source: "/laundry-management-system",
+        destination: "/lms",
+        permanent: true,
+      },
+      {
+        source: "/laundry-management-system/:path*",
+        destination: "/lms/:path*",
+        permanent: true,
+      },
     ];
   },
   async headers() {

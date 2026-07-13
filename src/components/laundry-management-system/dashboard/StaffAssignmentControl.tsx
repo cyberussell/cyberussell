@@ -1,6 +1,6 @@
 'use client'
 
-import { assignOrderStaff } from '@/app/laundry-management-system/actions/orders'
+import { assignOrderStaff } from '@/app/lms/actions/orders'
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { StaffMember } from '@/lib/laundry-management-system/modules/staff/types'
 import AssignedStaffSelect from './AssignedStaffSelect'

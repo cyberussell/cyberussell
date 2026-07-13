@@ -16,7 +16,7 @@ export default function LandingNav() {
   return (
     <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-[#0B1B33]/10">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 md:px-10 py-4" aria-label="Main">
-        <Link href="/laundry-management-system" className="font-sans text-[17px] font-bold text-[#0B1B33] tracking-tight">
+        <Link href="/lms" className="font-sans text-[17px] font-bold text-[#0B1B33] tracking-tight">
           Laundry Management <span className="text-[#0284C7]">System</span>
         </Link>
 
@@ -34,13 +34,13 @@ export default function LandingNav() {
 
         <div className="hidden md:flex items-center gap-4">
           <Link
-            href="/laundry-management-system/login"
+            href="/lms/login"
             className="font-[family-name:var(--font-inter)] text-[13.5px] font-medium text-[#0B1B33]/65 hover:text-[#0B1B33] transition-colors"
           >
             Sign In
           </Link>
           <Link
-            href="/laundry-management-system/signup"
+            href="/lms/signup"
             className="inline-flex items-center justify-center bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_20px_rgba(56,189,248,0.35)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[13.5px] px-5 py-2.5 rounded-lg"
           >
             Start Now
@@ -75,14 +75,14 @@ export default function LandingNav() {
               </a>
             ))}
             <Link
-              href="/laundry-management-system/login"
+              href="/lms/login"
               onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-2.5 font-[family-name:var(--font-inter)] text-[14px] text-[#0B1B33]/70 hover:bg-[#0B1B33]/5"
             >
               Sign In
             </Link>
             <Link
-              href="/laundry-management-system/signup"
+              href="/lms/signup"
               onClick={() => setOpen(false)}
               className="mt-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] px-3 py-2.5 text-center font-[family-name:var(--font-inter)] font-bold text-[14px] text-white"
             >

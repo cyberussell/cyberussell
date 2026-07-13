@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createWalkInOrder } from '@/app/laundry-management-system/actions/orders'
+import { createWalkInOrder } from '@/app/lms/actions/orders'
 import { createOrderSchema, type CreateOrderInput } from '@/lib/laundry-management-system/modules/orders/schema'
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Branch } from '@/lib/laundry-management-system/modules/tenant/types'

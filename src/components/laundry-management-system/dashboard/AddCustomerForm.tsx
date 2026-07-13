@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { addCustomer } from '@/app/laundry-management-system/actions/customer'
+import { addCustomer } from '@/app/lms/actions/customer'
 import { addCustomerSchema, type AddCustomerInput } from '@/lib/laundry-management-system/modules/customer/schema'
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import Card from './Card'

@@ -92,7 +92,7 @@ export default function OrdersTable({
       header: 'Receipt',
       cell: (o) => (
         <Link
-          href={`/laundry-management-system/orders/${o.id}/receipt`}
+          href={`/lms/orders/${o.id}/receipt`}
           title="Print receipt"
           aria-label={`Print receipt for order ${o.order_number}`}
           className="inline-flex items-center gap-1 text-slate-400 hover:text-[#2563EB] transition"

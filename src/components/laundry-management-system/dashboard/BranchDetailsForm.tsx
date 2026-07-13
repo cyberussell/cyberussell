@@ -1,8 +1,8 @@
 'use client'
 
 import { useActionState } from 'react'
-import { updateBranchDetails } from '@/app/laundry-management-system/actions/settings'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { updateBranchDetails } from '@/app/lms/actions/settings'
+import type { ActionResult } from '@/app/lms/actions/shared'
 import type { Branch } from '@/lib/laundry-management-system/modules/tenant/types'
 import BusinessHoursInput from '@/components/laundry-management-system/BusinessHoursInput'
 import Card from './Card'

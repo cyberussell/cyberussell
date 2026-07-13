@@ -247,7 +247,14 @@ Last generated: 2026-07-13 (added product #9, Territory Management System — fo
 
 ---
 
-## 8. Laundry Management System (LMS) — planning stage, no app code yet
+## 8. Laundry Management System (LMS) — ⚠️ SECTION STALE, needs full regeneration
+
+**This section describes the 2026-07-11 planning stage and is now significantly out of date.** As of 2026-07-14: the Supabase project has been provisioned (confirmed live, under the `russell.a.parayno@gmail.com` account — see [[reference_supabase_accounts]]), and per `docs/working-on.md` the product has since gone through a full production-readiness roadmap (phases 8a-8g: feature flags, RHF+Zod forms, data-layer pagination/search/sort/filter, UX/reliability polish, Supabase Storage business-logo upload + PDF receipts, an `audit_logs` table + owner-only Activity History view, and a performance/bundle pass) plus at least 14 migrations, dashboards for owner/staff/customer roles, and its own auth/middleware. The route prefix has also since moved from `/laundry-management-system` to `/lms` (see this repo's current git status).
+
+None of the detail below (purpose, planned architecture, "not yet created" list) has been re-verified against the current codebase — **re-read the actual LMS source tree (`src/app/lms/`, `src/lib/lms/` or equivalent, `lms/migrations/` or equivalent) before relying on this section for any LMS work.** The original planning-stage content has been left below for historical reference only.
+
+<details>
+<summary>Original 2026-07-11 planning-stage content (outdated, kept for reference)</summary>
 
 **Purpose:** Standalone multi-tenant SaaS for laundry businesses (order/inventory tracking, staff workflow, owner dashboard, customer booking) — architecturally modeled on the Appointment System: own Supabase project, own auth, own middleware, own lib/component namespace, fully isolated from Cyberussell.com and the Appointment System. Three roles: **owner** (org + financials), **staff** (inventory/order processing, sales/bookings dashboard), **customer** (booking/order tracking).
 
@@ -267,6 +274,8 @@ Last generated: 2026-07-13 (added product #9, Territory Management System — fo
 **Not yet created:** Supabase project, env vars, auth, middleware, dashboard routes, DB schema/migrations. Blocked on Russell provisioning the new Supabase project.
 
 **Major dependencies (planned, to match Appointment System conventions):** `@supabase/supabase-js`, `@supabase/ssr`, likely `@anthropic-ai/sdk` if AI features are added later.
+
+</details>
 
 ---
 

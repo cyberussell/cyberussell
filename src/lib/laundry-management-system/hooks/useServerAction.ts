@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useTransition } from 'react'
 import { toast } from 'sonner'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import type { ActionResult } from '@/app/lms/actions/shared'
 
 // Centralizes the "is state.error a real error or an info sentinel like
 // 'SAVED'/'INVITED'" branching that was hand-rolled per component (const saved

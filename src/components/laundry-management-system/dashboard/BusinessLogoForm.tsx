@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { ImageIcon } from 'lucide-react'
-import { uploadBusinessLogo } from '@/app/laundry-management-system/actions/settings'
+import { uploadBusinessLogo } from '@/app/lms/actions/settings'
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Business } from '@/lib/laundry-management-system/modules/tenant/types'
 import Card from './Card'

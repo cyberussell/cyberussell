@@ -16,7 +16,7 @@ import {
   Zap,
   History,
 } from 'lucide-react'
-import { signOut } from '@/app/laundry-management-system/actions/auth'
+import { signOut } from '@/app/lms/actions/auth'
 import { hasPermission, type Permission } from '@/lib/laundry-management-system/modules/auth/permissions'
 import type { BusinessRole } from '@/lib/laundry-management-system/modules/auth/queries'
 import { hasFeature, type FeatureFlag } from '@/lib/laundry-management-system/modules/billing/entitlements'
@@ -43,7 +43,7 @@ function buildNavItems(
 export default function DashboardSidebar({
   businessName,
   role = 'owner',
-  basePath = '/laundry-management-system/dashboard',
+  basePath = '/lms/dashboard',
   planTier = 'essential',
 }: {
   businessName: string

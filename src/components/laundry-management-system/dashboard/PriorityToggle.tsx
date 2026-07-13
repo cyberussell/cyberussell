@@ -4,7 +4,7 @@ import { useOptimistic, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Zap } from 'lucide-react'
 import { toast } from 'sonner'
-import { setOrderPriority } from '@/app/laundry-management-system/actions/orders'
+import { setOrderPriority } from '@/app/lms/actions/orders'
 
 export default function PriorityToggle({ orderId, isPriority }: { orderId: string; isPriority: boolean }) {
   const router = useRouter()

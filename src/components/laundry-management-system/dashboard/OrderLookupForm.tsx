@@ -14,7 +14,7 @@ export default function OrderLookupForm() {
     e.preventDefault()
     const trimmed = value.trim()
     if (!trimmed) return
-    router.push(`/laundry-management-system/orders/lookup/${encodeURIComponent(trimmed)}`)
+    router.push(`/lms/orders/lookup/${encodeURIComponent(trimmed)}`)
   }
 
   return (

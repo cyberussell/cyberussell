@@ -6,7 +6,7 @@ import QRCode from 'qrcode'
 const APP_ORIGIN = 'https://www.cyberussell.com'
 
 export function getOrderLookupUrl(orderNumber: string): string {
-  return `${APP_ORIGIN}/laundry-management-system/orders/lookup/${encodeURIComponent(orderNumber)}`
+  return `${APP_ORIGIN}/lms/orders/lookup/${encodeURIComponent(orderNumber)}`
 }
 
 // Scanning this with an ordinary phone camera opens the lookup URL directly —

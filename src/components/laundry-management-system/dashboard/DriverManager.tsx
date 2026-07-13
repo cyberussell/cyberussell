@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Pencil, Trash2, Plus, Check, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { createDriver, updateDriver, deleteDriver } from '@/app/laundry-management-system/actions/drivers'
+import { createDriver, updateDriver, deleteDriver } from '@/app/lms/actions/drivers'
 import type { Driver } from '@/lib/laundry-management-system/modules/drivers/types'
 import Card from './Card'
 

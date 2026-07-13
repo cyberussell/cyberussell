@@ -8,7 +8,7 @@ import {
   createInventoryItem,
   updateInventoryItem,
   deleteInventoryItem,
-} from '@/app/laundry-management-system/actions/inventory'
+} from '@/app/lms/actions/inventory'
 import type { InventoryCategory, InventoryItem } from '@/lib/laundry-management-system/modules/inventory/types'
 import { INVENTORY_CATEGORIES, INVENTORY_CATEGORY_LABELS, groupByCategory } from '@/lib/laundry-management-system/modules/inventory/categories'
 import Card from './Card'

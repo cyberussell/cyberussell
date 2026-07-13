@@ -13,7 +13,7 @@
   "liveProduct": {
     "text": "This concept grew into a real product —",
     "label": "see the Laundry Management System live",
-    "url": "/laundry-management-system"
+    "url": "/lms"
   },
   "techStack": ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
   "overview": "A self-initiated concept build with a twist: it's designed first as the official website of a fictional local business, \"Aling Maria Laundry Shop\" — booking, services, pricing, reviews — and only reveals near the bottom of the page that it's a Cyberussell portfolio piece, showcasing \"LaundryFlow,\" the management system quietly running the business behind the scenes.",

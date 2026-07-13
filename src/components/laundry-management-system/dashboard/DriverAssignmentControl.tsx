@@ -1,6 +1,6 @@
 'use client'
 
-import { assignOrderDriver } from '@/app/laundry-management-system/actions/orders'
+import { assignOrderDriver } from '@/app/lms/actions/orders'
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Driver } from '@/lib/laundry-management-system/modules/drivers/types'
 import DriverSelect from './DriverSelect'

@@ -2,8 +2,8 @@
 
 import { useActionState } from 'react'
 import { motion } from 'framer-motion'
-import { updateCustomerProfile } from '@/app/laundry-management-system/actions/customer'
-import type { ActionResult } from '@/app/laundry-management-system/actions/shared'
+import { updateCustomerProfile } from '@/app/lms/actions/customer'
+import type { ActionResult } from '@/app/lms/actions/shared'
 import type { Customer } from '@/lib/laundry-management-system/modules/customer/types'
 
 export default function ProfileForm({ customer }: { customer: Customer }) {

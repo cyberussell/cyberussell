@@ -3,7 +3,7 @@
 import { useOptimistic, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { updateOrderStatus } from '@/app/laundry-management-system/actions/orders'
+import { updateOrderStatus } from '@/app/lms/actions/orders'
 import type { OrderStatus } from '@/lib/laundry-management-system/modules/orders/types'
 import { getNextStatuses, isTerminalStatus } from '@/lib/laundry-management-system/modules/orders/stateMachine'
 import { ORDER_STATUS_LABELS } from './StatusBadge'
