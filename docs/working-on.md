@@ -1,5 +1,25 @@
 # Current Work
 
+**Territory Management System — Foundation + Administrator Module (2026-07-13) — code done, tsc + build clean, blocked on Supabase provisioning:**
+
+Current Product: Territory Management System (TMS) — brand-new 9th product, first session. See checkpoint `territory-management-foundation-v1.md` for full detail.
+
+Current Feature: Full application foundation (multi-congregation tenancy, auth, congregation profile/settings) plus the complete Administrator module (Territory Management + Territory Records), per Russell's spec. Confirmed via clarifying questions before building: section/block generation is count-based (admin specifies counts, auto-labeled A/B/C… and 1/2/3…, editable after); a Territory Record = one address/household with a dated visit-history log; CSV-imported records land as `pending` for admin review (manually-created records are `approved` immediately); tenant provisioning is manual this pass (no public signup route — congregations/admins are provisioned directly per `territory-management-system/SETUP.md`).
+
+Current Status: Code complete.
+- **Architecture**: follows the Appointment System/LMS pattern exactly — own dedicated Supabase project (env vars `NEXT_PUBLIC_TMS_SUPABASE_URL`/`NEXT_PUBLIC_TMS_SUPABASE_ANON_KEY`/`TMS_SUPABASE_SERVICE_ROLE_KEY`), own auth, own `lib`/`components`/`app` namespace, no shared code with other products.
+- **New migration `001_init.sql`**: `profiles`, `congregations`, `territories`, `territory_sections`, `territory_blocks`, `territory_records`, `territory_record_visits`, plus `create_territory_structure()` (atomic RPC for count-based section/block generation), `tms_section_label()`, and a `territory-maps` Storage bucket. Deliberately denormalized `congregation_id` onto every tenant-scoped table so every RLS policy is a flat check with no cross-table joins — a direct lesson from LMS hitting RLS recursion twice in earlier sessions.
+- **Full Administrator dashboard built**: Territories (CRUD, auto section/block generation with atomic RPC, JPG map upload + click-to-zoom viewer, manual add/delete section/block), Records (CRUD, search, status filter, pagination via a reusable `DataTable`, CSV import scoped per-territory with section/block label resolution + error reporting, CSV export via a streaming route handler, per-record visit history log, pending-approval workflow with approve/reject), Settings (congregation profile).
+- **One new dependency**: `papaparse` (+ `@types/papaparse`) for CSV import — flagged explicitly since AGENTS.md asks not to add dependencies silently; justified because CSV Import is a named required feature and hand-rolled RFC4180 parsing has real edge cases (quoted fields, embedded commas).
+- **Mobile-responsive sidebar** (slide-in drawer on mobile, static column on desktop) — a gap LMS's own sidebar still has (flagged in LMS's phase-2 checkpoint as unfixed); built correctly from the start here since "Responsive Layout" is an explicit named requirement for this product.
+- `npx tsc --noEmit` clean, `npx next build` succeeds with zero errors (all TMS routes correctly marked dynamic `ƒ`, avoiding the exact static-prerendering build failure LMS hit once before — confirmed by testing the build with TMS env vars deliberately blanked out).
+
+**Not verified this pass**: everything DB-backed (dashboard KPIs, territory creation, section/block auto-generation, records CRUD/CSV import-export/visit history/approval) is blocked until Russell provisions the dedicated TMS Supabase project and runs `001_init.sql` — same sequencing as LMS's very first phase. Only the login page was live-verified in the browser preview (desktop + mobile 375×812, zero console errors) since it has no DB dependency.
+
+**Next recommended task:** Russell provisions the TMS Supabase project (create it, run `001_init.sql`, set the three env vars, provision the first congregation + admin per `territory-management-system/SETUP.md` §3), then a live pass: log in, create a territory with auto-generated sections/blocks, upload a JPG map, add records manually and via CSV import, log a visit, approve a pending record, edit congregation settings. After that, the next module would be publisher-facing territory assignment/checkout (not started, not yet scoped).
+
+----------------------------------------
+
 **LMS Production Readiness — Phase 8e: Files & Documents (2026-07-13) — code done, tsc + build clean, functional verification blocked on a migration:**
 
 Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-files-documents-v1.md` for full detail.

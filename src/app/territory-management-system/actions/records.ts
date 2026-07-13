@@ -1,0 +1,152 @@
+'use server'
+
+import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/territory-management-system/modules/auth/queries'
+import { createRecordSchema, logVisitSchema, updateRecordSchema } from '@/lib/territory-management-system/modules/records/schema'
+import * as recordQueries from '@/lib/territory-management-system/modules/records/queries'
+import { parseRecordsCsv } from '@/lib/territory-management-system/modules/records/csv'
+import { getTerritoryStructure } from '@/lib/territory-management-system/modules/territory/queries'
+import { type ActionResult } from './shared'
+
+export async function createRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = createRecordSchema.safeParse({
+    territoryId: formData.get('territoryId'),
+    sectionId: formData.get('sectionId'),
+    blockId: formData.get('blockId'),
+    address: formData.get('address'),
+    unit: formData.get('unit'),
+    residentName: formData.get('residentName'),
+    plusCode: formData.get('plusCode'),
+    notes: formData.get('notes'),
+    doNotCall: formData.get('doNotCall'),
+  })
+  if (!parsed.success) return { error: 'Please fill in the required fields.' }
+
+  const { supabase, congregation } = await requireAdmin()
+  try {
+    await recordQueries.createRecord(supabase, congregation.id, parsed.data)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Could not create the record.' }
+  }
+
+  revalidatePath('/territory-management-system/dashboard/records')
+  revalidatePath(`/territory-management-system/dashboard/territories/${parsed.data.territoryId}`)
+  return { error: 'SAVED' }
+}
+
+export async function updateRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = updateRecordSchema.safeParse({
+    recordId: formData.get('recordId'),
+    address: formData.get('address'),
+    unit: formData.get('unit'),
+    residentName: formData.get('residentName'),
+    plusCode: formData.get('plusCode'),
+    notes: formData.get('notes'),
+    doNotCall: formData.get('doNotCall'),
+  })
+  if (!parsed.success) return { error: 'Please fill in the required fields.' }
+  const { recordId, ...updates } = parsed.data
+
+  const { supabase } = await requireAdmin()
+  try {
+    await recordQueries.updateRecord(supabase, recordId, updates)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Could not update the record.' }
+  }
+
+  revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
+  return { error: 'SAVED' }
+}
+
+export async function deleteRecordAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.deleteRecord(supabase, recordId)
+  revalidatePath('/territory-management-system/dashboard/records')
+}
+
+export async function approveRecordAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.setRecordStatus(supabase, recordId, 'approved')
+  revalidatePath('/territory-management-system/dashboard/records')
+  revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
+}
+
+// "Reject" a pending CSV-imported record = delete it — there's no other state for a
+// rejected row to sit in, and leaving it around unresolved would strand rows the admin
+// already decided not to use.
+export async function rejectRecordAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.deleteRecord(supabase, recordId)
+  revalidatePath('/territory-management-system/dashboard/records')
+}
+
+export async function logVisitAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = logVisitSchema.safeParse({
+    recordId: formData.get('recordId'),
+    visitedAt: formData.get('visitedAt'),
+    result: formData.get('result'),
+    notes: formData.get('notes'),
+  })
+  if (!parsed.success) return { error: 'Please fill in the visit details correctly.' }
+
+  const { supabase, congregation, userId } = await requireAdmin()
+  try {
+    await recordQueries.logVisit(supabase, congregation.id, {
+      recordId: parsed.data.recordId,
+      visitedAt: new Date(parsed.data.visitedAt).toISOString(),
+      result: parsed.data.result,
+      notes: parsed.data.notes,
+      createdBy: userId,
+    })
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Could not log the visit.' }
+  }
+
+  revalidatePath(`/territory-management-system/dashboard/records/${parsed.data.recordId}`)
+  return { error: 'SAVED' }
+}
+
+export interface ImportSummary {
+  imported: number
+  errors: string[]
+}
+
+export async function importRecordsAction(territoryId: string, csvText: string): Promise<ImportSummary> {
+  const { supabase, congregation } = await requireAdmin()
+  const { rows, errors } = parseRecordsCsv(csvText)
+  const structure = await getTerritoryStructure(supabase, congregation.id, territoryId)
+  if (!structure) return { imported: 0, errors: ['Territory not found.'] }
+
+  const resolvedRows: Parameters<typeof recordQueries.importRecords>[3] = []
+  const resolutionErrors: string[] = []
+  rows.forEach((row, index) => {
+    const section = structure.sections.find((s) => s.label.toLowerCase() === row.section.toLowerCase())
+    if (!section) {
+      resolutionErrors.push(`Row ${index + 2}: no section "${row.section}" in this territory.`)
+      return
+    }
+    const block = section.blocks.find((b) => b.label.toLowerCase() === row.block.toLowerCase())
+    if (!block) {
+      resolutionErrors.push(`Row ${index + 2}: no block "${row.block}" in section "${row.section}".`)
+      return
+    }
+    resolvedRows.push({
+      sectionId: section.id,
+      blockId: block.id,
+      address: row.address,
+      unit: row.unit,
+      residentName: row.residentName,
+      plusCode: row.plusCode,
+      notes: row.notes,
+      doNotCall: row.doNotCall,
+    })
+  })
+
+  const allErrors = [...errors, ...resolutionErrors]
+  if (resolvedRows.length === 0) return { imported: 0, errors: allErrors }
+
+  const imported = await recordQueries.importRecords(supabase, congregation.id, territoryId, resolvedRows)
+  revalidatePath('/territory-management-system/dashboard/records')
+  revalidatePath(`/territory-management-system/dashboard/territories/${territoryId}`)
+  return { imported, errors: allErrors }
+}

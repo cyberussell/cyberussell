@@ -1,0 +1,51 @@
+'use client'
+
+import { logVisitAction } from '@/app/territory-management-system/actions/records'
+import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
+import { VISIT_RESULT_LABELS, VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
+import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
+import Card from '@/components/territory-management-system/dashboard/Card'
+
+function nowLocalDatetime() {
+  const d = new Date()
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
+  return d.toISOString().slice(0, 16)
+}
+
+export default function VisitLogForm({ recordId }: { recordId: string }) {
+  const { dispatch, pending, error, successMessage } = useServerAction(logVisitAction, ['SAVED'], 'Visit logged.')
+
+  return (
+    <Card className="p-6">
+      <h2 className="mb-4 font-semibold text-[#0B1B33]">Log a Visit</h2>
+      <form action={dispatch} className="space-y-4" key={successMessage ?? 'form'}>
+        <input type="hidden" name="recordId" value={recordId} />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label="Visited at">
+            <input name="visitedAt" type="datetime-local" required defaultValue={nowLocalDatetime()} className={inputClass} />
+          </FormField>
+          <FormField label="Result">
+            <select name="result" required defaultValue="visited" className={inputClass}>
+              {VISIT_RESULTS.map((r) => (
+                <option key={r} value={r}>
+                  {VISIT_RESULT_LABELS[r]}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        </div>
+        <FormField label="Notes" optional>
+          <textarea name="notes" maxLength={500} rows={2} className={inputClass} />
+        </FormField>
+        {error && <p className="text-sm text-red-500">{error}</p>}
+        <button
+          type="submit"
+          disabled={pending}
+          className="rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+        >
+          {pending ? 'Logging…' : 'Log Visit'}
+        </button>
+      </form>
+    </Card>
+  )
+}
