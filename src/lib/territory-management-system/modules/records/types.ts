@@ -1,6 +1,6 @@
 export type RecordStatus = 'pending' | 'approved'
 export type RecordSource = 'manual' | 'csv_import' | 'publisher'
-export type VisitResult = 'initial_visit' | 'return_visit' | 'bible_study' | 'not_home' | 'do_not_call' | 'moved'
+export type VisitResult = 'initial_visit' | 'return_visit' | 'bible_study' | 'not_home' | 'do_not_call' | 'moved' | 'other' | 'undone'
 
 export interface TerritoryRecord {
   id: string

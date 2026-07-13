@@ -27,11 +27,21 @@ export const addPublisherRecordSchema = z.object({
 })
 export type AddPublisherRecordInput = z.input<typeof addPublisherRecordSchema>
 
-export const logPublisherVisitSchema = z.object({
-  partnershipToken: z.string().min(1),
-  recordId: z.string().uuid(),
-  visitedAt: z.string().min(1),
-  result: z.string().min(1),
-  notes: z.string().max(500).optional().default(''),
-})
+export const logPublisherVisitSchema = z
+  .object({
+    partnershipToken: z.string().min(1),
+    recordId: z.string().uuid(),
+    visitedAt: z.string().min(1),
+    result: z.string().min(1),
+    notes: z.string().max(500).optional().default(''),
+  })
+  .refine((data) => data.result !== 'other' || data.notes.trim().length > 0, {
+    message: 'Notes are required when the result is "Other".',
+    path: ['notes'],
+  })
 export type LogPublisherVisitInput = z.input<typeof logPublisherVisitSchema>
+
+export const terminatePartnershipEarlySchema = z.object({
+  partnershipToken: z.string().min(1),
+})
+export type TerminatePartnershipEarlyInput = z.input<typeof terminatePartnershipEarlySchema>

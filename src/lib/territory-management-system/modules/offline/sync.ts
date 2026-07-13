@@ -5,7 +5,12 @@
 // admin regenerated the assignment) is marked 'failed' and left in the queue rather than
 // retried silently or dropped — the confirmed reject-and-flag conflict rule.
 
-import { addPublisherRecordAction, logPublisherVisitAction, renamePartnershipAction } from '@/app/territory-management-system/actions/publisher'
+import {
+  addPublisherRecordAction,
+  logPublisherVisitAction,
+  renamePartnershipAction,
+  terminatePartnershipEarlyAction,
+} from '@/app/territory-management-system/actions/publisher'
 import type { SyncQueueItem } from './db'
 import { listQueue, removeFromQueue, updateQueueItem } from './queue'
 
@@ -37,7 +42,9 @@ async function executeItem(item: SyncQueueItem): Promise<{ ok: boolean; error?: 
       ? await renamePartnershipAction({}, formData)
       : item.type === 'visit'
         ? await logPublisherVisitAction({}, formData)
-        : await addPublisherRecordAction({}, formData)
+        : item.type === 'addRecord'
+          ? await addPublisherRecordAction({}, formData)
+          : await terminatePartnershipEarlyAction({}, formData)
 
   // 'SAVED' is this codebase's success sentinel (see useServerAction) — everything else in
   // result.error is a real failure.

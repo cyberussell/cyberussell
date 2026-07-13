@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { VISIT_RESULT_LABELS, VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
+import { SELECTABLE_VISIT_RESULTS, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import { nowLocalDatetime } from '@/lib/territory-management-system/modules/records/localTime'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
@@ -12,8 +12,9 @@ export default function PublisherVisitLogForm({
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
 }) {
   const [visitedAt, setVisitedAt] = useState(nowLocalDatetime())
-  const [result, setResult] = useState<(typeof VISIT_RESULTS)[number]>('initial_visit')
+  const [result, setResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number]>('initial_visit')
   const [notes, setNotes] = useState('')
+  const notesRequired = result === 'other'
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -39,10 +40,10 @@ export default function PublisherVisitLogForm({
           <FormField label="Result">
             <select
               value={result}
-              onChange={(e) => setResult(e.target.value as (typeof VISIT_RESULTS)[number])}
+              onChange={(e) => setResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number])}
               className={inputClass}
             >
-              {VISIT_RESULTS.map((r) => (
+              {SELECTABLE_VISIT_RESULTS.map((r) => (
                 <option key={r} value={r}>
                   {VISIT_RESULT_LABELS[r]}
                 </option>
@@ -50,8 +51,15 @@ export default function PublisherVisitLogForm({
             </select>
           </FormField>
         </div>
-        <FormField label="Notes" optional>
-          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={500} rows={2} className={inputClass} />
+        <FormField label="Notes" optional={!notesRequired}>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            maxLength={500}
+            rows={2}
+            required={notesRequired}
+            className={inputClass}
+          />
         </FormField>
         <button
           type="submit"

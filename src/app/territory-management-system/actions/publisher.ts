@@ -6,15 +6,17 @@ import {
   addPublisherRecordSchema,
   logPublisherVisitSchema,
   renamePartnershipSchema,
+  terminatePartnershipEarlySchema,
 } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
   getPartnershipByToken,
   markPartnershipRecordCompleted,
   partnershipHasRecord,
   renamePartnership,
+  terminatePartnershipEarly,
 } from '@/lib/territory-management-system/modules/assignment/queries'
 import { createRecord, logVisit } from '@/lib/territory-management-system/modules/records/queries'
-import { VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
+import { SELECTABLE_VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
 import { getTerritoryStructure } from '@/lib/territory-management-system/modules/territory/queries'
 import { type ActionResult } from './shared'
 
@@ -51,8 +53,13 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
     result: formData.get('result'),
     notes: formData.get('notes'),
   })
-  if (!parsed.success) return { error: 'Please fill in the visit details correctly.' }
-  if (!(VISIT_RESULTS as readonly string[]).includes(parsed.data.result)) return { error: 'Invalid visit result.' }
+  if (!parsed.success) {
+    const notesIssue = parsed.error.issues.find((i) => i.path.includes('notes'))
+    return { error: notesIssue?.message ?? 'Please fill in the visit details correctly.' }
+  }
+  // 'undone' is written only by terminatePartnershipEarlyAction — not a result a publisher can
+  // pick manually, so it's excluded from the selectable list this checks against.
+  if (!(SELECTABLE_VISIT_RESULTS as readonly string[]).includes(parsed.data.result)) return { error: 'Invalid visit result.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -129,6 +136,26 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
     return { error: e instanceof Error ? e.message : 'Could not add the contact record.' }
   }
 
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+export async function terminatePartnershipEarlyAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = terminatePartnershipEarlySchema.safeParse({ partnershipToken: formData.get('partnershipToken') })
+  if (!parsed.success) return { error: 'Invalid request.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+
+  try {
+    await terminatePartnershipEarly(supabase, partnership.congregation_id, partnership.id)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Could not end the ministry session.' }
+  }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}`)
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
   return { error: 'SAVED' }
 }

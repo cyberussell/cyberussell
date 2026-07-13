@@ -21,10 +21,14 @@ function cardToneClass(latestResult: string | undefined): string {
 export default function PublisherRecordDetailView({
   assigned,
   pendingVisits,
+  readOnly,
   onLogVisit,
 }: {
   assigned: PartnershipRecordDetail
   pendingVisits: SyncQueueItem[]
+  // True while viewing another Ministry Partner's assignment from this device — address,
+  // badges, and full visit history still show, but there's nothing here to log or edit.
+  readOnly: boolean
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
 }) {
   const mapsUrl = assigned.record.plus_code
@@ -61,11 +65,13 @@ export default function PublisherRecordDetailView({
         )}
       </div>
 
-      <div id="record-a-visit-form">
-        <PublisherVisitLogForm onLogVisit={onLogVisit} />
-      </div>
+      {!readOnly && (
+        <div id="record-a-visit-form">
+          <PublisherVisitLogForm onLogVisit={onLogVisit} />
+        </div>
+      )}
 
-      {pendingVisits.length > 0 && (
+      {!readOnly && pendingVisits.length > 0 && (
         <div>
           <h2 className="mb-3 font-semibold text-[#0B1B33]">Pending Sync</h2>
           <div className="space-y-2">

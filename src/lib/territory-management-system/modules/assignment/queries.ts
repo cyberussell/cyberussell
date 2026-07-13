@@ -2,6 +2,7 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { calculateAssignment, isAssignmentError, type AssignmentError } from './engine'
 import { isBatchExpired } from './date'
+import { logVisit } from '../records/queries'
 import type {
   AssignmentBatch,
   BatchSummary,
@@ -221,15 +222,12 @@ export async function getBatchByToken(supabase: SupabaseClient, accessToken: str
 }
 
 // Public entry point: resolves a partnership by its claim token and returns everything its
-// workspace page needs. Opportunistically stamps claimed_at the first time it's resolved —
-// there's no separate "claim" action; visiting the link *is* claiming it.
+// workspace page needs. Does NOT stamp claimed_at — claiming happens explicitly when the
+// publisher saves their name via renamePartnership below, not merely by opening the link, so
+// the assigned-records list can stay hidden behind a "who are you" step until then.
 export async function getPartnershipByToken(supabase: SupabaseClient, claimToken: string): Promise<PartnershipWorkspace | null> {
   const { data: partnership } = await supabase.from('partnerships').select('*').eq('claim_token', claimToken).maybeSingle()
   if (!partnership) return null
-
-  if (!partnership.claimed_at) {
-    await supabase.from('partnerships').update({ claimed_at: new Date().toISOString() }).eq('id', partnership.id)
-  }
 
   const { data: batch } = await supabase.from('assignment_batches').select('*').eq('id', partnership.batch_id).maybeSingle()
   if (!batch) return null
@@ -283,8 +281,50 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   }
 }
 
+// The first successful rename *is* the claim (see getPartnershipByToken's comment above) — a
+// later rename (e.g. a typo fix) shouldn't re-stamp claimed_at, so that only happens the one
+// time this conditional update actually matches a still-unclaimed row.
 export async function renamePartnership(supabase: SupabaseClient, partnershipId: string, name: string): Promise<void> {
+  const { data: claimedRow, error: claimError } = await supabase
+    .from('partnerships')
+    .update({ name, claimed_at: new Date().toISOString() })
+    .eq('id', partnershipId)
+    .is('claimed_at', null)
+    .select('id')
+    .maybeSingle()
+  if (claimError) throw claimError
+  if (claimedRow) return
+
   const { error } = await supabase.from('partnerships').update({ name }).eq('id', partnershipId)
+  if (error) throw error
+}
+
+// Ends a Ministry Partner's session early. Every assigned record they hadn't gotten to yet gets
+// a real 'undone' visit logged — so Reports reflects it was genuinely left unfinished rather
+// than silently missing — and is stamped completed, same as any other visited record.
+export async function terminatePartnershipEarly(supabase: SupabaseClient, congregationId: string, partnershipId: string): Promise<void> {
+  const { data: unfinished } = await supabase
+    .from('partnership_records')
+    .select('record_id')
+    .eq('partnership_id', partnershipId)
+    .is('completed_at', null)
+
+  for (const row of unfinished ?? []) {
+    await logVisit(supabase, congregationId, {
+      recordId: row.record_id,
+      visitedAt: new Date().toISOString(),
+      result: 'undone',
+      notes: '',
+      createdBy: null,
+    })
+    await markPartnershipRecordCompleted(supabase, partnershipId, row.record_id)
+  }
+
+  const { error } = await supabase
+    .from('partnerships')
+    .update({ ended_early_at: new Date().toISOString() })
+    .eq('id', partnershipId)
+    .is('ended_early_at', null)
   if (error) throw error
 }
 

@@ -98,7 +98,10 @@ export async function logVisitAction(_prev: ActionResult, formData: FormData): P
     result: formData.get('result'),
     notes: formData.get('notes'),
   })
-  if (!parsed.success) return { error: 'Please fill in the visit details correctly.' }
+  if (!parsed.success) {
+    const notesIssue = parsed.error.issues.find((i) => i.path.includes('notes'))
+    return { error: notesIssue?.message ?? 'Please fill in the visit details correctly.' }
+  }
 
   const { supabase, congregation, userId } = await requireAdmin()
   try {

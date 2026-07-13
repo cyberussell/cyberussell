@@ -2,7 +2,21 @@ import { z } from 'zod'
 
 // Shared by actions/records.ts and RecordForm/VisitLogForm's zodResolver.
 
-export const VISIT_RESULTS = ['initial_visit', 'return_visit', 'bible_study', 'not_home', 'do_not_call', 'moved'] as const
+export const VISIT_RESULTS = [
+  'initial_visit',
+  'return_visit',
+  'bible_study',
+  'not_home',
+  'do_not_call',
+  'moved',
+  'other',
+  'undone',
+] as const
+
+// 'undone' is written only by terminatePartnershipEarly (assignment/queries.ts) for records left
+// unfinished when a Ministry Partner ends their session early — never a real visit, so it's
+// deliberately excluded from the dropdown both visit-log forms present to a human.
+export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter((r) => r !== 'undone')
 
 export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string> = {
   initial_visit: 'Initial Visit',
@@ -11,6 +25,8 @@ export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string>
   not_home: 'Not At Home',
   do_not_call: 'Do Not Call',
   moved: 'Moved',
+  other: 'Other',
+  undone: 'Undone',
 }
 
 // Shared by VisitHistoryList and VisitResultBadge — one place for the color per result, so the
@@ -23,6 +39,8 @@ export const VISIT_RESULT_STYLES: Record<(typeof VISIT_RESULTS)[number], string>
   not_home: 'bg-slate-100 text-slate-600',
   do_not_call: 'bg-red-50 text-red-600',
   moved: 'bg-amber-50 text-amber-600',
+  other: 'bg-orange-50 text-orange-600',
+  undone: 'bg-gray-100 text-gray-500',
 }
 
 export const createRecordSchema = z.object({
@@ -49,10 +67,15 @@ export const updateRecordSchema = z.object({
 })
 export type UpdateRecordInput = z.input<typeof updateRecordSchema>
 
-export const logVisitSchema = z.object({
-  recordId: z.string().uuid(),
-  visitedAt: z.string().min(1),
-  result: z.enum(VISIT_RESULTS),
-  notes: z.string().max(500).optional().default(''),
-})
+export const logVisitSchema = z
+  .object({
+    recordId: z.string().uuid(),
+    visitedAt: z.string().min(1),
+    result: z.enum(VISIT_RESULTS),
+    notes: z.string().max(500).optional().default(''),
+  })
+  .refine((data) => data.result !== 'other' || data.notes.trim().length > 0, {
+    message: 'Notes are required when the result is "Other".',
+    path: ['notes'],
+  })
 export type LogVisitInput = z.input<typeof logVisitSchema>

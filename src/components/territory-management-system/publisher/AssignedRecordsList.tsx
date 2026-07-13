@@ -1,5 +1,6 @@
 import { AlertTriangle, Check } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
+import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
 // Selecting a record is an in-memory view-state change (onSelect), not a route navigation —
@@ -40,6 +41,12 @@ export default function AssignedRecordsList({
               Sec {r.record.section?.label ?? '—'} / Blk {r.record.block?.label ?? '—'}
               {r.record.do_not_call ? ' · Do Not Call' : ''}
             </p>
+            {r.visits[0] && (
+              <p className="mt-0.5 truncate text-xs text-slate-500">
+                {VISIT_RESULT_LABELS[r.visits[0].result]}
+                {r.visits[0].notes ? `: ${r.visits[0].notes}` : ''}
+              </p>
+            )}
           </div>
           {failedRecordIds.has(r.record.id) ? (
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500" title="Sync failed — open to see why">

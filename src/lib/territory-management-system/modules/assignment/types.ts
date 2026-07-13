@@ -17,6 +17,7 @@ export interface Partnership {
   name: string
   claim_token: string
   claimed_at: string | null
+  ended_early_at: string | null
   created_at: string
 }
 
