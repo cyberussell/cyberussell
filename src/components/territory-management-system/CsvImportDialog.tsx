@@ -4,7 +4,10 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import { Upload, X } from 'lucide-react'
 import { importRecordsAction, type ImportSummary } from '@/app/territory-management-system/actions/records'
 
-export default function CsvImportDialog({ territoryId }: { territoryId: string }) {
+// territoryId is set when launched from a specific Territory's page (rows skip the Territory
+// Name column) and omitted when launched from the global Records page (every row must name
+// its own territory).
+export default function CsvImportDialog({ territoryId }: { territoryId?: string }) {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [result, setResult] = useState<ImportSummary | null>(null)
@@ -25,7 +28,7 @@ export default function CsvImportDialog({ territoryId }: { territoryId: string }
     if (!file) return
     startTransition(async () => {
       const text = await file.text()
-      const summary = await importRecordsAction(territoryId, text)
+      const summary = await importRecordsAction(territoryId ?? null, text)
       setResult(summary)
     })
   }
@@ -60,9 +63,19 @@ export default function CsvImportDialog({ territoryId }: { territoryId: string }
               </button>
             </div>
             <p className="mb-3 text-sm text-slate-500">
-              Columns: <strong>Section, Block, Address</strong> (required), Unit, Resident Name, Notes, Do Not Call
-              (optional). Section/Block must match existing labels in this territory. Imported rows land as{' '}
-              <strong>Pending</strong> for review.
+              {territoryId ? (
+                <>
+                  Columns: <strong>Section, Block</strong> (required), Name, Plus Code, Household Members, Address, Unit,
+                  Note, Do Not Call (optional). Section/Block must match existing labels in this territory.
+                </>
+              ) : (
+                <>
+                  Columns: <strong>Territory Name, Section, Block</strong> (required), Name, Plus Code, Household Members,
+                  Address, Unit, Note, Do Not Call (optional). Territory/Section/Block must match existing labels exactly
+                  (case-insensitive).
+                </>
+              )}{' '}
+              Imported rows land as <strong>Pending</strong> for review.
             </p>
             <input
               ref={fileInputRef}

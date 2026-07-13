@@ -16,6 +16,13 @@ const STATUS_OPTIONS: { label: string; value: 'all' | 'pending' | 'approved' }[]
   { label: 'Approved', value: 'approved' },
 ]
 
+// The cross-territory import has no Address column (Plus Code is the location identifier
+// there), so address can be blank — fall back to Plus Code, then a placeholder, everywhere a
+// record needs a single-line label.
+function recordLabel(r: TerritoryRecordWithLocation): string {
+  return r.address || r.plus_code || 'Unlabeled record'
+}
+
 export default function RecordsTable({ records }: { records: TerritoryRecordWithLocation[] }) {
   const [status, setStatus] = useState<'all' | 'pending' | 'approved'>('all')
   const [search, setSearch] = useState('')
@@ -27,6 +34,7 @@ export default function RecordsTable({ records }: { records: TerritoryRecordWith
       const q = search.trim().toLowerCase()
       return (
         r.address.toLowerCase().includes(q) ||
+        (r.plus_code?.toLowerCase().includes(q) ?? false) ||
         r.resident_name.toLowerCase().includes(q) ||
         (r.territory?.name.toLowerCase().includes(q) ?? false)
       )
@@ -45,17 +53,18 @@ export default function RecordsTable({ records }: { records: TerritoryRecordWith
             header: 'Address',
             cell: (r) => (
               <Link href={`/territory-management-system/dashboard/records/${r.id}`} className="font-medium hover:text-[#2563EB]">
-                {r.address}
+                {recordLabel(r)}
                 {r.unit ? `, ${r.unit}` : ''}
               </Link>
             ),
-            sortValue: (r) => r.address,
+            sortValue: (r) => recordLabel(r),
           },
           {
             header: 'Location',
             cell: (r) => `${r.territory?.name ?? '—'} / Sec ${r.section?.label ?? '—'} / Blk ${r.block?.label ?? '—'}`,
           },
           { header: 'Resident', cell: (r) => r.resident_name || '—', sortValue: (r) => r.resident_name },
+          { header: 'Household', cell: (r) => r.household_members ?? '—' },
           { header: 'Status', cell: (r) => <ApprovalBadge status={r.status} /> },
           { header: 'DNC', cell: (r) => (r.do_not_call ? <span className="font-medium text-red-500">Yes</span> : '—') },
           { header: 'Actions', cell: (r) => <RecordActions record={r} /> },
@@ -92,8 +101,8 @@ function RecordActions({ record }: { record: TerritoryRecordWithLocation }) {
       )}
       <ConfirmDeleteButton
         action={() => deleteRecordAction(record.id)}
-        confirmMessage={`Delete the contact record at ${record.address}? This also deletes its visit history.`}
-        ariaLabel={`Delete contact record at ${record.address}`}
+        confirmMessage={`Delete the contact record at ${recordLabel(record)}? This also deletes its visit history.`}
+        ariaLabel={`Delete contact record at ${recordLabel(record)}`}
         className="text-slate-400 hover:text-red-500"
       />
     </div>

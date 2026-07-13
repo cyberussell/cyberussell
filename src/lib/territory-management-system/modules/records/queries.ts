@@ -45,6 +45,7 @@ export async function createRecord(
     unit: string
     residentName: string
     plusCode: string
+    householdMembers?: number
     notes: string
     doNotCall: boolean
     status?: RecordStatus
@@ -62,6 +63,7 @@ export async function createRecord(
       unit: input.unit,
       resident_name: input.residentName,
       plus_code: input.plusCode || null,
+      household_members: input.householdMembers ?? null,
       notes: input.notes,
       do_not_call: input.doNotCall,
       status: input.status ?? 'approved',
@@ -76,7 +78,15 @@ export async function createRecord(
 export async function updateRecord(
   supabase: SupabaseClient,
   recordId: string,
-  updates: { address: string; unit: string; residentName: string; plusCode: string; notes: string; doNotCall: boolean }
+  updates: {
+    address: string
+    unit: string
+    residentName: string
+    plusCode: string
+    householdMembers?: number
+    notes: string
+    doNotCall: boolean
+  }
 ): Promise<void> {
   const { error } = await supabase
     .from('territory_records')
@@ -85,6 +95,7 @@ export async function updateRecord(
       unit: updates.unit,
       resident_name: updates.residentName,
       plus_code: updates.plusCode || null,
+      household_members: updates.householdMembers ?? null,
       notes: updates.notes,
       do_not_call: updates.doNotCall,
       updated_at: new Date().toISOString(),
@@ -104,36 +115,36 @@ export async function setRecordStatus(supabase: SupabaseClient, recordId: string
 }
 
 interface ImportRow {
+  territoryId: string
   sectionId: string
   blockId: string
   address: string
   unit: string
   residentName: string
   plusCode: string
+  householdMembers: number | null
   notes: string
   doNotCall: boolean
 }
 
 // CSV-imported rows land as 'pending' so the admin reviews them before they count as live
 // territory data — matches the same 'pending' state a future publisher-facing submission
-// flow can also feed without a schema change.
-export async function importRecords(
-  supabase: SupabaseClient,
-  congregationId: string,
-  territoryId: string,
-  rows: ImportRow[]
-): Promise<number> {
+// flow can also feed without a schema change. territoryId lives per-row (not a shared param)
+// since the cross-territory import resolves a different territory for each row from its own
+// Territory Name column; the per-territory import just sets the same id on every row.
+export async function importRecords(supabase: SupabaseClient, congregationId: string, rows: ImportRow[]): Promise<number> {
   if (rows.length === 0) return 0
   const { error } = await supabase.from('territory_records').insert(
     rows.map((r) => ({
       congregation_id: congregationId,
-      territory_id: territoryId,
+      territory_id: r.territoryId,
       section_id: r.sectionId,
       block_id: r.blockId,
       address: r.address,
       unit: r.unit,
       resident_name: r.residentName,
       plus_code: r.plusCode || null,
+      household_members: r.householdMembers,
       notes: r.notes,
       do_not_call: r.doNotCall,
       status: 'pending',

@@ -50,12 +50,21 @@ export async function inviteGroupLeader(
   if (error) return { error: error.message }
   if (!data.user) return { error: 'Could not create the invite.' }
 
-  // handle_new_user() (001_init.sql) already created the profile row with role='admin' (the
-  // column default) and no congregation — this is what turns it into an actual Group Leader.
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .update({ role: 'group_leader', congregation_id: congregationId, email: input.email, full_name: fullName })
-    .eq('id', data.user.id)
+  // handle_new_user() (001_init.sql) creates the profile row with role='admin' (the column
+  // default) and no congregation as part of the same trigger-driven insert — this is what turns
+  // it into an actual Group Leader attached to the inviting admin's own congregation. Upsert
+  // rather than update: an .update().eq('id', ...) that happens to race the trigger (or matches
+  // zero rows for any other reason) succeeds with no error and silently does nothing, leaving
+  // the invited user able to log in but stuck with no congregation — exactly the failure this
+  // was hitting live. Upsert writes the row unconditionally, so it can't go missing regardless
+  // of whether the trigger's insert has already landed.
+  const { error: profileError } = await supabase.from('profiles').upsert({
+    id: data.user.id,
+    role: 'group_leader',
+    congregation_id: congregationId,
+    email: input.email,
+    full_name: fullName,
+  })
   if (profileError) return { error: profileError.message }
   return {}
 }

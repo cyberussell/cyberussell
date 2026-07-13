@@ -2,10 +2,16 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/territory-management-system/modules/auth/queries'
-import { createRecordSchema, logVisitSchema, updateRecordSchema } from '@/lib/territory-management-system/modules/records/schema'
+import {
+  createRecordSchema,
+  logVisitSchema,
+  mergeConductorIntoNotes,
+  updateRecordSchema,
+} from '@/lib/territory-management-system/modules/records/schema'
 import * as recordQueries from '@/lib/territory-management-system/modules/records/queries'
 import { parseRecordsCsv } from '@/lib/territory-management-system/modules/records/csv'
-import { getTerritoryStructure } from '@/lib/territory-management-system/modules/territory/queries'
+import { getTerritoryStructure, listTerritories } from '@/lib/territory-management-system/modules/territory/queries'
+import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import { type ActionResult } from './shared'
 
 export async function createRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
@@ -17,6 +23,7 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
     unit: formData.get('unit'),
     residentName: formData.get('residentName'),
     plusCode: formData.get('plusCode'),
+    householdMembers: formData.get('householdMembers'),
     notes: formData.get('notes'),
     doNotCall: formData.get('doNotCall'),
   })
@@ -52,6 +59,7 @@ export async function updateRecordAction(_prev: ActionResult, formData: FormData
     unit: formData.get('unit'),
     residentName: formData.get('residentName'),
     plusCode: formData.get('plusCode'),
+    householdMembers: formData.get('householdMembers'),
     notes: formData.get('notes'),
     doNotCall: formData.get('doNotCall'),
   })
@@ -96,11 +104,13 @@ export async function logVisitAction(_prev: ActionResult, formData: FormData): P
     recordId: formData.get('recordId'),
     visitedAt: formData.get('visitedAt'),
     result: formData.get('result'),
+    conductorName: formData.get('conductorName'),
     notes: formData.get('notes'),
   })
   if (!parsed.success) {
     const notesIssue = parsed.error.issues.find((i) => i.path.includes('notes'))
-    return { error: notesIssue?.message ?? 'Please fill in the visit details correctly.' }
+    const conductorIssue = parsed.error.issues.find((i) => i.path.includes('conductorName'))
+    return { error: notesIssue?.message ?? conductorIssue?.message ?? 'Please fill in the visit details correctly.' }
   }
 
   const { supabase, congregation, userId } = await requireAdmin()
@@ -109,7 +119,7 @@ export async function logVisitAction(_prev: ActionResult, formData: FormData): P
       recordId: parsed.data.recordId,
       visitedAt: new Date(parsed.data.visitedAt).toISOString(),
       result: parsed.data.result,
-      notes: parsed.data.notes,
+      notes: mergeConductorIntoNotes(parsed.data.conductorName, parsed.data.notes),
       createdBy: userId,
     })
   } catch (e) {
@@ -125,42 +135,85 @@ export interface ImportSummary {
   errors: string[]
 }
 
-export async function importRecordsAction(territoryId: string, csvText: string): Promise<ImportSummary> {
+// territoryId is passed when launched from a specific Territory's page (every row lands in
+// that territory, a Territory Name column if present is ignored) and null when launched from
+// the global Records page (every row names its own territory via Territory Name, resolved by
+// case-insensitive exact match against this congregation's territories — same matching rule
+// already used for Section/Block below).
+export async function importRecordsAction(territoryId: string | null, csvText: string): Promise<ImportSummary> {
   const { supabase, congregation } = await requireAdmin()
-  const { rows, errors } = parseRecordsCsv(csvText)
-  const structure = await getTerritoryStructure(supabase, congregation.id, territoryId)
-  if (!structure) return { imported: 0, errors: ['Territory not found.'] }
+  const { rows, errors } = parseRecordsCsv(csvText, { requireTerritoryName: territoryId === null })
 
-  const resolvedRows: Parameters<typeof recordQueries.importRecords>[3] = []
+  const structureCache = new Map<string, TerritoryStructure>()
+  const territoryIdByName = new Map<string, string>()
+  if (territoryId) {
+    const structure = await getTerritoryStructure(supabase, congregation.id, territoryId)
+    if (!structure) return { imported: 0, errors: ['Territory not found.'] }
+    structureCache.set(territoryId, structure)
+  } else {
+    const territories = await listTerritories(supabase, congregation.id)
+    for (const t of territories) territoryIdByName.set(t.name.toLowerCase(), t.id)
+  }
+
+  const resolvedRows: Parameters<typeof recordQueries.importRecords>[2] = []
   const resolutionErrors: string[] = []
-  rows.forEach((row, index) => {
+  const touchedTerritoryIds = new Set<string>()
+
+  for (const [index, row] of rows.entries()) {
+    const rowNum = index + 2
+    let rowTerritoryId = territoryId
+
+    if (!rowTerritoryId) {
+      const matchId = territoryIdByName.get(row.territoryName.toLowerCase())
+      if (!matchId) {
+        resolutionErrors.push(`Row ${rowNum}: no territory named "${row.territoryName}".`)
+        continue
+      }
+      rowTerritoryId = matchId
+    }
+
+    let structure = structureCache.get(rowTerritoryId)
+    if (!structure) {
+      const fetched = await getTerritoryStructure(supabase, congregation.id, rowTerritoryId)
+      if (!fetched) {
+        resolutionErrors.push(`Row ${rowNum}: territory not found.`)
+        continue
+      }
+      structure = fetched
+      structureCache.set(rowTerritoryId, structure)
+    }
+
     const section = structure.sections.find((s) => s.label.toLowerCase() === row.section.toLowerCase())
     if (!section) {
-      resolutionErrors.push(`Row ${index + 2}: no section "${row.section}" in this territory.`)
-      return
+      resolutionErrors.push(`Row ${rowNum}: no section "${row.section}" in territory "${structure.name}".`)
+      continue
     }
     const block = section.blocks.find((b) => b.label.toLowerCase() === row.block.toLowerCase())
     if (!block) {
-      resolutionErrors.push(`Row ${index + 2}: no block "${row.block}" in section "${row.section}".`)
-      return
+      resolutionErrors.push(`Row ${rowNum}: no block "${row.block}" in section "${row.section}".`)
+      continue
     }
+
+    touchedTerritoryIds.add(rowTerritoryId)
     resolvedRows.push({
+      territoryId: rowTerritoryId,
       sectionId: section.id,
       blockId: block.id,
       address: row.address,
       unit: row.unit,
       residentName: row.residentName,
       plusCode: row.plusCode,
+      householdMembers: row.householdMembers,
       notes: row.notes,
       doNotCall: row.doNotCall,
     })
-  })
+  }
 
   const allErrors = [...errors, ...resolutionErrors]
   if (resolvedRows.length === 0) return { imported: 0, errors: allErrors }
 
-  const imported = await recordQueries.importRecords(supabase, congregation.id, territoryId, resolvedRows)
+  const imported = await recordQueries.importRecords(supabase, congregation.id, resolvedRows)
   revalidatePath('/territory-management-system/dashboard/records')
-  revalidatePath(`/territory-management-system/dashboard/territories/${territoryId}`)
+  for (const id of touchedTerritoryIds) revalidatePath(`/territory-management-system/dashboard/territories/${id}`)
   return { imported, errors: allErrors }
 }

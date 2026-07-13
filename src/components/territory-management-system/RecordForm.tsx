@@ -42,8 +42,8 @@ export default function RecordForm({ territory }: { territory: TerritoryStructur
             </select>
           </FormField>
         </div>
-        <FormField label="Address">
-          <input name="address" required maxLength={200} className={inputClass} placeholder="123 Main St" />
+        <FormField label="Address" optional>
+          <input name="address" maxLength={200} className={inputClass} placeholder="123 Main St" />
         </FormField>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField label="Unit" optional>
@@ -53,9 +53,14 @@ export default function RecordForm({ territory }: { territory: TerritoryStructur
             <input name="residentName" maxLength={120} className={inputClass} />
           </FormField>
         </div>
-        <FormField label="Plus Code" optional>
-          <input name="plusCode" maxLength={20} className={inputClass} placeholder="e.g. 7FG8+4V" />
-        </FormField>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label="Plus Code" optional>
+            <input name="plusCode" maxLength={20} className={inputClass} placeholder="e.g. 7FG8+4V" />
+          </FormField>
+          <FormField label="Household members" optional>
+            <input name="householdMembers" type="number" min={0} max={99} className={inputClass} />
+          </FormField>
+        </div>
         <FormField label="Notes" optional>
           <textarea name="notes" maxLength={500} rows={2} className={inputClass} />
         </FormField>

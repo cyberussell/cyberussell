@@ -1,11 +1,67 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { Minus, Plus } from 'lucide-react'
 import { createGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import { DEFAULT_MAX_PER_PARTNERSHIP } from '@/lib/territory-management-system/modules/assignment/engine'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
+
+// Plain type="number" inputs give mobile browsers no visible increment/decrement affordance
+// (the native stepper arrows are a desktop-only convention) — publishers/group-size are both a
+// small bounded range, so tap +/- buttons are the clearer mobile pattern. Typing is still
+// supported (useful for a bigger jump, e.g. 2 → 8) via the same not-clamped-until-blur pattern
+// as before, so clearing the field to type a fresh value still works.
+function NumberStepper({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+}: {
+  label: string
+  value: number
+  onChange: (next: number) => void
+  min: number
+  max: number
+}) {
+  return (
+    <FormField label={label}>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onChange(Math.max(min, value - 1))}
+          disabled={value <= min}
+          aria-label={`Decrease ${label.toLowerCase()}`}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-white text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-40"
+        >
+          <Minus className="h-4 w-4" />
+        </button>
+        <input
+          type="number"
+          inputMode="numeric"
+          min={min}
+          max={max}
+          required
+          value={value || ''}
+          onChange={(e) => onChange(e.target.value === '' ? 0 : Math.max(0, Number(e.target.value)))}
+          onBlur={() => onChange(Math.min(max, Math.max(min, value || min)))}
+          className={`${inputClass} text-center`}
+        />
+        <button
+          type="button"
+          onClick={() => onChange(Math.min(max, value + 1))}
+          disabled={value >= max}
+          aria-label={`Increase ${label.toLowerCase()}`}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-white text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-40"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+      </div>
+    </FormField>
+  )
+}
 
 // Group-Leader-only (assignment generation moved off the Admin dashboard — see
 // actions/group-leader.ts). Asks for a publisher headcount rather than a raw partnership
@@ -23,7 +79,7 @@ export default function AssignmentForm({
   const [selected, setSelected] = useState<string[]>([])
   const [publisherCount, setPublisherCount] = useState(4)
   const [groupSize, setGroupSize] = useState(2)
-  const partnershipCount = Math.max(1, Math.ceil(publisherCount / groupSize))
+  const partnershipCount = Math.max(1, Math.ceil((publisherCount || 1) / (groupSize || 1)))
 
   const eligibleTotal = useMemo(
     () => territories.filter((t) => selected.includes(t.id)).reduce((sum, t) => sum + t.approvedCount, 0),
@@ -78,28 +134,8 @@ export default function AssignmentForm({
           )}
         </FormField>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="Publishers going out">
-            <input
-              type="number"
-              min={1}
-              max={999}
-              required
-              value={publisherCount}
-              onChange={(e) => setPublisherCount(Math.max(1, Number(e.target.value) || 1))}
-              className={inputClass}
-            />
-          </FormField>
-          <FormField label="Group size">
-            <input
-              type="number"
-              min={1}
-              max={10}
-              required
-              value={groupSize}
-              onChange={(e) => setGroupSize(Math.max(1, Number(e.target.value) || 1))}
-              className={inputClass}
-            />
-          </FormField>
+          <NumberStepper label="Publishers going out" value={publisherCount} onChange={setPublisherCount} min={1} max={999} />
+          <NumberStepper label="Group size" value={groupSize} onChange={setGroupSize} min={1} max={10} />
         </div>
         <input type="hidden" name="partnershipCount" value={partnershipCount} />
         <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">

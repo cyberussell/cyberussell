@@ -10,6 +10,7 @@ const EXPORT_COLUMNS = [
   'Unit',
   'Resident Name',
   'Plus Code',
+  'Household Members',
   'Notes',
   'Do Not Call',
   'Status',
@@ -25,6 +26,7 @@ export function recordsToCsv(records: TerritoryRecordWithLocation[]): string {
     Unit: r.unit,
     'Resident Name': r.resident_name,
     'Plus Code': r.plus_code ?? '',
+    'Household Members': r.household_members ?? '',
     Notes: r.notes,
     'Do Not Call': r.do_not_call ? 'yes' : 'no',
     Status: r.status,
@@ -37,12 +39,14 @@ export function recordsToCsv(records: TerritoryRecordWithLocation[]): string {
 }
 
 export interface CsvImportRow {
+  territoryName: string
   section: string
   block: string
   address: string
   unit: string
   residentName: string
   plusCode: string
+  householdMembers: number | null
   notes: string
   doNotCall: boolean
 }
@@ -52,41 +56,90 @@ export interface CsvImportResult {
   errors: string[]
 }
 
-const REQUIRED_HEADERS = ['Section', 'Block', 'Address']
+// Every column has at least one alias so the same parser serves both the territory-scoped
+// import (address-first, matches the original export headers) and the newer cross-territory
+// import (Name/Territory Name/Household Members, no Address column at all).
+const HEADER_ALIASES = {
+  territoryName: ['Territory Name', 'Territory'],
+  section: ['Section'],
+  block: ['Block'],
+  address: ['Address'],
+  unit: ['Unit'],
+  residentName: ['Name', 'Resident Name'],
+  plusCode: ['Plus Code'],
+  householdMembers: ['Household Members'],
+  notes: ['Note', 'Notes'],
+  doNotCall: ['Do Not Call'],
+} as const
 
-// Import format mirrors the export columns (minus the read-only Territory/Status/Created At
-// columns, which are implied by the territory the admin picked and always land as 'pending').
-export function parseRecordsCsv(csvText: string): CsvImportResult {
+function pick(row: Record<string, string>, keys: readonly string[]): string {
+  for (const key of keys) {
+    if (row[key] !== undefined) return (row[key] ?? '').trim()
+  }
+  return ''
+}
+
+// requireTerritoryName is true for the global Records-page import (no territory pre-selected,
+// so every row must name its own territory) and false for the per-territory import launched
+// from a Territory's own page (territoryId is already fixed, a Territory Name column if
+// present is ignored).
+export function parseRecordsCsv(csvText: string, options: { requireTerritoryName: boolean }): CsvImportResult {
   const parsed = Papa.parse<Record<string, string>>(csvText, { header: true, skipEmptyLines: true })
   const errors: string[] = parsed.errors.map((e) => `Row ${e.row ?? '?'}: ${e.message}`)
 
   const headers = parsed.meta.fields ?? []
-  const missing = REQUIRED_HEADERS.filter((h) => !headers.includes(h))
-  if (missing.length > 0) {
+  const hasAny = (keys: readonly string[]) => keys.some((k) => headers.includes(k))
+  const missingLabels: string[] = []
+  if (!hasAny(HEADER_ALIASES.section)) missingLabels.push('Section')
+  if (!hasAny(HEADER_ALIASES.block)) missingLabels.push('Block')
+  if (options.requireTerritoryName && !hasAny(HEADER_ALIASES.territoryName)) missingLabels.push('Territory Name')
+  if (missingLabels.length > 0) {
     errors.unshift(
-      `Missing required column(s): ${missing.join(', ')}. Expected headers: Section, Block, Address, Unit, Resident Name, Plus Code, Notes, Do Not Call.`
+      `Missing required column(s): ${missingLabels.join(', ')}. Expected headers: ${
+        options.requireTerritoryName ? 'Territory Name, ' : ''
+      }Section, Block, Name, Plus Code, Household Members, Address, Unit, Note, Do Not Call.`
     )
     return { rows: [], errors }
   }
 
   const rows: CsvImportRow[] = []
   parsed.data.forEach((row, index) => {
-    const section = (row['Section'] ?? '').trim()
-    const block = (row['Block'] ?? '').trim()
-    const address = (row['Address'] ?? '').trim()
-    if (!section || !block || !address) {
-      errors.push(`Row ${index + 2}: Section, Block, and Address are required.`)
+    const rowNum = index + 2
+    const territoryName = pick(row, HEADER_ALIASES.territoryName)
+    const section = pick(row, HEADER_ALIASES.section)
+    const block = pick(row, HEADER_ALIASES.block)
+    if (!section || !block) {
+      errors.push(`Row ${rowNum}: Section and Block are required.`)
       return
     }
+    if (options.requireTerritoryName && !territoryName) {
+      errors.push(`Row ${rowNum}: Territory Name is required.`)
+      return
+    }
+
+    const householdMembersRaw = pick(row, HEADER_ALIASES.householdMembers)
+    let householdMembers: number | null = null
+    if (householdMembersRaw) {
+      const n = Number(householdMembersRaw)
+      if (!Number.isInteger(n) || n < 0) {
+        errors.push(`Row ${rowNum}: Household Members must be a whole number.`)
+        return
+      }
+      householdMembers = n
+    }
+
+    const doNotCallRaw = pick(row, HEADER_ALIASES.doNotCall).toLowerCase()
     rows.push({
+      territoryName,
       section,
       block,
-      address,
-      unit: (row['Unit'] ?? '').trim(),
-      residentName: (row['Resident Name'] ?? '').trim(),
-      plusCode: (row['Plus Code'] ?? '').trim(),
-      notes: (row['Notes'] ?? '').trim(),
-      doNotCall: ['yes', 'true', '1'].includes((row['Do Not Call'] ?? '').trim().toLowerCase()),
+      address: pick(row, HEADER_ALIASES.address),
+      unit: pick(row, HEADER_ALIASES.unit),
+      residentName: pick(row, HEADER_ALIASES.residentName),
+      plusCode: pick(row, HEADER_ALIASES.plusCode),
+      householdMembers,
+      notes: pick(row, HEADER_ALIASES.notes),
+      doNotCall: ['yes', 'true', '1'].includes(doNotCallRaw),
     })
   })
 

@@ -34,19 +34,17 @@ export default function AssignedRecordsList({
         >
           <div className="min-w-0">
             <p className="truncate font-medium text-[#0B1B33]">
-              {r.sequence}. {r.record.address}
+              {r.sequence}. {r.record.address || r.record.plus_code || 'Unlabeled record'}
               {r.record.unit ? `, ${r.record.unit}` : ''}
             </p>
             <p className="truncate text-xs text-slate-400">
               Sec {r.record.section?.label ?? '—'} / Blk {r.record.block?.label ?? '—'}
               {r.record.do_not_call ? ' · Do Not Call' : ''}
             </p>
-            {r.visits[0] && (
-              <p className="mt-0.5 truncate text-xs text-slate-500">
-                {VISIT_RESULT_LABELS[r.visits[0].result]}
-                {r.visits[0].notes ? `: ${r.visits[0].notes}` : ''}
-              </p>
-            )}
+            <p className="mt-0.5 truncate text-xs text-slate-500">
+              {r.visits[0] ? VISIT_RESULT_LABELS[r.visits[0].result] : VISIT_RESULT_LABELS.initial_visit}
+              {r.visits[0]?.notes ? `: ${r.visits[0].notes}` : ''}
+            </p>
           </div>
           {failedRecordIds.has(r.record.id) ? (
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500" title="Sync failed — open to see why">

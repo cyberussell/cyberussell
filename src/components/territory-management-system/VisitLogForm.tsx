@@ -3,15 +3,20 @@
 import { useState } from 'react'
 import { logVisitAction } from '@/app/territory-management-system/actions/records'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
-import { SELECTABLE_VISIT_RESULTS, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
+import {
+  SELECTABLE_VISIT_RESULTS,
+  VISIT_RESULT_CONDUCTOR_PROMPT,
+  VISIT_RESULT_LABELS,
+} from '@/lib/territory-management-system/modules/records/schema'
 import { nowLocalDatetime } from '@/lib/territory-management-system/modules/records/localTime'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
 export default function VisitLogForm({ recordId }: { recordId: string }) {
   const { dispatch, pending, error, successMessage } = useServerAction(logVisitAction, ['SAVED'], 'Visit logged.')
-  const [result, setResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number]>('initial_visit')
+  const [result, setResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
   const notesRequired = result === 'other'
+  const conductorPrompt = result ? VISIT_RESULT_CONDUCTOR_PROMPT[result] : undefined
 
   return (
     <Card className="p-6">
@@ -30,6 +35,9 @@ export default function VisitLogForm({ recordId }: { recordId: string }) {
               onChange={(e) => setResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number])}
               className={inputClass}
             >
+              <option value="" disabled>
+                Select a result…
+              </option>
               {SELECTABLE_VISIT_RESULTS.map((r) => (
                 <option key={r} value={r}>
                   {VISIT_RESULT_LABELS[r]}
@@ -38,6 +46,11 @@ export default function VisitLogForm({ recordId }: { recordId: string }) {
             </select>
           </FormField>
         </div>
+        {conductorPrompt && (
+          <FormField label={conductorPrompt}>
+            <input name="conductorName" required maxLength={80} className={inputClass} />
+          </FormField>
+        )}
         <FormField label="Notes" optional={!notesRequired}>
           <textarea name="notes" maxLength={500} rows={2} required={notesRequired} className={inputClass} />
         </FormField>

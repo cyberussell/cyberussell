@@ -41,10 +41,10 @@ export default function PublisherRecordDetailView({
       <div className={`rounded-2xl border p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)] ${cardToneClass(latestResult)}`}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h1 className="font-semibold text-[#0B1B33]">
-            {assigned.record.address}
+            {assigned.record.address || assigned.record.plus_code || 'Unlabeled record'}
             {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
           </h1>
-          {assigned.visits[0] && <VisitResultBadge result={assigned.visits[0].result} />}
+          <VisitResultBadge result={assigned.visits[0]?.result ?? 'initial_visit'} />
         </div>
         <p className="mt-1 text-sm text-slate-500">
           Sec {assigned.record.section?.label ?? '—'} / Blk {assigned.record.block?.label ?? '—'}

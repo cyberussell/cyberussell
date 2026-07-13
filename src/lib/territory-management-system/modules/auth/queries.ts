@@ -17,9 +17,12 @@ async function requireRole(role: UserRole): Promise<RoleSession> {
   } = await supabase.auth.getUser()
   if (!user) redirect('/territory-management-system/login')
 
+  // Profile + congregation in one round-trip via the existing profiles.congregation_id FK
+  // (PostgREST resolves the embed server-side) — this ran as two sequential fetches before,
+  // adding a full extra Supabase round-trip to every single authenticated TMS page load.
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role, congregation_id, revoked_at')
+    .select('role, congregation_id, revoked_at, congregation:congregations(*)')
     .eq('id', user.id)
     .maybeSingle()
   if (!profile || profile.role !== role) redirect('/territory-management-system/login')
@@ -27,16 +30,9 @@ async function requireRole(role: UserRole): Promise<RoleSession> {
   // revoked (see revokeGroupLeaderAccess), but a session token issued just before that could
   // otherwise still pass auth.getUser() until it naturally expires.
   if (profile.revoked_at) redirect('/territory-management-system/login?error=revoked')
-  if (!profile.congregation_id) redirect('/territory-management-system/login?error=not_provisioned')
+  if (!profile.congregation_id || !profile.congregation) redirect('/territory-management-system/login?error=not_provisioned')
 
-  const { data: congregation } = await supabase
-    .from('congregations')
-    .select('*')
-    .eq('id', profile.congregation_id)
-    .maybeSingle()
-  if (!congregation) redirect('/territory-management-system/login?error=not_provisioned')
-
-  return { supabase, userId: user.id, congregation: congregation as Congregation }
+  return { supabase, userId: user.id, congregation: profile.congregation as unknown as Congregation }
 }
 
 // Admin dashboard pages/actions call this: resolves the signed-in admin + their congregation.

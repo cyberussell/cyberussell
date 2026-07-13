@@ -1,5 +1,117 @@
 # Current Work
 
+**Territory Management System — Group size/publisher count mobile stepper buttons (2026-07-13) — code done, tsc + build clean, committed:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell tested the live site and found Group size still stuck at 1 on mobile — turned out the earlier fix (documented below, "Mobile QR/Group Size fixes + Global CSV Import") had never been committed or deployed, so he was testing the old code. Also flagged that a plain `type="number"` input gives mobile no visible way to change the value at all (no stepper arrows on mobile browsers — that's a desktop-only convention), just a numeric keypad requiring clear-and-retype.
+
+Current Status: Code complete.
+- New `NumberStepper` (local to `AssignmentForm.tsx`, not extracted to a shared component — this is the only place in TMS with a small-bounded-range numeric control) adds explicit tap +/− buttons on both "Publishers going out" and "Group size", alongside the existing typeable field (still useful for a bigger jump, e.g. typing "8" directly rather than tapping + six times). Buttons disable at min/max.
+- Live-verified in the browser preview at mobile width (375px) via a temporary scratch route (removed after testing, not part of the diff): tapping +/− correctly increments/decrements, decrementing at the floor (1) correctly does nothing once disabled, and typing a fresh value (clearing the field and entering "8") still works — confirmed via the accessibility tree, not just visually (an early screenshot briefly showed a stale frame after a rapid triple-click, not a real bug — a fresh screenshot immediately after confirmed the DOM value was already correct).
+- `npx tsc --noEmit` and `npx next build` clean.
+- **Committed and this time actually includes everything from this whole session** (previously all uncommitted) — Russell needs to deploy for any of this session's fixes to reach the live site, including this one.
+
+**Next recommended task:** Russell deploys this branch (or merges to `main`) so the live site actually reflects this session's fixes, then re-tests Group size on a real mobile device.
+
+----------------------------------------
+
+**Territory Management System — "Bible Studies in the Area" stat (2026-07-13) — code done, tsc + build clean, blocked on Russell's live re-test:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked for a new stat on the Group Leader Dashboard tab — how many Bible Studies are active in the area. Confirmed via clarifying questions: scoped to today's assigned batch's territories (matching the tab's other stats, not congregation-wide), and counts a record only when its most recent visit is the established "Bible Study" result (not "Started Bible Study").
+
+Current Status: Code complete.
+- New `countActiveBibleStudies()` (`src/lib/territory-management-system/modules/reports/queries.ts`) — deliberately has **no date range** (unlike the existing `getVisitResultCounts`, which only looks at visits logged within one day): a study runs over weeks, so "active" means each record's latest visit ever, not just one logged today. Same "rows ordered newest-first, first occurrence per record_id is the latest" de-dup pattern as the existing function.
+- `BatchStats` (not the more general `ReportStats` used by the separate admin Reports page — this stat wasn't requested there, so it wasn't added there) gained `activeBibleStudies: number`, computed alongside the tab's other `Promise.all`'d stats in `getBatchStats`.
+- New "Bible Studies in the Area" StatCard added to `GroupLeaderTabs.tsx`'s Dashboard tab.
+- `npx tsc --noEmit` and `npx next build` clean. **Not live-verified**: same standing limitation as every prior TMS pass this session — no Supabase credentials in this worktree.
+
+**Next recommended task:** Russell confirms live: a record whose latest visit is "Bible Study" shows up in the count; one whose latest visit is "Started Bible Study" (not yet promoted to ongoing) correctly does not; the count only reflects today's assigned territories, not the whole congregation.
+
+----------------------------------------
+
+**Territory Management System — Group Leader dashboard stale-stats fix (2026-07-13) — code done, tsc + build clean, blocked on Russell's live re-test:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell reported the Group Leader dashboard's Visit Results don't update when a publisher syncs a visit.
+
+Current Status: Root cause found and fixed.
+- `GroupLeaderDashboardPage` (`src/app/territory-management-system/group-leader/dashboard/page.tsx`) is a Server Component that fetches `stats` once per request and passes it down as a prop into `GroupLeaderTabs` (`'use client'`). Switching between Home/Dashboard/Visit Results/Ministry Partner is pure client-side tab state — nothing there ever refetches. So if a Group Leader has the dashboard open and a publisher syncs a visit on a different device, nothing updates until a manual full browser reload — not a caching bug, just no refresh mechanism existed at all.
+- Fixed in `GroupLeaderTabs.tsx`: a `useEffect` now calls Next.js's `router.refresh()` (re-runs the page's Server Component, pushes fresh `stats` down without losing the selected tab, since that's separate local state) every 30 seconds, plus immediately whenever the tab regains focus (`visibilitychange`) — covers both "left it open" and "checked back after being away" without needing WebSockets/Supabase Realtime.
+- `npx tsc --noEmit` and `npx next build` clean. **Not live-verified**: same standing limitation as every prior TMS pass this session — no Supabase credentials in this worktree, and this is a client-side effect on a Group-Leader-authenticated page with no way to exercise it without real data.
+
+**Next recommended task:** Russell confirms live: open the Group Leader dashboard's Visit Results tab, have a publisher sync a visit from another device, and either wait ~30s or switch away and back to the browser tab — the count should update without a manual page reload.
+
+----------------------------------------
+
+**Territory Management System — Publisher workflow: auto-advance, Initial Visit default, Started/Bible Study conductor prompt (2026-07-13) — code done, tsc + build clean, blocked on migration 008 + Russell's live click-through:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Four related changes to how a publisher logs a visit, confirmed with Russell via clarifying questions before building:
+1. After logging a visit, the app auto-advances to the next incomplete assigned record (skipping already-completed ones, wrapping to check earlier ones left incomplete out of order) instead of leaving the publisher on the just-logged record — falls back to the records list (which already shows "All assigned records are done!") once nothing is left.
+2. `initial_visit` removed from the selectable Result dropdown in both visit-log forms (admin and publisher) — it's the implicit state of any record with zero logged visits, never something a publisher picks as an outcome. Un-visited records now explicitly show "Initial Visit" as their default label (records list, publisher record detail, admin record detail) rather than blank.
+3. New, separate `started_bible_study` result distinct from the existing `bible_study` (first-time vs. an already-ongoing study) — both new to the selectable list.
+4. Selecting either Bible Study result prompts for who's conducting it (worded differently per option — "Name of the publisher" vs. "Who is conducting the Bible Study?"), required before logging. Folded into the existing Notes field via a shared `mergeConductorIntoNotes()` helper (prefix `"Conducted by: {name} — "`) rather than a new DB column — computed client-side in the publisher's form (so the offline sync payload needs no special server-side handling) and server-side in the admin's `logVisitAction`.
+
+Current Status: Code complete, `tsc`/`next build` clean.
+- New migration `008_started_bible_study_result.sql` widens `territory_record_visits.result`'s CHECK constraint to add `'started_bible_study'` — **Russell needs to run this in the TMS Supabase SQL Editor** before that result can be logged (will fail with a DB constraint violation until then).
+- `VISIT_RESULTS`/`VISIT_RESULT_LABELS`/`VISIT_RESULT_STYLES`/`SELECTABLE_VISIT_RESULTS` (`records/schema.ts`) are the single source of truth every display spot already read from generically (`VisitResultBadge`, `VisitHistoryList`, `emptyResultCounts()` in reports) — adding `started_bible_study` there was enough to flow through everywhere except two hardcoded Visit Results StatCard grids (`GroupLeaderTabs.tsx`, `ReportsView.tsx`), which got an explicit new tile each.
+- `PartnershipWorkspaceApp.tsx`'s auto-advance uses each assigned record's existing `sequence` number (already fetched, already used for display ordering) — no new field needed.
+- **Not verified live this pass**: same standing limitation as every prior TMS pass this session — no Supabase credentials in this worktree, and every changed surface (both visit-log forms, the publisher offline workspace, both stats views) sits behind Supabase auth or the offline-first publisher app shell, neither exercisable without real data.
+
+**Next recommended task:** Russell runs migration 008, then live-verifies: logging a visit auto-advances to the next incomplete record; Initial Visit shows as the default label on a fresh unvisited record; both Bible Study options require and correctly save the conductor name into Notes; the new Visit Results tiles show correct counts on both the Group Leader dashboard and admin Reports.
+
+----------------------------------------
+
+**Territory Management System — TMS slow-load diagnosis + auth round-trip reduction (2026-07-13) — code done, tsc clean, blocked on Russell's live measurement:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked why `/tms` loads much slower than the main cyberussell.com site. Diagnosed two separate causes: (1) every TMS route is server-rendered dynamically on every request (confirmed via `next build` output — main site pages are mostly `○` static/CDN-served, every TMS route is `ƒ` dynamic), and authenticated pages additionally did 3 sequential Supabase network round-trips (`auth.getUser()` → profile fetch → congregation fetch) via `requireRole()` before rendering anything; (2) TMS shares the site-wide root layout (`src/app/layout.tsx`), so every TMS page — including the bare login screen — also loads Google Fonts, GA, Vercel Analytics, 2 marketing JSON-LD blocks, Facebook Pixel, TikTok Pixel, and conditionally AdSense, none of which serve any purpose on an internal login/dashboard page.
+
+Current Status: Implemented the TMS-only fix (cause 1's redundant round-trip); the other two causes were flagged, not yet acted on.
+- `requireRole()` (`src/lib/territory-management-system/modules/auth/queries.ts`) collapsed the sequential profile-fetch + congregation-fetch into a single PostgREST embedded query (`.select('role, congregation_id, revoked_at, congregation:congregations(*)')`, using the existing `profiles.congregation_id → congregations.id` FK) — cuts one full Supabase round-trip off every authenticated TMS page load (3 → 2, alongside `auth.getUser()`). RLS applies to both the base and embedded table independently and the existing "admin/group leader reads own congregation" policies (migrations 001/003) already cover this, so no RLS change was needed.
+- `npx tsc --noEmit` clean. **Not live-verified / no before-after timing measured**: no Supabase credentials in this worktree to exercise the change or measure real latency.
+- **Not yet done, flagged to Russell**: skipping the marketing pixel/analytics/JSON-LD payload for TMS (and likely Appointments/LMS/Mission Control dashboards too) requires editing the shared root layout — out of TMS-only scope, needs his explicit go-ahead. Also flagged: check whether the Vercel deployment's function region and the TMS Supabase project's region are co-located — could be the single biggest factor if not, and isn't checkable from this environment.
+
+**Next recommended task:** Russell measures real load times before/after this change (e.g. via browser devtools Network tab or Vercel's own request timing) to confirm the win, and decides whether to proceed with the root-layout pixel-skipping change and/or check the Vercel/Supabase region alignment.
+
+----------------------------------------
+
+**Territory Management System — Group Leader invite congregation-attachment fix (2026-07-13) — code done, tsc clean, blocked on Russell's live re-test:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell sent a real Group Leader invite (first live test of that flow), the invited person accepted it and set their password, but logging in afterward hit the "not provisioned" error — they were never attached to Russell's congregation.
+
+Current Status: Root cause found and fixed.
+- `inviteGroupLeader` (`src/lib/territory-management-system/modules/groupLeaders/queries.ts`) turned the trigger-created default profile row into a real Group Leader via `.update({...}).eq('id', data.user.id)`. A Supabase `.update()` that matches zero rows returns success with **no error** — it just silently does nothing. That update depended on `handle_new_user()`'s trigger having already inserted the profile row for the brand-new invited auth user; if the update ran before/raced that insert (or missed for any other reason), it would no-op with no visible failure — invite email still sent, admin sees no error, but `role`/`congregation_id` never get set. Exactly matches what Russell hit.
+- Fixed by switching `.update().eq(...)` to `.upsert({ id: data.user.id, role: 'group_leader', congregation_id, email, full_name })` — writes the row unconditionally regardless of whether the trigger's insert already landed, so this can't silently no-op again.
+- `npx tsc --noEmit` clean. **Not live-verified**: same standing limitation as every prior TMS pass this session — no Supabase credentials in this worktree, and this is a server-side write behind admin auth with no browser-observable surface to smoke-test.
+
+**Next recommended task:** Russell re-sends a real invite against this fix and confirms the invited Group Leader can log in immediately (no "not provisioned" error). If it still fails, the next thing to check live is whether `data.user.id` returned by `inviteUserByEmail` actually matches the `auth.users` row Supabase created (would need direct DB/log access this session doesn't have).
+
+----------------------------------------
+
+**Territory Management System — Mobile QR/Group Size fixes + Global CSV Import (2026-07-13) — code done, tsc + build clean, blocked on migration 007 + Russell's live click-through:**
+
+Current Product: Territory Management System (TMS) — see checkpoint `territory-management-mobile-qr-groupsize-import-v1.md` for full detail.
+
+Current Feature: Three follow-up requests — a 2x-larger QR code on the Group Leader dashboard's mobile view, a fix for "Group size cannot be edited on mobile" (a real bug: the number input snapped back to 1 on every keystroke while being cleared, fighting a mobile numeric keypad), and a new cross-territory CSV import accepting `name, plus code, territory name, section, block, household members, note` — generalized from the existing per-territory importer rather than building a second one, resolving Territory/Section/Block per row by case-insensitive exact match (confirmed with Russell: no auto-creation of missing structure).
+
+Current Status: Code complete, `tsc`/`next build` clean.
+- New migration `007_optional_address_household_members.sql` makes `territory_records.address` optional (the new import format has no address column — Plus Code is the location identifier instead, confirmed with Russell) and adds `household_members integer` — **Russell needs to run this in the TMS Supabase SQL Editor** before the new global import or the Household Members field will work.
+- Every place that displays a record by its address (records table, delete-confirm text, record detail title, both publisher-facing public views) now falls back to Plus Code, then "Unlabeled record", since address can be blank now.
+- **Not verified live this pass**: same standing limitation as every prior TMS pass this session — no Supabase credentials exist in this worktree, and all three changed surfaces sit behind Supabase auth. Only confirmed the dev server boots and the one DB-independent route (`/territory-management-system/login`) renders with zero console errors.
+
+**Next recommended task:** Russell runs migration 007, then live-verifies on a real mobile device (QR size + scannability, group-size typing) and does a real CSV import round-trip with the new global format (including a couple of deliberately-wrong territory/section/block names to confirm per-row error messages). After that: the standing next-step remains a full live pass through the rest of the Administrator dashboard (Territories, Reports, Settings) against real data.
+
+----------------------------------------
+
 **Territory Management System — Group Leader Invite System + GL Dashboard Nav Rework (2026-07-13) — code done, deployed, blocked on migration 006 + Russell's live click-through:**
 
 Current Product: Territory Management System (TMS) — see checkpoint `territory-management-group-leader-invites-v1.md` for full detail.

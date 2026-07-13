@@ -22,11 +22,11 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ r
   return (
     <div className="space-y-8">
       <PageHeader
-        title={`${record.address}${record.unit ? `, ${record.unit}` : ''}`}
+        title={`${record.address || record.plus_code || 'Unlabeled record'}${record.unit ? `, ${record.unit}` : ''}`}
         subtitle={`${record.territory?.name ?? '—'} / Section ${record.section?.label ?? '—'} / Block ${record.block?.label ?? '—'}`}
         action={
           <div className="flex items-center gap-3">
-            {latestVisit && <VisitResultBadge result={latestVisit.result} />}
+            <VisitResultBadge result={latestVisit?.result ?? 'initial_visit'} />
             <ApprovalBadge status={record.status} />
             {record.status === 'pending' && <RecordApprovalActions recordId={record.id} />}
           </div>

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Download, PartyPopper, Plus } from 'lucide-react'
-import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
+import type { PartnershipRecordDetail, PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { downloadAssignment, getLocalMapImageUrl, isDownloaded } from '@/lib/territory-management-system/modules/offline/download'
@@ -157,15 +157,27 @@ export default function PublisherWorkspaceApp({
   }
 
   async function handleLogVisit(recordId: string, visitedAt: string, result: string, notes: string) {
-    setWorkspace((w) => ({
-      ...w,
-      records: w.records.map((r) =>
-        r.record.id === recordId ? { ...r, completed_at: r.completed_at ?? new Date().toISOString() } : r
-      ),
-    }))
+    const updatedRecords = workspace.records.map((r) =>
+      r.record.id === recordId ? { ...r, completed_at: r.completed_at ?? new Date().toISOString() } : r
+    )
+    setWorkspace((w) => ({ ...w, records: updatedRecords }))
     await enqueue(partnershipToken, 'visit', { partnershipToken, recordId, visitedAt, result, notes })
     await refreshQueue()
     if (online) handleSync()
+    goToNextRecord(recordId, updatedRecords)
+  }
+
+  // After logging a visit, jump straight to the next record still needing one instead of
+  // making the publisher go back to the list and pick it themselves. "Next" means the next
+  // incomplete record after this one in assigned sequence order, wrapping to check earlier
+  // records too (in case one was left incomplete out of order). Falls back to the list — which
+  // already shows the "All assigned records are done!" banner — once nothing is left.
+  function goToNextRecord(fromRecordId: string, records: PartnershipRecordDetail[]) {
+    const sorted = [...records].sort((a, b) => a.sequence - b.sequence)
+    const currentIndex = sorted.findIndex((r) => r.record.id === fromRecordId)
+    const next =
+      sorted.slice(currentIndex + 1).find((r) => !r.completed_at) ?? sorted.slice(0, currentIndex).find((r) => !r.completed_at)
+    setView(next ? { name: 'detail', recordId: next.record.id } : { name: 'list' })
   }
 
   async function handleAddRecord(payload: NewPublisherRecordPayload) {

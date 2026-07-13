@@ -14,8 +14,8 @@ export default function RecordEditForm({ record }: { record: TerritoryRecordWith
       <h2 className="mb-4 font-semibold text-[#0B1B33]">Edit Contact Record</h2>
       <form action={dispatch} className="space-y-4">
         <input type="hidden" name="recordId" value={record.id} />
-        <FormField label="Address">
-          <input name="address" required maxLength={200} defaultValue={record.address} className={inputClass} />
+        <FormField label="Address" optional>
+          <input name="address" maxLength={200} defaultValue={record.address} className={inputClass} />
         </FormField>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField label="Unit" optional>
@@ -25,9 +25,21 @@ export default function RecordEditForm({ record }: { record: TerritoryRecordWith
             <input name="residentName" maxLength={120} defaultValue={record.resident_name} className={inputClass} />
           </FormField>
         </div>
-        <FormField label="Plus Code" optional>
-          <input name="plusCode" maxLength={20} defaultValue={record.plus_code ?? ''} placeholder="e.g. 7FG8+4V" className={inputClass} />
-        </FormField>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label="Plus Code" optional>
+            <input name="plusCode" maxLength={20} defaultValue={record.plus_code ?? ''} placeholder="e.g. 7FG8+4V" className={inputClass} />
+          </FormField>
+          <FormField label="Household members" optional>
+            <input
+              name="householdMembers"
+              type="number"
+              min={0}
+              max={99}
+              defaultValue={record.household_members ?? ''}
+              className={inputClass}
+            />
+          </FormField>
+        </div>
         <FormField label="Notes" optional>
           <textarea name="notes" maxLength={500} rows={2} defaultValue={record.notes} className={inputClass} />
         </FormField>

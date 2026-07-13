@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
+  BookMarked,
   BookOpen,
   CheckCircle2,
   CircleSlash,
@@ -51,6 +53,25 @@ export default function GroupLeaderTabs({
   const active = 'bg-[#2563EB] text-white'
   const inactive = 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
 
+  const router = useRouter()
+  // `stats` (and everything else here) is fetched once per Server Component render and passed
+  // down as a prop — switching between Home/Dashboard/Visit Results/Ministry Partner is pure
+  // client-side tab state, nothing here ever refetches on its own. Without this, a publisher
+  // syncing a visit while the Group Leader already has this page open would never show up until
+  // a manual browser reload. router.refresh() re-runs the page's Server Component and pushes
+  // fresh props down without losing the selected tab (that's local state, untouched by this).
+  useEffect(() => {
+    const interval = setInterval(() => router.refresh(), 30000)
+    function handleVisibility() {
+      if (document.visibilityState === 'visible') router.refresh()
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
+  }, [router])
+
   return (
     <div>
       <nav
@@ -75,7 +96,7 @@ export default function GroupLeaderTabs({
             />
             <h2 className="font-semibold text-[#0B1B33]">Assignment QR Code</h2>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={qrDataUrl} alt="Assignment QR code" className="h-40 w-40" />
+            <img src={qrDataUrl} alt="Assignment QR code" className="h-80 w-80 sm:h-40 sm:w-40" />
             <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
               {publicUrl}
             </a>
@@ -96,6 +117,7 @@ export default function GroupLeaderTabs({
           <StatCard icon={Clock} label="Remaining Contact Records" value={stats.remainingRecords} />
           <StatCard icon={Percent} label="Completion" value={`${stats.completionPct}%`} />
           <StatCard icon={FilePlus} label="New Contact Records Submitted" value={stats.newRecordsSubmitted} />
+          <StatCard icon={BookOpen} label="Bible Studies in the Area" value={stats.activeBibleStudies} />
         </div>
       )}
 
@@ -103,6 +125,7 @@ export default function GroupLeaderTabs({
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <StatCard icon={ClipboardList} label={VISIT_RESULT_LABELS.initial_visit} value={stats.resultCounts.initial_visit} />
           <StatCard icon={Repeat} label={VISIT_RESULT_LABELS.return_visit} value={stats.resultCounts.return_visit} />
+          <StatCard icon={BookMarked} label={VISIT_RESULT_LABELS.started_bible_study} value={stats.resultCounts.started_bible_study} />
           <StatCard icon={BookOpen} label={VISIT_RESULT_LABELS.bible_study} value={stats.resultCounts.bible_study} />
           <StatCard icon={DoorClosed} label={VISIT_RESULT_LABELS.not_home} value={stats.resultCounts.not_home} />
           <StatCard icon={PhoneOff} label={VISIT_RESULT_LABELS.do_not_call} value={stats.resultCounts.do_not_call} />

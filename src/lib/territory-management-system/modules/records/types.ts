@@ -1,6 +1,15 @@
 export type RecordStatus = 'pending' | 'approved'
 export type RecordSource = 'manual' | 'csv_import' | 'publisher'
-export type VisitResult = 'initial_visit' | 'return_visit' | 'bible_study' | 'not_home' | 'do_not_call' | 'moved' | 'other' | 'undone'
+export type VisitResult =
+  | 'initial_visit'
+  | 'return_visit'
+  | 'started_bible_study'
+  | 'bible_study'
+  | 'not_home'
+  | 'do_not_call'
+  | 'moved'
+  | 'other'
+  | 'undone'
 
 export interface TerritoryRecord {
   id: string
@@ -12,6 +21,7 @@ export interface TerritoryRecord {
   unit: string
   resident_name: string
   plus_code: string | null
+  household_members: number | null
   notes: string
   do_not_call: boolean
   status: RecordStatus

@@ -1,7 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { SELECTABLE_VISIT_RESULTS, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
+import {
+  mergeConductorIntoNotes,
+  SELECTABLE_VISIT_RESULTS,
+  VISIT_RESULT_CONDUCTOR_PROMPT,
+  VISIT_RESULT_LABELS,
+} from '@/lib/territory-management-system/modules/records/schema'
 import { nowLocalDatetime } from '@/lib/territory-management-system/modules/records/localTime'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
@@ -12,13 +17,21 @@ export default function PublisherVisitLogForm({
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
 }) {
   const [visitedAt, setVisitedAt] = useState(nowLocalDatetime())
-  const [result, setResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number]>('initial_visit')
+  const [result, setResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
+  const [conductorName, setConductorName] = useState('')
   const [notes, setNotes] = useState('')
   const notesRequired = result === 'other'
+  const conductorPrompt = result ? VISIT_RESULT_CONDUCTOR_PROMPT[result] : undefined
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    onLogVisit(visitedAt, result, notes)
+    if (!result) return
+    // Merged here, client-side, before the offline queue item is even created — the eventual
+    // sync payload just carries an ordinary "notes" string, no special handling needed once it
+    // reaches logPublisherVisitAction.
+    onLogVisit(visitedAt, result, mergeConductorIntoNotes(conductorName, notes))
+    setResult('')
+    setConductorName('')
     setNotes('')
     setVisitedAt(nowLocalDatetime())
   }
@@ -39,10 +52,14 @@ export default function PublisherVisitLogForm({
           </FormField>
           <FormField label="Result">
             <select
+              required
               value={result}
               onChange={(e) => setResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number])}
               className={inputClass}
             >
+              <option value="" disabled>
+                Select a result…
+              </option>
               {SELECTABLE_VISIT_RESULTS.map((r) => (
                 <option key={r} value={r}>
                   {VISIT_RESULT_LABELS[r]}
@@ -51,6 +68,17 @@ export default function PublisherVisitLogForm({
             </select>
           </FormField>
         </div>
+        {conductorPrompt && (
+          <FormField label={conductorPrompt}>
+            <input
+              value={conductorName}
+              onChange={(e) => setConductorName(e.target.value)}
+              required
+              maxLength={80}
+              className={inputClass}
+            />
+          </FormField>
+        )}
         <FormField label="Notes" optional={!notesRequired}>
           <textarea
             value={notes}

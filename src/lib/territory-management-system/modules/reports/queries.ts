@@ -16,6 +16,7 @@ export interface ReportStats {
 }
 
 export interface BatchStats extends ReportStats {
+  activeBibleStudies: number
   partnerships: PartnershipWithProgress[]
 }
 
@@ -86,6 +87,33 @@ async function countNewPublisherRecords(
   return count ?? 0
 }
 
+// "Bible Studies in the Area" (Group Leader Dashboard tab only, confirmed with Russell): a
+// record counts if its most recent visit ever — not just one logged today — is 'bible_study'.
+// A study runs over weeks, so unlike getVisitResultCounts this deliberately has no date range;
+// scoped to today's batch's territories (also confirmed), same as the tab's other stats.
+async function countActiveBibleStudies(supabase: SupabaseClient, congregationId: string, territoryIds: string[]): Promise<number> {
+  const recordIds = await recordIdsForTerritories(supabase, congregationId, territoryIds)
+  if (recordIds.length === 0) return 0
+
+  const { data } = await supabase
+    .from('territory_record_visits')
+    .select('record_id, result, visited_at')
+    .eq('congregation_id', congregationId)
+    .in('record_id', recordIds)
+    .order('visited_at', { ascending: false })
+
+  // Same "rows ordered newest-first, first time we see a record_id is its latest result"
+  // de-dup pattern as getVisitResultCounts.
+  const seenRecordIds = new Set<string>()
+  let count = 0
+  for (const row of (data ?? []) as { record_id: string; result: VisitResult }[]) {
+    if (seenRecordIds.has(row.record_id)) continue
+    seenRecordIds.add(row.record_id)
+    if (row.result === 'bible_study') count++
+  }
+  return count
+}
+
 // Backs both the Group Leader Dashboard (always today's batch) and, indirectly, the shape
 // Reports reuses for a single-day rollup — the two features share this one metric definition
 // rather than each inventing their own.
@@ -104,9 +132,10 @@ export async function getBatchStats(
   const rangeStart = startOfDayUtc(batch.assignment_date, timezone)
   const rangeEnd = endOfDayUtcExclusive(batch.assignment_date, timezone)
 
-  const [resultCounts, newRecordsSubmitted] = await Promise.all([
+  const [resultCounts, newRecordsSubmitted, activeBibleStudies] = await Promise.all([
     getVisitResultCounts(supabase, congregationId, territoryIds, rangeStart, rangeEnd),
     countNewPublisherRecords(supabase, congregationId, territoryIds, rangeStart, rangeEnd),
+    countActiveBibleStudies(supabase, congregationId, territoryIds),
   ])
 
   return {
@@ -116,6 +145,7 @@ export async function getBatchStats(
     completionPct: totalRecords > 0 ? Math.round((completedRecords / totalRecords) * 100) : 0,
     resultCounts,
     newRecordsSubmitted,
+    activeBibleStudies,
     partnerships: batch.partnerships,
   }
 }
