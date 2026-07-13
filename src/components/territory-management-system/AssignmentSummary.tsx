@@ -1,11 +1,10 @@
-import Link from 'next/link'
 import type { BatchSummary } from '@/lib/territory-management-system/modules/assignment/types'
 import { getAssignmentBatchUrl } from '@/lib/territory-management-system/modules/assignment/qr'
 import Card from '@/components/territory-management-system/dashboard/Card'
-import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'
 import PartnershipList from '@/components/territory-management-system/PartnershipList'
-import { deleteAssignmentAction } from '@/app/territory-management-system/actions/assignments'
 
+// Admin's read-only view of an assignment batch — no regenerate/delete controls here.
+// Generation is exclusively the Territory Group Leader's call (see their dashboard).
 export default function AssignmentSummary({ batch, qrDataUrl }: { batch: BatchSummary; qrDataUrl: string }) {
   const publicUrl = getAssignmentBatchUrl(batch.access_token)
 
@@ -28,19 +27,6 @@ export default function AssignmentSummary({ batch, qrDataUrl }: { batch: BatchSu
               <dd className="text-[#0B1B33]">{batch.partnerships.length}</dd>
             </div>
           </dl>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Link
-              href="/territory-management-system/dashboard/assignments/new"
-              className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-sm font-medium text-[#2563EB] hover:border-[#38BDF8]/40"
-            >
-              Regenerate
-            </Link>
-            <ConfirmDeleteButton
-              action={() => deleteAssignmentAction(batch.id)}
-              confirmMessage="Delete this assignment? Publishers who scanned the QR code will lose access."
-              label="Delete Assignment"
-            />
-          </div>
         </Card>
         <Card className="flex flex-col items-center gap-3 p-6 text-center">
           <h2 className="font-semibold text-[#0B1B33]">Scan to Download Today&apos;s Assignment</h2>

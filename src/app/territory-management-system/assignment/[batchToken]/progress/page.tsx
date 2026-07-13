@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { createAdminSupabase } from '@/lib/territory-management-system/supabase-server'
 import { getBatchByToken } from '@/lib/territory-management-system/modules/assignment/queries'
 import PartnershipList from '@/components/territory-management-system/PartnershipList'
+import AssignmentEndedNotice from '@/components/territory-management-system/publisher/AssignmentEndedNotice'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,6 +11,7 @@ export default async function ProgressPage({ params }: { params: Promise<{ batch
   const supabase = createAdminSupabase()
   const batch = await getBatchByToken(supabase, batchToken)
   if (!batch) notFound()
+  if (batch.expired) return <AssignmentEndedNotice />
 
   return (
     <div className="min-h-screen bg-[#F3F8FF] px-4 py-8">

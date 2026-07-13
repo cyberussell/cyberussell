@@ -28,6 +28,9 @@ export interface PartnershipWithProgress extends Partnership {
 export interface BatchSummary extends AssignmentBatch {
   territories: { id: string; name: string }[]
   partnerships: PartnershipWithProgress[]
+  // True once assignment_date is before today in the congregation's timezone — the public
+  // landing/progress pages render an "ended" state instead of the live view when this is set.
+  expired: boolean
 }
 
 export interface PartnershipRecordDetail {
@@ -48,4 +51,7 @@ export interface PartnershipWorkspace extends Partnership {
   batch: AssignmentBatch
   records: PartnershipRecordDetail[]
   territories: { id: string; name: string; map_image_url: string | null }[]
+  // Same meaning as BatchSummary.expired — checked again server-side before every
+  // publisher-facing write (rename/log visit/add record), not just used for display.
+  expired: boolean
 }

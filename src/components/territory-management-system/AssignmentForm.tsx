@@ -1,12 +1,17 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { createAssignmentAction } from '@/app/territory-management-system/actions/assignments'
+import { createGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import { DEFAULT_MAX_PER_PARTNERSHIP } from '@/lib/territory-management-system/modules/assignment/engine'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
+// Group-Leader-only (assignment generation moved off the Admin dashboard — see
+// actions/group-leader.ts). Asks for a publisher headcount rather than a raw partnership
+// count directly, since on a campaign day the Group Leader knows "how many people showed up,"
+// not how the engine should group them — partnershipCount is derived (ceil(publishers /
+// groupSize)) and submitted as the hidden field the engine actually expects.
 export default function AssignmentForm({
   territories,
   hasExistingBatch,
@@ -14,9 +19,11 @@ export default function AssignmentForm({
   territories: { id: string; name: string; approvedCount: number }[]
   hasExistingBatch: boolean
 }) {
-  const { dispatch, pending, error } = useServerAction(createAssignmentAction)
+  const { dispatch, pending, error } = useServerAction(createGroupLeaderAssignmentAction)
   const [selected, setSelected] = useState<string[]>([])
-  const [partnershipCount, setPartnershipCount] = useState(2)
+  const [publisherCount, setPublisherCount] = useState(4)
+  const [groupSize, setGroupSize] = useState(2)
+  const partnershipCount = Math.max(1, Math.ceil(publisherCount / groupSize))
 
   const eligibleTotal = useMemo(
     () => territories.filter((t) => selected.includes(t.id)).reduce((sum, t) => sum + t.approvedCount, 0),
@@ -46,7 +53,7 @@ export default function AssignmentForm({
             An assignment already exists for today. Generating a new one will replace it.
           </div>
         )}
-        <FormField label="Territories">
+        <FormField label="Territory map(s)">
           {territories.length === 0 ? (
             <p className="text-sm text-slate-400">No active territories yet.</p>
           ) : (
@@ -70,22 +77,36 @@ export default function AssignmentForm({
             </div>
           )}
         </FormField>
-        <FormField label="Number of partnerships">
-          <input
-            name="partnershipCount"
-            type="number"
-            min={1}
-            max={50}
-            required
-            value={partnershipCount}
-            onChange={(e) => setPartnershipCount(Math.max(1, Number(e.target.value) || 1))}
-            className={inputClass}
-          />
-        </FormField>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label="Publishers going out">
+            <input
+              type="number"
+              min={1}
+              max={999}
+              required
+              value={publisherCount}
+              onChange={(e) => setPublisherCount(Math.max(1, Number(e.target.value) || 1))}
+              className={inputClass}
+            />
+          </FormField>
+          <FormField label="Group size">
+            <input
+              type="number"
+              min={1}
+              max={10}
+              required
+              value={groupSize}
+              onChange={(e) => setGroupSize(Math.max(1, Number(e.target.value) || 1))}
+              className={inputClass}
+            />
+          </FormField>
+        </div>
+        <input type="hidden" name="partnershipCount" value={partnershipCount} />
         <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">
-          {eligibleTotal} approved contact record{eligibleTotal === 1 ? '' : 's'} available across the selected territories —
-          up to {partnershipCount * DEFAULT_MAX_PER_PARTNERSHIP} will be assigned ({partnershipCount} partnership
-          {partnershipCount === 1 ? '' : 's'} × {DEFAULT_MAX_PER_PARTNERSHIP} max).
+          {publisherCount} publisher{publisherCount === 1 ? '' : 's'} in groups of {groupSize} → {partnershipCount} partnership
+          {partnershipCount === 1 ? '' : 's'}. {eligibleTotal} approved contact record{eligibleTotal === 1 ? '' : 's'} available
+          across the selected territories — up to {partnershipCount * DEFAULT_MAX_PER_PARTNERSHIP} will be assigned (
+          {DEFAULT_MAX_PER_PARTNERSHIP} per partnership max).
           {eligibleTotal > 0 && eligibleTotal < partnershipCount && (
             <p className="mt-1 font-medium text-red-500">Not enough contact records for {partnershipCount} partnerships.</p>
           )}

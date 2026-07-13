@@ -33,6 +33,9 @@ export async function renamePartnershipAction(_prev: ActionResult, formData: For
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
   if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  // A session that was already open before midnight could still try to submit after — the
+  // client-side "ended" screen is a courtesy, this is the actual enforcement.
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
 
   await renamePartnership(supabase, partnership.id, parsed.data.name)
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}`)
@@ -54,6 +57,7 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
   if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
 
   const owns = await partnershipHasRecord(supabase, partnership.id, parsed.data.recordId)
   if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
@@ -94,6 +98,9 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
   if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  // A session that was already open before midnight could still try to submit after — the
+  // client-side "ended" screen is a courtesy, this is the actual enforcement.
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
 
   // This path runs on the service-role client (no RLS), so it must independently verify the
   // submitted territory/section/block chain actually belongs to this partnership's own

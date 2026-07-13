@@ -14,7 +14,7 @@ All code lives in three scoped places:
 ## 1. Create the dedicated Supabase project
 
 1. Go to [supabase.com/dashboard](https://supabase.com/dashboard) → **New project** → name it `territory-management-system`.
-2. Open **SQL Editor** and run every file in `territory-management-system/migrations/` in order (001 → ...).
+2. Open **SQL Editor** and run every file in `territory-management-system/migrations/` in order (001 → 002 → 003 → 004).
 3. In **Authentication → Providers → Email**: keep Email enabled.
 4. Copy the keys from **Settings → API** into `.env.local`:
 
@@ -28,10 +28,17 @@ TMS_SUPABASE_SERVICE_ROLE_KEY=sb_secret_xxxx   # server-only, never NEXT_PUBLIC
 
 Two real-account roles share `profiles.role`, both provisioned manually (no public signup):
 
-- **admin** — configures the congregation, its territory structure, runs the Assignment
-  Engine, reviews pending records, full read/write.
-- **group_leader** — read-only monitoring dashboard (today's assignment, progress, visit-result
-  breakdown). No write access anywhere.
+- **admin** — configures the congregation, its territory structure, and reviews pending
+  records; full read/write there. Read-only on assignments (migration 004 moved assignment
+  generation off the Admin dashboard — see below).
+- **group_leader** — owns assignment generation: picks territory map(s) and a publisher
+  headcount, the app computes partnerships and a QR code for the day. Also gets the monitoring
+  dashboard (today's assignment, progress, visit-result breakdown). Read-only everywhere else
+  (territories, records, congregation settings).
+
+Assignment links are day-scoped: once `assignment_date` is before today (in the congregation's
+own timezone), the public QR/partnership links show "This assignment has ended" and reject any
+further writes — nothing is deleted, Reports/history keep working normally.
 
 **Publishers are not a `profiles` role at all** — they never sign up or log in. Publisher
 access is entirely QR/token-based: scanning the Assignment Summary's QR code opens a public,

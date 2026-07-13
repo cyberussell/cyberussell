@@ -1,6 +1,7 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { calculateAssignment, isAssignmentError, type AssignmentError } from './engine'
+import { isBatchExpired } from './date'
 import type {
   AssignmentBatch,
   BatchSummary,
@@ -182,9 +183,10 @@ export async function getBatchSummary(
     .maybeSingle()
   if (!batch) return null
 
-  const [{ data: territoryLinks }, { data: partnerships }] = await Promise.all([
+  const [{ data: territoryLinks }, { data: partnerships }, { data: congregation }] = await Promise.all([
     supabase.from('assignment_batch_territories').select('territory:territories(id, name)').eq('batch_id', batchId),
     supabase.from('partnerships').select('*').eq('batch_id', batchId).order('sequence'),
+    supabase.from('congregations').select('timezone').eq('id', congregationId).maybeSingle(),
   ])
 
   const partnershipIds = (partnerships ?? []).map((p) => p.id)
@@ -206,6 +208,7 @@ export async function getBatchSummary(
     ...(batch as AssignmentBatch),
     territories: ((territoryLinks ?? []) as unknown as { territory: { id: string; name: string } }[]).map((t) => t.territory),
     partnerships: partnershipsWithProgress,
+    expired: isBatchExpired((batch as AssignmentBatch).assignment_date, congregation?.timezone ?? 'UTC'),
   }
 }
 
@@ -230,6 +233,9 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
 
   const { data: batch } = await supabase.from('assignment_batches').select('*').eq('id', partnership.batch_id).maybeSingle()
   if (!batch) return null
+
+  const { data: congregation } = await supabase.from('congregations').select('timezone').eq('id', partnership.congregation_id).maybeSingle()
+  const expired = isBatchExpired(batch.assignment_date, congregation?.timezone ?? 'UTC')
 
   const { data: partnershipRecords } = await supabase
     .from('partnership_records')
@@ -273,6 +279,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     batch: batch as AssignmentBatch,
     records,
     territories: [...territoryMap.values()],
+    expired,
   }
 }
 

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createAdminSupabase } from '@/lib/territory-management-system/supabase-server'
 import { getBatchByToken } from '@/lib/territory-management-system/modules/assignment/queries'
 import PartnershipCard from '@/components/territory-management-system/publisher/PartnershipCard'
+import AssignmentEndedNotice from '@/components/territory-management-system/publisher/AssignmentEndedNotice'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,6 +12,7 @@ export default async function BatchLandingPage({ params }: { params: Promise<{ b
   const supabase = createAdminSupabase()
   const batch = await getBatchByToken(supabase, batchToken)
   if (!batch) notFound()
+  if (batch.expired) return <AssignmentEndedNotice />
 
   return (
     <div className="min-h-screen bg-[#F3F8FF] px-4 py-8">
