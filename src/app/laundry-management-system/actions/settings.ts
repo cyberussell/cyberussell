@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { requireOwnerBusiness } from '@/lib/laundry-management-system/modules/auth/queries'
+import { logActivity } from '@/lib/laundry-management-system/modules/audit/queries'
 import { CURRENCIES, type ActionResult } from './shared'
 
 const businessProfileSchema = z.object({
@@ -22,9 +23,19 @@ export async function updateBusinessProfile(_prev: ActionResult, formData: FormD
   })
   if (!parsed.success) return { error: 'Please fill in all fields correctly.' }
 
-  const { supabase, business } = await requireOwnerBusiness()
+  const { supabase, user, business } = await requireOwnerBusiness()
   const { error } = await supabase.from('businesses').update(parsed.data).eq('id', business.id)
   if (error) return { error: error.message }
+
+  await logActivity(supabase, {
+    businessId: business.id,
+    actorId: user.id,
+    actorRole: 'owner',
+    action: 'business_profile_updated',
+    entityType: 'business',
+    entityId: business.id,
+    details: parsed.data,
+  })
 
   return { error: 'SAVED' } // handled as info, not error, in the UI
 }
@@ -58,13 +69,23 @@ export async function updateBranchDetails(_prev: ActionResult, formData: FormDat
   if (!parsed.success) return { error: 'Please fill in all branch fields correctly.' }
   const { branchId, name, address, phone, businessHours } = parsed.data
 
-  const { supabase, business } = await requireOwnerBusiness()
+  const { supabase, user, business } = await requireOwnerBusiness()
   const { error } = await supabase
     .from('branches')
     .update({ name, address, phone, business_hours: businessHours })
     .eq('id', branchId)
     .eq('business_id', business.id)
   if (error) return { error: error.message }
+
+  await logActivity(supabase, {
+    businessId: business.id,
+    actorId: user.id,
+    actorRole: 'owner',
+    action: 'branch_details_updated',
+    entityType: 'branch',
+    entityId: branchId,
+    details: { name, address, phone },
+  })
 
   return { error: 'SAVED' } // handled as info, not error, in the UI
 }

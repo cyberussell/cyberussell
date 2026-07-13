@@ -3,6 +3,7 @@
 import { z } from 'zod'
 import { requireOwnerBusiness } from '@/lib/laundry-management-system/modules/auth/queries'
 import { INVENTORY_CATEGORIES } from '@/lib/laundry-management-system/modules/inventory/categories'
+import { logActivity } from '@/lib/laundry-management-system/modules/audit/queries'
 import type { ActionResult } from './shared'
 
 const itemSchema = z.object({
@@ -64,8 +65,20 @@ export async function updateInventoryItem(_prev: ActionResult, formData: FormDat
 }
 
 export async function deleteInventoryItem(itemId: string): Promise<ActionResult> {
-  const { supabase, business } = await requireOwnerBusiness()
+  const { supabase, user, business } = await requireOwnerBusiness()
+  const { data: existing } = await supabase.from('inventory_items').select('name').eq('id', itemId).maybeSingle()
   const { error } = await supabase.from('inventory_items').delete().eq('id', itemId).eq('business_id', business.id)
   if (error) return { error: error.message }
+
+  await logActivity(supabase, {
+    businessId: business.id,
+    actorId: user.id,
+    actorRole: 'owner',
+    action: 'inventory_item_deleted',
+    entityType: 'inventory_item',
+    entityId: itemId,
+    details: { name: existing?.name ?? null },
+  })
+
   return {}
 }

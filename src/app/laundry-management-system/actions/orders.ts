@@ -8,6 +8,7 @@ import { isValidTransition } from '@/lib/laundry-management-system/modules/order
 import type { OrderStatus } from '@/lib/laundry-management-system/modules/orders/types'
 import { hasFeature } from '@/lib/laundry-management-system/modules/billing/entitlements'
 import { createOrderSchema, updateDetailsSchema } from '@/lib/laundry-management-system/modules/orders/schema'
+import { logActivity } from '@/lib/laundry-management-system/modules/audit/queries'
 
 const ORDER_STATUSES = [
   'received',
@@ -148,6 +149,16 @@ export async function updateOrderStatus(_prev: ActionResult, formData: FormData)
     .eq('business_id', business.id)
   if (error) return { error: error.message }
 
+  await logActivity(supabase, {
+    businessId: business.id,
+    actorId: session.userId,
+    actorRole: role,
+    action: 'order_status_changed',
+    entityType: 'order',
+    entityId: orderId,
+    details: { from: existing.status, to: status },
+  })
+
   return {}
 }
 
@@ -211,7 +222,7 @@ export async function assignOrderStaff(_prev: ActionResult, formData: FormData):
 
   const { session, denied } = await requireActionPermission('assign_order_staff')
   if (denied) return denied
-  const { supabase, business } = session
+  const { supabase, business, role, userId } = session
 
   const { error } = await supabase
     .from('orders')
@@ -219,6 +230,16 @@ export async function assignOrderStaff(_prev: ActionResult, formData: FormData):
     .eq('id', orderId)
     .eq('business_id', business.id)
   if (error) return { error: error.message }
+
+  await logActivity(supabase, {
+    businessId: business.id,
+    actorId: userId,
+    actorRole: role,
+    action: 'order_staff_assigned',
+    entityType: 'order',
+    entityId: orderId,
+    details: { assignedStaffId: assignedStaffId || null },
+  })
 
   return { error: 'SAVED' } // handled as info, not error, in the UI
 }
@@ -323,7 +344,7 @@ export async function assignOrderDriver(_prev: ActionResult, formData: FormData)
 
   const { session, denied } = await requireActionPermission('manage_delivery')
   if (denied) return denied
-  const { supabase, business } = session
+  const { supabase, business, role, userId } = session
   if (!hasFeature(business, 'feature_pickup_delivery')) return { error: 'Driver assignment is a Professional plan feature.' }
 
   const { error } = await supabase
@@ -332,6 +353,16 @@ export async function assignOrderDriver(_prev: ActionResult, formData: FormData)
     .eq('id', orderId)
     .eq('business_id', business.id)
   if (error) return { error: error.message }
+
+  await logActivity(supabase, {
+    businessId: business.id,
+    actorId: userId,
+    actorRole: role,
+    action: 'order_driver_assigned',
+    entityType: 'order',
+    entityId: orderId,
+    details: { driverId: driverId || null },
+  })
 
   return { error: 'SAVED' } // handled as info, not error, in the UI
 }
@@ -351,7 +382,7 @@ export async function setOrderPriority(_prev: ActionResult, formData: FormData):
 
   const { session, denied } = await requireActionPermission('update_order_status')
   if (denied) return denied
-  const { supabase, business } = session
+  const { supabase, business, role, userId } = session
   if (!hasFeature(business, 'feature_priority_queue')) return { error: 'Priority Queue is a Professional plan feature.' }
 
   const { error } = await supabase
@@ -360,6 +391,16 @@ export async function setOrderPriority(_prev: ActionResult, formData: FormData):
     .eq('id', orderId)
     .eq('business_id', business.id)
   if (error) return { error: error.message }
+
+  await logActivity(supabase, {
+    businessId: business.id,
+    actorId: userId,
+    actorRole: role,
+    action: 'order_priority_changed',
+    entityType: 'order',
+    entityId: orderId,
+    details: { isPriority },
+  })
 
   return {}
 }

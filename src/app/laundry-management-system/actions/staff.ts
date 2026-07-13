@@ -5,6 +5,7 @@ import { createServerSupabase, createAdminSupabase } from '@/lib/laundry-managem
 import { countActiveStaff } from '@/lib/laundry-management-system/modules/staff/queries'
 import { getLimit, PLANS } from '@/lib/laundry-management-system/modules/billing/entitlements'
 import { inviteStaffSchema } from '@/lib/laundry-management-system/modules/staff/schema'
+import { logActivity } from '@/lib/laundry-management-system/modules/audit/queries'
 import type { PlanTier } from '@/lib/laundry-management-system/modules/tenant/types'
 import type { ActionResult } from './shared'
 
@@ -49,6 +50,15 @@ export async function inviteStaff(_prev: ActionResult, formData: FormData): Prom
     redirectTo: 'https://www.cyberussell.com/laundry-management-system/staff/accept-invite',
   })
   if (error) return { error: error.message }
+
+  await logActivity(supabase, {
+    businessId: business.id,
+    actorId: user.id,
+    actorRole: 'owner',
+    action: 'staff_invited',
+    entityType: 'staff',
+    details: { email, title },
+  })
 
   return { error: 'INVITED' } // handled as info, not error, in the UI
 }

@@ -1,5 +1,25 @@
 # Current Work
 
+**LMS Production Readiness — Phase 8f: Audit Logs (2026-07-13) — code done, tsc + build clean, blocked on a migration:**
+
+Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-audit-logs-v1.md` for full detail.
+
+Current Feature: New `audit_logs` table + logging helper wired into 8 key mutations, plus an owner-only Activity History view — the last roadmap item before performance (8g).
+
+Current Status: Code complete.
+- **New migration `014_audit_logs.sql`** — **Russell needs to run this in the LMS Supabase project's SQL Editor** before any of this works (the table doesn't exist yet).
+- **Deliberately scoped to 8 "key mutations," not all ~28 action functions**: order status/staff-assignment/driver-assignment/priority changes, inventory/driver deletions (fetches the entity's name first so the log reads clearly, not a bare UUID), staff invites, and business/branch profile updates. `logActivity()` is best-effort — checks for an insert error and logs it, but never blocks or fails the real mutation it's describing.
+- **New `view_activity_log` permission**, owner-only by omission from `STAFF_PERMISSIONS` (same pattern as `manage_subscription`) — no new gating logic needed.
+- **New Activity page reuses the phase 8c primitives** (`DataTable`, `FilterPills`, `TableSearchInput`) entirely via composition — search, entity-type filter, sortable timestamp column, human-readable per-action detail summaries.
+- Fixed an unrelated blocker along the way: `npm install` had never been re-run after the earlier TMS-session merge, so `node_modules` was out of sync with the merged `package.json` (`idb`/`papaparse` missing) — resynced, confirmed the resulting `tsc` errors were TMS-only and disappeared, zero errors in LMS files.
+- `npx tsc --noEmit` clean, `npx next build` succeeds with zero errors (new `/dashboard/activity` route builds, correctly marked dynamic).
+
+**Not verified this pass**: nothing in this feature is exercisable until the migration runs, and further production-database writes for testing keep hitting the safety classifier's per-action confirmation requirement (same friction as 8d/8e). Recommend Russell runs the migration, then a live pass: trigger each of the 8 instrumented mutations and confirm they show up correctly on the Activity page with the right actor/action/detail, confirm a staff account can't reach `/dashboard/activity` directly, confirm search + entity-type filter work.
+
+**Next recommended task:** Russell runs `014_audit_logs.sql`, then live-verify this phase or move to phase 8g (the roadmap's final item: dynamic imports, bundle audit, image optimization).
+
+----------------------------------------
+
 **Territory Management System — Group size/publisher count mobile stepper buttons (2026-07-13) — code done, tsc + build clean, committed:**
 
 Current Product: Territory Management System (TMS).

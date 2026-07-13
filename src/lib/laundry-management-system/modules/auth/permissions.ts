@@ -18,6 +18,7 @@ export type Permission =
   | 'manage_pickup'
   | 'manage_delivery'
   | 'view_priority_queue'
+  | 'view_activity_log'
 
 // Everything a staff member is allowed to do. Owners always pass (see hasPermission
 // below) — this list only needs to cover the staff role's explicit allow-list.

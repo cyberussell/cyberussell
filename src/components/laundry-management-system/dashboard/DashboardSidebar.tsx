@@ -14,6 +14,7 @@ import {
   PackageCheck,
   Truck,
   Zap,
+  History,
 } from 'lucide-react'
 import { signOut } from '@/app/laundry-management-system/actions/auth'
 import { hasPermission, type Permission } from '@/lib/laundry-management-system/modules/auth/permissions'
@@ -34,6 +35,7 @@ function buildNavItems(
     { label: 'Inventory', href: `${basePath}/inventory`, icon: Boxes, permission: 'manage_inventory' },
     { label: 'Staff', href: `${basePath}/staff`, icon: UserCog, permission: 'manage_staff' },
     { label: 'Reports', href: `${basePath}/reports`, icon: BarChart3, permission: 'view_financial_reports' },
+    { label: 'Activity', href: `${basePath}/activity`, icon: History, permission: 'view_activity_log' },
     { label: 'Settings', href: `${basePath}/settings`, icon: SettingsIcon, permission: 'change_business_settings' },
   ]
 }

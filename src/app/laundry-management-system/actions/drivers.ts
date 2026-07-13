@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { requireOwnerBusiness } from '@/lib/laundry-management-system/modules/auth/queries'
+import { logActivity } from '@/lib/laundry-management-system/modules/audit/queries'
 import type { ActionResult } from './shared'
 
 // Driver roster management is owner-only (same restriction as Inventory/Staff),
@@ -63,8 +64,20 @@ export async function updateDriver(_prev: ActionResult, formData: FormData): Pro
 }
 
 export async function deleteDriver(driverId: string): Promise<ActionResult> {
-  const { supabase, business } = await requireOwnerBusiness()
+  const { supabase, user, business } = await requireOwnerBusiness()
+  const { data: existing } = await supabase.from('drivers').select('name').eq('id', driverId).maybeSingle()
   const { error } = await supabase.from('drivers').delete().eq('id', driverId).eq('business_id', business.id)
   if (error) return { error: error.message }
+
+  await logActivity(supabase, {
+    businessId: business.id,
+    actorId: user.id,
+    actorRole: 'owner',
+    action: 'driver_deleted',
+    entityType: 'driver',
+    entityId: driverId,
+    details: { name: existing?.name ?? null },
+  })
+
   return {}
 }
