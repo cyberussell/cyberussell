@@ -274,33 +274,33 @@ export default function ServicesPage() {
               <img
                 src="/services/cta-photo.jpg"
                 alt="Russell Parayno at his desk"
-                className="w-full h-full object-cover scale-x-[-1]"
+                className="w-full h-full object-cover scale-x-[-1] object-[75%_center]"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A14]/95 via-[#0A0A14]/80 to-[#0A0A14]/60" />
+              <div className="absolute inset-0 bg-gradient-to-l from-[#0A0A14]/95 via-[#0A0A14]/80 to-[#0A0A14]/60" />
             </div>
-            <div className="relative z-10 px-8 md:px-14 py-16 md:py-20">
+            <div className="relative z-10 px-8 md:px-14 py-16 md:py-20 flex flex-col items-end text-right">
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[3px] mb-4 block">
                 Ready to Start?
               </span>
               <h2 className="font-sans text-[30px] md:text-[44px] font-bold text-white mb-4 leading-tight max-w-xl">
-                Let&apos;s Build Something Great Together
+                Let&apos;s Build Something<br />Great Together
               </h2>
               <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 max-w-lg leading-[1.8] mb-8">
-                Whether you need a website, a mobile app, AI automation, or a custom business solution, I&apos;d love to hear about your project. Let&apos;s talk about what you need.
+                Whether you need a website, a mobile app, AI automation, or a custom business solution, I&apos;d love to hear about your project.<br />Let&apos;s talk about what you need.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href="/services/inquire?service=General+Inquiry"
-                  className="inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 transition-all text-[#0A0A14] font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
-                >
-                  Request a Free Consultation <ArrowRight size={16} />
-                </a>
                 <a
                   href="/build-with-us"
                   className="inline-flex items-center justify-center gap-2 bg-white/[0.08] hover:bg-white/[0.12] border border-white/[0.12] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
                 >
                   Build With Us
+                </a>
+                <a
+                  href="/services/inquire?service=General+Inquiry"
+                  className="inline-flex items-center justify-center gap-2 bg-[#FFD23F] hover:bg-[#FFD23F]/90 transition-all text-[#0A0A14] font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
+                >
+                  Request a Free Consultation <ArrowRight size={16} />
                 </a>
               </div>
             </div>
