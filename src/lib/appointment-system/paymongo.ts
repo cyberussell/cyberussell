@@ -22,8 +22,10 @@ interface CheckoutSessionResponse {
 /** Creates a hosted PayMongo checkout for one billing cycle of a plan tier. */
 export async function createBillingCheckout(opts: {
   businessId: string
+  businessName: string
   tier: PlanTier
   planName: string
+  featuresSummary: string
   amountCentavos: number
   successUrl: string
   cancelUrl: string
@@ -41,13 +43,13 @@ export async function createBillingCheckout(opts: {
             {
               currency: 'PHP',
               amount: opts.amountCentavos,
-              description: `Appointment System — ${opts.planName} plan, 1 month`,
+              description: opts.featuresSummary,
               name: `${opts.planName} plan`,
               quantity: 1,
             },
           ],
           payment_method_types: ['card', 'gcash'],
-          description: `Appointment System billing — business ${opts.businessId}`,
+          description: `Appointment System billing — ${opts.businessName}`,
           success_url: opts.successUrl,
           cancel_url: opts.cancelUrl,
           metadata: { business_id: opts.businessId, tier: opts.tier },

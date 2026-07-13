@@ -107,6 +107,16 @@ export const PLAN_BULLETS: Record<PlanTier, string[]> = {
   ],
 }
 
+// Bullet-point feature summary shown on the PayMongo checkout page. Built
+// only from what's actually shipped (PLANS' limits/features), never from
+// PLAN_BULLETS directly — a paying customer shouldn't see "(soon)" promises
+// on the payment screen itself.
+export const PLAN_CHECKOUT_SUMMARY: Record<PlanTier, string> = {
+  free: '',
+  basic: '• Unlimited appointments  • Up to 5 staff logins  • Email notifications  • Basic reporting',
+  pro: '• Unlimited appointments  • Unlimited staff logins  • Email notifications  • Basic reporting  • Messenger booking bot',
+}
+
 function planOf(business: Pick<Business, 'plan_tier'>): PlanConfig {
   return PLANS[business.plan_tier] ?? PLANS.free
 }
