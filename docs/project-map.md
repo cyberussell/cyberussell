@@ -270,11 +270,11 @@ Last generated: 2026-07-13 (added product #9, Territory Management System — fo
 
 ---
 
-## 9. Territory Management System (TMS) — audited for production, blocked on Supabase provisioning
+## 9. Territory Management System (TMS) — Supabase live, Group Leader login verified in production
 
 **Purpose:** Standalone multi-congregation SaaS for organizing, assigning, and tracking territory work during field ministry — architecturally modeled on the Appointment System/LMS: own Supabase project, own auth, own middleware-free page-level auth gating, own lib/component namespace, fully isolated from Cyberussell.com and the other products. Covers the tenant foundation (congregations), the full Administrator module (territories/sections/blocks, records, CSV import/export), an assignment engine with a QR-based publisher workflow (offline-capable, IndexedDB-backed sync), a read-only Group Leader role/dashboard, and Reports.
 
-**Status as of 2026-07-13:** Code complete and audited (`tsc`/`next build` clean). Login page live-verified in preview; everything DB-backed is unverified by browser — blocked on Russell provisioning the dedicated Supabase project and running all 3 migrations. See checkpoints `territory-management-foundation-v1.md` (original build, phase 1 only) and `territory-management-production-audit-v1.md` (full-product audit + fixes).
+**Status as of 2026-07-13:** Supabase project provisioned and live. First real live-DB click-through (Group Leader dashboard login) surfaced and fixed two production bugs — an invalid IANA timezone value crashing date calculations, and a Server Action closure that isn't a valid serializable Server Reference across the RSC boundary — both deployed to production and confirmed working by Russell. Rest of the product (Administrator dashboard screens, publisher QR workflow, offline sync) is still unverified against real data. See checkpoints `territory-management-foundation-v1.md` (original build, phase 1 only), `territory-management-production-audit-v1.md` (full-product code audit), and `territory-management-group-leader-login-fix-v1.md` (first live bugs, fixed + deployed).
 
 **Main routes:**
 - `/territory-management-system/login` (only auth route — no public signup, provisioning is manual)

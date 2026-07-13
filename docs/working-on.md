@@ -1,5 +1,23 @@
 # Current Work
 
+**Territory Management System — Group Leader Login Crash Fix (2026-07-13) — fixed, deployed, live-verified:**
+
+Current Product: Territory Management System (TMS) — see checkpoint `territory-management-group-leader-login-fix-v1.md` for full detail.
+
+Current Feature: Russell provisioned the TMS Supabase project and hit a crash on his very first live login as Group Leader (generic "Something went wrong — Server Components render" error). This was the first real live-DB click-through of any TMS screen.
+
+Current Status: Fixed and deployed.
+- **Bug 1**: `congregations.timezone` was set to `"GMT+8"` (not a valid IANA zone) during manual provisioning — crashed `Intl`/`toLocaleDateString` calls in `assignment/date.ts`/`reports/date.ts` uncaught. Added a `safeTimezone()` guard (falls back to `'UTC'`); Russell also corrected the DB row to `'Asia/Manila'`.
+- **Bug 2**, found after Bug 1's fix let the page render further: an inline arrow-function closure wrapping a Server Action (`action={() => deleteX(id)}`) passed from a Server Component into a Client Component isn't a valid serializable Server Reference — throws during RSC payload serialization the instant an assignment batch exists. Fixed via `.bind(null, id)` in both the Group Leader dashboard and the one other TMS file with the identical pattern (admin Territory detail page's delete button).
+- Also fixed in passing: `actions/auth.ts` silently defaulted an unknown/failed role lookup to `'admin'` instead of surfacing the error.
+- `tsc`/`next build` clean after each fix. Committed as two commits, pushed and merged directly to `main` at Russell's request, both auto-deployed via Vercel (confirmed `● Ready` in Production). **Live-verified by Russell**: Group Leader dashboard now loads cleanly.
+
+**Not verified this pass**: everything else DB-backed in TMS (Administrator dashboard screens, publisher QR workflow, offline sync) — this was only the Group Leader dashboard's first-ever real click-through. Given two latent bugs surfaced on this one screen, other screens likely have similar never-before-exercised issues.
+
+**Next recommended task:** A real live pass through the rest of the Administrator dashboard (create a territory, generate sections/blocks, add/import records, generate an assignment batch, walk the publisher QR flow end-to-end) — see the checkpoint's "Next Recommended Task."
+
+----------------------------------------
+
 **Territory Management System — Production Readiness Audit (2026-07-13) — code done, tsc + build clean, blocked on Supabase provisioning:**
 
 Current Product: Territory Management System (TMS) — see checkpoint `territory-management-production-audit-v1.md` for full detail.
