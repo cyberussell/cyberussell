@@ -1,17 +1,14 @@
-import { BookOpen, CheckCircle2, ClipboardList, Clock, DoorClosed, FilePlus, Percent, PhoneOff, Repeat, Truck } from 'lucide-react'
 import { requireGroupLeader } from '@/lib/territory-management-system/modules/auth/queries'
 import { getApprovedRecordCounts, getBatchForDate } from '@/lib/territory-management-system/modules/assignment/queries'
 import { listTerritories } from '@/lib/territory-management-system/modules/territory/queries'
 import { getBatchStats } from '@/lib/territory-management-system/modules/reports/queries'
 import { getAssignmentBatchQrDataUrl, getAssignmentBatchUrl } from '@/lib/territory-management-system/modules/assignment/qr'
 import { todayInTimezone } from '@/lib/territory-management-system/modules/assignment/date'
-import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import { deleteGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
 import PageHeader from '@/components/territory-management-system/dashboard/PageHeader'
-import StatCard from '@/components/territory-management-system/dashboard/StatCard'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'
-import PartnershipList from '@/components/territory-management-system/PartnershipList'
+import GroupLeaderTabs from '@/components/territory-management-system/GroupLeaderTabs'
 import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
 
 export const dynamic = 'force-dynamic'
@@ -60,46 +57,22 @@ export default async function GroupLeaderDashboardPage() {
         }
       />
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Card className="flex flex-col items-center gap-3 p-6 text-center lg:col-span-1">
-          <h2 className="font-semibold text-[#0B1B33]">Assignment QR Code</h2>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={qrDataUrl} alt="Assignment QR code" className="h-40 w-40" />
-          <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
-            {publicUrl}
-          </a>
-          <p className="text-xs text-slate-400">Valid for today only — a new one is needed tomorrow.</p>
-        </Card>
-        <div className="grid grid-cols-2 gap-4 lg:col-span-2 lg:grid-cols-3">
-          <StatCard icon={ClipboardList} label="Total Contact Records" value={stats.totalRecords} />
-          <StatCard icon={CheckCircle2} label="Contact Records Completed" value={stats.completedRecords} />
-          <StatCard icon={Clock} label="Remaining Contact Records" value={stats.remainingRecords} />
-          <StatCard icon={Percent} label="Completion" value={`${stats.completionPct}%`} />
-          <StatCard icon={FilePlus} label="New Contact Records Submitted" value={stats.newRecordsSubmitted} />
-        </div>
-      </div>
-
-      <div>
-        <h2 className="mb-4 font-semibold text-[#0B1B33]">Visit Results</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          <StatCard icon={ClipboardList} label={VISIT_RESULT_LABELS.initial_visit} value={stats.resultCounts.initial_visit} />
-          <StatCard icon={Repeat} label={VISIT_RESULT_LABELS.return_visit} value={stats.resultCounts.return_visit} />
-          <StatCard icon={BookOpen} label={VISIT_RESULT_LABELS.bible_study} value={stats.resultCounts.bible_study} />
-          <StatCard icon={DoorClosed} label={VISIT_RESULT_LABELS.not_home} value={stats.resultCounts.not_home} />
-          <StatCard icon={PhoneOff} label={VISIT_RESULT_LABELS.do_not_call} value={stats.resultCounts.do_not_call} />
-          <StatCard icon={Truck} label={VISIT_RESULT_LABELS.moved} value={stats.resultCounts.moved} />
-        </div>
-      </div>
-
-      <div>
-        <h2 className="mb-4 font-semibold text-[#0B1B33]">Ministry Partner Progress</h2>
-        <PartnershipList partnerships={stats.partnerships} />
-      </div>
+      <Card className="flex flex-col items-center gap-3 p-6 text-center">
+        <h2 className="font-semibold text-[#0B1B33]">Assignment QR Code</h2>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={qrDataUrl} alt="Assignment QR code" className="h-40 w-40" />
+        <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
+          {publicUrl}
+        </a>
+        <p className="text-xs text-slate-400">Valid for today only — a new one is needed tomorrow.</p>
+      </Card>
 
       <div>
         <h2 className="mb-4 font-semibold text-[#0B1B33]">Regenerate Assignment</h2>
         <AssignmentForm territories={activeTerritories} hasExistingBatch={true} />
       </div>
+
+      <GroupLeaderTabs stats={stats} />
     </div>
   )
 }
