@@ -53,7 +53,7 @@ export default async function GroupLeaderDashboardPage() {
         subtitle={today}
         action={
           <ConfirmDeleteButton
-            action={() => deleteGroupLeaderAssignmentAction(batch.id)}
+            action={deleteGroupLeaderAssignmentAction.bind(null, batch.id)}
             confirmMessage="Delete today's assignment? Publishers who scanned the QR code will lose access."
             label="Delete Assignment"
           />

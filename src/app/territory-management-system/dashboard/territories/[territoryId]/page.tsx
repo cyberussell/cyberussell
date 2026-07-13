@@ -32,7 +32,7 @@ export default async function TerritoryDetailPage({ params }: { params: Promise<
             <CsvImportDialog territoryId={territory.id} />
             <CsvExportButton href={`/territory-management-system/dashboard/records/export?territoryId=${territory.id}`} />
             <ConfirmDeleteButton
-              action={() => deleteTerritoryAction(territory.id)}
+              action={deleteTerritoryAction.bind(null, territory.id)}
               confirmMessage={`Delete ${territory.name}? This deletes all its sections, blocks, and contact records.`}
               label="Delete Territory"
             />
