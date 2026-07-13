@@ -1,5 +1,20 @@
 # Current Work
 
+**Territory Management System — Publisher Workflow v2 (2026-07-13) — code done, deployed, blocked on migration 005 + Russell's live click-through:**
+
+Current Product: Territory Management System (TMS) — see checkpoint `territory-management-publisher-workflow-v2.md` for full detail.
+
+Current Feature: Redesign of the publisher (Ministry Partner) workflow — claiming now happens only when a name is saved (not on link-open), each device is locked to one partnership and sees any other partnership read-only, an end-of-session Sync → "Thank you for your service today!" flow, an "End My Ministry Early" button that marks unfinished records as a real `undone` visit result, and a new "Other" visit result that requires a note.
+
+Current Status: Code complete, `tsc`/`next build` clean, deployed to production (`0cd831d`).
+- New migration `005_publisher_workflow_v2.sql` widens `territory_record_visits.result`'s CHECK constraint for `'other'`/`'undone'` and adds `partnerships.ended_early_at` — **Russell needs to run this in the TMS Supabase SQL Editor** before "Other" or early termination will work (they'll fail with a DB constraint violation until then).
+- Device-local claiming via a new `localStorage` helper (`modules/offline/claim.ts`), not a DB/account concept — matches the product's existing no-login publisher design.
+- **Not verified live this pass**: this session's Vercel CLI access could list encrypted env vars but not decrypt them (`vercel env pull` returned empty values for every encrypted var, confirmed on both TMS and LMS, so it's an environment-level restriction, not TMS-specific) — no way to seed test data or click through the real Supabase project from here. Russell chose to test live himself once migration 005 is run, following the checklist in the checkpoint, rather than have a throwaway-congregation SQL seed script handed over.
+
+**Next recommended task:** Russell runs migration 005, generates a fresh assignment batch, and clicks through the full flow (claim, read-only view of a second partnership from the same device, "Other" requiring notes, all-records-done → Sync → Thank You, early termination marking Undone) — see the checkpoint's verification checklist. After that, the next logical step is a full live pass through the rest of the Administrator dashboard, which remains entirely unverified against real data.
+
+----------------------------------------
+
 **Territory Management System — Group Leader Login Crash Fix (2026-07-13) — fixed, deployed, live-verified:**
 
 Current Product: Territory Management System (TMS) — see checkpoint `territory-management-group-leader-login-fix-v1.md` for full detail.
