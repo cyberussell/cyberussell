@@ -1,5 +1,20 @@
 # Current Work
 
+**Territory Management System — Group Leader Invite System + GL Dashboard Nav Rework (2026-07-13) — code done, deployed, blocked on migration 006 + Russell's live click-through:**
+
+Current Product: Territory Management System (TMS) — see checkpoint `territory-management-group-leader-invites-v1.md` for full detail.
+
+Current Feature: Admins can now invite Group Leaders (first/last name + email → Supabase invite email → they set their own password), revoke/restore their access anytime, and permanently delete a history entry once it's 6+ months old (server-enforced). Added a shared password-reset flow (forgot-password + set-password, the latter reused for invite-acceptance too, both landing via the same PASSWORD_RECOVERY event). Also removed the Admin's read-only Assignments pages entirely (assignment oversight is exclusively the Group Leader's job now, per Russell) and reworked the Group Leader dashboard's own navigation per his follow-up request: a persistent Home/Dashboard/Visit Results/Ministry Partner tab bar under the congregation header, Delete Assignment as an icon in the QR card, centered Regenerate Assignment, Log Out moved to the page bottom.
+
+Current Status: Code complete, `tsc`/`next build` clean, deployed to production.
+- New migration `006_group_leader_management.sql` adds `profiles.email` and `profiles.revoked_at` — **Russell needs to run this in the TMS Supabase SQL Editor** before the Group Leaders page will work at all.
+- `profiles` RLS only ever had an "own profile" policy — no policy for an admin to list other congregation members' profiles. Rather than add one, the new Group Leaders list/mutations use the service-role client with congregation scoping enforced explicitly in every query (same pattern the public publisher routes already use).
+- **Not verified live this pass**: same environment limitation as the prior TMS passes this session — this session can't decrypt Supabase credentials to click through real data. Full verification checklist is in the checkpoint (run migration, send a real invite, confirm the email/set-password/login round-trip, confirm revoke actually blocks login, confirm delete's 6-month gate).
+
+**Next recommended task:** Russell runs migration 006 and works through the checkpoint's verification checklist. After that: a full live pass through the rest of the Administrator dashboard (Territories, Contact Records, CSV import/export, Reports, Settings) is still entirely unverified against real data — this has been the standing next-step since the very first live TMS pass this session.
+
+----------------------------------------
+
 **Territory Management System — Publisher Workflow v2 (2026-07-13) — code done, deployed, blocked on migration 005 + Russell's live click-through:**
 
 Current Product: Territory Management System (TMS) — see checkpoint `territory-management-publisher-workflow-v2.md` for full detail.
