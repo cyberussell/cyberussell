@@ -53,7 +53,7 @@ export default async function DashboardPage() {
                 className="flex items-center justify-between px-4 py-3 text-sm hover:bg-[#F8FBFF]/60"
               >
                 <span className="font-medium text-[#0B1B33]">{b.assignment_date}</span>
-                <span className="text-slate-400">{b.requested_partnership_count} partnership(s)</span>
+                <span className="text-slate-400">{b.requested_partnership_count} Ministry Partner(s)</span>
               </Link>
             ))}
           </Card>

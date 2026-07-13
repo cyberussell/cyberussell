@@ -2,6 +2,7 @@ import type { PartnershipRecordDetail } from '@/lib/territory-management-system/
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import VisitHistoryList from '@/components/territory-management-system/VisitHistoryList'
+import VisitResultBadge from '@/components/territory-management-system/VisitResultBadge'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherVisitLogForm from './PublisherVisitLogForm'
 
@@ -27,10 +28,13 @@ export default function PublisherRecordDetailView({
       </button>
 
       <Card className="p-6">
-        <h1 className="font-semibold text-[#0B1B33]">
-          {assigned.record.address}
-          {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
-        </h1>
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <h1 className="font-semibold text-[#0B1B33]">
+            {assigned.record.address}
+            {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
+          </h1>
+          {assigned.visits[0] && <VisitResultBadge result={assigned.visits[0].result} />}
+        </div>
         <p className="mt-1 text-sm text-slate-500">
           Sec {assigned.record.section?.label ?? '—'} / Blk {assigned.record.block?.label ?? '—'}
         </p>

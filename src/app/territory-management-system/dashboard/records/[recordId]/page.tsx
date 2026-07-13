@@ -7,6 +7,7 @@ import RecordApprovalActions from '@/components/territory-management-system/Reco
 import RecordEditForm from '@/components/territory-management-system/RecordEditForm'
 import VisitLogForm from '@/components/territory-management-system/VisitLogForm'
 import VisitHistoryList from '@/components/territory-management-system/VisitHistoryList'
+import VisitResultBadge from '@/components/territory-management-system/VisitResultBadge'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,6 +17,7 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ r
   const record = await getRecordById(supabase, congregation.id, recordId)
   if (!record) notFound()
   const visits = await listVisits(supabase, recordId)
+  const latestVisit = visits[0] ?? null
 
   return (
     <div className="space-y-8">
@@ -24,6 +26,7 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ r
         subtitle={`${record.territory?.name ?? '—'} / Section ${record.section?.label ?? '—'} / Block ${record.block?.label ?? '—'}`}
         action={
           <div className="flex items-center gap-3">
+            {latestVisit && <VisitResultBadge result={latestVisit.result} />}
             <ApprovalBadge status={record.status} />
             {record.status === 'pending' && <RecordApprovalActions recordId={record.id} />}
           </div>

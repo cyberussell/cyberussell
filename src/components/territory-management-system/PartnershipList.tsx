@@ -5,7 +5,7 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 // public Progress page ("Today's Assignment Progress"), which need the identical view.
 export default function PartnershipList({ partnerships }: { partnerships: PartnershipWithProgress[] }) {
   if (partnerships.length === 0) {
-    return <Card className="p-8 text-center text-sm text-slate-400">No partnerships yet.</Card>
+    return <Card className="p-8 text-center text-sm text-slate-400">No Ministry Partners yet.</Card>
   }
 
   return (

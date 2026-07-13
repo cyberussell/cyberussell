@@ -92,7 +92,7 @@ export default async function GroupLeaderDashboardPage() {
       </div>
 
       <div>
-        <h2 className="mb-4 font-semibold text-[#0B1B33]">Partnership Progress</h2>
+        <h2 className="mb-4 font-semibold text-[#0B1B33]">Ministry Partner Progress</h2>
         <PartnershipList partnerships={stats.partnerships} />
       </div>
 

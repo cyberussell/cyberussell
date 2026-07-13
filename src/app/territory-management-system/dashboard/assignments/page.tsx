@@ -28,7 +28,7 @@ export default async function AssignmentsPage() {
             ),
             sortValue: (b) => b.assignment_date,
           },
-          { header: 'Partnerships Requested', cell: (b) => b.requested_partnership_count, sortValue: (b) => b.requested_partnership_count },
+          { header: 'Ministry Partners Requested', cell: (b) => b.requested_partnership_count, sortValue: (b) => b.requested_partnership_count },
           {
             header: 'Created',
             cell: (b) => new Date(b.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),

@@ -29,7 +29,7 @@ export default async function PartnershipWorkspacePage({
     <div className="bg-[#F3F8FF] px-4 pt-4">
       <div className="mx-auto max-w-lg">
         <Link href={`/territory-management-system/assignment/${batchToken}`} className="text-sm text-[#2563EB] hover:underline">
-          ← All Partnerships
+          ← All Ministry Partners
         </Link>
       </div>
       <PublisherWorkspaceApp partnershipToken={partnershipToken} initialWorkspace={partnership} territoryStructures={validStructures} />

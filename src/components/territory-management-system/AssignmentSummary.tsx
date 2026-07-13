@@ -23,7 +23,7 @@ export default function AssignmentSummary({ batch, qrDataUrl }: { batch: BatchSu
               <dd className="text-[#0B1B33]">{batch.territories.map((t) => t.name).join(', ') || '—'}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Partnerships</dt>
+              <dt className="text-slate-500">Ministry Partners</dt>
               <dd className="text-[#0B1B33]">{batch.partnerships.length}</dd>
             </div>
           </dl>
@@ -38,7 +38,7 @@ export default function AssignmentSummary({ batch, qrDataUrl }: { batch: BatchSu
         </Card>
       </div>
       <div>
-        <h2 className="mb-4 font-semibold text-[#0B1B33]">Partnerships</h2>
+        <h2 className="mb-4 font-semibold text-[#0B1B33]">Ministry Partners</h2>
         <PartnershipList partnerships={batch.partnerships} />
       </div>
     </div>

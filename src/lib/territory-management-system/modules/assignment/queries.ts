@@ -119,7 +119,7 @@ export async function createAssignment(
         congregation_id: congregationId,
         batch_id: batchId,
         sequence: partnershipPlan.sequence,
-        name: `Partnership ${partnershipPlan.sequence}`,
+        name: `Ministry Partner ${partnershipPlan.sequence}`,
       })
       .select('id')
       .single()

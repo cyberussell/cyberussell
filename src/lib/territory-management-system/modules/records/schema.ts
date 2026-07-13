@@ -13,6 +13,18 @@ export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string>
   moved: 'Moved',
 }
 
+// Shared by VisitHistoryList and VisitResultBadge — one place for the color per result, so the
+// two can never drift out of sync with each other (or with VISIT_RESULTS itself) the way the
+// old inline copy once did.
+export const VISIT_RESULT_STYLES: Record<(typeof VISIT_RESULTS)[number], string> = {
+  initial_visit: 'bg-blue-50 text-[#2563EB]',
+  return_visit: 'bg-sky-50 text-sky-600',
+  bible_study: 'bg-violet-50 text-violet-600',
+  not_home: 'bg-slate-100 text-slate-600',
+  do_not_call: 'bg-red-50 text-red-600',
+  moved: 'bg-amber-50 text-amber-600',
+}
+
 export const createRecordSchema = z.object({
   territoryId: z.string().uuid(),
   sectionId: z.string().uuid(),
