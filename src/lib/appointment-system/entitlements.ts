@@ -8,25 +8,17 @@ import type { Business, PlanTier } from './types'
 // user-configurable, swap the PLANS constant for a DB read without touching
 // call sites.
 
-export type FeatureFlag =
-  | 'public_booking_page'
-  | 'customer_records'
-  | 'email_notifications'
-  | 'data_export'
-  | 'messenger_booking_bot'
-  | 'automated_reminders'
-  | 'no_show_tracking'
-  | 'revenue_reports'
+// Only flags that are actually built and enforced belong here. Add a flag at
+// the point a gated feature ships (see the "Soon" items in PLAN_BULLETS
+// below for what's planned but not real yet) — don't pre-declare flags for
+// features that don't exist, that's how customer_records/no_show_tracking
+// etc. ended up declared but never checked anywhere in a previous pass.
+export type FeatureFlag = 'messenger_booking_bot' | 'email_notifications' | 'basic_reporting'
 
 export const FEATURE_LABELS: Record<FeatureFlag, string> = {
-  public_booking_page: 'Public booking page',
-  customer_records: 'Client records',
-  email_notifications: 'Email notifications',
-  data_export: 'Data export',
   messenger_booking_bot: 'Messenger booking bot',
-  automated_reminders: 'Automated reminders',
-  no_show_tracking: 'No-show tracking',
-  revenue_reports: 'Revenue reports',
+  email_notifications: 'Email notifications',
+  basic_reporting: 'Reporting',
 }
 
 export interface PlanConfig {
@@ -49,7 +41,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     tagline: 'Start accepting bookings.',
     monthlyAppointments: 100,
     providerLimit: 1,
-    features: ['public_booking_page', 'customer_records', 'no_show_tracking'],
+    features: [],
   },
   basic: {
     tier: 'basic',
@@ -58,7 +50,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     tagline: 'Simple online booking.',
     monthlyAppointments: null,
     providerLimit: 5,
-    features: ['public_booking_page', 'customer_records', 'no_show_tracking', 'email_notifications'],
+    features: ['email_notifications', 'basic_reporting'],
   },
   pro: {
     tier: 'pro',
@@ -67,16 +59,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     tagline: 'Booking automation for growing businesses.',
     monthlyAppointments: null,
     providerLimit: null,
-    features: [
-      'public_booking_page',
-      'customer_records',
-      'no_show_tracking',
-      'email_notifications',
-      'data_export',
-      'messenger_booking_bot',
-      'automated_reminders',
-      'revenue_reports',
-    ],
+    features: ['email_notifications', 'basic_reporting', 'messenger_booking_bot'],
   },
 }
 
@@ -85,34 +68,42 @@ export const PLAN_ORDER: PlanTier[] = ['free', 'basic', 'pro']
 // Marketing/UI bullet copy per plan — shown on both the public landing page
 // and the logged-in Billing tab. Single-sourced here so the two can never
 // show different feature lists for the same plan.
+//
+// "(soon)" marks anything not actually shippable yet — remove the tag the
+// moment the feature ships, not before.
 export const PLAN_BULLETS: Record<PlanTier, string[]> = {
   free: [
-    '1 provider',
+    '1 staff login',
     'Public booking page',
     'Appointment calendar',
-    'Customer records',
+    'Customer records & notes',
+    'No-show tracking',
     'Services and pricing',
-    'Business hours, breaks & blocked dates',
+    'Business hours',
+    'Breaks & blocked dates',
     'Cancellation and rescheduling',
     'Manual and walk-in appointments',
     'Up to 100 appointments / month',
   ],
   basic: [
     'Everything in Free',
-    'Up to 5 staff / providers',
+    'Up to 5 staff logins',
     'Unlimited appointments',
-    'Email notifications (soon)',
-    'Expanded appointment statistics',
-    'Customer management tools',
+    'Email notifications',
+    'Calendar sync (soon)',
+    'Basic reporting',
+    'Waitlist (soon)',
   ],
   pro: [
     'Everything in Basic',
-    'Unlimited staff / providers',
+    'Unlimited staff logins',
     'Messenger booking bot',
-    'Automated reminders (soon)',
-    'Customer notes & no-show tracking',
-    'Basic revenue reports',
-    'Data export (soon)',
+    'SMS + email reminders (soon)',
+    'Deposits (soon)',
+    'White label (soon)',
+    'Advanced reporting & data export (soon)',
+    'Recurring appointments (soon)',
+    'Memberships & packages (soon)',
   ],
 }
 
@@ -158,14 +149,18 @@ export async function getMonthlyAppointmentUsage(
   return count ?? 0
 }
 
+// `used` is always the real count, even when limit is null — callers that
+// only care about "can I add one more" can ignore it, but anything showing
+// usage (the dashboard meter, the setup checklist) needs the true number,
+// not a placeholder 0 that only happened to be harmless at the call sites
+// this originally shipped with.
 export async function canCreateAppointment(
   db: SupabaseClient,
   business: Business
 ): Promise<{ allowed: boolean; used: number; limit: number | null }> {
   const limit = planOf(business).monthlyAppointments
-  if (limit === null) return { allowed: true, used: 0, limit: null }
   const used = await getMonthlyAppointmentUsage(db, business.id)
-  return { allowed: used < limit, used, limit }
+  return { allowed: limit === null || used < limit, used, limit }
 }
 
 export async function canAddProvider(
@@ -173,12 +168,11 @@ export async function canAddProvider(
   business: Business
 ): Promise<{ allowed: boolean; used: number; limit: number | null }> {
   const limit = planOf(business).providerLimit
-  if (limit === null) return { allowed: true, used: 0, limit: null }
   const { count } = await db
     .from('staff')
     .select('id', { count: 'exact', head: true })
     .eq('business_id', business.id)
     .eq('active', true)
   const used = count ?? 0
-  return { allowed: used < limit, used, limit }
+  return { allowed: limit === null || used < limit, used, limit }
 }

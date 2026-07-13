@@ -5,6 +5,7 @@ import { getAvailableSlots, bookAppointment, formatSlotLabel, hasSameDayBooking,
 import { sendText, sendButtons, sendQuickReplies } from './messenger'
 import { logEvent } from './events'
 import { hasFeature, canCreateAppointment } from './entitlements'
+import { sendNewBookingEmail } from './email'
 
 // Flow: menu → choosing_service → choosing_slot → (known client? book)
 //       → collecting_name → collecting_phone → book → confirmation.
@@ -394,6 +395,14 @@ async function finalizeBooking(
   await logEvent(db, business.id, 'booking_created', {
     psid,
     appointment_id: result.appointmentId,
+    source: 'messenger',
+  })
+  await sendNewBookingEmail(db, business, {
+    clientName: state.clientName ?? '',
+    clientPhone: state.clientPhone ?? '',
+    serviceName: service?.name ?? 'Service',
+    staffName: staff?.name ?? 'Staff',
+    timeLabel: label,
     source: 'messenger',
   })
   // Same info hierarchy as the dashboard/manage views: date & time first, then

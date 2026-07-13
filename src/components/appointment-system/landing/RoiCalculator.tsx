@@ -6,7 +6,6 @@ import { track } from './track'
 const PLAN_COSTS = [
   { label: 'Basic — ₱299/mo', value: 299 },
   { label: 'Pro — ₱699/mo', value: 699 },
-  { label: 'AI Receptionist — ₱1,499/mo', value: 1499 },
 ]
 
 const peso = (n: number) => `₱${Math.round(n).toLocaleString('en-PH')}`

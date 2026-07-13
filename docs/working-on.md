@@ -1,5 +1,25 @@
 # Current Work
 
+**Appointment System — Pricing Compliance Audit + Milestones 1-7 (2026-07-13) — see checkpoint `appointment-system-pricing-enforcement-v1.md` for full detail:**
+
+Current Product: Appointment System.
+
+Current Feature: Russell asked for a full audit of whether the published pricing plans (Free/Basic/Pro) are actually enforced throughout the app, run in strict phases (1: Architecture Audit, 2: Feature Verification, 3: Product Validation, 4: UX Review, 5: consolidated 9-milestone implementation plan), then asked for Milestones 1-7 to be implemented.
+
+Current Status: Milestones 1-7 of 9 done, live-verified against the real Supabase project. Milestones 8 (Testing) and 9 (Launch Readiness re-score) remain.
+- **Phase 1 found a Critical security gap**: the `businesses` RLS policy was row-level only, so any owner could `PATCH` their own `plan_tier`/`plan_status` directly via the REST API and grant themselves a paid plan for free. Fixed in Milestone 1 via column-level grants (`011_protect_billing_columns.sql`).
+- **Phase 2 found `hasFeature()` was only ever checked for the Messenger bot** — every other declared plan feature was decorative, and "Breaks & Blocked Dates" / "Reports" were advertised but didn't exist.
+- **Milestones 2-5 built real, tested, RLS-verified features**: Staff Login Accounts (full invite → accept → role-aware sign-in → parallel staff dashboard at `/appointments/staff/dashboard/*`), Breaks & Blocked Dates (actually wired into slot generation, not just a form), Email Notifications (owner gets emailed on new self-service bookings — scoped this way since customers never provide an email anywhere in this product), Basic Reporting (real revenue chart + service breakdown, genuine Free-tier preview mode instead of a blank/denied page). **Deliberately stopped mid-Milestone-5 per Russell's instruction** — Waitlist, Calendar Sync, Deposits, SMS+Email Reminders, Advanced Reporting & Data Export, White Label, Recurring Appointments, Packages, and Memberships are NOT built.
+- **Milestone 6 (UX)** added persistent usage meters, a Messenger sample-chat preview replacing the old disabled-form pattern, a quiet 60-79% usage tier, header renewal date/upgrade link, onboarding plan summary, a post-downgrade notice (wired into the real PayMongo webhook), and an over-limit-staff warning.
+- **Milestone 7 (Marketing Sync)** fixed the landing page's stale hardcoded Pro feature list (now reads `PLAN_BULLETS.pro` directly) and **two** separate stale "billing is manual only" claims (Settings page + the public landing page itself — the second one was found only while verifying the fix for the first).
+- **Real bugs found and fixed live, not just via code review**: an RLS infinite-recursion bug in Milestone 2 (same root-cause class as an earlier LMS incident — helper functions not marked `security definer`); a CSS bug where the new Reports revenue chart rendered completely empty (bar wrapper divs had no explicit height, so percentage heights resolved against 0); a bug where `canCreateAppointment`/`canAddProvider` silently returned `used: 0` for unlimited plans, which broke the onboarding checklist specifically for Pro-tier accounts.
+- **Every feature was live-verified** with throwaway Supabase accounts (created and fully deleted after each pass), not just `tsc`/code review — including actually completing a staff invite, logging in as that staff member, and using the real staff dashboard end-to-end.
+- **Mid-session incident, resolved cleanly**: a concurrent session (working on the LMS side of this repo) ran an interactive rebase and stashed all of this session's uncommitted work to get a clean tree. Work paused immediately rather than touching shared git state; once the other session's rebase finished, the stash returned intact and was verified byte-for-byte before resuming.
+
+**Next recommended task:** Milestone 8 — run the Phase 5 plan's full QA checklist (Free/Basic/Pro/Upgrade/Downgrade/Booking/Messenger/Reports/Limits/Billing/Mobile/Desktop) as one structured pass, then Milestone 9 to re-score launch readiness. Full context lives in the checkpoint — a new session does not need the original 5-phase conversation to continue.
+
+----------------------------------------
+
 **LMS Production Readiness — Phase 8g: Performance (2026-07-13) — fully done, this closes out the entire phase 8 roadmap:**
 
 Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-performance-v1.md` for full detail.

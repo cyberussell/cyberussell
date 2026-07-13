@@ -4,6 +4,7 @@ import { CircleCheck } from 'lucide-react'
 import { requireBusiness } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import ChangePasswordForm from '@/components/appointment-system/ChangePasswordForm'
+import MessengerPreview from '@/components/appointment-system/MessengerPreview'
 import { PLANS, PLAN_ORDER, hasFeature, tierWithFeature } from '@/lib/appointment-system/entitlements'
 import { hasConfiguredHours } from '@/lib/appointment-system/slots'
 import { DAY_KEYS, DAY_LABELS, type BusinessHours } from '@/lib/appointment-system/types'
@@ -208,20 +209,24 @@ export default async function SettingsPage() {
           <div className="rounded-lg bg-slate-800/60 p-4 text-sm text-slate-300 space-y-2">
             <p className="font-medium text-slate-200">How to pay</p>
             <p>
-              We currently accept <strong>GCash</strong> and <strong>bank transfer</strong>. Message
-              us through the{' '}
+              Pay online with card or GCash from the{' '}
+              <Link href="/appointments/dashboard/billing" className="text-emerald-400 underline">
+                Billing tab
+              </Link>{' '}
+              — your plan updates automatically. Prefer to arrange it manually instead? Message us
+              through the{' '}
               <Link href="/contact" className="text-emerald-400 underline">
                 contact page
               </Link>{' '}
-              with your business name and we&apos;ll send payment details. Your account is activated
-              within 24 hours of payment.
+              with your business name and we&apos;ll send payment details; manual payments are
+              confirmed within 24 hours.
             </p>
             <p className="text-slate-400">
               Plans: {PLAN_ORDER.map((p) => `${PLANS[p].name} ${PLANS[p].priceMonthly === 0 ? '₱0' : `₱${PLANS[p].priceMonthly.toLocaleString('en-PH')}`}`).join(' · ')} per month —{' '}
               <Link href="/appointments#pricing" className="text-emerald-400 underline">
                 compare plans
               </Link>
-              . Automatic online payment is coming soon.
+              .
             </p>
           </div>
         </div>
@@ -250,36 +255,21 @@ export default async function SettingsPage() {
             .
           </p>
         </div>
-        {!hasMessengerBot && (
-          <div className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-200">
-            Messenger booking automation is available on the {tierWithFeature('messenger_booking_bot').name} plan
-            (₱{tierWithFeature('messenger_booking_bot').priceMonthly.toLocaleString('en-PH')}/mo).{' '}
-            <Link href="/appointments#pricing" className="font-semibold underline underline-offset-4">
-              Compare plans
-            </Link>
-            .
-          </div>
-        )}
-        <form
-          action={saveFbConnection}
-          className={`space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-5 ${!hasMessengerBot ? 'opacity-50' : ''}`}
-        >
-          <Field
-            label="Facebook Page ID"
-            name="fb_page_id"
-            defaultValue={business.fb_page_id ?? ''}
-            required
-            disabled={!hasMessengerBot}
+        {hasMessengerBot ? (
+          <form action={saveFbConnection} className="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-5">
+            <Field label="Facebook Page ID" name="fb_page_id" defaultValue={business.fb_page_id ?? ''} required />
+            <Field label="Page Access Token" name="fb_page_token" type="password" required />
+            <p className="text-xs text-slate-500 break-all">Webhook URL for the Meta app: {webhookUrl}</p>
+            <button className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400">
+              Save connection
+            </button>
+          </form>
+        ) : (
+          <MessengerPreview
+            tierName={tierWithFeature('messenger_booking_bot').name}
+            priceMonthly={tierWithFeature('messenger_booking_bot').priceMonthly}
           />
-          <Field label="Page Access Token" name="fb_page_token" type="password" required disabled={!hasMessengerBot} />
-          <p className="text-xs text-slate-500 break-all">Webhook URL for the Meta app: {webhookUrl}</p>
-          <button
-            disabled={!hasMessengerBot}
-            className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:hover:bg-emerald-500"
-          >
-            Save connection
-          </button>
-        </form>
+        )}
       </section>
 
       {/* Password */}

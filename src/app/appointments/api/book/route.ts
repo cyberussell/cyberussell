@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import QRCode from 'qrcode'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
-import { bookAppointment, getAvailableSlots, hasSameDayBooking, hasConfiguredHours } from '@/lib/appointment-system/slots'
+import { bookAppointment, getAvailableSlots, hasSameDayBooking, hasConfiguredHours, formatSlotLabel } from '@/lib/appointment-system/slots'
 import { logEvent } from '@/lib/appointment-system/events'
 import { canCreateAppointment } from '@/lib/appointment-system/entitlements'
+import { sendNewBookingEmail } from '@/lib/appointment-system/email'
 import type { Business } from '@/lib/appointment-system/types'
 
 export const dynamic = 'force-dynamic'
@@ -111,6 +112,19 @@ export async function POST(request: NextRequest) {
 
   await logEvent(db, business.id, 'booking_created', {
     appointment_id: result.appointmentId,
+    source: 'web',
+  })
+
+  const [{ data: svcRow }, { data: staffRow }] = await Promise.all([
+    db.from('services').select('name').eq('id', input.serviceId).single(),
+    db.from('staff').select('name').eq('id', input.staffId).single(),
+  ])
+  await sendNewBookingEmail(db, business as Business, {
+    clientName: input.fullName,
+    clientPhone: input.phone,
+    serviceName: svcRow?.name ?? 'Service',
+    staffName: staffRow?.name ?? 'Staff',
+    timeLabel: formatSlotLabel(input.startsAt, (business as Business).timezone),
     source: 'web',
   })
 

@@ -26,6 +26,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <span className="text-slate-400 text-sm hidden sm:inline">· {business.name}</span>
           </div>
           <div className="flex items-center gap-3">
+            {business.plan_status === 'active' && business.plan_renews_at && (
+              <span className="hidden text-xs text-slate-500 sm:inline">
+                Renews{' '}
+                {new Date(business.plan_renews_at).toLocaleDateString('en-PH', {
+                  timeZone: business.timezone,
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </span>
+            )}
             <span
               className={`rounded-full px-3 py-1 text-xs font-medium ${
                 business.plan_status === 'active'
@@ -41,12 +51,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
                   ? `${PLANS[business.plan_tier]?.name ?? business.plan_tier} plan`
                   : 'Suspended'}
             </span>
+            {business.plan_tier !== 'pro' && (
+              <Link
+                href="/appointments/dashboard/billing"
+                className="hidden text-xs font-medium text-emerald-400 hover:text-emerald-300 hover:underline sm:inline"
+              >
+                Upgrade
+              </Link>
+            )}
             <form action={signOut}>
               <button className="text-sm text-slate-400 hover:text-white transition">Log out</button>
             </form>
           </div>
         </div>
-        <NavTabs clientsLabel={t.Clients} />
+        <NavTabs clientsLabel={t.Clients} entitledFeatures={PLANS[business.plan_tier].features} />
       </header>
       {settings.closed && (
         <div className="bg-amber-500/10 border-b border-amber-500/30 text-amber-300 text-sm py-2 px-4">

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
 import { verifyPaymongoSignature } from '@/lib/appointment-system/paymongo'
 import { logEvent } from '@/lib/appointment-system/events'
+import { PLAN_ORDER } from '@/lib/appointment-system/entitlements'
+import type { PlanTier } from '@/lib/appointment-system/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,9 +45,35 @@ export async function POST(request: NextRequest) {
     if (businessId && tier) {
       const db = createAdminSupabase()
       const renewsAt = new Date(Date.now() + 30 * 86400_000)
+
+      const { data: current } = await db
+        .from('businesses')
+        .select('plan_tier, settings')
+        .eq('id', businessId)
+        .maybeSingle()
+
+      // A downgrade still goes through this same "pay now" webhook (the lower
+      // tier's price, not zero) — detect it here by comparing against the
+      // tier being replaced, and leave a one-time notice for the owner to see
+      // on next dashboard load.
+      const isDowngrade =
+        current &&
+        PLAN_ORDER.includes(current.plan_tier as PlanTier) &&
+        PLAN_ORDER.indexOf(tier as PlanTier) < PLAN_ORDER.indexOf(current.plan_tier as PlanTier)
+
+      const settings = (current?.settings as Record<string, unknown>) ?? {}
+      const nextSettings = isDowngrade
+        ? { ...settings, downgrade_notice: { from: current!.plan_tier, to: tier, at: new Date().toISOString() } }
+        : settings
+
       await db
         .from('businesses')
-        .update({ plan_tier: tier, plan_status: 'active', plan_renews_at: renewsAt.toISOString() })
+        .update({
+          plan_tier: tier,
+          plan_status: 'active',
+          plan_renews_at: renewsAt.toISOString(),
+          settings: nextSettings,
+        })
         .eq('id', businessId)
         .eq('paymongo_checkout_session_id', session.id)
       await logEvent(db, businessId, 'billing_payment_paid', { tier, checkout_session_id: session.id })

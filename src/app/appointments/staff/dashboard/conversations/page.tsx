@@ -1,28 +1,15 @@
 import { TriangleAlert } from 'lucide-react'
-import { requireBusiness } from '@/lib/appointment-system/auth'
+import { requireStaffAccess } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
-import { hasFeature, tierWithFeature } from '@/lib/appointment-system/entitlements'
-import MessengerPreview from '@/components/appointment-system/MessengerPreview'
-import { resumeBot } from '../../actions'
+import { hasFeature } from '@/lib/appointment-system/entitlements'
+import { resumeBot } from '../../../actions'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ConversationsPage() {
-  const { supabase, business } = await requireBusiness()
+export default async function StaffConversationsPage() {
+  const { supabase, business } = await requireStaffAccess()
   const t = getTerms(business.business_types)
   const hasBot = hasFeature(business, 'messenger_booking_bot')
-
-  if (!hasBot) {
-    return (
-      <div className="space-y-8">
-        <h1 className="text-2xl font-bold">Messenger conversations</h1>
-        <MessengerPreview
-          tierName={tierWithFeature('messenger_booking_bot').name}
-          priceMonthly={tierWithFeature('messenger_booking_bot').priceMonthly}
-        />
-      </div>
-    )
-  }
 
   const { data: conversations } = await supabase
     .from('conversations')
@@ -38,16 +25,22 @@ export default async function ConversationsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold">Messenger conversations</h1>
-        <p className="text-slate-400 text-sm mt-1">
-          {handoffs.length > 0 ? (
-            <span className="inline-flex items-center gap-1.5">
-              <TriangleAlert className="h-3.5 w-3.5 text-amber-300" aria-hidden />
-              {handoffs.length} conversation{handoffs.length === 1 ? '' : 's'} waiting for a human reply — answer them in your Facebook Page inbox.
-            </span>
-          ) : (
-            'The bot is handling everything. Handed-off chats will appear here.'
-          )}
-        </p>
+        {!hasBot ? (
+          <p className="text-slate-400 text-sm mt-1">
+            Messenger automation isn&apos;t active on this business&apos;s plan yet.
+          </p>
+        ) : (
+          <p className="text-slate-400 text-sm mt-1">
+            {handoffs.length > 0 ? (
+              <span className="inline-flex items-center gap-1.5">
+                <TriangleAlert className="h-3.5 w-3.5 text-amber-300" aria-hidden />
+                {handoffs.length} conversation{handoffs.length === 1 ? '' : 's'} waiting for a human reply.
+              </span>
+            ) : (
+              'The bot is handling everything. Handed-off chats will appear here.'
+            )}
+          </p>
+        )}
       </div>
 
       <ul className="space-y-2">
@@ -69,7 +62,6 @@ export default async function ConversationsPage() {
               </p>
               <p className="text-xs text-slate-400 mt-1">
                 Last activity: {new Date(c.last_message_at).toLocaleString('en-PH', { timeZone: business.timezone })}
-                {' · '}step: {(c.state as { step?: string })?.step ?? 'idle'}
               </p>
             </div>
             {c.mode === 'human' && (
@@ -82,11 +74,7 @@ export default async function ConversationsPage() {
             )}
           </li>
         ))}
-        {list.length === 0 && (
-          <li className="text-slate-500 text-sm">
-            No conversations yet — connect your Facebook Page in Settings to go live.
-          </li>
-        )}
+        {list.length === 0 && <li className="text-slate-500 text-sm">No conversations yet.</li>}
       </ul>
     </div>
   )

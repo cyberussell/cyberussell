@@ -5,20 +5,30 @@ type Cell = boolean | string
 
 // Single source of truth for the feature comparison — shown on both the
 // public landing page and the logged-in Billing tab, so they can never drift.
+// "Soon" marks anything not actually shippable yet — see PLAN_BULLETS in
+// entitlements.ts for the same rule applied to the pricing cards.
 const COMPARISON: { feature: string; cells: [Cell, Cell, Cell] }[] = [
+  { feature: 'Staff logins', cells: ['1', '5', 'Unlimited'] },
   { feature: 'Monthly appointments', cells: ['100', 'Unlimited', 'Unlimited'] },
-  { feature: 'Staff / providers', cells: ['1', '5', 'Unlimited'] },
   { feature: 'Public booking page', cells: [true, true, true] },
   { feature: 'Appointment calendar & dashboard', cells: [true, true, true] },
-  { feature: 'Customer records & history', cells: [true, true, true] },
+  { feature: 'Customer records & notes', cells: [true, true, true] },
+  { feature: 'No-show tracking', cells: [true, true, true] },
+  { feature: 'Business hours', cells: [true, true, true] },
+  { feature: 'Breaks & blocked dates', cells: [true, true, true] },
   { feature: 'Manual & walk-in bookings', cells: [true, true, true] },
   { feature: 'Cancellation & rescheduling', cells: [true, true, true] },
-  { feature: 'No-show tracking', cells: [true, true, true] },
-  { feature: 'Email notifications', cells: [false, 'Soon', 'Soon'] },
-  { feature: 'Data export', cells: [false, false, 'Soon'] },
+  { feature: 'Email notifications', cells: [false, true, true] },
+  { feature: 'Calendar sync', cells: [false, 'Soon', 'Soon'] },
+  { feature: 'Reporting', cells: [false, true, true] },
+  { feature: 'Waitlist', cells: [false, 'Soon', 'Soon'] },
   { feature: 'Messenger booking bot', cells: [false, false, true] },
-  { feature: 'Automated reminders', cells: [false, false, 'Soon'] },
-  { feature: 'Basic revenue reports', cells: [false, false, true] },
+  { feature: 'SMS + email reminders', cells: [false, false, 'Soon'] },
+  { feature: 'Deposits', cells: [false, false, 'Soon'] },
+  { feature: 'White label', cells: [false, false, 'Soon'] },
+  { feature: 'Data export', cells: [false, false, 'Soon'] },
+  { feature: 'Recurring appointments', cells: [false, false, 'Soon'] },
+  { feature: 'Memberships & packages', cells: [false, false, 'Soon'] },
 ]
 
 function Check() {

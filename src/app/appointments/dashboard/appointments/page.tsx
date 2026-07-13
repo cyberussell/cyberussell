@@ -9,6 +9,8 @@ import ManualAppointmentForm from '@/components/appointment-system/ManualAppoint
 import RecordPaymentForm from '@/components/appointment-system/RecordPaymentForm'
 import RescheduleForm from '@/components/appointment-system/RescheduleForm'
 import AppointmentsMonthGrid, { type MonthDay } from '@/components/appointment-system/AppointmentsMonthGrid'
+import UsageBanner from '@/components/appointment-system/UsageBanner'
+import { canCreateAppointment } from '@/lib/appointment-system/entitlements'
 import { updateAppointmentStatus } from '../../actions'
 
 export const dynamic = 'force-dynamic'
@@ -116,10 +118,12 @@ export default async function AppointmentsPage({
     </div>
   )
 
-  const [svcRes, staffRes] = await Promise.all([
+  const [svcRes, staffRes, quota] = await Promise.all([
     supabase.from('services').select('*').eq('business_id', business.id).eq('active', true).order('created_at'),
     supabase.from('staff').select('*').eq('business_id', business.id).eq('active', true).order('created_at'),
+    canCreateAppointment(supabase, business),
   ])
+  const usageBanner = <UsageBanner tier={business.plan_tier} used={quota.used} limit={quota.limit} />
   const manualBookingForm = (
     <ManualAppointmentForm
       clientLabel={t.Client}
@@ -183,6 +187,7 @@ export default async function AppointmentsPage({
           <h1 className="text-2xl font-bold">Appointments</h1>
           {viewToggle}
         </div>
+        {usageBanner}
         <AppointmentsMonthGrid monthLabel={monthLabel} monthOffset={monthOffset} days={monthDays} />
         {manualBookingForm}
       </div>
@@ -296,6 +301,8 @@ export default async function AppointmentsPage({
           </Link>
         </div>
       </div>
+
+      {usageBanner}
 
       {/* Week calendar */}
       <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:overflow-visible sm:px-0">

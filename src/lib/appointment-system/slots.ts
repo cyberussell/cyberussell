@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Availability, Business, BusinessHours, Service, Slot, Staff } from './types'
+import type { Availability, AvailabilityBreak, BlockedDate, Business, BusinessHours, Service, Slot, Staff } from './types'
 
 /** True once the business has set at least one day of operating hours — gates whether it accepts any bookings at all. */
 export function hasConfiguredHours(business: Pick<Business, 'settings'>): boolean {
@@ -93,7 +93,12 @@ interface SlotQuery {
   limit?: number
 }
 
-// Generate open slots: staff weekly availability minus booked appointments.
+function dateKey(y: number, m: number, d: number): string {
+  return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+}
+
+// Generate open slots: staff weekly availability minus breaks, blocked dates,
+// and booked appointments.
 export async function getAvailableSlots(
   db: SupabaseClient,
   { businessId, timezone, serviceId, days = 7, limit = 30 }: SlotQuery
@@ -101,10 +106,17 @@ export async function getAvailableSlots(
   const now = new Date()
   const windowEnd = new Date(now.getTime() + days * 86400_000)
 
-  const [svcRes, staffRes, availRes, apptRes] = await Promise.all([
+  const [svcRes, staffRes, availRes, breaksRes, blockedRes, apptRes] = await Promise.all([
     db.from('services').select('*').eq('id', serviceId).single(),
     db.from('staff').select('*').eq('business_id', businessId).eq('active', true),
     db.from('availability').select('*').eq('business_id', businessId),
+    db.from('availability_breaks').select('*').eq('business_id', businessId),
+    db
+      .from('blocked_dates')
+      .select('*')
+      .eq('business_id', businessId)
+      .gte('date', dateKey(now.getFullYear(), now.getMonth() + 1, now.getDate()))
+      .lte('date', dateKey(windowEnd.getFullYear(), windowEnd.getMonth() + 1, windowEnd.getDate())),
     db
       .from('appointments')
       .select('staff_id, starts_at, ends_at')
@@ -118,6 +130,8 @@ export async function getAvailableSlots(
   if (!service) return []
   const staff = (staffRes.data ?? []) as Staff[]
   const availability = (availRes.data ?? []) as Availability[]
+  const breaks = (breaksRes.data ?? []) as AvailabilityBreak[]
+  const blockedDates = (blockedRes.data ?? []) as BlockedDate[]
   const booked = (apptRes.data ?? []) as { staff_id: string; starts_at: string; ends_at: string }[]
 
   const staffById = new Map(staff.map((s) => [s.id, s]))
@@ -128,20 +142,37 @@ export async function getAvailableSlots(
   for (let dayOffset = 0; dayOffset <= days; dayOffset++) {
     const day = new Date(now.getTime() + dayOffset * 86400_000)
     const { y, m, d, weekday } = dateInTz(day, timezone)
+    const key = dateKey(y, m, d)
+    const businessClosedToday = blockedDates.some((b) => b.staff_id === null && b.date === key)
+    if (businessClosedToday) continue
 
     for (const window of availability) {
       if (window.day_of_week !== weekday) continue
       const member = staffById.get(window.staff_id)
       if (!member) continue
+      if (blockedDates.some((b) => b.staff_id === member.id && b.date === key)) continue
 
       const [sh, sm] = window.start_time.split(':').map(Number)
       const [eh, em] = window.end_time.split(':').map(Number)
       const windowStart = zonedToUtc(y, m, d, sh, sm, timezone).getTime()
       const windowClose = zonedToUtc(y, m, d, eh, em, timezone).getTime()
 
+      const dayBreaks = breaks
+        .filter((b) => b.staff_id === member.id && b.day_of_week === weekday)
+        .map((b) => {
+          const [bsh, bsm] = b.start_time.split(':').map(Number)
+          const [beh, bem] = b.end_time.split(':').map(Number)
+          return {
+            start: zonedToUtc(y, m, d, bsh, bsm, timezone).getTime(),
+            end: zonedToUtc(y, m, d, beh, bem, timezone).getTime(),
+          }
+        })
+
       for (let t = windowStart; t + durationMs <= windowClose; t += durationMs) {
         if (t < earliest) continue
         const tEnd = t + durationMs
+        const onBreak = dayBreaks.some((b) => t < b.end && tEnd > b.start)
+        if (onBreak) continue
         const clash = booked.some(
           (b) =>
             b.staff_id === member.id &&

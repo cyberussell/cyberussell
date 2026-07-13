@@ -14,8 +14,11 @@ function nextTier(current: PlanTier): PlanConfig | null {
   return null
 }
 
-// Contextual, non-blocking usage nudge. Renders nothing until 80% of the
-// monthly appointment quota is used; switches to an upgrade CTA at the limit.
+// Contextual, non-blocking usage nudge. Silent below 60%. 60–79% is a quiet,
+// informational note (no alarm color, no upgrade push) — just surfacing the
+// number earlier than the 80%+ warning tier, per the "ambient awareness
+// before the warning" rule. 80%+ and 100% keep their existing amber/red
+// treatment.
 export default function UsageBanner({
   tier,
   used,
@@ -27,9 +30,22 @@ export default function UsageBanner({
 }) {
   if (limit === null) return null
   const atLimit = used >= limit
-  if (!atLimit && used < limit * 0.8) return null
+  const nearLimit = !atLimit && used >= limit * 0.8
+  const approaching = !atLimit && !nearLimit && used >= limit * 0.6
+  if (!atLimit && !nearLimit && !approaching) return null
 
   const upgrade = nextTier(tier)
+
+  if (approaching) {
+    return (
+      <div role="status" className="rounded-xl border border-slate-700 bg-slate-900 p-4 text-sm text-slate-300">
+        <p>
+          You&apos;ve used <strong>{used} of your {limit}</strong> appointments this month on the {PLANS[tier].name}{' '}
+          plan.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div

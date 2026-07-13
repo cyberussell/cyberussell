@@ -1,7 +1,8 @@
 import { requireBusiness } from '@/lib/appointment-system/auth'
-import { PLANS, PLAN_ORDER } from '@/lib/appointment-system/entitlements'
+import { PLANS, PLAN_ORDER, canCreateAppointment, canAddProvider } from '@/lib/appointment-system/entitlements'
 import BillingPlanCard from '@/components/appointment-system/BillingPlanCard'
 import PlanComparisonTable from '@/components/appointment-system/PlanComparisonTable'
+import UsageMeter from '@/components/appointment-system/UsageMeter'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,9 +11,10 @@ export default async function BillingPage({
 }: {
   searchParams: Promise<{ paid?: string; cancelled?: string }>
 }) {
-  const { business } = await requireBusiness()
+  const { supabase, business } = await requireBusiness()
   const { paid, cancelled } = await searchParams
   const currentPlan = PLANS[business.plan_tier]
+  const [quota, seats] = await Promise.all([canCreateAppointment(supabase, business), canAddProvider(supabase, business)])
 
   return (
     <div className="space-y-8">
@@ -44,6 +46,14 @@ export default async function BillingPage({
             </>
           )}
         </p>
+      </div>
+
+      <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+        <p className="text-sm font-semibold text-slate-300">Current usage</p>
+        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+          <UsageMeter label="Appointments this month" used={quota.used} limit={quota.limit} />
+          <UsageMeter label="Staff logins" used={seats.used} limit={seats.limit} />
+        </div>
       </div>
 
       {paid && (

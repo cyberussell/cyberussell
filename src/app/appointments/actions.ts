@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { createServerSupabase, createAdminSupabase } from '@/lib/appointment-system/supabase-server'
-import { requireBusiness } from '@/lib/appointment-system/auth'
+import { requireBusiness, requireBusinessAccess } from '@/lib/appointment-system/auth'
 import { logEvent } from '@/lib/appointment-system/events'
 import { bookAppointment, wallTimeToUtc } from '@/lib/appointment-system/slots'
 import { canCreateAppointment, canAddProvider, hasFeature, PLANS } from '@/lib/appointment-system/entitlements'
@@ -107,9 +107,21 @@ export async function signIn(_prev: ActionResult, formData: FormData): Promise<A
     .eq('owner_id', data.user.id)
     .maybeSingle()
 
-  if (business && !business.first_login_at) {
-    await admin.from('businesses').update({ first_login_at: new Date().toISOString() }).eq('id', business.id)
+  if (business) {
+    if (!business.first_login_at) {
+      await admin.from('businesses').update({ first_login_at: new Date().toISOString() }).eq('id', business.id)
+    }
+    redirect('/appointments/dashboard')
   }
+
+  // Not an owner — check for an active staff login before falling back.
+  const { data: staff } = await admin
+    .from('staff')
+    .select('id')
+    .eq('profile_id', data.user.id)
+    .eq('active', true)
+    .maybeSingle()
+  if (staff) redirect('/appointments/staff/dashboard')
 
   redirect('/appointments/dashboard')
 }
@@ -176,18 +188,67 @@ export async function deleteService(formData: FormData): Promise<void> {
 
 // ── Staff ────────────────────────────────────────────────────────────────────
 
-export async function createStaff(formData: FormData): Promise<void> {
+export async function createStaff(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const { supabase, business } = await requireBusiness()
   const name = String(formData.get('name') ?? '').trim()
-  if (!name) return
+  if (!name) return { error: 'Enter a name.' }
+
   const seats = await canAddProvider(supabase, business)
-  if (!seats.allowed) return
-  await supabase.from('staff').insert({
+  if (!seats.allowed) {
+    return {
+      error: `You've reached your limit of ${seats.limit} staff login${seats.limit === 1 ? '' : 's'} on the ${PLANS[business.plan_tier].name} plan. Upgrade to add more.`,
+    }
+  }
+
+  const { error } = await supabase.from('staff').insert({
     business_id: business.id,
     name,
     title: String(formData.get('title') ?? '').trim(),
   })
+  if (error) return { error: error.message }
   revalidatePath('/appointments/dashboard/staff')
+  return {}
+}
+
+// Lets a staff member log in for themselves — separate from creating the
+// staff row (name/title), since the email isn't always known up front.
+export async function inviteStaffLogin(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const { supabase, business } = await requireBusiness()
+  const staffId = String(formData.get('staff_id') ?? '')
+  const email = String(formData.get('email') ?? '').trim().toLowerCase()
+  if (!staffId || !email) return { error: 'Enter an email address.' }
+
+  const { data: staffRow } = await supabase
+    .from('staff')
+    .select('id, profile_id')
+    .eq('id', staffId)
+    .eq('business_id', business.id)
+    .maybeSingle()
+  if (!staffRow) return { error: 'Staff member not found.' }
+  if (staffRow.profile_id) return { error: 'This staff member already has a login.' }
+
+  const admin = createAdminSupabase()
+  const { data: invited, error } = await admin.auth.admin.inviteUserByEmail(email, {
+    redirectTo: 'https://www.cyberussell.com/appointments/staff/accept-invite',
+    data: { business_name: business.name },
+  })
+  if (error || !invited.user) {
+    return {
+      error: error?.message.toLowerCase().includes('already')
+        ? 'That email already has an account — ask them to use a different address.'
+        : 'Could not send the invite — please try again.',
+    }
+  }
+
+  const { error: updateError } = await admin
+    .from('staff')
+    .update({ profile_id: invited.user.id, invite_email: email, invited_at: new Date().toISOString() })
+    .eq('id', staffId)
+  if (updateError) return { error: updateError.message }
+
+  await logEvent(admin, business.id, 'staff_invited', { staff_id: staffId, email })
+  revalidatePath('/appointments/dashboard/staff')
+  return {}
 }
 
 export async function toggleStaff(formData: FormData): Promise<void> {
@@ -233,10 +294,64 @@ export async function deleteAvailability(formData: FormData): Promise<void> {
   revalidatePath('/appointments/dashboard/availability')
 }
 
+// ── Breaks & blocked dates ───────────────────────────────────────────────────
+
+export async function addAvailabilityBreak(formData: FormData): Promise<void> {
+  const { supabase, business } = await requireBusiness()
+  const staffId = String(formData.get('staff_id'))
+  const day = Number(formData.get('day_of_week'))
+  const start = String(formData.get('start_time'))
+  const end = String(formData.get('end_time'))
+  if (!staffId || !(day >= 0 && day <= 6) || !start || !end || start >= end) return
+  await supabase.from('availability_breaks').insert({
+    business_id: business.id,
+    staff_id: staffId,
+    day_of_week: day,
+    start_time: start,
+    end_time: end,
+  })
+  revalidatePath('/appointments/dashboard/availability')
+}
+
+export async function deleteAvailabilityBreak(formData: FormData): Promise<void> {
+  const { supabase, business } = await requireBusiness()
+  await supabase
+    .from('availability_breaks')
+    .delete()
+    .eq('id', String(formData.get('id')))
+    .eq('business_id', business.id)
+  revalidatePath('/appointments/dashboard/availability')
+}
+
+export async function addBlockedDate(formData: FormData): Promise<void> {
+  const { supabase, business } = await requireBusiness()
+  const staffId = String(formData.get('staff_id') ?? '').trim()
+  const date = String(formData.get('date') ?? '')
+  const reason = String(formData.get('reason') ?? '').trim().slice(0, 200)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return
+  await supabase.from('blocked_dates').insert({
+    business_id: business.id,
+    staff_id: staffId || null,
+    date,
+    reason,
+  })
+  revalidatePath('/appointments/dashboard/availability')
+}
+
+export async function deleteBlockedDate(formData: FormData): Promise<void> {
+  const { supabase, business } = await requireBusiness()
+  await supabase
+    .from('blocked_dates')
+    .delete()
+    .eq('id', String(formData.get('id')))
+    .eq('business_id', business.id)
+  revalidatePath('/appointments/dashboard/availability')
+}
+
 // ── Appointments ─────────────────────────────────────────────────────────────
 
 export async function updateAppointmentStatus(formData: FormData): Promise<void> {
-  const { supabase, business } = await requireBusiness()
+  const { supabase, business } = await requireBusinessAccess()
   const id = String(formData.get('id'))
   const status = String(formData.get('status'))
   if (!['confirmed', 'completed', 'cancelled', 'no_show'].includes(status)) return
@@ -251,7 +366,7 @@ export async function createManualAppointment(
   _prev: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
-  const { supabase, business } = await requireBusiness()
+  const { supabase, business } = await requireBusinessAccess()
   const fullName = String(formData.get('fullName') ?? '').trim()
   const phone = String(formData.get('phone') ?? '').trim()
   const serviceId = String(formData.get('service_id') ?? '')
@@ -303,7 +418,7 @@ export async function rescheduleAppointment(
   _prev: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
-  const { supabase, business } = await requireBusiness()
+  const { supabase, business } = await requireBusinessAccess()
   const id = String(formData.get('id') ?? '')
   const when = String(formData.get('starts_at') ?? '')
 
@@ -341,7 +456,7 @@ export async function rescheduleAppointment(
 }
 
 export async function recordPayment(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
-  const { supabase, business } = await requireBusiness()
+  const { supabase, business } = await requireBusinessAccess()
   const id = String(formData.get('id') ?? '')
   const amount = Number(formData.get('amount'))
   const dateStr = String(formData.get('paid_date') ?? '')
@@ -373,7 +488,7 @@ export async function recordPayment(_prev: ActionResult, formData: FormData): Pr
 // ── Conversations ────────────────────────────────────────────────────────────
 
 export async function resumeBot(formData: FormData): Promise<void> {
-  const { supabase, business } = await requireBusiness()
+  const { supabase, business } = await requireBusinessAccess()
   await supabase
     .from('conversations')
     .update({ mode: 'bot' })
@@ -456,6 +571,14 @@ export async function dismissSetupChecklist(): Promise<void> {
   revalidatePath('/appointments/dashboard')
 }
 
+export async function dismissDowngradeNotice(): Promise<void> {
+  const { supabase, business } = await requireBusiness()
+  const settings = { ...business.settings } as Record<string, unknown>
+  delete settings.downgrade_notice
+  await supabase.from('businesses').update({ settings }).eq('id', business.id)
+  revalidatePath('/appointments/dashboard')
+}
+
 // Business-wide operating hours — gates whether the business accepts any
 // online bookings at all. Does not constrain per-staff Availability.
 export async function updateBusinessHours(formData: FormData): Promise<void> {
@@ -487,7 +610,7 @@ export async function changePassword(_prev: ActionResult, formData: FormData): P
 }
 
 export async function updateClientNotes(formData: FormData): Promise<void> {
-  const { supabase, business } = await requireBusiness()
+  const { supabase, business } = await requireBusinessAccess()
   const id = String(formData.get('id'))
   await supabase
     .from('clients')

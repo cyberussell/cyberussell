@@ -6,14 +6,13 @@ import './landing.css'
 import { PLANS, PLAN_ORDER, PLAN_BULLETS } from '@/lib/appointment-system/entitlements'
 import LandingNav from '@/components/appointment-system/landing/LandingNav'
 import TrackedLink from '@/components/appointment-system/landing/TrackedLink'
-import AiDemo from '@/components/appointment-system/landing/AiDemo'
 import RoiCalculator from '@/components/appointment-system/landing/RoiCalculator'
 import PlanComparisonTable from '@/components/appointment-system/PlanComparisonTable'
 
 export const metadata: Metadata = {
   title: 'Affordable Online Appointment Booking System for Small Businesses | Cyberussell',
   description:
-    'Simple online appointment booking software for solo clinics, salons, spas, barbershops, and small businesses. Start free and upgrade when you need automation or an AI receptionist.',
+    'Simple online appointment booking software for solo clinics, salons, spas, barbershops, and small businesses. Start free and upgrade only when you need more staff or automation.',
   alternates: { canonical: 'https://www.cyberussell.com/appointments' },
   openGraph: {
     title: 'Appointment System — stop managing appointments through endless chats',
@@ -22,12 +21,14 @@ export const metadata: Metadata = {
     url: 'https://www.cyberussell.com/appointments',
     siteName: 'Cyberussell',
     type: 'website',
+    images: [{ url: '/og-image.jpg?v=2', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Appointment System by Cyberussell',
     description:
       'Simple, affordable appointment booking for Filipino small businesses. Start free.',
+    images: ['/og-image.jpg?v=2'],
   },
 }
 
@@ -46,10 +47,7 @@ const FAQS: { q: string; a: string }[] = [
   { q: 'Can I add appointments manually?', a: 'Yes. You can add phone bookings, Messenger bookings, and walk-ins from the dashboard on any plan.' },
   { q: 'Can customers cancel or reschedule?', a: 'Yes, according to your booking rules. You can also reschedule or cancel any appointment from the dashboard.' },
   { q: 'Can I use this for a solo clinic?', a: 'Yes. The system is specifically designed for solo providers and small appointment-based businesses.' },
-  { q: 'Can I upgrade later?', a: 'Yes. Start free and upgrade only when you need more bookings, staff accounts, automation, or AI.' },
-  { q: 'Do I need to know how to use AI?', a: 'No. AI features work as part of the appointment system — there is nothing to configure or train.' },
-  { q: 'Does the AI replace my staff?', a: 'No. The AI handles repetitive inquiries and booking tasks, and hands the conversation to your staff whenever human attention is needed.' },
-  { q: 'Does the AI understand Taglish?', a: 'Yes. The AI Receptionist plan is designed to handle natural English and Taglish conversations.' },
+  { q: 'Can I upgrade later?', a: 'Yes. Start free and upgrade only when you need more bookings, staff accounts, or automation.' },
   { q: 'Can I cancel anytime?', a: 'Yes. There are no long-term contracts — cancel anytime.' },
 ]
 
@@ -76,7 +74,7 @@ const jsonLd = {
       operatingSystem: 'Web',
       url: 'https://www.cyberussell.com/appointments',
       description:
-        'Online appointment booking system for small Filipino businesses: booking page, appointment calendar, customer records, Messenger automation, and an AI receptionist.',
+        'Online appointment booking system for small Filipino businesses: booking page, appointment calendar, customer records, and Messenger booking automation.',
       offers: PLAN_ORDER.map((tier) => ({
         '@type': 'Offer',
         name: `${PLANS[tier].name} plan`,
@@ -337,43 +335,10 @@ export default function AppointmentSystemLanding() {
                 ))}
               </div>
               <ul className="mx-auto mt-8 grid max-w-3xl gap-x-8 gap-y-2 text-sm text-slate-300 sm:grid-cols-2">
-                {['Messenger booking bot', 'Automated reminders (soon)', 'Customer notes', 'No-show tracking', 'Basic revenue reports', 'Data export (soon)', 'Up to 5 staff / providers', 'Unlimited appointments'].map((f) => (
+                {PLAN_BULLETS.pro.map((f) => (
                   <li key={f} className="flex items-start gap-2"><Check /> {f}</li>
                 ))}
               </ul>
-            </div>
-          </section>
-
-          {/* ── AI Receptionist ── */}
-          <section className="mx-auto max-w-6xl px-4 py-20">
-            <SectionHeading
-              eyebrow="AI Receptionist"
-              title="Meet the receptionist that never stops answering."
-              sub="Let customers ask questions naturally in English or Taglish. Your AI receptionist answers common questions, checks availability, and helps customers book appointments."
-            />
-            <div className="grid items-start gap-10 lg:grid-cols-2">
-              <AiDemo />
-              <div>
-                <ul className="grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
-                  {[
-                    'Answers common business questions',
-                    'Understands English and Taglish',
-                    'Checks actual availability',
-                    'Books appointments',
-                    'Reschedules and cancels',
-                    'Collects customer information',
-                    'Creates intake notes',
-                    'Summarizes conversations',
-                  ].map((c) => (
-                    <li key={c} className="flex items-start gap-2"><Check /> {c}</li>
-                  ))}
-                </ul>
-                <div className="mt-6 rounded-xl border border-amber-300/25 bg-amber-300/[0.07] p-4 text-sm text-amber-100/90">
-                  <strong className="text-amber-200">Built with clear boundaries.</strong> The AI isn&apos;t
-                  perfect and doesn&apos;t pretend to be — whenever a customer needs a person, the
-                  conversation is handed to your staff, and you can take over any chat at any time.
-                </div>
-              </div>
             </div>
           </section>
 
@@ -447,7 +412,8 @@ export default function AppointmentSystemLanding() {
             <div className="mt-10">
               <PlanComparisonTable toggleClassName="as-glass mx-auto flex w-fit cursor-pointer items-center gap-2 rounded-xl px-5 py-2.5 text-sm text-slate-200 hover:bg-white/10 [&::-webkit-details-marker]:hidden" />
               <p className="mt-3 text-center text-xs text-slate-500">
-                Billing is currently handled manually (GCash / bank transfer) — see Settings after signup.
+                Pay online with card or GCash right after signup — instant activation. Prefer to pay manually? That
+                works too.
               </p>
             </div>
           </section>

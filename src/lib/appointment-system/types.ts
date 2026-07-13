@@ -37,6 +37,9 @@ export interface Staff {
   title: string
   active: boolean
   created_at: string
+  profile_id: string | null
+  invite_email: string | null
+  invited_at: string | null
 }
 
 export interface Service {
@@ -57,6 +60,24 @@ export interface Availability {
   day_of_week: number
   start_time: string
   end_time: string
+}
+
+export interface AvailabilityBreak {
+  id: string
+  business_id: string
+  staff_id: string
+  day_of_week: number
+  start_time: string
+  end_time: string
+}
+
+export interface BlockedDate {
+  id: string
+  business_id: string
+  staff_id: string | null // null = whole business closed
+  date: string // "YYYY-MM-DD"
+  reason: string
+  created_at: string
 }
 
 export interface Client {

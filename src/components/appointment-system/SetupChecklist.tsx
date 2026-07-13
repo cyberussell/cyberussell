@@ -13,11 +13,14 @@ export default function SetupChecklist({
   steps,
   hidden,
   pendingPlanName,
+  planSummary,
 }: {
   steps: ChecklistStep[]
   hidden: boolean
   /** Name of the plan the business picked at signup but hasn't paid for yet — null/undefined if none. */
   pendingPlanName?: string | null
+  /** e.g. "You're on the Free plan — 1 staff login, up to 100 appointments/month." Stated once up front so the ceiling isn't a surprise later. */
+  planSummary?: string
 }) {
   const doneCount = steps.filter((s) => s.done).length
   if (hidden || doneCount === steps.length) return null
@@ -35,6 +38,7 @@ export default function SetupChecklist({
           <button className="text-xs text-slate-500 transition hover:text-slate-300">Hide this</button>
         </form>
       </div>
+      {planSummary && <p className="mt-3 text-sm text-slate-400">{planSummary}</p>}
       {pendingPlanName && (
         <p className="mt-3 text-sm text-slate-400">
           You picked the <span className="font-medium text-emerald-300">{pendingPlanName}</span> plan at
