@@ -1,22 +1,20 @@
 # Current Work
 
-**LMS Production Readiness — Phase 8e: Files & Documents (2026-07-13) — code done, tsc + build clean, functional verification blocked on a migration:**
+**LMS Production Readiness — Phase 8e: Files & Documents (2026-07-13) — fully done, deployed, and verified live:**
 
 Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-files-documents-v1.md` for full detail.
 
 Current Feature: Business logo upload (Supabase Storage, first pass — logo only, per the phase 8a decision) and a real downloadable receipt PDF via `@react-pdf/renderer` — the "files & documents" item from the roadmap.
 
-Current Status: Code complete.
-- **New migration `013_business_logo.sql`** — adds `businesses.logo_url`, creates a public `business-logos` Storage bucket, and owner-only write RLS on `storage.objects` scoped to each business's own folder. **Russell needs to run this in the LMS Supabase project's SQL Editor before logo upload will work at all** — same pattern as every prior LMS migration.
-- **`uploadBusinessLogo`** validates PNG/JPEG/WebP ≤2MB, clears any existing file in the business's Storage folder first (so a format change doesn't leave an orphaned old file), updates `logo_url` with a cache-busted public URL. New `BusinessLogoForm` (file input + instant client-side preview, wired through the existing `useServerAction` hook for a free toast) added to Settings.
-- **Logo shown on the receipt page** (HTML + PDF), the only display surface touched this pass per the "logo only, first pass" scope.
-- **New `ReceiptDocument`** (`@react-pdf/renderer`) mirrors the existing HTML receipt exactly (logo, business info, order details, total, QR) on an A6 page. New route handler streams it back as a real downloadable PDF, gated by the same `print_receipts` permission check as the HTML receipt — no divergence in access control between the two views. "Download PDF" link added next to the existing "Print" button.
+Current Status: Done.
+- **Migration `013_business_logo.sql`** run by Russell in the Supabase SQL Editor — adds `businesses.logo_url`, a public `business-logos` Storage bucket, and owner-only write RLS on `storage.objects` scoped to each business's own folder.
+- **`uploadBusinessLogo`** validates PNG/JPEG/WebP ≤2MB, clears any existing file in the business's Storage folder first, updates `logo_url` with a cache-busted public URL. `BusinessLogoForm` (file input + instant client-side preview) added to Settings.
+- **Real bug caught mid-verification, not a code issue**: the first live-verification attempt found the logo section missing entirely — turned out phase 8e had only been *committed* (`807d5f1`), never pushed, so production was still serving the pre-8e build. Pushed, confirmed Vercel redeployed (`● Ready`), re-verified successfully afterward.
+- **New `ReceiptDocument`** (`@react-pdf/renderer`) mirrors the HTML receipt exactly on an A6 page; a route handler streams it back as a real PDF, gated by the same `print_receipts` check as the HTML view.
 - Fixed a real `tsc` error along the way: `NextResponse` doesn't accept a raw Node `Buffer` as body in this TS config — wrapped in `new Uint8Array(buffer)`.
-- `npx tsc --noEmit` clean, `npx next build` succeeds with zero errors (confirmed the new PDF route builds correctly and is marked dynamic, and `@react-pdf/renderer` bundles without issue).
+- **Fully live-verified against production** with a throwaway owner account (created and fully deleted afterward — business, branch, orders, and the uploaded Storage file, all cross-checked via REST, nothing left behind): uploaded a real 776KB PNG, confirmed the instant client-side preview, confirmed `logo_url` set correctly and the file publicly retrievable byte-for-byte; did a format-change re-upload (PNG → JPEG) and confirmed via the Storage API that the *old file was actually deleted*, not just superseded; downloaded the receipt PDF and confirmed a genuine `%PDF-1.3` file (correct content-type, filename, 59.7KB) rather than a broken response; confirmed an unauthenticated request to the same PDF URL gets redirected to `/login` instead of leaking the file. Zero console errors throughout.
 
-**Not verified this pass**: logo upload can't be tested at all until the migration runs (the Storage bucket doesn't exist yet), and further production-database writes for testing keep hitting the safety classifier's per-action confirmation requirement (same friction as the 8d follow-up). Recommend Russell runs the migration first, then a live pass: upload a logo, do a format-change upload (confirm the old file is actually gone from Storage), download the PDF (confirm it matches the HTML receipt and opens cleanly), and confirm a non-owner can't fetch another business's receipt PDF.
-
-**Next recommended task:** Russell runs `013_business_logo.sql`, then live-verify this phase or move to phase 8f (audit logs table + owner-only Activity History view).
+**Next recommended task:** Move to phase 8f (audit logs table + owner-only Activity History view).
 
 ----------------------------------------
 
