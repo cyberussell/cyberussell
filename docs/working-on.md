@@ -1,5 +1,22 @@
 # Current Work
 
+**LMS — Found and fixed a real production regression while closing out 8d/8f verification gaps (2026-07-13):**
+
+Current Product: Laundry Management System (LMS) — see checkpoint `laundry-management-system-8d-8f-verification-v1.md` for full detail.
+
+Current Feature: Russell asked "is this ready for production?" — the honest answer named two untested surfaces (phase 8d's remaining UX-polish items, phase 8f's never-opened Activity page). Verifying them surfaced a real, currently-live bug.
+
+Current Status: Bug found and fixed, not yet committed/pushed.
+- **Real regression, live in production since phase 8c shipped**: making `DataTable` a client component (to add sorting/pagination) broke 3 pre-existing callers phase 8c never audited — `PriorityQueueTable.tsx`, `CustomerDetailView.tsx`, and `dashboard/staff/page.tsx` — all plain Server Components passing function-valued `cell` props across the RSC boundary into the now-client `DataTable`. **5 real pages were crashing**: Priority Queue (owner+staff), Customer detail (owner+staff), Staff list. Found by exhaustively grepping every `DataTableColumn` importer and checking which lacked `'use client'`.
+- **Fixed**: added `'use client'` directly to the two pure-presentational components; extracted a new `StaffTable.tsx` client component for the Staff page (which does its own server-side data fetching, so couldn't just become client itself) — same pattern as phase 8c's `OrdersTable`.
+- **Second real bug, smaller**: Activity page's Actor column showed blank instead of a name — `?? 'Unknown'` doesn't catch empty strings, and LMS's signup flow never collects a personal name (only email/password), so `profiles.full_name` is genuinely `""` for every owner account, not just test ones. Fixed the fallback logic (`||` + role-aware default).
+- **Verified for real, not just code-reviewed**: Priority Queue confirmed broken pre-fix (reproduced the exact RSC error), confirmed fixed post-fix. `PriorityToggle`'s `useOptimistic` confirmed working (synchronous button-text flip). Staff invite submitted through the real UI (not REST) — toast fired, `staff_invited` audit entry correct. Activity page renders both real log entries correctly with working search. Staff account correctly redirected away from the owner-only Activity URL (consistent with existing, already-documented behavior, not a new gap). Inventory/driver deletion both done for real — audit entries correct, capturing the entity's name. Zero console errors, confirmed in a fresh tab to rule out stale-log false positives.
+- All test data (business, branch, orders, audit logs, staff, 2 auth users) fully deleted afterward, cross-checked via REST — only the two pre-existing unrelated businesses remain.
+
+**Next recommended task:** Commit and push this fix — it corrects a real, currently-live production bug, so this one shouldn't wait.
+
+----------------------------------------
+
 **Appointment System — Pricing Compliance Audit + Milestones 1-7 (2026-07-13) — see checkpoint `appointment-system-pricing-enforcement-v1.md` for full detail:**
 
 Current Product: Appointment System.

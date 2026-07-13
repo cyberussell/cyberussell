@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import type { Customer } from '@/lib/laundry-management-system/modules/customer/types'
 import type { Order } from '@/lib/laundry-management-system/modules/orders/types'

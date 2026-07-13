@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import type { OrderWithRelations } from '@/lib/laundry-management-system/modules/orders/types'
 import { formatCurrency } from '@/lib/laundry-management-system/format'

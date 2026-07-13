@@ -72,7 +72,7 @@ export default function ActivityTable({ logs }: { logs: AuditLogWithActor[] }) {
       header: 'Actor',
       cell: (l) => (
         <span>
-          {l.actor?.full_name ?? 'Unknown'}{' '}
+          {l.actor?.full_name || (l.actor_role === 'owner' ? 'Owner' : 'Staff member')}{' '}
           <span className="text-xs text-slate-400">({l.actor_role})</span>
         </span>
       ),
