@@ -45,8 +45,8 @@
 - **Not live-verified**: this session's Browser-pane and Bash tools could not reach any locally-running dev server (both `preview_start`'s own spawned server and the pre-existing one on port 3001 timed out / were unreachable from this session's sandbox) — same standing limitation as most TMS/LMS sessions in this project's history that note "no live credentials in this worktree." The actual owner-login → suspended-redirect round-trip has not been click-tested against the real LMS Supabase project.
 
 ## Remaining Work
-- **Migrations 015 and 016 need to be run** in the LMS Supabase SQL Editor (015 was covered in the prior checkpoint; 016 is new this pass).
-- **Live verification still outstanding**: log in as a real (or throwaway) owner, manually set `plan_status = 'suspended'` on their business row, confirm they're redirected to `/lms/subscription-required` and can't reach any dashboard page; then set `plan_status = 'active'` and confirm normal access returns. Also confirm a `trial_ends_at` in the past with `plan_status = 'trial'` triggers the same block.
+- **Migrations 015 and 016 confirmed run and correct (2026-07-14)**: Russell ran both and verified via `information_schema.column_privileges` that `authenticated` has `UPDATE` on exactly `address, currency, logo_url, name, phone, timezone` on `businesses` (no billing columns), and that `public.rate_limits` exists and is queryable.
+- **Live verification of the gate itself still outstanding**: log in as a real (or throwaway) owner, manually set `plan_status = 'suspended'` on their business row, confirm they're redirected to `/lms/subscription-required` and can't reach any dashboard page; then set `plan_status = 'active'` and confirm normal access returns. Also confirm a `trial_ends_at` in the past with `plan_status = 'trial'` triggers the same block.
 - **Deliberately deferred, not blocking**: server-side pagination for `listOrders()`/customer list (Medium, scalability debt — large architecture change across every dashboard list page, doesn't bite until a business has months of order history; rushing it under this pass's time pressure risked introducing new bugs for a problem that isn't urgent). Also the shared-layout CSP header (cross-product decision, not LMS-scoped, previously deferred pending Russell's go-ahead).
 
 ## Known Issues
@@ -54,4 +54,4 @@
 - Pagination on core dashboard lists is still unbounded/client-side (see Remaining Work).
 
 ## Next Recommended Task
-Russell runs migrations 015 + 016, then live-verifies the suspension/trial-expiry gate end-to-end per the checklist above. Once confirmed, this closes out the audit's Critical and High findings — the product would then be a **Go** for paying customers, with the deferred pagination rework as acknowledged post-launch technical debt.
+Russell live-verifies the suspension/trial-expiry gate end-to-end per the checklist above (both migrations are already confirmed live). Once confirmed, this closes out the audit's Critical and High findings — the product would then be a **Go** for paying customers, with the deferred pagination rework as acknowledged post-launch technical debt.
