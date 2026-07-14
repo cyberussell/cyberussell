@@ -22,7 +22,7 @@ export default function PortraitFrame() {
   return (
     <motion.div
       style={{ x, y }}
-      className="relative order-1 w-[320px] sm:w-[380px] md:w-[480px] lg:w-[560px] xl:order-2 xl:w-[490px]"
+      className="relative order-1 w-[360px] sm:w-[400px] md:w-[540px] lg:w-[620px] xl:order-2 xl:w-[580px]"
     >
       {/* Warm key light from behind */}
       <div
@@ -54,8 +54,9 @@ export default function PortraitFrame() {
           style={{
             filter:
               "drop-shadow(-10px 0 26px rgba(140,170,255,0.14)) drop-shadow(0 0 55px rgba(255,122,26,0.38)) drop-shadow(0 45px 55px rgba(0,0,0,0.55))",
-            maskImage: "linear-gradient(to bottom, black 80%, transparent 97%)",
-            WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 97%)",
+            maskImage: "linear-gradient(to bottom, transparent 0%, black 6%, black 80%, transparent 97%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, black 6%, black 80%, transparent 97%)",
           }}
           onError={() => setImgError(true)}
         />

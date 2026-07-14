@@ -5,25 +5,25 @@ import { ArrowUpRight } from "lucide-react";
 import cyberussell from "@/data/portfolio/cyberussell.json";
 import appointmentSystem from "@/data/portfolio/appointment-system.json";
 import hireworkers from "@/data/portfolio/hireworkers.json";
+import laundryManagementSystem from "@/data/portfolio/laundry-management-system.json";
 
-const PROJECTS = [cyberussell, appointmentSystem, hireworkers];
+const PROJECTS = [cyberussell, appointmentSystem, hireworkers, laundryManagementSystem];
 
-// Cover images specific to this page only — the shared portfolio JSON's
+// Logo images specific to this page only — the shared portfolio JSON's
 // `coverImage` (used by /portfolio and /portfolio/[slug]) is left untouched.
-// Mapped by card position: 1.png = Cyberussell, 2.png = Appointment System,
-// 3.png = HireWorkers.work — drop the file into public/build-with-us/ to
-// override a card's image; checked on the server so there's no client-side
-// flash of a broken image.
+// Each logo is a plain white-background square, shown as a centered badge
+// with a glow behind it rather than a full-bleed cover image.
 const COVER_OVERRIDES: Record<string, string> = {
-  cyberussell: "/build-with-us/1.png",
-  "appointment-system": "/build-with-us/2.png",
-  hireworkers: "/build-with-us/3.png",
+  cyberussell: "/build-with-us/cyberussell.com.png",
+  "appointment-system": "/build-with-us/Appointment Management System.png",
+  hireworkers: "/build-with-us/Hireworkers.work.png",
+  "laundry-management-system": "/build-with-us/Laundry Management System.png",
 };
 
 function resolveCoverImage(slug: string, fallback: string): string {
   const overridePath = COVER_OVERRIDES[slug];
   if (overridePath && fs.existsSync(path.join(process.cwd(), "public", overridePath))) {
-    return overridePath;
+    return encodeURI(overridePath);
   }
   return fallback;
 }
@@ -44,7 +44,7 @@ export default function FeaturedProjects() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {PROJECTS.map((project) => (
             <Link
               key={project.slug}
@@ -52,12 +52,16 @@ export default function FeaturedProjects() {
               className="group flex flex-col overflow-hidden rounded-2xl border border-[#FF7A1A]/20 bg-gradient-to-b from-white/[0.06] to-white/[0.015] backdrop-blur-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:border-[#FF7A1A]/50"
               style={{ boxShadow: "0 16px 32px rgba(0,0,0,0.35)" }}
             >
-              <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#111118]">
+              <div className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden bg-[#111118]">
+                <div
+                  className="pointer-events-none absolute h-36 w-36 rounded-full blur-3xl transition-opacity duration-300 group-hover:opacity-80"
+                  style={{ background: "radial-gradient(circle at center, rgba(255,122,26,0.4) 0%, transparent 70%)" }}
+                />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={resolveCoverImage(project.slug, project.coverImage)}
                   alt={project.title}
-                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  className="relative z-10 h-24 w-24 rounded-2xl object-cover shadow-[0_8px_24px_rgba(0,0,0,0.4)] transition-transform duration-500 ease-out group-hover:scale-105 md:h-28 md:w-28"
                 />
               </div>
 

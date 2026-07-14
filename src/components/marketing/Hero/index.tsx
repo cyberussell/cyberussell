@@ -48,7 +48,7 @@ export default function Hero() {
       </div>
 
       <div
-        className="relative z-10 mx-auto mt-12 flex w-full max-w-[420px] flex-col items-center md:mt-0 md:max-w-[640px] md:flex-1 lg:max-w-[760px] xl:max-w-[1240px] xl:grid xl:grid-cols-[auto_auto_auto] xl:items-center xl:justify-center xl:gap-x-6"
+        className="relative z-10 mx-auto mt-12 flex w-full max-w-[420px] flex-col items-center md:mt-0 md:max-w-[640px] md:flex-1 lg:max-w-[760px] xl:max-w-[1240px] xl:grid xl:grid-cols-[auto_auto_auto] xl:items-center xl:justify-center xl:gap-x-3"
         style={{ perspective: "2000px" }}
       >
         <PortraitFrame />
