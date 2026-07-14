@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useTransition } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { signIn, resendConfirmation, type ActionResult } from '../actions'
 import { AuthHeader, AuthFooter } from '@/components/appointment-system/AuthChrome'
 
@@ -25,7 +26,7 @@ export default function LoginPage() {
       <main className="flex flex-1 items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <Link href="/appointments" className="mb-8 flex flex-col items-center text-center">
-          <img src="/appointment-logo.png" alt="" className="mb-3 h-14 w-14 rounded-2xl object-cover" />
+          <Image src="/appointment-logo.png" alt="" width={56} height={56} className="mb-3 h-14 w-14 rounded-2xl object-cover" priority />
           <span className="text-2xl font-bold text-white">
             Appointment <span className="text-emerald-400">System</span>
           </span>

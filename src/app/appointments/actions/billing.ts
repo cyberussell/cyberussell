@@ -4,6 +4,7 @@ import { requireBusiness } from '@/lib/appointment-system/auth'
 import { PLANS, PLAN_CHECKOUT_SUMMARY } from '@/lib/appointment-system/entitlements'
 import { createBillingCheckout } from '@/lib/appointment-system/paymongo'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
+import { logError } from '@/lib/appointment-system/errors'
 import type { BillingActionResult } from './types'
 
 // ── Billing (PayMongo "Pay Now" checkout — see docs/checkpoints for why this
@@ -30,7 +31,8 @@ export async function initiateBillingCheckout(
       successUrl: 'https://www.cyberussell.com/appointments/dashboard/billing?paid=1',
       cancelUrl: 'https://www.cyberussell.com/appointments/dashboard/billing?cancelled=1',
     })
-  } catch {
+  } catch (error) {
+    await logError(createAdminSupabase(), business.id, 'initiateBillingCheckout', error)
     return { error: 'Could not start checkout — please try again.' }
   }
 

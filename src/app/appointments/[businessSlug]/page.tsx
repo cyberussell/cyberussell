@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import { MessageCircle, MapPin, Phone } from 'lucide-react'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
 import type { Business, Service } from '@/lib/appointment-system/types'
@@ -53,10 +54,13 @@ export default async function BusinessPublicPage({
 
       <div className="mx-auto max-w-2xl px-4 py-16 sm:py-20">
         <header className="text-center">
-          <img
+          <Image
             src="/appointment-logo.png"
             alt=""
+            width={80}
+            height={80}
             className="mx-auto h-16 w-16 rounded-2xl object-cover shadow-lg shadow-emerald-500/20 sm:h-20 sm:w-20"
+            priority
           />
           <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">{business.name}</h1>
           {(business.address || business.phone) && (

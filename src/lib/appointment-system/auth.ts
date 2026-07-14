@@ -38,7 +38,18 @@ export async function requireBusiness() {
     .select('*')
     .eq('owner_id', user.id)
     .maybeSingle()
-  if (!business) redirect('/appointments/signup?step=business')
+  if (!business) {
+    // A staff login landing on an owner-only page isn't an unprovisioned
+    // account — send them to a clean "not for you" screen instead of
+    // signup, which would wrongly suggest they need to create a business.
+    const { data: staff } = await supabase
+      .from('staff')
+      .select('id')
+      .eq('profile_id', user.id)
+      .eq('active', true)
+      .maybeSingle()
+    redirect(staff ? '/appointments/not-authorized' : '/appointments/signup?step=business')
+  }
 
   return { supabase, user, business: await applyLazySuspend(business as Business) }
 }

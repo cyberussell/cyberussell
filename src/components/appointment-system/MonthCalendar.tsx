@@ -68,6 +68,7 @@ export default function MonthCalendar({
           disabled={isTodayMonth}
           onClick={() => onNavigate({ year: month === 0 ? year - 1 : year, month: month === 0 ? 11 : month - 1 })}
           className="rounded-lg p-1.5 text-slate-400 transition hover:bg-white/5 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+          aria-label="Previous month"
         >
           <ChevronLeft className="h-4 w-4" aria-hidden />
         </button>
@@ -76,6 +77,7 @@ export default function MonthCalendar({
           type="button"
           onClick={() => onNavigate({ year: month === 11 ? year + 1 : year, month: month === 11 ? 0 : month + 1 })}
           className="rounded-lg p-1.5 text-slate-400 transition hover:bg-white/5 hover:text-white"
+          aria-label="Next month"
         >
           <ChevronRight className="h-4 w-4" aria-hidden />
         </button>

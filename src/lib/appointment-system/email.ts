@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Business } from './types'
 import { hasFeature } from './entitlements'
+import { logError } from './errors'
 
 function escapeHtml(str: string): string {
   return str
@@ -28,7 +29,7 @@ function transporter() {
  */
 export async function sendNewBookingEmail(
   db: SupabaseClient,
-  business: Pick<Business, 'name' | 'owner_id' | 'plan_tier'>,
+  business: Pick<Business, 'id' | 'name' | 'owner_id' | 'plan_tier'>,
   details: {
     clientName: string
     clientPhone: string
@@ -72,5 +73,6 @@ export async function sendNewBookingEmail(
     })
   } catch (error) {
     console.error('New booking email failed:', error)
+    await logError(db, business.id, 'sendNewBookingEmail', error)
   }
 }

@@ -5,6 +5,7 @@ import { getTerms } from '@/lib/appointment-system/terminology'
 import { canAddProvider, PLANS } from '@/lib/appointment-system/entitlements'
 import StaffForm from '@/components/appointment-system/StaffForm'
 import StaffInviteForm from '@/components/appointment-system/StaffInviteForm'
+import StaffResendInviteForm from '@/components/appointment-system/StaffResendInviteForm'
 import { toggleStaff, deleteStaff } from '../../actions'
 
 export const dynamic = 'force-dynamic'
@@ -79,6 +80,7 @@ export default async function StaffPage() {
               )}
             </div>
             <div className="flex gap-2">
+              {m.profile_id && <StaffResendInviteForm staffId={m.id} />}
               <form action={toggleStaff}>
                 <input type="hidden" name="id" value={m.id} />
                 <input type="hidden" name="active" value={String(m.active)} />

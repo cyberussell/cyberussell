@@ -259,12 +259,25 @@ export async function hasSameDayBooking(
 // Insert an appointment; the DB exclusion constraint is the final guard
 // against double-booking under concurrency.
 export async function bookAppointment(db: SupabaseClient, input: BookingInput): Promise<BookingResult> {
+  // Scoped by business_id, not just id — the public booking API passes these
+  // straight from client JSON with no other ownership check (this function
+  // runs on the admin client there, so RLS doesn't catch a mismatch either).
+  // Without this, a request could book business A using a service or staff
+  // row that actually belongs to business B.
   const { data: service } = await db
     .from('services')
     .select('duration_min')
     .eq('id', input.serviceId)
+    .eq('business_id', input.businessId)
     .single()
   if (!service) return { ok: false, reason: 'error', message: 'Service not found' }
+
+  const { count: staffCount } = await db
+    .from('staff')
+    .select('id', { count: 'exact', head: true })
+    .eq('id', input.staffId)
+    .eq('business_id', input.businessId)
+  if (!staffCount) return { ok: false, reason: 'error', message: 'Staff member not found' }
 
   // Find or create the client (by PSID for Messenger, by phone for web).
   let clientId: string | null = null

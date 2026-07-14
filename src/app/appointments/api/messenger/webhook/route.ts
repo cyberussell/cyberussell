@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
 import { verifyMetaSignature } from '@/lib/appointment-system/messenger'
 import { handleIncoming } from '@/lib/appointment-system/flow'
+import { logError } from '@/lib/appointment-system/errors'
 import type { Business } from '@/lib/appointment-system/types'
 
 export const dynamic = 'force-dynamic'
@@ -49,38 +50,46 @@ export async function POST(request: NextRequest) {
   const db = createAdminSupabase()
 
   for (const entry of body.entry) {
-    // Route by page id → business tenant.
-    const { data: business } = await db
-      .from('businesses')
-      .select('*')
-      .eq('fb_page_id', entry.id)
-      .maybeSingle()
-    if (!business) continue
+    try {
+      // Route by page id → business tenant.
+      const { data: business } = await db
+        .from('businesses')
+        .select('*')
+        .eq('fb_page_id', entry.id)
+        .maybeSingle()
+      if (!business) continue
 
-    // Suspended businesses stop getting bot replies (manual billing enforcement).
-    if ((business as Business).plan_status === 'suspended') continue
+      // Suspended businesses stop getting bot replies (manual billing enforcement).
+      if ((business as Business).plan_status === 'suspended') continue
 
-    const { data: secret } = await db
-      .from('business_secrets')
-      .select('fb_page_token')
-      .eq('business_id', business.id)
-      .maybeSingle()
-    const pageToken = secret?.fb_page_token
-    if (!pageToken) continue
+      const { data: secret } = await db
+        .from('business_secrets')
+        .select('fb_page_token')
+        .eq('business_id', business.id)
+        .maybeSingle()
+      const pageToken = secret?.fb_page_token
+      if (!pageToken) continue
 
-    for (const event of entry.messaging ?? []) {
-      const psid = event.sender?.id
-      if (!psid || event.message?.is_echo) continue
+      for (const event of entry.messaging ?? []) {
+        const psid = event.sender?.id
+        if (!psid || event.message?.is_echo) continue
 
-      const payload = event.postback?.payload ?? event.message?.quick_reply?.payload
-      const text = event.message?.text
+        const payload = event.postback?.payload ?? event.message?.quick_reply?.payload
+        const text = event.message?.text
 
-      if (!payload && !text) continue
-      try {
-        await handleIncoming(db, business as Business, pageToken, psid, { payload, text })
-      } catch (err) {
-        console.error('[appointment-system] webhook handling failed', err)
+        if (!payload && !text) continue
+        try {
+          await handleIncoming(db, business as Business, pageToken, psid, { payload, text })
+        } catch (err) {
+          console.error('[appointment-system] webhook handling failed', err)
+          await logError(db, business.id, 'messenger_webhook_handle_incoming', err)
+        }
       }
+    } catch (err) {
+      // A failure resolving the tenant (business/secret lookup) shouldn't
+      // crash the whole batch or skip Meta's required 200 — log and move on.
+      console.error('[appointment-system] webhook entry routing failed', err)
+      await logError(db, null, 'messenger_webhook_routing', err)
     }
   }
 
