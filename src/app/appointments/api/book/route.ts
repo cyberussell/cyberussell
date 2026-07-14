@@ -6,6 +6,7 @@ import { bookAppointment, getAvailableSlots, hasSameDayBooking, hasConfiguredHou
 import { logEvent } from '@/lib/appointment-system/events'
 import { canCreateAppointment } from '@/lib/appointment-system/entitlements'
 import { sendNewBookingEmail } from '@/lib/appointment-system/email'
+import { checkRateLimit, clientIp } from '@/lib/appointment-system/rateLimit'
 import type { Business } from '@/lib/appointment-system/types'
 
 export const dynamic = 'force-dynamic'
@@ -52,6 +53,12 @@ const bookSchema = z.object({
 
 // POST /appointments/api/book → create a web booking
 export async function POST(request: NextRequest) {
+  const ip = clientIp(request.headers)
+  const allowed = await checkRateLimit(`book:${ip}`, 10)
+  if (!allowed) {
+    return NextResponse.json({ error: 'Too many booking attempts — please wait a minute and try again.' }, { status: 429 })
+  }
+
   const parsed = bookSchema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) {
     const message = parsed.error.issues[0]?.message ?? 'Invalid booking details'
