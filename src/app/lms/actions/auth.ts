@@ -1,8 +1,10 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { z } from 'zod'
 import { createServerSupabase } from '@/lib/laundry-management-system/supabase-server'
+import { checkRateLimit, clientIp } from '@/lib/laundry-management-system/rateLimit'
 import type { UserRole } from '@/lib/laundry-management-system/modules/auth/types'
 import { type ActionResult } from './shared'
 
@@ -14,6 +16,11 @@ const signUpSchema = z.object({
 })
 
 export async function signUp(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const ip = clientIp(await headers())
+  if (!(await checkRateLimit(`lms-signup:${ip}`, 5))) {
+    return { error: 'Too many signup attempts — please wait a minute and try again.' }
+  }
+
   const parsed = signUpSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
@@ -49,6 +56,11 @@ const ROLE_REDIRECT: Record<UserRole, string> = {
 }
 
 export async function signIn(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const ip = clientIp(await headers())
+  if (!(await checkRateLimit(`lms-login:${ip}`, 10))) {
+    return { error: 'Too many login attempts — please wait a minute and try again.' }
+  }
+
   const email = String(formData.get('email') ?? '')
   const password = String(formData.get('password') ?? '')
   const supabase = await createServerSupabase()
@@ -80,6 +92,11 @@ export async function resendConfirmation(email: string): Promise<ActionResult> {
 }
 
 export async function requestPasswordReset(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const ip = clientIp(await headers())
+  if (!(await checkRateLimit(`lms-reset:${ip}`, 5))) {
+    return { error: 'Too many reset attempts — please wait a minute and try again.' }
+  }
+
   const email = String(formData.get('email') ?? '').trim()
   if (!email) return { error: 'Enter your email address.' }
   const supabase = await createServerSupabase()

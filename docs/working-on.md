@@ -1,5 +1,26 @@
 # Current Work
 
+**LMS — Independent production audit + full remediation to a Go verdict (2026-07-14) — see checkpoint `laundry-management-system-production-audit-remediation-v1.md` for full detail:**
+
+Current Product: Laundry Management System (LMS).
+
+Current Feature: Russell asked for a fresh, independent "certify for paying customers" audit across security/billing/UX/scalability/performance/maintainability/accessibility/testing/ops, explicitly disregarding prior phase sign-offs — then asked to resolve everything found until it's a Go.
+
+Current Status: Code complete for every finding except one deliberately deferred item; verdict is Go pending two live steps.
+- **CRITICAL fixed**: `plan_status`/`trial_ends_at` were defined in schema but never enforced anywhere — a business could never be cut off for non-payment and the 14-day trial never expired. New `getSubscriptionBlock()` (pure, unit-tested) wired into all owner/staff session resolution; blocked businesses now redirect to a new `/lms/subscription-required` page. Deliberately left customer-facing pages ungated — flagged for Russell to override if he wants suspended businesses' customers cut off too.
+- **HIGH fixed**: rate limiting added to signIn/signUp/requestPasswordReset/customerSignUp (new `rate_limits` table, migration 016, same pattern as the Appointment System). Also closed a residual gap where `inviteStaff` bypassed the new gate via inline auth instead of `requireOwnerBusiness()`.
+- **HIGH fixed**: zero test coverage → 22 new tests (subscription-block logic, entitlements, permissions, order state machine), all passing.
+- **MEDIUM fixed**: new `/lms/api/health` endpoint (same shape as Appointments').
+- **MEDIUM checked, no gap found**: full accessibility sweep of every icon-heavy LMS component — every icon-only control already had `aria-label`; the audit's initial suspicion was a false positive.
+- **MEDIUM deliberately deferred, documented**: server-side pagination for `listOrders()`/customer list — real scalability debt but a large architecture change that doesn't bite until a business has months of history; not rushed under this pass's time pressure.
+- **LOW fixed**: staff accept-invite's 4s timeout race (flashed a false "expired" message) bumped to 8s.
+- `npx tsc --noEmit` clean, `npx vitest run` 22/22 passing, `npx next build` succeeds (new routes confirmed compiled into `.next/server/app/lms/...`).
+- **Not live-verified**: this session had no way to reach any locally-running dev server (Browser pane and Bash were both sandboxed away from it) and no live Supabase credentials, so the actual suspend/reactivate round-trip hasn't been click-tested against the real project.
+
+**Next recommended task:** Russell runs migrations 015 (billing columns, from the prior pass) and 016 (rate_limits), then live-verifies the subscription gate: set a test business's `plan_status` to `suspended`, confirm the owner/staff dashboard redirects to `/lms/subscription-required` and customer pages still work; confirm a past `trial_ends_at` with `plan_status='trial'` triggers the same block; confirm setting `plan_status` back to `active` restores access. Once confirmed, LMS is a Go for paying customers.
+
+----------------------------------------
+
 **LMS — Billing RLS security audit (2026-07-14) — see checkpoint `laundry-management-system-billing-rls-audit-v1.md` for full detail:**
 
 Current Product: Laundry Management System (LMS).

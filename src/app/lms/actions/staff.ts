@@ -1,7 +1,7 @@
 'use server'
 
-import { redirect } from 'next/navigation'
-import { createServerSupabase, createAdminSupabase } from '@/lib/laundry-management-system/supabase-server'
+import { createAdminSupabase } from '@/lib/laundry-management-system/supabase-server'
+import { requireOwnerBusiness } from '@/lib/laundry-management-system/modules/auth/queries'
 import { countActiveStaff } from '@/lib/laundry-management-system/modules/staff/queries'
 import { getLimit, PLANS } from '@/lib/laundry-management-system/modules/billing/entitlements'
 import { inviteStaffSchema } from '@/lib/laundry-management-system/modules/staff/schema'
@@ -18,18 +18,7 @@ export async function inviteStaff(_prev: ActionResult, formData: FormData): Prom
   if (!parsed.success) return { error: 'Enter a valid email address.' }
   const { email, title, branchId } = parsed.data
 
-  const supabase = await createServerSupabase()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) redirect('/lms/login')
-
-  const { data: business } = await supabase
-    .from('businesses')
-    .select('id, plan_tier')
-    .eq('owner_id', user.id)
-    .maybeSingle()
-  if (!business) return { error: 'Business not found.' }
+  const { supabase, user, business } = await requireOwnerBusiness()
 
   const staffLimit = getLimit(business, 'staffAccounts')
   if (staffLimit !== null) {

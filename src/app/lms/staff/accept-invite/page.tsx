@@ -31,9 +31,14 @@ export default function AcceptStaffInvitePage() {
         setReady(true)
       }
     })
+    // 8s, not 4 — a slow connection's auth event can genuinely take a few
+    // seconds to arrive, and 4s was long enough to flash a scary "invalid or
+    // expired" message for a link that was actually still fine (the UI
+    // self-corrects once `ready` does fire, but that flicker alone could
+    // make someone abandon a working invite).
     const timeout = setTimeout(() => {
       if (!readyRef.current) setExpired(true)
-    }, 4000)
+    }, 8000)
     return () => {
       subscription.unsubscribe()
       clearTimeout(timeout)

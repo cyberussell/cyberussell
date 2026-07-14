@@ -1,10 +1,12 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { z } from 'zod'
 import { createServerSupabase, createAdminSupabase } from '@/lib/laundry-management-system/supabase-server'
 import { requireOwnerBusiness, requireCustomerAccess } from '@/lib/laundry-management-system/modules/auth/queries'
 import { addCustomerSchema } from '@/lib/laundry-management-system/modules/customer/schema'
+import { checkRateLimit, clientIp } from '@/lib/laundry-management-system/rateLimit'
 import type { ActionResult } from './shared'
 
 const customerSignUpSchema = z.object({
@@ -18,6 +20,11 @@ const customerSignUpSchema = z.object({
 // Re-resolves the business from the slug server-side rather than trusting a
 // client-submitted business_id, since this route is public.
 export async function customerSignUp(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const ip = clientIp(await headers())
+  if (!(await checkRateLimit(`lms-customer-signup:${ip}`, 5))) {
+    return { error: 'Too many signup attempts — please wait a minute and try again.' }
+  }
+
   const parsed = customerSignUpSchema.safeParse({
     slug: formData.get('slug'),
     email: formData.get('email'),
