@@ -1,11 +1,12 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, updateTag } from 'next/cache'
 import { z } from 'zod'
 import { createServerSupabase, createAdminSupabase } from '@/lib/appointment-system/supabase-server'
 import { requireBusiness, requireBusinessAccess } from '@/lib/appointment-system/auth'
 import { logEvent } from '@/lib/appointment-system/events'
 import { hasFeature } from '@/lib/appointment-system/entitlements'
+import { businessPageCacheTag } from '@/lib/appointment-system/cacheTags'
 import { DAY_KEYS, type BusinessHours } from '@/lib/appointment-system/types'
 import type { ActionResult } from './types'
 
@@ -26,6 +27,9 @@ export async function updateBusinessProfile(formData: FormData): Promise<void> {
   const { name, phone, address } = parsed.data
   await supabase.from('businesses').update({ name, phone, address }).eq('id', business.id)
   revalidatePath('/appointments/dashboard/settings')
+  // The public booking page's data is cached via unstable_cache (60s) —
+  // name/address/phone shown there shouldn't wait on the timer.
+  updateTag(businessPageCacheTag(business.slug))
 }
 
 // Temporarily-closed notice: pauses Messenger + web booking with a message.
@@ -39,6 +43,9 @@ export async function updateClosedNotice(formData: FormData): Promise<void> {
     .eq('id', business.id)
   revalidatePath('/appointments/dashboard/settings')
   revalidatePath('/appointments/dashboard')
+  // Most time-sensitive of the public-page revalidations — an owner marking
+  // themselves closed shouldn't wait up to 60s to take effect.
+  updateTag(businessPageCacheTag(business.slug))
 }
 
 // Manually hides the dashboard's setup checklist even if not all steps are done.
@@ -75,7 +82,7 @@ export async function updateBusinessHours(formData: FormData): Promise<void> {
     .update({ settings: { ...business.settings, hours } })
     .eq('id', business.id)
   revalidatePath('/appointments/dashboard/settings')
-  revalidatePath(`/appointments/${business.slug}`)
+  updateTag(businessPageCacheTag(business.slug))
 }
 
 const changePasswordSchema = z

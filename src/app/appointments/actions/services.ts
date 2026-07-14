@@ -1,8 +1,9 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, updateTag } from 'next/cache'
 import { z } from 'zod'
 import { requireBusiness } from '@/lib/appointment-system/auth'
+import { businessPageCacheTag } from '@/lib/appointment-system/cacheTags'
 
 const createServiceSchema = z.object({
   name: z.string().trim().min(1),
@@ -26,6 +27,10 @@ export async function createService(formData: FormData): Promise<void> {
     price,
   })
   revalidatePath('/appointments/dashboard/services')
+  // The public booking page's data is cached via unstable_cache (60s) and
+  // lists active services — a new service shouldn't wait on the timer to
+  // become bookable.
+  updateTag(businessPageCacheTag(business.slug))
 }
 
 export async function toggleService(formData: FormData): Promise<void> {
@@ -34,10 +39,12 @@ export async function toggleService(formData: FormData): Promise<void> {
   const active = formData.get('active') === 'true'
   await supabase.from('services').update({ active: !active }).eq('id', id).eq('business_id', business.id)
   revalidatePath('/appointments/dashboard/services')
+  updateTag(businessPageCacheTag(business.slug))
 }
 
 export async function deleteService(formData: FormData): Promise<void> {
   const { supabase, business } = await requireBusiness()
   await supabase.from('services').delete().eq('id', String(formData.get('id'))).eq('business_id', business.id)
   revalidatePath('/appointments/dashboard/services')
+  updateTag(businessPageCacheTag(business.slug))
 }

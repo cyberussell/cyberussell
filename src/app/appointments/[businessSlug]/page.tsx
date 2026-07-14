@@ -1,13 +1,54 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
+import { unstable_cache } from 'next/cache'
 import { MessageCircle, MapPin, Phone } from 'lucide-react'
 import { createAdminSupabase } from '@/lib/appointment-system/supabase-server'
 import type { Business, Service } from '@/lib/appointment-system/types'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import { hasConfiguredHours } from '@/lib/appointment-system/slots'
 import BookingWidget from '@/components/appointment-system/BookingWidget'
+import { businessPageCacheTag } from '@/lib/appointment-system/cacheTags'
 
-export const dynamic = 'force-dynamic'
+// This page's rendered output only ever includes owner-driven data (business
+// info, service list) — real-time slot availability is fetched client-side
+// by BookingWidget via a separate API call, never baked into this HTML, so
+// caching the shell can't show stale availability.
+//
+// Supabase's client makes its own fetch() calls that Next doesn't cache by
+// default (this is the "previous", non-cacheComponents model — see
+// node_modules/next/dist/docs/01-app/02-guides/caching-without-cache-components.md),
+// so a plain `export const revalidate` on this route does nothing on its
+// own: nothing here is a cacheable fetch for Next to apply it to. The data
+// fetch itself has to be wrapped in unstable_cache. Mutations that should
+// show up immediately (closed notice, profile, services) call
+// revalidatePath on this route, which invalidates this tagged cache entry
+// too, ahead of the 60s timer.
+const getPublicBusinessPageData = (slug: string) =>
+  unstable_cache(
+    async () => {
+      const db = createAdminSupabase()
+      const { data: businessRow } = await db.from('businesses').select('*').eq('slug', slug).maybeSingle()
+      if (!businessRow) return null
+      const business = businessRow as Business
+
+      const { data: services } = await db
+        .from('services')
+        .select('*')
+        .eq('business_id', business.id)
+        .eq('active', true)
+        .order('created_at')
+
+      const { count: staffCount } = await db
+        .from('staff')
+        .select('id', { count: 'exact', head: true })
+        .eq('business_id', business.id)
+        .eq('active', true)
+
+      return { business, services: services ?? [], staffCount: staffCount ?? 0 }
+    },
+    [`business-page-${slug}`],
+    { revalidate: 60, tags: [businessPageCacheTag(slug)] }
+  )()
 
 // Public business page: Messenger is the primary CTA; the web form is the
 // fallback for clients arriving from Google instead of Facebook.
@@ -17,25 +58,10 @@ export default async function BusinessPublicPage({
   params: Promise<{ businessSlug: string }>
 }) {
   const { businessSlug } = await params
-  const db = createAdminSupabase()
-
-  const { data: businessRow } = await db.from('businesses').select('*').eq('slug', businessSlug).maybeSingle()
-  if (!businessRow) notFound()
-  const business = businessRow as Business
+  const data = await getPublicBusinessPageData(businessSlug)
+  if (!data) notFound()
+  const { business, services, staffCount } = data
   if (business.plan_status === 'suspended') notFound()
-
-  const { data: services } = await db
-    .from('services')
-    .select('*')
-    .eq('business_id', business.id)
-    .eq('active', true)
-    .order('created_at')
-
-  const { count: staffCount } = await db
-    .from('staff')
-    .select('id', { count: 'exact', head: true })
-    .eq('business_id', business.id)
-    .eq('active', true)
 
   const closed = (business.settings as { closed?: boolean }).closed
   const hoursConfigured = hasConfiguredHours(business)
