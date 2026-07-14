@@ -1,12 +1,30 @@
 # Current Work
 
-**LMS — Independent production audit + full remediation to a Go verdict (2026-07-14) — see checkpoint `laundry-management-system-production-audit-remediation-v1.md` for full detail:**
+**Territory Management System — Group Leader login failure diagnosis (2026-07-14) — investigation only, no code changed, blocked on Russell checking Supabase Auth dashboard settings:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell (`russell.a.parayno@gmail.com`, trying to log in as a **Group Leader**) gets "Invalid email or password" on direct login, and the "Forgot password" email link doesn't "push through" — lands on `/territory-management-system/set-password` but never completes.
+
+Current Status: Diagnosed via code read + a live (unauthenticated) browser check of the production pages — **could not query the live TMS Supabase project** (it's under the `ruparayno.ldc@gmail.com` account/`supabase-ldc` MCP server; `SUPABASE_ACCESS_TOKEN` isn't loaded in this session, same standing limitation as every prior TMS pass).
+- Read `actions/auth.ts` (`signIn`), `actions/password.ts` (`requestPasswordResetAction`), `groupLeaders/queries.ts` (`inviteGroupLeader`), and `set-password/page.tsx` — all internally consistent: invite and password-reset both use the identical `redirectTo: 'https://www.cyberussell.com/territory-management-system/set-password'`, and `next.config.ts`'s `/tms` redirects only go short→long, so they can't interfere with that URL.
+- Live-checked `/territory-management-system/forgot-password` and `/territory-management-system/set-password` in production: both render correctly, no console errors, no env-var crash (`getTmsEnv()` would throw immediately if `NEXT_PUBLIC_TMS_SUPABASE_URL`/`ANON_KEY` were missing in prod — they're not). `set-password` correctly shows "Verifying link…" then "This link is invalid or has expired." after 4s when visited with no recovery token, confirming the page's own logic works.
+- **Conclusion: the code path looks correct; the two symptoms are almost certainly one root cause, not two** — this Group Leader account has likely never had a password successfully set (invite/reset email link never completing), so direct login naturally fails as "invalid" (no password exists to match). Ranked hypotheses for why the link doesn't complete, none of which are checkable from this environment:
+  1. **Most likely**: Supabase project's Authentication → URL Configuration → Redirect URLs allowlist doesn't include `https://www.cyberussell.com/territory-management-system/set-password` — Supabase silently rejects/redirects links not on that list.
+  2. The reset/invite link was opened in a different browser or device than the one used to request it — `@supabase/ssr` defaults to PKCE flow, whose code verifier is browser-local; opening the email on a phone after requesting from desktop (or vice versa) breaks the exchange silently, landing exactly on the "invalid or expired" state seen here.
+  3. The link was already used once, or its OTP expiry (Supabase project setting) is short and it simply expired.
+
+**Next recommended task:** Russell checks (a) Supabase Dashboard → Authentication → URL Configuration for the `ruparayno.ldc@gmail.com` account's TMS project — confirm `https://www.cyberussell.com/territory-management-system/set-password` is an allowed redirect URL; (b) Authentication → Logs around the time of the failed attempt, which will show the actual rejection reason; (c) retry the reset link in the exact same browser/device used to request it, within a few minutes, watching whether the URL that lands has a `?code=...` param. Once one of these is confirmed, report back — the code fix (if any is even needed) will be small and targeted. Separately: get a real `SUPABASE_ACCESS_TOKEN` for the `ruparayno.ldc@gmail.com` account into this environment so future TMS sessions can query `auth.users`/`profiles` directly instead of diagnosing blind — this has now blocked multiple sessions in a row.
+
+----------------------------------------
+
+**LMS — Independent production audit + full remediation — VERDICT: GO (2026-07-14) — see checkpoint `laundry-management-system-production-audit-remediation-v1.md` for full detail:**
 
 Current Product: Laundry Management System (LMS).
 
 Current Feature: Russell asked for a fresh, independent "certify for paying customers" audit across security/billing/UX/scalability/performance/maintainability/accessibility/testing/ops, explicitly disregarding prior phase sign-offs — then asked to resolve everything found until it's a Go.
 
-Current Status: Code complete for every finding except one deliberately deferred item; verdict is Go pending two live steps.
+Current Status: **Closed out — GO for paying customers.** Every finding fixed except one deliberately deferred item, and the subscription gate is now live-verified end-to-end.
 - **CRITICAL fixed**: `plan_status`/`trial_ends_at` were defined in schema but never enforced anywhere — a business could never be cut off for non-payment and the 14-day trial never expired. New `getSubscriptionBlock()` (pure, unit-tested) wired into all owner/staff session resolution; blocked businesses now redirect to a new `/lms/subscription-required` page. Deliberately left customer-facing pages ungated — flagged for Russell to override if he wants suspended businesses' customers cut off too.
 - **HIGH fixed**: rate limiting added to signIn/signUp/requestPasswordReset/customerSignUp (new `rate_limits` table, migration 016, same pattern as the Appointment System). Also closed a residual gap where `inviteStaff` bypassed the new gate via inline auth instead of `requireOwnerBusiness()`.
 - **HIGH fixed**: zero test coverage → 22 new tests (subscription-block logic, entitlements, permissions, order state machine), all passing.
@@ -16,9 +34,9 @@ Current Status: Code complete for every finding except one deliberately deferred
 - **LOW fixed**: staff accept-invite's 4s timeout race (flashed a false "expired" message) bumped to 8s.
 - `npx tsc --noEmit` clean, `npx vitest run` 22/22 passing, `npx next build` succeeds (new routes confirmed compiled into `.next/server/app/lms/...`).
 - **Migrations 015 and 016 confirmed run and correct (2026-07-14)** — Russell ran both in the LMS Supabase SQL Editor and verified the result: `information_schema.column_privileges` shows `authenticated` has `UPDATE` on exactly `address, currency, logo_url, name, phone, timezone` on `businesses` (no `plan_tier`/`plan_status`/`trial_ends_at`), and `public.rate_limits` exists and is queryable. Both DB-side fixes are confirmed live.
-- **Still not live-verified**: the actual suspend/reactivate round-trip through the app itself (flip a test business's `plan_status` to `suspended`, confirm redirect to `/lms/subscription-required`) — this session still has no way to reach a running dev server or click through the UI.
+- **Subscription gate live-verified end-to-end (2026-07-14)**: Russell signed up a real throwaway business ("Aling Maria Laundry Shop", `id e442c931-85be-4d5f-962b-34a421eb4cc2`) through the actual `/lms` signup flow. Confirmed via SQL + real login round-trips: `plan_status='suspended'` → redirected to `/lms/subscription-required` ("This account is suspended"); `plan_status='trial'` with `trial_ends_at` in the past → redirected ("Your free trial has ended"); `plan_status='active'` → normal dashboard access restored. All three screenshotted.
 
-**Next recommended task:** Russell live-verifies the subscription gate end-to-end: set a test business's `plan_status` to `suspended`, confirm the owner/staff dashboard redirects to `/lms/subscription-required` and customer pages still work; confirm a past `trial_ends_at` with `plan_status='trial'` triggers the same block; confirm setting `plan_status` back to `active` restores access. Once confirmed, LMS is a Go for paying customers.
+**Next recommended task:** Optional cleanup — delete the throwaway "Aling Maria Laundry Shop" test business (`e442c931-85be-4d5f-962b-34a421eb4cc2`) and its `auth.users` row from the live LMS Supabase project. Otherwise no blocking work remains from this audit; next session should pick up new feature requests or the deferred pagination item whenever Russell prioritizes it.
 
 ----------------------------------------
 
