@@ -94,7 +94,7 @@ export default function AssignmentForm({
     if (
       hasExistingBatch &&
       !window.confirm(
-        "An assignment already exists for today. Generating a new one replaces it — any Ministry Partners publishers have already claimed today will be lost. Continue?"
+        "An assignment already exists for today. Generating a new one replaces it — any Partners publishers have already claimed today will be lost. Continue?"
       )
     ) {
       e.preventDefault()
@@ -144,7 +144,7 @@ export default function AssignmentForm({
           across the selected territories — up to {partnershipCount * DEFAULT_MAX_PER_PARTNERSHIP} will be assigned (
           {DEFAULT_MAX_PER_PARTNERSHIP} per partnership max).
           {eligibleTotal > 0 && eligibleTotal < partnershipCount && (
-            <p className="mt-1 font-medium text-red-500">Not enough contact records for {partnershipCount} Ministry Partners.</p>
+            <p className="mt-1 font-medium text-red-500">Not enough contact records for {partnershipCount} Partners.</p>
           )}
         </div>
         {error && <p className="text-sm text-red-500">{error}</p>}

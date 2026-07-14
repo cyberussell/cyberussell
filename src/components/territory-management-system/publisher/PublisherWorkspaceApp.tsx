@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { Download, PartyPopper, Plus } from 'lucide-react'
+import { PartyPopper, Plus } from 'lucide-react'
 import type { PartnershipRecordDetail, PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
@@ -12,8 +12,7 @@ import { flushQueue } from '@/lib/territory-management-system/modules/offline/sy
 import { useOnlineStatus } from '@/lib/territory-management-system/modules/offline/useOnlineStatus'
 import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
-import PublisherTopMenu from './PublisherTopMenu'
-import SyncStatusBar from './SyncStatusBar'
+import PublisherBottomMenu from './PublisherBottomMenu'
 import PartnershipRenameForm from './PartnershipRenameForm'
 import AssignedRecordsList from './AssignedRecordsList'
 import PublisherRecordDetailView from './PublisherRecordDetailView'
@@ -216,33 +215,8 @@ export default function PublisherWorkspaceApp({
   const showSessionChrome = view.name !== 'sync' && view.name !== 'done'
 
   return (
-    <div className="min-h-screen bg-[#F3F8FF] px-4 py-8">
+    <div className="min-h-screen bg-[#F3F8FF] px-4 pb-24 pt-8">
       <div className="mx-auto max-w-lg space-y-6">
-        <PublisherTopMenu
-          batchToken={batchToken}
-          view={view.name === 'sync' || view.name === 'done' ? 'list' : view.name}
-          onGoToRecords={() => setView({ name: 'list' })}
-          onGoToVisitForm={scrollToVisitForm}
-        />
-
-        {showSessionChrome && (
-          <SyncStatusBar online={online} pendingCount={pendingCount} failedCount={failedCount} syncing={syncing} onSync={handleSync} />
-        )}
-
-        {showSessionChrome &&
-          (!downloaded ? (
-            <button
-              type="button"
-              onClick={handleDownload}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#38BDF8]/40 bg-white py-3 text-sm font-semibold text-[#2563EB] hover:border-[#38BDF8]"
-            >
-              <Download className="h-4 w-4" />
-              Download for Offline Use
-            </button>
-          ) : (
-            <p className="text-center text-xs font-medium text-emerald-600">✓ Downloaded — ready for offline use</p>
-          ))}
-
         {readOnly && (view.name === 'list' || view.name === 'detail') && (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-center text-sm font-medium text-amber-700 shadow-sm">
             Viewing {workspace.name}&apos;s assignment — read only.
@@ -369,6 +343,21 @@ export default function PublisherWorkspaceApp({
           </div>
         )}
       </div>
+
+      <PublisherBottomMenu
+        batchToken={batchToken}
+        view={view.name === 'sync' || view.name === 'done' ? 'list' : view.name}
+        onGoToRecords={() => setView({ name: 'list' })}
+        onGoToVisitForm={scrollToVisitForm}
+        showSync={showSessionChrome}
+        downloaded={downloaded}
+        onDownload={handleDownload}
+        online={online}
+        pendingCount={pendingCount}
+        failedCount={failedCount}
+        syncing={syncing}
+        onSync={handleSync}
+      />
     </div>
   )
 }

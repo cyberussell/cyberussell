@@ -12,10 +12,14 @@ import {
   DoorClosed,
   FilePlus,
   HelpCircle,
+  Home,
+  LayoutDashboard,
   Percent,
   PhoneOff,
   Repeat,
   Truck,
+  Users,
+  type LucideIcon,
 } from 'lucide-react'
 import type { BatchStats } from '@/lib/territory-management-system/modules/reports/queries'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
@@ -28,11 +32,11 @@ import AssignmentForm from '@/components/territory-management-system/AssignmentF
 
 type Tab = 'home' | 'dashboard' | 'results' | 'progress'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'home', label: 'Home' },
-  { id: 'dashboard', label: 'Dashboard' },
-  { id: 'results', label: 'Visit Results' },
-  { id: 'progress', label: 'Ministry Partner' },
+const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
+  { id: 'home', label: 'Home', icon: Home },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'results', label: 'Visits', icon: ClipboardList },
+  { id: 'progress', label: 'Partners', icon: Users },
 ]
 
 export default function GroupLeaderTabs({
@@ -73,9 +77,10 @@ export default function GroupLeaderTabs({
   }, [router])
 
   return (
-    <div>
+    <div className="pb-24 sm:pb-0">
+      {/* Desktop/tablet: sticky top tab bar. Hidden below `sm` in favor of the fixed bottom bar. */}
       <nav
-        className="sticky top-0 z-10 mb-6 flex gap-2 rounded-2xl border border-blue-100/60 bg-white/95 p-2 shadow-sm backdrop-blur"
+        className="sticky top-0 z-10 mb-6 hidden gap-2 rounded-2xl border border-blue-100/60 bg-white/95 p-2 shadow-sm backdrop-blur sm:flex"
         aria-label="Assignment sections"
       >
         {TABS.map((t) => (
@@ -83,6 +88,31 @@ export default function GroupLeaderTabs({
             {t.label}
           </button>
         ))}
+      </nav>
+
+      {/* Mobile: fixed bottom icon bar, like a native app tab bar. Hidden at `sm` and up. */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-20 flex border-t border-blue-100/60 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-1px_8px_rgba(15,23,42,0.06)] backdrop-blur sm:hidden"
+        aria-label="Assignment sections"
+      >
+        {TABS.map((t) => {
+          const Icon = t.icon
+          const isActive = tab === t.id
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              className={`flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold leading-tight transition ${
+                isActive ? 'text-[#2563EB]' : 'text-slate-400'
+              }`}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} aria-hidden />
+              {t.label}
+            </button>
+          )
+        })}
       </nav>
 
       {tab === 'home' && (

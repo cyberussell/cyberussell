@@ -20,7 +20,7 @@ export default function PartnershipRenameForm({
     <Card className="p-4">
       <div className="flex items-end gap-3">
         <div className="flex-1">
-          <label className="text-sm font-medium text-slate-600">Ministry Partner Name</label>
+          <label className="text-sm font-medium text-slate-600">Partner Name</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}

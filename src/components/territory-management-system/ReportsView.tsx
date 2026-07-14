@@ -32,7 +32,7 @@ export default function ReportsView({ daily, weekly, monthly }: { daily: ReportS
       </div>
 
       <div>
-        <h2 className="mb-4 font-semibold text-[#0B1B33]">Visit Results</h2>
+        <h2 className="mb-4 font-semibold text-[#0B1B33]">Visits</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-7">
           <StatCard icon={ClipboardList} label={VISIT_RESULT_LABELS.initial_visit} value={stats.resultCounts.initial_visit} />
           <StatCard icon={Repeat} label={VISIT_RESULT_LABELS.return_visit} value={stats.resultCounts.return_visit} />
