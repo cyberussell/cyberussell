@@ -103,14 +103,17 @@ const updateClientNotesSchema = z.object({
     .transform((v) => v.slice(0, 2000)),
 })
 
-export async function updateClientNotes(formData: FormData): Promise<void> {
+export async function updateClientNotes(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const { supabase, business } = await requireBusinessAccess()
   const parsed = updateClientNotesSchema.safeParse({ id: formData.get('id'), notes: formData.get('notes') })
-  if (!parsed.success) return
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Could not save notes.' }
   const { id, notes } = parsed.data
-  await supabase.from('clients').update({ notes }).eq('id', id).eq('business_id', business.id)
+  const { error } = await supabase.from('clients').update({ notes }).eq('id', id).eq('business_id', business.id)
+  if (error) return { error: 'Could not save notes — please try again.' }
   revalidatePath(`/appointments/dashboard/clients/${id}`)
   revalidatePath('/appointments/dashboard/clients')
+  revalidatePath(`/appointments/staff/dashboard/clients/${id}`)
+  return { error: 'DONE' } // rendered as success in the UI
 }
 
 // Facebook Page connection. v1: owner pastes Page ID + Page Access Token from

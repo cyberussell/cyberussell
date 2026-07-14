@@ -5,7 +5,7 @@ import { requireStaffAccess } from '@/lib/appointment-system/auth'
 import { getTerms } from '@/lib/appointment-system/terminology'
 import { formatSlotLabel } from '@/lib/appointment-system/slots'
 import RecordPaymentForm from '@/components/appointment-system/RecordPaymentForm'
-import { updateClientNotes } from '../../../../actions'
+import ClientNotesForm from '@/components/appointment-system/ClientNotesForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -78,20 +78,7 @@ export default async function StaffClientDetailPage({
         </div>
       </div>
 
-      <form action={updateClientNotes} className="rounded-xl border border-slate-800 bg-slate-900 p-4 space-y-3">
-        <input type="hidden" name="id" value={client.id} />
-        <p className="text-sm font-semibold text-slate-300">Internal notes</p>
-        <textarea
-          name="notes"
-          rows={3}
-          defaultValue={client.notes}
-          placeholder="Allergies, preferences, treatment plan, balance owed…"
-          className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none"
-        />
-        <button className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">
-          Save notes
-        </button>
-      </form>
+      <ClientNotesForm clientId={client.id} notes={client.notes} />
 
       <div className="space-y-2">
         <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">History</h2>
