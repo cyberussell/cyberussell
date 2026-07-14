@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "supabase-personal": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase@latest"],
+      "env": { "SUPABASE_ACCESS_TOKEN": "${SUPABASE_PAT_PERSONAL}" }
+    },
+    "supabase-cyberussell": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase@latest", "--project-ref=${SUPABASE_PROJECT_REF_CYBERUSSELL}"],
+      "env": { "SUPABASE_ACCESS_TOKEN": "${SUPABASE_PAT_CYBERUSSELL}" }
+    },
+    "supabase-ldc": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase@latest"],
+      "env": { "SUPABASE_ACCESS_TOKEN": "${SUPABASE_PAT_LDC}" }
+    }
+  }
+}
