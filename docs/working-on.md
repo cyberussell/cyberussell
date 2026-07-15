@@ -1,5 +1,23 @@
 # Current Work
 
+**Territory Management System — Publisher-added records get their own visible/editable list (2026-07-15) — code done, tsc + build clean, engine tests 10/10 passing, migration 019 already run by Russell, committed and pushed (`ff45107`), not yet deployed — see checkpoint `territory-management-publisher-added-records-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked that when a publisher adds a contact record via the workspace's "Add a New Contact Record" form, they should immediately see it in their own workspace and be able to edit or delete it — but only until their ministry session ends, after which it's locked. Confirmed via follow-up: Admin's existing pending-review gate stays as-is (publisher control doesn't skip Admin approval), and the added records must live in a separate list, never mixed into the existing "Assigned Records" list.
+
+Current Status: Code complete.
+- New `territory_records.created_by_partnership_id` column (migration 019, **Russell has run this**) tracks which partnership added a record, independent of `partnership_records` — the new records are deliberately never linked there, which is what keeps them out of Assigned Records.
+- New "My Added Records" section in the publisher workspace (new bottom-nav item, `AddedRecordsList` + `PublisherAddedRecordDetailView` components), populated via a new `getPartnershipByToken` field.
+- Two new publisher-scoped Server Actions (`deletePublisherAddedRecordAction`, `editPublisherAddedRecordAction`) — both re-verify ownership server-side and hard-block (not just hide the button) once `finished_at`/`ended_early_at` is set on the partnership. `addPublisherRecordAction` got the same finished/ended check so new adds are also blocked after ministry ends.
+- `PublisherRecordForm` gained an edit mode (same component, `mode`/`initialValues` props) so Add and Edit share one form.
+- A just-added record is inserted under a client-generated UUID (not the DB default) so it's immediately editable/deletable in the UI before the write has even synced — both new mutations are routed through the existing offline sync queue like every other publisher action.
+- `npx tsc --noEmit` clean, `npx next build` clean, TMS engine test suite 10/10. **Not live-verified** — no live Supabase credentials in this environment, same standing limitation as every TMS session.
+
+**Next recommended task:** Russell live-verifies: add a record, confirm it shows under "My Added Records" (not Assigned Records); edit and delete it; end the ministry session and confirm both actions are then blocked (button gone client-side, rejected server-side if retried); confirm it still surfaces in Admin's existing pending-review queue unchanged. Then deploy at Russell's request.
+
+----------------------------------------
+
 **Territory Management System — Assignment generation capacity cap, v2 corrected rule (2026-07-15) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, not yet committed/pushed — see checkpoint `territory-management-assignment-capacity-cap-v2.md` for full detail (supersedes v1):**
 
 Current Product: Territory Management System (TMS).
