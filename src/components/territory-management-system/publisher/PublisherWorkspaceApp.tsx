@@ -326,10 +326,12 @@ export default function PublisherWorkspaceApp({
   const selected = view.name === 'detail' ? (workspace.records.find((r) => r.record.id === view.recordId) ?? null) : null
   const pendingVisitsForSelected =
     view.name === 'detail' ? queue.filter((q) => q.type === 'visit' && q.payload.recordId === view.recordId) : []
-  // A "searching a fresh territory" partnership starts with zero assigned records by design
-  // (see engine.ts) — vacuously "done" the moment it's claimed, since there's nothing to visit,
-  // so Sync & Finish is available right away rather than only reachable via End Early.
-  const allDone = workspace.records.every((r) => r.completed_at)
+  // Deliberately requires at least one real assigned record — a "searching a fresh territory"
+  // partnership (zero assigned records) should NOT auto-surface "All assigned records are
+  // done! Sync & Finish" the instant it's claimed, since the whole point is spending the
+  // allotted time adding new contact records, which can keep happening throughout the session.
+  // "End My Ministry Early" is the only way that kind of partnership finishes for the day.
+  const allDone = workspace.records.length > 0 && workspace.records.every((r) => r.completed_at)
   // Only hide a territory's map when it genuinely has no section/block structure at all — a
   // defensive guard, not the normal zero-records case (a fresh territory still has real
   // sections/blocks from the moment it's created; TerritoryMapViewer just has nothing useful to
@@ -438,7 +440,7 @@ export default function PublisherWorkspaceApp({
                   if (window.confirm("End your ministry early? All unfinished records will be marked as undone."))
                     handleTerminate()
                 }}
-                className="w-full text-center text-xs font-medium text-red-500 hover:underline"
+                className="w-full rounded-lg border border-red-200 bg-white py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50"
               >
                 End My Ministry Early
               </button>

@@ -338,10 +338,18 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     }
   }
 
-  const territoryMap = new Map<string, { id: string; name: string; map_image_url: string | null }>()
-  for (const r of records) {
-    if (r.record.territory) territoryMap.set(r.record.territory.id, r.record.territory)
-  }
+  // The whole BATCH's selected territories, not just the ones with an assigned record — a
+  // zero-record ("searching a fresh territory") partnership has no records to derive a
+  // territory from at all, which used to leave both "Add a New Contact Record" and the
+  // Territory Map(s) section with nothing to show for a batch that's entirely about searching
+  // one specific territory.
+  const { data: batchTerritoryLinks } = await supabase
+    .from('assignment_batch_territories')
+    .select('territory:territories(id, name, map_image_url)')
+    .eq('batch_id', partnership.batch_id)
+  const territories = ((batchTerritoryLinks ?? []) as unknown as { territory: { id: string; name: string; map_image_url: string | null } | null }[])
+    .map((l) => l.territory)
+    .filter((t): t is { id: string; name: string; map_image_url: string | null } => t !== null)
 
   const siblingPartnerships = await getBatchSiblingPartnerships(supabase, partnership.batch_id, partnership.id)
 
@@ -350,7 +358,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     batch: batch as AssignmentBatch,
     congregationName: congregation?.name ?? '',
     records,
-    territories: [...territoryMap.values()],
+    territories,
     expired,
     siblingPartnerships,
   }
