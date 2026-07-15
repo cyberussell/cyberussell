@@ -1,12 +1,25 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { X, ZoomIn } from 'lucide-react'
+import { Map, X, ZoomIn } from 'lucide-react'
 
 // Reference image only — no section/block boundaries are drawn on it (count-based
 // generation, not spatial). Click-to-zoom lightbox with native scroll/pinch, no new
 // canvas/drawing dependency.
-export default function TerritoryMapViewer({ mapImageUrl, territoryName }: { mapImageUrl: string; territoryName: string }) {
+//
+// 'thumbnail' (default) renders the full-width image preview used on the workspace's list
+// view. 'button' renders a small labeled button instead — used from the record detail card,
+// where a full-width image preview would be too much next to the other action buttons — both
+// variants open the exact same lightbox.
+export default function TerritoryMapViewer({
+  mapImageUrl,
+  territoryName,
+  variant = 'thumbnail',
+}: {
+  mapImageUrl: string
+  territoryName: string
+  variant?: 'thumbnail' | 'button'
+}) {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -20,18 +33,30 @@ export default function TerritoryMapViewer({ mapImageUrl, territoryName }: { map
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={`View ${territoryName} map full size`}
-        className="group relative block w-full overflow-hidden rounded-xl border border-blue-100"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={mapImageUrl} alt={`${territoryName} map`} className="w-full object-contain" />
-        <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/20 group-hover:opacity-100">
-          <ZoomIn className="h-8 w-8 text-white" />
-        </span>
-      </button>
+      {variant === 'button' ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={`View ${territoryName} map`}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] hover:border-[#38BDF8]/40 hover:bg-blue-50"
+        >
+          <Map className="h-4 w-4" />
+          View Territory Map
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={`View ${territoryName} map full size`}
+          className="group relative block w-full overflow-hidden rounded-xl border border-blue-100"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={mapImageUrl} alt={`${territoryName} map`} className="w-full object-contain" />
+          <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/20 group-hover:opacity-100">
+            <ZoomIn className="h-8 w-8 text-white" />
+          </span>
+        </button>
+      )}
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setOpen(false)}>

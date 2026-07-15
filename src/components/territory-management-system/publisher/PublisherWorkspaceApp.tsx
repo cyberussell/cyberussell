@@ -560,6 +560,7 @@ export default function PublisherWorkspaceApp({
             siblingPartnerships={workspace.siblingPartnerships}
             moving={movingRecord}
             markingMoved={markingMoved}
+            mapUrl={selected.record.territory ? mapUrls[selected.record.territory.id] : undefined}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
             onMoveRecord={(destinationPartnershipId) => handleMoveRecord(selected.record.id, destinationPartnershipId)}
             onUpdateMoved={(fields) => handleUpdateMoved(selected.record.id, fields)}

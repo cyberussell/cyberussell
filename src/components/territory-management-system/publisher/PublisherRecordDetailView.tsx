@@ -8,6 +8,7 @@ import type { SyncQueueItem } from '@/lib/territory-management-system/modules/of
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import VisitHistoryList from '@/components/territory-management-system/VisitHistoryList'
 import VisitResultBadge from '@/components/territory-management-system/VisitResultBadge'
+import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherVisitLogForm from './PublisherVisitLogForm'
 import MoveRecordForm from './MoveRecordForm'
@@ -56,6 +57,7 @@ export default function PublisherRecordDetailView({
   siblingPartnerships,
   moving,
   markingMoved,
+  mapUrl,
   onLogVisit,
   onMoveRecord,
   onUpdateMoved,
@@ -78,6 +80,10 @@ export default function PublisherRecordDetailView({
   // True while either "Mark as Moved" path (Update Contact Record / Recommend for Admin
   // Removal) is being saved/synced.
   markingMoved: boolean
+  // The record's own territory map — resolved by the parent (preferring an offline-cached
+  // blob over the live URL, same as the workspace list view's Territory Map(s) section).
+  // Undefined/empty when the territory has no map uploaded, or hasn't been resolved yet.
+  mapUrl?: string
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
   onMoveRecord: (destinationPartnershipId: string) => void
   onUpdateMoved: (fields: MovedRecordFields) => void
@@ -127,16 +133,23 @@ export default function PublisherRecordDetailView({
         )}
         {assigned.record.notes && <p className="mt-2 text-sm text-slate-500">{assigned.record.notes}</p>}
         {assigned.record.do_not_call && <p className="mt-2 text-sm font-medium text-red-500">Do Not Call</p>}
-        {mapsUrl && (
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] hover:border-[#38BDF8]/40 hover:bg-blue-50"
-          >
-            <MapPin className="h-4 w-4" />
-            Open in Google Maps
-          </a>
+        {(mapsUrl || mapUrl) && (
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {mapsUrl && (
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] hover:border-[#38BDF8]/40 hover:bg-blue-50"
+              >
+                <MapPin className="h-4 w-4" />
+                Open in Google Maps
+              </a>
+            )}
+            {mapUrl && (
+              <TerritoryMapViewer mapImageUrl={mapUrl} territoryName={assigned.record.territory?.name ?? 'Territory'} variant="button" />
+            )}
+          </div>
         )}
       </div>
 
