@@ -34,6 +34,11 @@ export interface TerritoryRecord {
   removal_recommended_at: string | null
   removal_recommended_reason: string | null
   removal_recommended_by: string | null
+  // Which partnership added this record via the publisher workspace's "Add a New Contact
+  // Record" form (null for admin/CSV-created records) — see 019_publisher_added_record_ownership.sql.
+  // Powers the publisher's own "My Added Records" list, kept separate from partnership_records
+  // (today's assigned-record list) and from the pending-review gate (still Admin-only).
+  created_by_partnership_id: string | null
   created_at: string
   updated_at: string
 }

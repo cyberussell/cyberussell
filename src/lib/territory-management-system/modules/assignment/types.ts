@@ -1,4 +1,4 @@
-import type { RecordVisitWithAuthor, TerritoryRecord } from '../records/types'
+import type { RecordVisitWithAuthor, TerritoryRecord, TerritoryRecordWithLocation } from '../records/types'
 
 export interface AssignmentBatch {
   id: string
@@ -68,4 +68,9 @@ export interface PartnershipWorkspace extends Partnership {
   // Other partnerships in the same batch a record can be moved/passed to — excludes this
   // partnership itself and any that already ended their ministry early.
   siblingPartnerships: { id: string; name: string }[]
+  // Records this partnership added via "Add a New Contact Record" — deliberately separate from
+  // `records` above (today's assigned list): never linked into partnership_records, still
+  // pending Admin review, but visible/editable/deletable by the publisher until their ministry
+  // session ends (see created_by_partnership_id on TerritoryRecord).
+  addedRecords: TerritoryRecordWithLocation[]
 }

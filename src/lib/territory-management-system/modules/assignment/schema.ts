@@ -21,6 +21,10 @@ export type RenamePartnershipInput = z.input<typeof renamePartnershipSchema>
 export const addPublisherRecordSchema = z
   .object({
     partnershipToken: z.string().min(1),
+    // Generated client-side (crypto.randomUUID()) the moment the publisher submits the form —
+    // lets the offline-first UI optimistically render (and immediately allow editing/deleting)
+    // the new record under a stable id before this write has even synced.
+    recordId: z.string().uuid(),
     territoryId: z.string().uuid(),
     sectionId: z.string().uuid(),
     blockId: z.string().uuid(),
@@ -112,3 +116,28 @@ export const recommendRemovalSchema = z.object({
   reason: z.string().min(1).max(500),
 })
 export type RecommendRemovalInput = z.input<typeof recommendRemovalSchema>
+
+// Deleting a record the publisher added themselves — only reachable while their own ministry
+// session is still active (see deletePublisherAddedRecordAction).
+export const deletePublisherAddedRecordSchema = z.object({
+  partnershipToken: z.string().min(1),
+  recordId: z.string().uuid(),
+})
+export type DeletePublisherAddedRecordInput = z.input<typeof deletePublisherAddedRecordSchema>
+
+// Editing a record the publisher added themselves — same field set as addPublisherRecordSchema
+// minus the initial-visit fields (editing a record you added isn't "logging a visit").
+export const editPublisherAddedRecordSchema = z.object({
+  partnershipToken: z.string().min(1),
+  recordId: z.string().uuid(),
+  territoryId: z.string().uuid(),
+  sectionId: z.string().uuid(),
+  blockId: z.string().uuid(),
+  address: z.string().min(1).max(200),
+  unit: z.string().max(40).optional().default(''),
+  residentName: z.string().max(120).optional().default(''),
+  plusCode: z.string().max(20).optional().default(''),
+  householdMembers: householdMembersField,
+  notes: z.string().max(500).optional().default(''),
+})
+export type EditPublisherAddedRecordInput = z.input<typeof editPublisherAddedRecordSchema>

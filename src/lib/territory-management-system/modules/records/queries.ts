@@ -38,6 +38,12 @@ export async function createRecord(
   supabase: SupabaseClient,
   congregationId: string,
   input: {
+    // Set by addPublisherRecordAction to the same id it optimistically rendered client-side
+    // the moment the publisher submitted — lets the offline-first UI show (and immediately
+    // allow editing/deleting) a just-added record before the write has even synced, since the
+    // id is already known and stable. Admin/CSV-import paths omit this and get the column's
+    // normal gen_random_uuid() default.
+    id?: string
     territoryId: string
     sectionId: string
     blockId: string
@@ -50,11 +56,13 @@ export async function createRecord(
     doNotCall: boolean
     status?: RecordStatus
     source?: TerritoryRecord['source']
+    createdByPartnershipId?: string
   }
 ): Promise<TerritoryRecord> {
   const { data, error } = await supabase
     .from('territory_records')
     .insert({
+      ...(input.id ? { id: input.id } : {}),
       congregation_id: congregationId,
       territory_id: input.territoryId,
       section_id: input.sectionId,
@@ -68,6 +76,7 @@ export async function createRecord(
       do_not_call: input.doNotCall,
       status: input.status ?? 'approved',
       source: input.source ?? 'manual',
+      created_by_partnership_id: input.createdByPartnershipId ?? null,
     })
     .select('*')
     .single()
@@ -79,6 +88,11 @@ export async function updateRecord(
   supabase: SupabaseClient,
   recordId: string,
   updates: {
+    // Only set by the publisher's own "edit a record I added" path — every other caller
+    // (admin edit, "Mark as Moved" → Update Contact Record) leaves the record's location alone.
+    territoryId?: string
+    sectionId?: string
+    blockId?: string
     address: string
     unit: string
     residentName: string
@@ -91,6 +105,9 @@ export async function updateRecord(
   const { error } = await supabase
     .from('territory_records')
     .update({
+      ...(updates.territoryId ? { territory_id: updates.territoryId } : {}),
+      ...(updates.sectionId ? { section_id: updates.sectionId } : {}),
+      ...(updates.blockId ? { block_id: updates.blockId } : {}),
       address: updates.address,
       unit: updates.unit,
       resident_name: updates.residentName,
@@ -107,6 +124,37 @@ export async function updateRecord(
 export async function deleteRecord(supabase: SupabaseClient, recordId: string): Promise<void> {
   const { error } = await supabase.from('territory_records').delete().eq('id', recordId)
   if (error) throw error
+}
+
+// The publisher's own "My Added Records" list — records this specific partnership added via
+// the workspace's Add form, regardless of their (still Admin-controlled) pending/approved
+// status. Deliberately not scoped through partnership_records — these records are never
+// linked there (see addPublisherRecordAction).
+export async function listRecordsAddedByPartnership(
+  supabase: SupabaseClient,
+  partnershipId: string
+): Promise<TerritoryRecordWithLocation[]> {
+  const { data } = await supabase
+    .from('territory_records')
+    .select(RECORD_WITH_LOCATION_SELECT)
+    .eq('created_by_partnership_id', partnershipId)
+    .order('created_at', { ascending: false })
+  return (data ?? []) as unknown as TerritoryRecordWithLocation[]
+}
+
+// Guard used before the publisher-facing edit/delete-added-record actions — the concrete
+// enforcement of "a publisher may only edit/delete records they personally added," mirroring
+// partnershipHasRecord's role for assigned records. source='publisher' is belt-and-suspenders:
+// created_by_partnership_id is never set on any other source.
+export async function recordAddedByPartnership(supabase: SupabaseClient, partnershipId: string, recordId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('territory_records')
+    .select('id')
+    .eq('id', recordId)
+    .eq('created_by_partnership_id', partnershipId)
+    .eq('source', 'publisher')
+    .maybeSingle()
+  return !!data
 }
 
 export async function setRecordStatus(supabase: SupabaseClient, recordId: string, status: RecordStatus): Promise<void> {

@@ -7,6 +7,8 @@ import { checkRateLimit, clientIp } from '@/lib/territory-management-system/rate
 import { logError } from '@/lib/territory-management-system/errors'
 import {
   addPublisherRecordSchema,
+  deletePublisherAddedRecordSchema,
+  editPublisherAddedRecordSchema,
   finishPartnershipSchema,
   logPublisherVisitSchema,
   movePartnershipRecordSchema,
@@ -29,11 +31,13 @@ import {
 } from '@/lib/territory-management-system/modules/assignment/queries'
 import {
   createRecord,
+  deleteRecord,
   getLatestVisitResult,
   getRecordById,
   getRecordDoNotCall,
   logVisit,
   recommendRecordForRemoval,
+  recordAddedByPartnership,
   updateRecord,
 } from '@/lib/territory-management-system/modules/records/queries'
 import { getSelectableResults, mergeConductorIntoNotes } from '@/lib/territory-management-system/modules/records/schema'
@@ -120,10 +124,13 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
 }
 
 // New records added here are 'pending'/'publisher'-sourced, same review gate as CSV import —
-// they never retroactively appear in today's own partnership list.
+// they never retroactively appear in today's own partnership list (partnership_records).
+// Stamped with created_by_partnership_id instead, which is what powers the publisher's own
+// separate "My Added Records" list and its edit/delete permission checks.
 export async function addPublisherRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = addPublisherRecordSchema.safeParse({
     partnershipToken: formData.get('partnershipToken'),
+    recordId: formData.get('recordId'),
     territoryId: formData.get('territoryId'),
     sectionId: formData.get('sectionId'),
     blockId: formData.get('blockId'),
@@ -146,6 +153,7 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
   // A session that was already open before midnight could still try to submit after — the
   // client-side "ended" screen is a courtesy, this is the actual enforcement.
   if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+  if (partnership.finished_at || partnership.ended_early_at) return { error: 'Your ministry session has already ended.' }
 
   // This path runs on the service-role client (no RLS), so it must independently verify the
   // submitted territory/section/block chain actually belongs to this partnership's own
@@ -165,6 +173,7 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
 
   try {
     const record = await createRecord(supabase, partnership.congregation_id, {
+      id: parsed.data.recordId,
       territoryId: parsed.data.territoryId,
       sectionId: parsed.data.sectionId,
       blockId: parsed.data.blockId,
@@ -177,6 +186,7 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
       doNotCall: false,
       status: 'pending',
       source: 'publisher',
+      createdByPartnershipId: partnership.id,
     })
     // Not marked as a completed partnership record — a just-added record is still pending admin
     // review and was never assigned to this partnership in the first place (see the comment on
@@ -401,6 +411,100 @@ export async function recommendRemovalAction(_prev: ActionResult, formData: Form
   } catch (e) {
     await logError(partnership.congregation_id, 'recommendRemovalAction', e)
     return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }
+  }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// Deletes a record the publisher added themselves this session (never one that was actually
+// assigned — recordAddedByPartnership only matches created_by_partnership_id, which is
+// unrelated to partnership_records). Hard-blocked once the ministry session has ended, both
+// normally (finished_at) or early (ended_early_at) — not just client-side hidden, since this
+// runs on the service-role client with no RLS to fall back on.
+export async function deletePublisherAddedRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = deletePublisherAddedRecordSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    recordId: formData.get('recordId'),
+  })
+  if (!parsed.success) return { error: 'Invalid request.' }
+  if (!(await checkRateLimit(`tms-delete-added-record:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+  if (partnership.finished_at || partnership.ended_early_at) return { error: 'Your ministry session has already ended.' }
+
+  const owns = await recordAddedByPartnership(supabase, partnership.id, parsed.data.recordId)
+  if (!owns) return { error: 'This contact record was not added by your partnership.' }
+
+  try {
+    await deleteRecord(supabase, parsed.data.recordId)
+  } catch (e) {
+    await logError(partnership.congregation_id, 'deletePublisherAddedRecordAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not delete the contact record.' }
+  }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// Edits a record the publisher added themselves this session — unlike
+// updatePublisherRecordAction ("Mark as Moved" → "Update Contact Record"), territory/section/
+// block ARE editable here (a publisher correcting where they placed their own new record is a
+// different situation than correcting contact info on an already-assigned one). Same
+// finished_at/ended_early_at hard-block as the delete action above.
+export async function editPublisherAddedRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = editPublisherAddedRecordSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    recordId: formData.get('recordId'),
+    territoryId: formData.get('territoryId'),
+    sectionId: formData.get('sectionId'),
+    blockId: formData.get('blockId'),
+    address: formData.get('address'),
+    unit: formData.get('unit'),
+    residentName: formData.get('residentName'),
+    plusCode: formData.get('plusCode'),
+    householdMembers: formData.get('householdMembers'),
+    notes: formData.get('notes'),
+  })
+  if (!parsed.success) return { error: 'Please fill in the required fields.' }
+  if (!(await checkRateLimit(`tms-edit-added-record:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+  if (partnership.finished_at || partnership.ended_early_at) return { error: 'Your ministry session has already ended.' }
+
+  const owns = await recordAddedByPartnership(supabase, partnership.id, parsed.data.recordId)
+  if (!owns) return { error: 'This contact record was not added by your partnership.' }
+
+  const territory = await getTerritoryStructure(supabase, partnership.congregation_id, parsed.data.territoryId)
+  const section = territory?.sections.find((s) => s.id === parsed.data.sectionId)
+  const block = section?.blocks.find((b) => b.id === parsed.data.blockId)
+  if (!territory || !section || !block) return { error: 'Invalid territory, section, or block.' }
+
+  const existing = await getRecordById(supabase, partnership.congregation_id, parsed.data.recordId)
+  if (!existing) return { error: 'Contact record not found.' }
+
+  try {
+    await updateRecord(supabase, parsed.data.recordId, {
+      territoryId: parsed.data.territoryId,
+      sectionId: parsed.data.sectionId,
+      blockId: parsed.data.blockId,
+      address: parsed.data.address,
+      unit: parsed.data.unit,
+      residentName: parsed.data.residentName,
+      plusCode: parsed.data.plusCode,
+      householdMembers: parsed.data.householdMembers,
+      notes: parsed.data.notes,
+      doNotCall: existing.do_not_call,
+    })
+  } catch (e) {
+    await logError(partnership.congregation_id, 'editPublisherAddedRecordAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not update the contact record.' }
   }
 
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)

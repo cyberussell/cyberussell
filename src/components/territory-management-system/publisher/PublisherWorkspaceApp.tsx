@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipRecordDetail, PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
+import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { downloadAssignment, getLocalMapImageUrl, isDownloaded } from '@/lib/territory-management-system/modules/offline/download'
@@ -15,7 +16,9 @@ import TerritoryMapViewer from '@/components/territory-management-system/Territo
 import PublisherBottomMenu from './PublisherBottomMenu'
 import PartnershipRenameForm from './PartnershipRenameForm'
 import AssignedRecordsList from './AssignedRecordsList'
+import AddedRecordsList from './AddedRecordsList'
 import PublisherRecordDetailView from './PublisherRecordDetailView'
+import PublisherAddedRecordDetailView from './PublisherAddedRecordDetailView'
 import PublisherRecordForm, { type NewPublisherRecordPayload } from './PublisherRecordForm'
 import PublisherNoteForm from './PublisherNoteForm'
 
@@ -23,6 +26,9 @@ type View =
   | { name: 'list' }
   | { name: 'detail'; recordId: string }
   | { name: 'addRecord' }
+  | { name: 'addedRecords' }
+  | { name: 'addedRecordDetail'; recordId: string }
+  | { name: 'editAddedRecord'; recordId: string }
   | { name: 'note' }
   | { name: 'sync' }
   | { name: 'done' }
@@ -48,6 +54,7 @@ export default function PublisherWorkspaceApp({
   const [movingRecord, setMovingRecord] = useState(false)
   const [sendingNote, setSendingNote] = useState(false)
   const [markingMoved, setMarkingMoved] = useState(false)
+  const [deletingAddedRecord, setDeletingAddedRecord] = useState(false)
   const [queue, setQueue] = useState<SyncQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
   const [mapUrls, setMapUrls] = useState<Record<string, string>>({})
@@ -80,6 +87,9 @@ export default function PublisherWorkspaceApp({
   // controls (Record a Visit, Mark as Moved, Pass to Another Partner) go away — there's nothing
   // left to log for the day.
   const sessionEnded = Boolean(workspace.finished_at || workspace.ended_early_at)
+  // Same rule PublisherRecordDetailView applies internally for assigned records — reused here
+  // to gate the "Add a New Contact Record" button and the added-records Edit/Delete actions.
+  const editable = !readOnly && !sessionEnded
 
   const refreshQueue = useCallback(async () => {
     setQueue(await listQueue(partnershipToken))
@@ -258,12 +268,104 @@ export default function PublisherWorkspaceApp({
     window.scrollTo({ top: 0, behavior: 'auto' })
   }
 
+  // The new record's id is generated here (not server-side) so it can be optimistically
+  // rendered in "My Added Records" — and immediately made editable/deletable — before this
+  // write has even synced. addPublisherRecordAction inserts under this exact id.
   async function handleAddRecord(payload: NewPublisherRecordPayload) {
-    await enqueue(partnershipToken, 'addRecord', { partnershipToken, ...payload })
+    const recordId = crypto.randomUUID()
+    const territory = territoryStructures.find((t) => t.id === payload.territoryId)
+    const section = territory?.sections.find((s) => s.id === payload.sectionId)
+    const block = section?.blocks.find((b) => b.id === payload.blockId)
+    const optimisticRecord: TerritoryRecordWithLocation = {
+      id: recordId,
+      congregation_id: workspace.congregation_id,
+      territory_id: payload.territoryId,
+      section_id: payload.sectionId,
+      block_id: payload.blockId,
+      address: payload.address,
+      unit: payload.unit,
+      resident_name: payload.residentName,
+      plus_code: payload.plusCode || null,
+      household_members: payload.householdMembers ? Number(payload.householdMembers) : null,
+      notes: payload.notes,
+      do_not_call: false,
+      status: 'pending',
+      source: 'publisher',
+      removal_recommended_at: null,
+      removal_recommended_reason: null,
+      removal_recommended_by: null,
+      created_by_partnership_id: workspace.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      territory: territory ? { id: territory.id, name: territory.name } : null,
+      section: section ? { id: section.id, label: section.label } : null,
+      block: block ? { id: block.id, label: block.label } : null,
+    }
+    setWorkspace((w) => ({ ...w, addedRecords: [optimisticRecord, ...w.addedRecords] }))
+    await enqueue(partnershipToken, 'addRecord', { partnershipToken, recordId, ...payload })
     await refreshQueue()
-    setView({ name: 'list' })
-    toast.success('Contact record queued for submission.')
+    setView({ name: 'addedRecords' })
+    toast.success('Contact record added.')
     if (online) handleSync()
+  }
+
+  async function handleEditAddedRecord(recordId: string, payload: NewPublisherRecordPayload) {
+    const territory = territoryStructures.find((t) => t.id === payload.territoryId)
+    const section = territory?.sections.find((s) => s.id === payload.sectionId)
+    const block = section?.blocks.find((b) => b.id === payload.blockId)
+    setWorkspace((w) => ({
+      ...w,
+      addedRecords: w.addedRecords.map((r) =>
+        r.id === recordId
+          ? {
+              ...r,
+              territory_id: payload.territoryId,
+              section_id: payload.sectionId,
+              block_id: payload.blockId,
+              address: payload.address,
+              unit: payload.unit,
+              resident_name: payload.residentName,
+              plus_code: payload.plusCode || null,
+              household_members: payload.householdMembers ? Number(payload.householdMembers) : null,
+              notes: payload.notes,
+              territory: territory ? { id: territory.id, name: territory.name } : r.territory,
+              section: section ? { id: section.id, label: section.label } : r.section,
+              block: block ? { id: block.id, label: block.label } : r.block,
+            }
+          : r
+      ),
+    }))
+    await enqueue(partnershipToken, 'editAddedRecord', {
+      partnershipToken,
+      recordId,
+      territoryId: payload.territoryId,
+      sectionId: payload.sectionId,
+      blockId: payload.blockId,
+      address: payload.address,
+      unit: payload.unit,
+      residentName: payload.residentName,
+      plusCode: payload.plusCode,
+      householdMembers: payload.householdMembers,
+      notes: payload.notes,
+    })
+    await refreshQueue()
+    toast.success('Contact record updated.')
+    if (online) await handleSync()
+    setView({ name: 'addedRecordDetail', recordId })
+  }
+
+  async function handleDeleteAddedRecord(recordId: string) {
+    setDeletingAddedRecord(true)
+    try {
+      setWorkspace((w) => ({ ...w, addedRecords: w.addedRecords.filter((r) => r.id !== recordId) }))
+      await enqueue(partnershipToken, 'deleteAddedRecord', { partnershipToken, recordId })
+      await refreshQueue()
+      toast.success('Contact record deleted.')
+      if (online) await handleSync()
+      setView({ name: 'addedRecords' })
+    } finally {
+      setDeletingAddedRecord(false)
+    }
   }
 
   function goToSync() {
@@ -422,7 +524,7 @@ export default function PublisherWorkspaceApp({
               </div>
             )}
 
-            {!readOnly && territoryStructures.length > 0 && (
+            {editable && territoryStructures.length > 0 && (
               <button
                 type="button"
                 onClick={() => setView({ name: 'addRecord' })}
@@ -468,6 +570,68 @@ export default function PublisherWorkspaceApp({
         {view.name === 'addRecord' && (
           <PublisherRecordForm territories={territoryStructures} onSubmit={handleAddRecord} onCancel={() => setView({ name: 'list' })} />
         )}
+
+        {view.name === 'addedRecords' && (
+          <div>
+            <h2 className="mb-3 font-semibold text-[#0B1B33]">My Added Records</h2>
+            <AddedRecordsList
+              records={workspace.addedRecords}
+              onSelect={(recordId) => setView({ name: 'addedRecordDetail', recordId })}
+            />
+            {editable && territoryStructures.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setView({ name: 'addRecord' })}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-medium text-[#2563EB] hover:border-[#38BDF8]/40"
+              >
+                <Plus className="h-4 w-4" />
+                Add a New Contact Record
+              </button>
+            )}
+          </div>
+        )}
+
+        {view.name === 'addedRecordDetail' &&
+          (() => {
+            const addedRecord = workspace.addedRecords.find((r) => r.id === view.recordId)
+            if (!addedRecord) return null
+            return (
+              <PublisherAddedRecordDetailView
+                record={addedRecord}
+                editable={editable}
+                deleting={deletingAddedRecord}
+                onEdit={() => setView({ name: 'editAddedRecord', recordId: addedRecord.id })}
+                onDelete={() => {
+                  if (window.confirm('Delete this contact record? This cannot be undone.')) handleDeleteAddedRecord(addedRecord.id)
+                }}
+              />
+            )
+          })()}
+
+        {view.name === 'editAddedRecord' &&
+          (() => {
+            const addedRecord = workspace.addedRecords.find((r) => r.id === view.recordId)
+            if (!addedRecord) return null
+            return (
+              <PublisherRecordForm
+                mode="edit"
+                territories={territoryStructures}
+                initialValues={{
+                  territoryId: addedRecord.territory_id,
+                  sectionId: addedRecord.section_id,
+                  blockId: addedRecord.block_id,
+                  address: addedRecord.address,
+                  unit: addedRecord.unit,
+                  residentName: addedRecord.resident_name,
+                  plusCode: addedRecord.plus_code ?? '',
+                  householdMembers: addedRecord.household_members != null ? String(addedRecord.household_members) : '',
+                  notes: addedRecord.notes,
+                }}
+                onSubmit={(payload) => handleEditAddedRecord(addedRecord.id, payload)}
+                onCancel={() => setView({ name: 'addedRecordDetail', recordId: addedRecord.id })}
+              />
+            )
+          })()}
 
         {view.name === 'note' && <PublisherNoteForm sending={sendingNote} onSend={handleSendNote} onSkip={handleSkipNote} />}
 
@@ -517,6 +681,8 @@ export default function PublisherWorkspaceApp({
         batchToken={batchToken}
         view={view.name === 'note' || view.name === 'sync' || view.name === 'done' ? 'list' : view.name}
         onGoToRecords={() => setView({ name: 'list' })}
+        onGoToAddedRecords={() => setView({ name: 'addedRecords' })}
+        showAddedRecords={!readOnly}
         onGoToVisitForm={scrollToVisitForm}
         showSync={showSessionChrome}
         downloaded={downloaded}

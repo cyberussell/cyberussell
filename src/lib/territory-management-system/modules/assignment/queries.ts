@@ -2,7 +2,7 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { calculateAssignment, isAssignmentError, type AssignmentError } from './engine'
 import { isBatchExpired } from './date'
-import { logVisit } from '../records/queries'
+import { listRecordsAddedByPartnership, logVisit } from '../records/queries'
 import type {
   AssignmentBatch,
   BatchSummary,
@@ -352,6 +352,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     .filter((t): t is { id: string; name: string; map_image_url: string | null } => t !== null)
 
   const siblingPartnerships = await getBatchSiblingPartnerships(supabase, partnership.batch_id, partnership.id)
+  const addedRecords = await listRecordsAddedByPartnership(supabase, partnership.id)
 
   return {
     ...(partnership as Partnership),
@@ -361,6 +362,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     territories,
     expired,
     siblingPartnerships,
+    addedRecords,
   }
 }
 

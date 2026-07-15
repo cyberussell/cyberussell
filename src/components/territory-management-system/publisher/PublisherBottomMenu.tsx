@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { CheckCircle2, CloudOff, ClipboardCheck, ClipboardList, Download, RefreshCw, Users, type LucideIcon } from 'lucide-react'
+import { CheckCircle2, CloudOff, ClipboardCheck, ClipboardList, ClipboardPlus, Download, RefreshCw, Users, type LucideIcon } from 'lucide-react'
 
 // Fixed bottom navigation for the publisher workspace, like a native app tab bar — easier to
 // reach one-handed than a top bar while out in ministry. Also folds in the two standalone
@@ -14,6 +14,8 @@ export default function PublisherBottomMenu({
   batchToken,
   view,
   onGoToRecords,
+  onGoToAddedRecords,
+  showAddedRecords,
   onGoToVisitForm,
   showSync,
   downloaded,
@@ -25,8 +27,13 @@ export default function PublisherBottomMenu({
   onSync,
 }: {
   batchToken: string
-  view: 'list' | 'detail' | 'addRecord'
+  view: 'list' | 'detail' | 'addRecord' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord'
   onGoToRecords: () => void
+  // Hidden while readOnly (viewing another Ministry Partner's assignment) — a publisher-added
+  // record only ever belongs to the partnership that added it, same as "Add a New Contact
+  // Record" itself, which is also readOnly-gated.
+  onGoToAddedRecords: () => void
+  showAddedRecords: boolean
   onGoToVisitForm: () => void
   showSync: boolean
   downloaded: boolean
@@ -80,6 +87,15 @@ export default function PublisherBottomMenu({
     { key: 'partners', label: 'All Partners', icon: Users, active: false, href: `/territory-management-system/assignment/${batchToken}` },
     { key: 'records', label: 'Assigned Records', icon: ClipboardList, active: view === 'list', onClick: onGoToRecords }
   )
+  if (showAddedRecords) {
+    items.push({
+      key: 'addedRecords',
+      label: 'My Added Records',
+      icon: ClipboardPlus,
+      active: view === 'addedRecords' || view === 'addedRecordDetail' || view === 'editAddedRecord',
+      onClick: onGoToAddedRecords,
+    })
+  }
   if (view === 'detail') {
     items.push({ key: 'visit', label: 'Record a Visit', icon: ClipboardCheck, active: true, onClick: onGoToVisitForm })
   }

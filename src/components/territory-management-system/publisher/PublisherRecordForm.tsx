@@ -28,26 +28,36 @@ export interface NewPublisherRecordPayload {
 
 // Fully controlled — enqueueing (not a native form action) is how this reaches the server now,
 // so every field needs to be readable in JS on submit rather than pulled from FormData.
+//
+// Doubles as the "edit a record I added" form (mode='edit') — same fields, seeded from
+// initialValues instead of blank, minus the initial-visit-status section (editing a record you
+// added isn't "logging a visit"). onSubmit's payload shape stays the same either way; the
+// initialResult/initialConductorName/initialNotes fields just come back empty in edit mode and
+// the caller (handleEditAddedRecord) ignores them.
 export default function PublisherRecordForm({
   territories,
   onSubmit,
   onCancel,
+  mode = 'add',
+  initialValues,
 }: {
   territories: TerritoryStructure[]
   onSubmit: (payload: NewPublisherRecordPayload) => void
   onCancel: () => void
+  mode?: 'add' | 'edit'
+  initialValues?: Partial<Omit<NewPublisherRecordPayload, 'initialResult' | 'initialConductorName' | 'initialNotes'>>
 }) {
-  const [territoryId, setTerritoryId] = useState(territories[0]?.id ?? '')
+  const [territoryId, setTerritoryId] = useState(initialValues?.territoryId ?? territories[0]?.id ?? '')
   const territory = territories.find((t) => t.id === territoryId)
-  const [sectionId, setSectionId] = useState(territory?.sections[0]?.id ?? '')
+  const [sectionId, setSectionId] = useState(initialValues?.sectionId ?? territory?.sections[0]?.id ?? '')
   const section = territory?.sections.find((s) => s.id === sectionId)
-  const [blockId, setBlockId] = useState(section?.blocks[0]?.id ?? '')
-  const [address, setAddress] = useState('')
-  const [unit, setUnit] = useState('')
-  const [residentName, setResidentName] = useState('')
-  const [plusCode, setPlusCode] = useState('')
-  const [householdMembers, setHouseholdMembers] = useState('')
-  const [notes, setNotes] = useState('')
+  const [blockId, setBlockId] = useState(initialValues?.blockId ?? section?.blocks[0]?.id ?? '')
+  const [address, setAddress] = useState(initialValues?.address ?? '')
+  const [unit, setUnit] = useState(initialValues?.unit ?? '')
+  const [residentName, setResidentName] = useState(initialValues?.residentName ?? '')
+  const [plusCode, setPlusCode] = useState(initialValues?.plusCode ?? '')
+  const [householdMembers, setHouseholdMembers] = useState(initialValues?.householdMembers ?? '')
+  const [notes, setNotes] = useState(initialValues?.notes ?? '')
   // A brand-new record has no prior visit and is never do_not_call yet, so the full selectable
   // list applies — same call shape as a fresh admin RecordForm.
   const [initialResult, setInitialResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
@@ -98,8 +108,12 @@ export default function PublisherRecordForm({
 
   return (
     <Card className="p-6">
-      <h2 className="mb-1 font-semibold text-[#0B1B33]">Add a New Contact Record</h2>
-      <p className="mb-4 text-xs text-slate-500">Submitted for admin review — it won&apos;t appear on today&apos;s assignment.</p>
+      <h2 className="mb-1 font-semibold text-[#0B1B33]">{mode === 'edit' ? 'Edit Contact Record' : 'Add a New Contact Record'}</h2>
+      <p className="mb-4 text-xs text-slate-500">
+        {mode === 'edit'
+          ? 'Still pending Admin review — you can keep editing until you end your ministry for today.'
+          : "You'll see it under My Added Records right away — still pending Admin review before it's used in a future assignment."}
+      </p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {territories.length > 1 && (
@@ -173,21 +187,23 @@ export default function PublisherRecordForm({
         <FormField label="Notes" optional>
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={500} rows={2} className={inputClass} />
         </FormField>
-        <FormField label="Initial status" optional>
-          <select
-            value={initialResult}
-            onChange={(e) => setInitialResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number] | '')}
-            className={inputClass}
-          >
-            <option value="">Leave blank (Initial Visit)</option>
-            {selectableResults.map((r) => (
-              <option key={r} value={r}>
-                {VISIT_RESULT_LABELS[r]}
-              </option>
-            ))}
-          </select>
-        </FormField>
-        {conductorPrompt && (
+        {mode === 'add' && (
+          <FormField label="Initial status" optional>
+            <select
+              value={initialResult}
+              onChange={(e) => setInitialResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number] | '')}
+              className={inputClass}
+            >
+              <option value="">Leave blank (Initial Visit)</option>
+              {selectableResults.map((r) => (
+                <option key={r} value={r}>
+                  {VISIT_RESULT_LABELS[r]}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        )}
+        {mode === 'add' && conductorPrompt && (
           <FormField label={conductorPrompt}>
             <input
               value={initialConductorName}
@@ -198,7 +214,7 @@ export default function PublisherRecordForm({
             />
           </FormField>
         )}
-        {initialResult && (
+        {mode === 'add' && initialResult && (
           <FormField label="Initial visit notes" optional={!initialNotesRequired}>
             <textarea
               value={initialNotes}
@@ -223,7 +239,7 @@ export default function PublisherRecordForm({
             disabled={!section || section.blocks.length === 0}
             className="flex-1 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
           >
-            Submit Record
+            {mode === 'edit' ? 'Save Changes' : 'Submit Record'}
           </button>
         </div>
       </form>
