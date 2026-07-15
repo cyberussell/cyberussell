@@ -22,13 +22,18 @@ export default function MarkMovedForm({
   submitting,
   onUpdate,
   onRecommend,
+  // Lets a parent skip straight past the trigger button — used by the mobile "Pass to Other /
+  // Mark as Moved" button row (PublisherRecordDetailView), which only mounts this component
+  // once its own "Mark as Moved" button is tapped, so the trigger itself would be redundant.
+  initialMode = 'closed',
 }: {
   initial: MovedRecordFields
   submitting: boolean
   onUpdate: (fields: MovedRecordFields) => void
   onRecommend: (reason: string) => void
+  initialMode?: 'closed' | 'choose'
 }) {
-  const [mode, setMode] = useState<'closed' | 'choose' | 'edit' | 'recommend'>('closed')
+  const [mode, setMode] = useState<'closed' | 'choose' | 'edit' | 'recommend'>(initialMode)
   const [fields, setFields] = useState(initial)
   const [reason, setReason] = useState('')
 

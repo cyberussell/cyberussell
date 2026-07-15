@@ -1,4 +1,7 @@
-import { MapPin } from 'lucide-react'
+'use client'
+
+import { useState } from 'react'
+import { ArrowRightLeft, MapPin, Truck } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
@@ -62,6 +65,18 @@ export default function PublisherRecordDetailView({
     : null
   const latestResult = assigned.visits[0]?.result
   const editable = !readOnly && !sessionEnded
+  // Mobile only (see the sm:hidden/hidden sm:block split below) — desktop has room to show both
+  // "Pass to Another Partner" and "Mark as Moved" fully expanded at once, but on a phone that's
+  // a lot of scrolling past two big cards to reach Record a Visit. Collapsed behind a two-button
+  // row instead; tapping one reveals its panel in place of the row.
+  const [mobileAction, setMobileAction] = useState<'none' | 'move' | 'moved'>('none')
+  const movedFields = {
+    address: assigned.record.address,
+    unit: assigned.record.unit,
+    residentName: assigned.record.resident_name,
+    plusCode: assigned.record.plus_code ?? '',
+    notes: assigned.record.notes,
+  }
 
   return (
     <div className="space-y-6">
@@ -98,22 +113,59 @@ export default function PublisherRecordDetailView({
       </div>
 
       {editable && !assigned.completed_at && (
-        <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
-      )}
+        <>
+          {/* Desktop/tablet: both forms fully expanded, plenty of room */}
+          <div className="hidden space-y-6 sm:block">
+            <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
+            <MarkMovedForm initial={movedFields} submitting={markingMoved} onUpdate={onUpdateMoved} onRecommend={onRecommendRemoval} />
+          </div>
 
-      {editable && !assigned.completed_at && (
-        <MarkMovedForm
-          initial={{
-            address: assigned.record.address,
-            unit: assigned.record.unit,
-            residentName: assigned.record.resident_name,
-            plusCode: assigned.record.plus_code ?? '',
-            notes: assigned.record.notes,
-          }}
-          submitting={markingMoved}
-          onUpdate={onUpdateMoved}
-          onRecommend={onRecommendRemoval}
-        />
+          {/* Mobile: collapsed behind a two-button row until one is tapped */}
+          <div className="sm:hidden">
+            {mobileAction === 'none' && (
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setMobileAction('move')}
+                  className="flex items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+                >
+                  <ArrowRightLeft className="h-4 w-4" />
+                  Pass to Other
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileAction('moved')}
+                  className="flex items-center justify-center gap-2 rounded-lg border border-amber-200 bg-amber-50 py-2.5 text-sm font-semibold text-amber-700 transition hover:border-amber-300"
+                >
+                  <Truck className="h-4 w-4" />
+                  Mark as Moved
+                </button>
+              </div>
+            )}
+            {mobileAction === 'move' && (
+              <div className="space-y-3">
+                <button type="button" onClick={() => setMobileAction('none')} className="text-xs font-medium text-slate-400 hover:underline">
+                  ‹ Back
+                </button>
+                <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
+              </div>
+            )}
+            {mobileAction === 'moved' && (
+              <div className="space-y-3">
+                <button type="button" onClick={() => setMobileAction('none')} className="text-xs font-medium text-slate-400 hover:underline">
+                  ‹ Back
+                </button>
+                <MarkMovedForm
+                  initialMode="choose"
+                  initial={movedFields}
+                  submitting={markingMoved}
+                  onUpdate={onUpdateMoved}
+                  onRecommend={onRecommendRemoval}
+                />
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {editable && (
