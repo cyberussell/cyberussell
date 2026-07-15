@@ -6,6 +6,7 @@ import VisitHistoryList from '@/components/territory-management-system/VisitHist
 import VisitResultBadge from '@/components/territory-management-system/VisitResultBadge'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherVisitLogForm from './PublisherVisitLogForm'
+import MoveRecordForm from './MoveRecordForm'
 
 // Full-card tone driven by the record's latest logged visit result — a glance-level warning
 // (Do Not Call) or good-news highlight (Bible Study) that's more visible than a small badge
@@ -23,7 +24,10 @@ export default function PublisherRecordDetailView({
   pendingVisits,
   readOnly,
   saving,
+  siblingPartnerships,
+  moving,
   onLogVisit,
+  onMoveRecord,
 }: {
   assigned: PartnershipRecordDetail
   pendingVisits: SyncQueueItem[]
@@ -33,7 +37,10 @@ export default function PublisherRecordDetailView({
   // True while a just-submitted visit is being saved/synced — disables the form and shows a
   // spinner so a slow connection doesn't look like a missed tap.
   saving: boolean
+  siblingPartnerships: { id: string; name: string }[]
+  moving: boolean
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
+  onMoveRecord: (destinationPartnershipId: string) => void
 }) {
   const mapsUrl = assigned.record.plus_code
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assigned.record.plus_code)}`
@@ -73,6 +80,10 @@ export default function PublisherRecordDetailView({
           </a>
         )}
       </div>
+
+      {!readOnly && !assigned.completed_at && (
+        <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
+      )}
 
       {!readOnly && (
         <div id="record-a-visit-form">

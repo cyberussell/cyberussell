@@ -55,4 +55,7 @@ export interface PartnershipWorkspace extends Partnership {
   // Same meaning as BatchSummary.expired — checked again server-side before every
   // publisher-facing write (rename/log visit/add record), not just used for display.
   expired: boolean
+  // Other partnerships in the same batch a record can be moved/passed to — excludes this
+  // partnership itself and any that already ended their ministry early.
+  siblingPartnerships: { id: string; name: string }[]
 }

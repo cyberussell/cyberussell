@@ -263,13 +263,42 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     if (r.record.territory) territoryMap.set(r.record.territory.id, r.record.territory)
   }
 
+  const siblingPartnerships = await getBatchSiblingPartnerships(supabase, partnership.batch_id, partnership.id)
+
   return {
     ...(partnership as Partnership),
     batch: batch as AssignmentBatch,
     records,
     territories: [...territoryMap.values()],
     expired,
+    siblingPartnerships,
   }
+}
+
+// Other partnerships in the same batch a record can be moved to — excludes the partnership
+// itself and any that already ended their ministry early (nothing left to hand a record to).
+export async function getBatchSiblingPartnerships(
+  supabase: SupabaseClient,
+  batchId: string,
+  excludePartnershipId: string
+): Promise<{ id: string; name: string }[]> {
+  const { data } = await supabase
+    .from('partnerships')
+    .select('id, name, ended_early_at')
+    .eq('batch_id', batchId)
+    .neq('id', excludePartnershipId)
+    .order('sequence')
+  return ((data ?? []) as { id: string; name: string; ended_early_at: string | null }[])
+    .filter((p) => !p.ended_early_at)
+    .map((p) => ({ id: p.id, name: p.name }))
+}
+
+// Resolves a partnership by its raw id (not claim_token) — used to validate a move's
+// destination, which the publisher picks from getBatchSiblingPartnerships' list rather than
+// ever having that partnership's own token.
+export async function getPartnershipById(supabase: SupabaseClient, partnershipId: string): Promise<Partnership | null> {
+  const { data } = await supabase.from('partnerships').select('*').eq('id', partnershipId).maybeSingle()
+  return (data as Partnership | null) ?? null
 }
 
 // The first successful rename *is* the claim (see getPartnershipByToken's comment above) — a
@@ -346,5 +375,33 @@ export async function markPartnershipRecordCompleted(supabase: SupabaseClient, p
     .eq('partnership_id', partnershipId)
     .eq('record_id', recordId)
     .is('completed_at', null)
+  if (error) throw error
+}
+
+// Passes an assigned record to a different partnership in the same batch — an UPDATE on the
+// existing partnership_records row (preserving its id), not a delete+reinsert. Re-sequenced to
+// the end of the destination's list and completed_at reset to null: only incomplete records are
+// ever offered for a move (see the publisher UI), but this stays defensive either way, since the
+// destination partnership hasn't actually visited it yet regardless of the source's state.
+export async function movePartnershipRecord(
+  supabase: SupabaseClient,
+  sourcePartnershipId: string,
+  destinationPartnershipId: string,
+  recordId: string
+): Promise<void> {
+  const { data: lastRow } = await supabase
+    .from('partnership_records')
+    .select('sequence')
+    .eq('partnership_id', destinationPartnershipId)
+    .order('sequence', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  const nextSequence = ((lastRow?.sequence as number | undefined) ?? 0) + 1
+
+  const { error } = await supabase
+    .from('partnership_records')
+    .update({ partnership_id: destinationPartnershipId, sequence: nextSequence, completed_at: null })
+    .eq('partnership_id', sourcePartnershipId)
+    .eq('record_id', recordId)
   if (error) throw error
 }

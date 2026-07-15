@@ -38,6 +38,7 @@ export default function PublisherWorkspaceApp({
   const [view, setView] = useState<View>({ name: 'list' })
   const [downloaded, setDownloaded] = useState(false)
   const [savingVisit, setSavingVisit] = useState(false)
+  const [movingRecord, setMovingRecord] = useState(false)
   const [queue, setQueue] = useState<SyncQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
   const [mapUrls, setMapUrls] = useState<Record<string, string>>({})
@@ -169,6 +170,24 @@ export default function PublisherWorkspaceApp({
       goToNextRecord(recordId, updatedRecords)
     } finally {
       setSavingVisit(false)
+    }
+  }
+
+  // Passes a record to a different Ministry Partner — unlike logging a visit, the record simply
+  // leaves this partnership's list entirely (it isn't "completed" here, it's someone else's now).
+  async function handleMoveRecord(recordId: string, destinationPartnershipId: string) {
+    setMovingRecord(true)
+    try {
+      await enqueue(partnershipToken, 'moveRecord', { partnershipToken, recordId, destinationPartnershipId })
+      await refreshQueue()
+      if (online) await handleSync()
+      const remainingRecords = workspace.records.filter((r) => r.record.id !== recordId)
+      setWorkspace((w) => ({ ...w, records: remainingRecords }))
+      toast.success('Moved to another Ministry Partner.')
+      const next = [...remainingRecords].sort((a, b) => a.sequence - b.sequence).find((r) => !r.completed_at)
+      setView(next ? { name: 'detail', recordId: next.record.id } : { name: 'list' })
+    } finally {
+      setMovingRecord(false)
     }
   }
 
@@ -310,7 +329,10 @@ export default function PublisherWorkspaceApp({
             pendingVisits={pendingVisitsForSelected}
             readOnly={readOnly}
             saving={savingVisit}
+            siblingPartnerships={workspace.siblingPartnerships}
+            moving={movingRecord}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
+            onMoveRecord={(destinationPartnershipId) => handleMoveRecord(selected.record.id, destinationPartnershipId)}
           />
         )}
 

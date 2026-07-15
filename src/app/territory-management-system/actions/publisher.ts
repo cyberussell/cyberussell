@@ -5,12 +5,15 @@ import { createAdminSupabase } from '@/lib/territory-management-system/supabase-
 import {
   addPublisherRecordSchema,
   logPublisherVisitSchema,
+  movePartnershipRecordSchema,
   renamePartnershipSchema,
   terminatePartnershipEarlySchema,
 } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
+  getPartnershipById,
   getPartnershipByToken,
   markPartnershipRecordCompleted,
+  movePartnershipRecord,
   partnershipHasRecord,
   renamePartnership,
   terminatePartnershipEarly,
@@ -135,6 +138,40 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
     })
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Could not add the contact record.' }
+  }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// Passes an assigned record to a different Ministry Partner in the same batch. Both sides are
+// re-resolved server-side (the source via the caller's own token, the destination by id) —
+// never trusts the client's claim that the destination actually belongs to this batch.
+export async function movePartnershipRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = movePartnershipRecordSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    recordId: formData.get('recordId'),
+    destinationPartnershipId: formData.get('destinationPartnershipId'),
+  })
+  if (!parsed.success) return { error: 'Invalid request.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+  if (parsed.data.destinationPartnershipId === partnership.id) return { error: 'Choose a different Ministry Partner.' }
+
+  const owns = await partnershipHasRecord(supabase, partnership.id, parsed.data.recordId)
+  if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
+
+  const destination = await getPartnershipById(supabase, parsed.data.destinationPartnershipId)
+  if (!destination || destination.batch_id !== partnership.batch_id) return { error: 'Invalid destination Ministry Partner.' }
+  if (destination.ended_early_at) return { error: 'That Ministry Partner has already ended their ministry for today.' }
+
+  try {
+    await movePartnershipRecord(supabase, partnership.id, destination.id, parsed.data.recordId)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Could not move the contact record.' }
   }
 
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)

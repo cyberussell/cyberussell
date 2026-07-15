@@ -45,3 +45,13 @@ export const terminatePartnershipEarlySchema = z.object({
   partnershipToken: z.string().min(1),
 })
 export type TerminatePartnershipEarlyInput = z.input<typeof terminatePartnershipEarlySchema>
+
+// destinationPartnershipId is a raw id, not a claim_token — the publisher picks it from a list
+// of sibling partnerships in the same batch (fetched server-side), and never has the
+// destination's own token.
+export const movePartnershipRecordSchema = z.object({
+  partnershipToken: z.string().min(1),
+  recordId: z.string().uuid(),
+  destinationPartnershipId: z.string().uuid(),
+})
+export type MovePartnershipRecordInput = z.input<typeof movePartnershipRecordSchema>

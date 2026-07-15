@@ -8,6 +8,7 @@
 import {
   addPublisherRecordAction,
   logPublisherVisitAction,
+  movePartnershipRecordAction,
   renamePartnershipAction,
   terminatePartnershipEarlyAction,
 } from '@/app/territory-management-system/actions/publisher'
@@ -37,14 +38,12 @@ function isNetworkError(e: unknown): boolean {
 
 async function executeItem(item: SyncQueueItem): Promise<{ ok: boolean; error?: string }> {
   const formData = buildFormData(item.payload)
-  const result =
-    item.type === 'rename'
-      ? await renamePartnershipAction({}, formData)
-      : item.type === 'visit'
-        ? await logPublisherVisitAction({}, formData)
-        : item.type === 'addRecord'
-          ? await addPublisherRecordAction({}, formData)
-          : await terminatePartnershipEarlyAction({}, formData)
+  let result: { error?: string }
+  if (item.type === 'rename') result = await renamePartnershipAction({}, formData)
+  else if (item.type === 'visit') result = await logPublisherVisitAction({}, formData)
+  else if (item.type === 'addRecord') result = await addPublisherRecordAction({}, formData)
+  else if (item.type === 'moveRecord') result = await movePartnershipRecordAction({}, formData)
+  else result = await terminatePartnershipEarlyAction({}, formData)
 
   // 'SAVED' is this codebase's success sentinel (see useServerAction) — everything else in
   // result.error is a real failure.
