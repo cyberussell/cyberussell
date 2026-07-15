@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { RefreshCw } from 'lucide-react'
 import {
   getSelectableResults,
   mergeConductorIntoNotes,
@@ -14,8 +13,9 @@ import FormField, { inputClass } from '@/components/territory-management-system/
 import Card from '@/components/territory-management-system/dashboard/Card'
 
 // latestResult narrows the Status choices once a record is already an ongoing Bible Study — see
-// getSelectableResults in records/schema.ts. saving disables the form and shows a spinner while
-// the parent is enqueuing/syncing the just-submitted visit and advancing to the next record.
+// getSelectableResults in records/schema.ts. saving disables the form while the parent is
+// enqueuing/syncing the just-submitted visit and advancing to the next record — the "saving"
+// indicator itself lives at the top of the screen (PublisherWorkspaceApp), not on this button.
 export default function PublisherVisitLogForm({
   latestResult,
   saving,
@@ -106,16 +106,9 @@ export default function PublisherVisitLogForm({
         <button
           type="submit"
           disabled={saving}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70"
+          className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
-          {saving ? (
-            <>
-              <RefreshCw className="h-4 w-4 animate-spin" />
-              Saving your visit — loading next record…
-            </>
-          ) : (
-            'Log Visit'
-          )}
+          Log Visit
         </button>
       </form>
     </Card>

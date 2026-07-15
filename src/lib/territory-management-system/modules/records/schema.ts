@@ -21,7 +21,11 @@ export const VISIT_RESULTS = [
 // PublisherRecordDetailView, and the admin record detail page) — a publisher never chooses it
 // as an outcome, so like 'undone' (written only by terminatePartnershipEarly, never picked
 // manually) it's excluded from the dropdown both visit-log forms present to a human.
-export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter((r) => r !== 'undone' && r !== 'initial_visit')
+// 'progressing'/'discontinued' are excluded too — they only ever appear via
+// BIBLE_STUDY_FOLLOWUP_RESULTS below, once a record is already an ongoing Bible Study.
+export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter(
+  (r) => r !== 'undone' && r !== 'initial_visit' && r !== 'progressing' && r !== 'discontinued'
+)
 
 // Once a record's most recent visit is 'bible_study' (confirmed ongoing — not the first-time
 // 'started_bible_study'), the next visit's Status choices narrow to just these three follow-up
@@ -33,7 +37,7 @@ export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'mov
 
 export function getSelectableResults(
   latestResult?: string | null
-): readonly (typeof SELECTABLE_VISIT_RESULTS)[number][] {
+): readonly Exclude<(typeof VISIT_RESULTS)[number], 'undone' | 'initial_visit'>[] {
   if (latestResult && (BIBLE_STUDY_ONGOING_RESULTS as readonly string[]).includes(latestResult)) {
     return BIBLE_STUDY_FOLLOWUP_RESULTS
   }

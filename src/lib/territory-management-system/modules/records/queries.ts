@@ -168,12 +168,31 @@ export async function listVisits(supabase: SupabaseClient, recordId: string): Pr
 
 // Logging a 'do_not_call' result also flips the record's own flag — one action instead of
 // the admin/publisher having to separately toggle it after the fact.
+//
+// Only one logged visit per record per calendar day is kept — logging a second visit for the
+// same record on the same day overwrites that day's row (matched by a UTC day-boundary range on
+// visited_at) instead of inserting a second history entry, so there's never more than one
+// update per day in the history.
 export async function logVisit(
   supabase: SupabaseClient,
   congregationId: string,
   input: { recordId: string; visitedAt: string; result: string; notes: string; createdBy: string | null; partnerName: string | null }
 ): Promise<void> {
-  const { error } = await supabase.from('territory_record_visits').insert({
+  const visitedDate = new Date(input.visitedAt)
+  const dayStart = new Date(Date.UTC(visitedDate.getUTCFullYear(), visitedDate.getUTCMonth(), visitedDate.getUTCDate()))
+  const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000)
+
+  const { data: sameDayVisit } = await supabase
+    .from('territory_record_visits')
+    .select('id')
+    .eq('record_id', input.recordId)
+    .gte('visited_at', dayStart.toISOString())
+    .lt('visited_at', dayEnd.toISOString())
+    .order('visited_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const row = {
     congregation_id: congregationId,
     record_id: input.recordId,
     visited_at: input.visitedAt,
@@ -181,7 +200,11 @@ export async function logVisit(
     notes: input.notes,
     created_by: input.createdBy,
     partner_name: input.partnerName,
-  })
+  }
+
+  const { error } = sameDayVisit
+    ? await supabase.from('territory_record_visits').update(row).eq('id', sameDayVisit.id)
+    : await supabase.from('territory_record_visits').insert(row)
   if (error) throw error
 
   if (input.result === 'do_not_call') {
@@ -191,4 +214,11 @@ export async function logVisit(
       .eq('id', input.recordId)
     if (flagError) throw flagError
   }
+
+  // Retention: hard-delete visit history older than 6 months. Run opportunistically on every
+  // write rather than needing a separate scheduled job — best-effort, so a failure here doesn't
+  // undo the visit that was just successfully saved above.
+  const sixMonthsAgo = new Date()
+  sixMonthsAgo.setUTCMonth(sixMonthsAgo.getUTCMonth() - 6)
+  await supabase.from('territory_record_visits').delete().eq('congregation_id', congregationId).lt('visited_at', sixMonthsAgo.toISOString())
 }

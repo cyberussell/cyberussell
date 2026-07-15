@@ -46,12 +46,16 @@
 
 ## Remaining Work
 - **Migrations 015 and 016 confirmed run and correct (2026-07-14)**: Russell ran both and verified via `information_schema.column_privileges` that `authenticated` has `UPDATE` on exactly `address, currency, logo_url, name, phone, timezone` on `businesses` (no billing columns), and that `public.rate_limits` exists and is queryable.
-- **Live verification of the gate itself still outstanding**: log in as a real (or throwaway) owner, manually set `plan_status = 'suspended'` on their business row, confirm they're redirected to `/lms/subscription-required` and can't reach any dashboard page; then set `plan_status = 'active'` and confirm normal access returns. Also confirm a `trial_ends_at` in the past with `plan_status = 'trial'` triggers the same block.
+- **Live verification of the gate — DONE (2026-07-14)**: Russell signed up a real throwaway business ("Aling Maria Laundry Shop", `id e442c931-85be-4d5f-962b-34a421eb4cc2`) through the actual `/lms` signup flow, then in the LMS Supabase SQL Editor: set `plan_status = 'suspended'` → confirmed login redirected to `/lms/subscription-required` showing "This account is suspended"; set `plan_status = 'trial'` + `trial_ends_at` in the past → confirmed login redirected showing "Your free trial has ended"; set `plan_status = 'active'` → confirmed login reached the normal owner dashboard. All three screenshotted and confirmed. Customer-facing-page-stays-open behavior was already a deliberate code decision, not separately re-verified live this pass.
 - **Deliberately deferred, not blocking**: server-side pagination for `listOrders()`/customer list (Medium, scalability debt — large architecture change across every dashboard list page, doesn't bite until a business has months of order history; rushing it under this pass's time pressure risked introducing new bugs for a problem that isn't urgent). Also the shared-layout CSP header (cross-product decision, not LMS-scoped, previously deferred pending Russell's go-ahead).
 
 ## Known Issues
 - Customer-facing pages remain accessible even when the business's owner/staff dashboard is blocked (deliberate, see above — revisit if Russell wants it changed).
 - Pagination on core dashboard lists is still unbounded/client-side (see Remaining Work).
+- Throwaway test business "Aling Maria Laundry Shop" (`e442c931-85be-4d5f-962b-34a421eb4cc2`) still exists live in the LMS Supabase project, currently `plan_status = 'active'` — not yet cleaned up.
+
+## Verdict: GO
+All Critical and High findings from this audit are fixed and now live-verified end-to-end (code + migrations + real click-through). LMS is cleared for paying customers, with the deferred pagination rework as acknowledged post-launch technical debt.
 
 ## Next Recommended Task
-Russell live-verifies the suspension/trial-expiry gate end-to-end per the checklist above (both migrations are already confirmed live). Once confirmed, this closes out the audit's Critical and High findings — the product would then be a **Go** for paying customers, with the deferred pagination rework as acknowledged post-launch technical debt.
+Optional cleanup: delete the throwaway "Aling Maria Laundry Shop" test business (and its `auth.users` row) from the live LMS Supabase project now that verification is done. Otherwise, no further blocking work remains from this audit — next session should treat LMS as shipped and pick up new feature requests or the deferred pagination item whenever Russell prioritizes it.

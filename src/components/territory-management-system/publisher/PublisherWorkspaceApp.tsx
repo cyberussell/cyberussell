@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { PartyPopper, Plus } from 'lucide-react'
+import { PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipRecordDetail, PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
@@ -186,6 +186,7 @@ export default function PublisherWorkspaceApp({
       toast.success('Moved to another Ministry Partner.')
       const next = [...remainingRecords].sort((a, b) => a.sequence - b.sequence).find((r) => !r.completed_at)
       setView(next ? { name: 'detail', recordId: next.record.id } : { name: 'list' })
+      window.scrollTo({ top: 0, behavior: 'auto' })
     } finally {
       setMovingRecord(false)
     }
@@ -202,6 +203,7 @@ export default function PublisherWorkspaceApp({
     const next =
       sorted.slice(currentIndex + 1).find((r) => !r.completed_at) ?? sorted.slice(0, currentIndex).find((r) => !r.completed_at)
     setView(next ? { name: 'detail', recordId: next.record.id } : { name: 'list' })
+    window.scrollTo({ top: 0, behavior: 'auto' })
   }
 
   async function handleAddRecord(payload: NewPublisherRecordPayload) {
@@ -241,6 +243,17 @@ export default function PublisherWorkspaceApp({
 
   return (
     <div className="min-h-screen bg-[#F3F8FF] px-4 pb-24 pt-8">
+      {/* Saving indicator lives here, floating at the top of the screen — not on the "Log
+          Visit" button itself — so it's visible the instant the view jumps to the next record. */}
+      {savingVisit && (
+        <div className="fixed inset-x-0 top-4 z-30 flex justify-center px-4">
+          <div className="flex items-center gap-2 rounded-full bg-[#0B1B33] px-4 py-2.5 text-sm font-semibold text-white shadow-lg">
+            <RefreshCw className="h-4 w-4 animate-spin text-[#38BDF8]" />
+            Saving your visit…
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto max-w-lg space-y-6">
         {readOnly && (view.name === 'list' || view.name === 'detail') && (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-center text-sm font-medium text-amber-700 shadow-sm">
