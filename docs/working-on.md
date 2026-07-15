@@ -1,18 +1,19 @@
 # Current Work
 
-**Territory Management System — Assignment generation capacity cap (2026-07-15) — code done, tsc + vitest (50/50) + build clean, committed and pushed (`1368822`), Vercel auto-deploy should be building — see checkpoint `territory-management-assignment-capacity-cap-v1.md` for full detail:**
+**Territory Management System — Assignment generation capacity cap, v2 corrected rule (2026-07-15) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, not yet committed/pushed — see checkpoint `territory-management-assignment-capacity-cap-v2.md` for full detail (supersedes v1):**
 
 Current Product: Territory Management System (TMS).
 
-Current Feature: Russell asked that generating an assignment consider the max partnerships that can actually be filled based on approved contact records vs. publishers-going-out/group-size, remembering the existing 6-records-per-partnership cap — block generation with a warning instead of silently leaving records unassigned when selected territories have more approved records than the configured group can hold.
+Current Feature: v1 (commits `1368822`, `75b2678`, deployed) got the rule backwards — it blocked when approved records *exceeded* capacity, which Russell clarified is fine (extra records carry over, original design). After two worked examples via `AskUserQuestion`, the real rule: block when the *requested* partnership count exceeds `ceil(approvedRecords / 6)` — i.e. when some partnership would get zero records.
 
 Current Status: Code complete.
-- `calculateAssignment` (`src/lib/territory-management-system/modules/assignment/engine.ts`) now returns an error when `eligibleRecordIds.length > partnershipCount * maxPerPartnership` (capacity = partnerships × 6 by default) — previously this silently truncated the excess into `unassignedCount`, a deliberate original design choice that Russell explicitly asked to change to a hard block.
-- `AssignmentForm.tsx` mirrors the same check client-side: shows a red "Too many approved records…" warning in the existing preview box and disables the Generate Assignment button when the selected territories' approved-record total exceeds capacity.
-- Updated `engine.test.ts` — one pre-existing test had exercised the old silent-truncation behavior as a passing case; changed it to a within-capacity scenario and added two new tests (over-capacity errors, exactly-at-capacity still succeeds).
-- No migration needed (pure calculation logic). `npx tsc --noEmit` clean, `npx vitest run` 50/50 passing, `npx next build` clean across all routes.
+- `calculateAssignment` (`engine.ts`) — removed v1's "too many records" block; replaced the old "records < partnershipCount" check with `partnershipCount > Math.ceil(eligibleRecordIds.length / maxPerPartnership)`, which strictly subsumes the old check and correctly catches the sequential-fill-leaves-some-partnerships-empty case the old one missed.
+- `AssignmentForm.tsx` — preview box now shows two bullets (max records/partnership; approved-record total + max supportable partnerships with a plain-English breakdown), red warning + disabled button only when requested partnerships exceed what the records support.
+- `engine.test.ts` — reverted the wrongly-changed test, added ceil-boundary tests plus two tests transcribing Russell's own 50-record examples verbatim.
+- **Live-verified in the browser** (rare for TMS) via a temporary scratch route rendering the real `AssignmentForm` with mock data matching Russell's screenshot — confirmed all three states (under capacity: no warning; over capacity: warning + disabled; back under: clears) exactly match spec. Scratch route removed before commit.
+- `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean.
 
-**Next recommended task:** Committed, pushed to `main` (`1368822`), and deployed at Russell's request. Russell live-verifies on the deployed site: selecting territories whose approved-record total exceeds `partnershipCount × 6` shows the warning and disables Generate; increasing publishers/group size or deselecting a territory clears it and lets generation proceed normally.
+**Next recommended task:** Not yet committed/pushed — v1 is already live from this session's earlier deploy, so this v2 fix needs to ship to correct it. Commit, push, and deploy at Russell's request (he said "deploy" for v1 already, likely wants the same for this correction).
 
 ----------------------------------------
 

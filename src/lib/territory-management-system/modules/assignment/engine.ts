@@ -41,15 +41,14 @@ export function calculateAssignment(
       unassignedCount: 0,
     }
   }
-  if (eligibleRecordIds.length < partnershipCount) {
+  // Records fill sequentially, partnership-by-partnership, up to maxPerPartnership each — so the
+  // number of partnerships that can end up with at least one record is capped at
+  // ceil(records / maxPerPartnership), regardless of how many more records exist beyond that.
+  // Requesting more partnerships than that would leave the excess ones with nothing to do.
+  const maxPossiblePartnerships = Math.ceil(eligibleRecordIds.length / maxPerPartnership)
+  if (partnershipCount > maxPossiblePartnerships) {
     return {
-      error: `Insufficient records: ${eligibleRecordIds.length} approved record(s) available, but ${partnershipCount} partnership(s) requested — every partnership needs at least 1 record.`,
-    }
-  }
-  const maxCapacity = partnershipCount * maxPerPartnership
-  if (eligibleRecordIds.length > maxCapacity) {
-    return {
-      error: `Too many approved records: ${eligibleRecordIds.length} available, but ${partnershipCount} partnership(s) × ${maxPerPartnership} max per partnership = ${maxCapacity} capacity. Increase publishers going out or group size, or select fewer territories.`,
+      error: `Not enough approved records for ${partnershipCount} partnership(s): ${eligibleRecordIds.length} approved record(s) can fully cover at most ${maxPossiblePartnerships} partnership(s) at ${maxPerPartnership} records each — the rest would get none. Reduce publishers going out, increase group size, or have another Group Leader generate a separate assignment to cover the remaining publishers.`,
     }
   }
 

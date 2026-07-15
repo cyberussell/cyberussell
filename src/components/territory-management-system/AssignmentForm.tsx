@@ -85,8 +85,19 @@ export default function AssignmentForm({
     () => territories.filter((t) => selected.includes(t.id)).reduce((sum, t) => sum + t.approvedCount, 0),
     [territories, selected]
   )
-  const maxCapacity = partnershipCount * DEFAULT_MAX_PER_PARTNERSHIP
-  const exceedsCapacity = eligibleTotal > maxCapacity
+  // Mirrors engine.ts's calculateAssignment: records fill sequentially up to
+  // DEFAULT_MAX_PER_PARTNERSHIP per partnership, so at most ceil(eligibleTotal / max) partnerships
+  // can end up with any records at all — requesting more than that leaves some with none.
+  const recordsMaxPartnerships = eligibleTotal > 0 ? Math.ceil(eligibleTotal / DEFAULT_MAX_PER_PARTNERSHIP) : 0
+  const insufficientForHeadcount = eligibleTotal > 0 && partnershipCount > recordsMaxPartnerships
+  const fullPartnerships = Math.floor(eligibleTotal / DEFAULT_MAX_PER_PARTNERSHIP)
+  const remainder = eligibleTotal % DEFAULT_MAX_PER_PARTNERSHIP
+  const breakdownText =
+    remainder === 0
+      ? `${fullPartnerships} partnership${fullPartnerships === 1 ? '' : 's'} with ${DEFAULT_MAX_PER_PARTNERSHIP} records each`
+      : fullPartnerships === 0
+        ? `1 partnership with ${remainder} record${remainder === 1 ? '' : 's'}`
+        : `${fullPartnerships} partnership${fullPartnerships === 1 ? '' : 's'} with ${DEFAULT_MAX_PER_PARTNERSHIP} records and 1 partnership with ${remainder} record${remainder === 1 ? '' : 's'}`
 
   function toggle(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -141,25 +152,30 @@ export default function AssignmentForm({
         </div>
         <input type="hidden" name="partnershipCount" value={partnershipCount} />
         <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">
-          {publisherCount} publisher{publisherCount === 1 ? '' : 's'} in groups of {groupSize} → {partnershipCount} partnership
-          {partnershipCount === 1 ? '' : 's'}. {eligibleTotal} approved contact record{eligibleTotal === 1 ? '' : 's'} available
-          across the selected territories — up to {maxCapacity} will be assigned (
-          {DEFAULT_MAX_PER_PARTNERSHIP} per partnership max).
-          {eligibleTotal > 0 && eligibleTotal < partnershipCount && (
-            <p className="mt-1 font-medium text-red-500">Not enough contact records for {partnershipCount} Partners.</p>
-          )}
-          {exceedsCapacity && (
-            <p className="mt-1 font-medium text-red-500">
-              Too many approved records ({eligibleTotal}) for {partnershipCount} partnership{partnershipCount === 1 ? '' : 's'} ×{' '}
-              {DEFAULT_MAX_PER_PARTNERSHIP} max ({maxCapacity} capacity). Increase publishers going out or group size, or select
-              fewer territories.
+          <p>
+            {publisherCount} publisher{publisherCount === 1 ? '' : 's'} in groups of {groupSize} → {partnershipCount} partnership
+            {partnershipCount === 1 ? '' : 's'}.
+          </p>
+          <ul className="mt-1 list-disc space-y-1 pl-4">
+            <li>Each partnership can hold up to {DEFAULT_MAX_PER_PARTNERSHIP} approved records.</li>
+            <li>
+              {eligibleTotal === 0
+                ? 'No approved contact records yet in the selected territories — every partnership will start empty.'
+                : `${eligibleTotal} approved contact record${eligibleTotal === 1 ? '' : 's'} available across the selected territories — enough for up to ${recordsMaxPartnerships} partnership${recordsMaxPartnerships === 1 ? '' : 's'} (${breakdownText}).`}
+            </li>
+          </ul>
+          {insufficientForHeadcount && (
+            <p className="mt-2 font-medium text-red-500">
+              Not enough approved records for {partnershipCount} partnerships — only {recordsMaxPartnerships} of them can get
+              records from the {eligibleTotal} available. Reduce publishers going out, increase group size, or have another
+              Group Leader generate a separate assignment to cover the remaining publishers.
             </p>
           )}
         </div>
         {error && <p className="text-sm text-red-500">{error}</p>}
         <button
           type="submit"
-          disabled={pending || selected.length === 0 || exceedsCapacity}
+          disabled={pending || selected.length === 0 || insufficientForHeadcount}
           className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {pending ? 'Generating…' : 'Generate Assignment'}
