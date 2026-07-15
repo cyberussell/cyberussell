@@ -1,6 +1,6 @@
 # Current Work
 
-**Territory Management System — Assignment generation capacity cap (2026-07-15) — code done, tsc + vitest (50/50) + build clean, not yet committed/pushed — see checkpoint `territory-management-assignment-capacity-cap-v1.md` for full detail:**
+**Territory Management System — Assignment generation capacity cap (2026-07-15) — code done, tsc + vitest (50/50) + build clean, committed and pushed (`1368822`), Vercel auto-deploy should be building — see checkpoint `territory-management-assignment-capacity-cap-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
@@ -12,7 +12,7 @@ Current Status: Code complete.
 - Updated `engine.test.ts` — one pre-existing test had exercised the old silent-truncation behavior as a passing case; changed it to a within-capacity scenario and added two new tests (over-capacity errors, exactly-at-capacity still succeeds).
 - No migration needed (pure calculation logic). `npx tsc --noEmit` clean, `npx vitest run` 50/50 passing, `npx next build` clean across all routes.
 
-**Next recommended task:** Not committed/pushed/deployed. Russell live-verifies: selecting territories whose approved-record total exceeds `partnershipCount × 6` shows the warning and disables Generate; increasing publishers/group size or deselecting a territory clears it and lets generation proceed normally. Then commit/push/deploy at Russell's request.
+**Next recommended task:** Committed, pushed to `main` (`1368822`), and deployed at Russell's request. Russell live-verifies on the deployed site: selecting territories whose approved-record total exceeds `partnershipCount × 6` shows the warning and disables Generate; increasing publishers/group size or deselecting a territory clears it and lets generation proceed normally.
 
 ----------------------------------------
 
