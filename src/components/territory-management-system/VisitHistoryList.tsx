@@ -15,7 +15,7 @@ export default function VisitHistoryList({
   onUndoLast?: () => Promise<void>
 }) {
   if (visits.length === 0) {
-    return <Card className="p-6 text-center text-sm text-slate-400">No visits logged yet.</Card>
+    return <Card className="p-6 text-center text-sm text-slate-600">No visits logged yet.</Card>
   }
 
   return (
@@ -25,7 +25,7 @@ export default function VisitHistoryList({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <VisitResultBadge result={visit.result} />
             <div className="flex items-center gap-3">
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-600">
                 {new Date(visit.visited_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
               </span>
               {index === 0 && onUndoLast && (
@@ -41,7 +41,7 @@ export default function VisitHistoryList({
           </div>
           {visit.notes && <p className="mt-2 text-sm text-slate-600">{visit.notes}</p>}
           {(visit.created_by_name || visit.partner_name) && (
-            <p className="mt-2 text-xs text-slate-400">Visited by {visit.created_by_name ?? visit.partner_name}</p>
+            <p className="mt-2 text-xs text-slate-600">Visited by {visit.created_by_name ?? visit.partner_name}</p>
           )}
         </Card>
       ))}

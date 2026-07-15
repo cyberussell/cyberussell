@@ -28,7 +28,7 @@ export default function SectionBlockTree({ territory }: { territory: TerritorySt
       </div>
 
       {territory.sections.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-slate-400">No sections yet.</Card>
+        <Card className="p-8 text-center text-sm text-slate-600">No sections yet.</Card>
       ) : (
         territory.sections.map((section) => <SectionCard key={section.id} section={section} territoryId={territory.id} />)
       )}
@@ -70,7 +70,7 @@ function SectionCard({
         </div>
       </div>
       {section.blocks.length === 0 ? (
-        <p className="text-sm text-slate-400">No blocks yet.</p>
+        <p className="text-sm text-slate-600">No blocks yet.</p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {section.blocks.map((block) => (

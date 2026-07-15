@@ -36,7 +36,7 @@ import {
   recommendRecordForRemoval,
   updateRecord,
 } from '@/lib/territory-management-system/modules/records/queries'
-import { getSelectableResults } from '@/lib/territory-management-system/modules/records/schema'
+import { getSelectableResults, mergeConductorIntoNotes } from '@/lib/territory-management-system/modules/records/schema'
 import { getTerritoryStructure } from '@/lib/territory-management-system/modules/territory/queries'
 import { type ActionResult } from './shared'
 
@@ -131,7 +131,11 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
     unit: formData.get('unit'),
     residentName: formData.get('residentName'),
     plusCode: formData.get('plusCode'),
+    householdMembers: formData.get('householdMembers'),
     notes: formData.get('notes'),
+    initialResult: formData.get('initialResult'),
+    initialConductorName: formData.get('initialConductorName'),
+    initialNotes: formData.get('initialNotes'),
   })
   if (!parsed.success) return { error: 'Please fill in the required fields.' }
   if (!(await checkRateLimit(`tms-add-record:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
@@ -152,8 +156,15 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
   const block = section?.blocks.find((b) => b.id === parsed.data.blockId)
   if (!territory || !section || !block) return { error: 'Invalid territory, section, or block.' }
 
+  // A blank initialResult here re-derives the full SELECTABLE_VISIT_RESULTS list (a fresh
+  // record has no prior visit and is never do_not_call yet), same re-validation pattern
+  // logPublisherVisitAction already applies rather than trusting the submitted value outright.
+  if (parsed.data.initialResult && !(getSelectableResults() as readonly string[]).includes(parsed.data.initialResult)) {
+    return { error: 'Invalid initial status.' }
+  }
+
   try {
-    await createRecord(supabase, partnership.congregation_id, {
+    const record = await createRecord(supabase, partnership.congregation_id, {
       territoryId: parsed.data.territoryId,
       sectionId: parsed.data.sectionId,
       blockId: parsed.data.blockId,
@@ -161,11 +172,25 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
       unit: parsed.data.unit,
       residentName: parsed.data.residentName,
       plusCode: parsed.data.plusCode,
+      householdMembers: parsed.data.householdMembers,
       notes: parsed.data.notes,
       doNotCall: false,
       status: 'pending',
       source: 'publisher',
     })
+    // Not marked as a completed partnership record — a just-added record is still pending admin
+    // review and was never assigned to this partnership in the first place (see the comment on
+    // this action's declaration).
+    if (parsed.data.initialResult) {
+      await logVisit(supabase, partnership.congregation_id, {
+        recordId: record.id,
+        visitedAt: new Date().toISOString(),
+        result: parsed.data.initialResult,
+        notes: mergeConductorIntoNotes(parsed.data.initialConductorName, parsed.data.initialNotes),
+        createdBy: null,
+        partnerName: partnership.name || null,
+      })
+    }
   } catch (e) {
     await logError(partnership.congregation_id, 'addPublisherRecordAction', e)
     return { error: e instanceof Error ? e.message : 'Could not add the contact record.' }

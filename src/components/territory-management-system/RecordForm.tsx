@@ -4,6 +4,12 @@ import { useState } from 'react'
 import { createRecordAction } from '@/app/territory-management-system/actions/records'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
+import {
+  getSelectableResults,
+  SELECTABLE_VISIT_RESULTS,
+  VISIT_RESULT_CONDUCTOR_PROMPT,
+  VISIT_RESULT_LABELS,
+} from '@/lib/territory-management-system/modules/records/schema'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
@@ -11,9 +17,15 @@ export default function RecordForm({ territory }: { territory: TerritoryStructur
   const { dispatch, pending, error, successMessage } = useServerAction(createRecordAction, ['SAVED'], 'Record added.')
   const [sectionId, setSectionId] = useState(territory.sections[0]?.id ?? '')
   const section = territory.sections.find((s) => s.id === sectionId)
+  // A brand-new record has no prior visit and is never do_not_call yet, so the full selectable
+  // list applies — same call shape as a fresh PublisherRecordForm.
+  const [initialResult, setInitialResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
+  const selectableResults = getSelectableResults()
+  const initialNotesRequired = initialResult === 'other'
+  const conductorPrompt = initialResult ? VISIT_RESULT_CONDUCTOR_PROMPT[initialResult] : undefined
 
   if (territory.sections.length === 0) {
-    return <Card className="p-6 text-sm text-slate-400">Add a section first before adding records.</Card>
+    return <Card className="p-6 text-sm text-slate-600">Add a section first before adding records.</Card>
   }
 
   return (
@@ -68,6 +80,31 @@ export default function RecordForm({ territory }: { territory: TerritoryStructur
           <input type="checkbox" name="doNotCall" value="true" className="h-4 w-4 rounded border-blue-200" />
           Do Not Call
         </label>
+        <FormField label="Initial status" optional>
+          <select
+            name="initialResult"
+            value={initialResult}
+            onChange={(e) => setInitialResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number] | '')}
+            className={inputClass}
+          >
+            <option value="">Leave blank (Initial Visit)</option>
+            {selectableResults.map((r) => (
+              <option key={r} value={r}>
+                {VISIT_RESULT_LABELS[r]}
+              </option>
+            ))}
+          </select>
+        </FormField>
+        {conductorPrompt && (
+          <FormField label={conductorPrompt}>
+            <input name="initialConductorName" required maxLength={80} className={inputClass} />
+          </FormField>
+        )}
+        {initialResult && (
+          <FormField label="Initial visit notes" optional={!initialNotesRequired}>
+            <textarea name="initialNotes" maxLength={500} rows={2} required={initialNotesRequired} className={inputClass} />
+          </FormField>
+        )}
         {error && <p className="text-sm text-red-500">{error}</p>}
         <button
           type="submit"

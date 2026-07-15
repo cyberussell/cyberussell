@@ -103,7 +103,7 @@ function RecordActions({ record }: { record: TerritoryRecordWithLocation }) {
         action={() => deleteRecordAction(record.id)}
         confirmMessage={`Delete the contact record at ${recordLabel(record)}? This also deletes its visit history.`}
         ariaLabel={`Delete contact record at ${recordLabel(record)}`}
-        className="text-slate-400 hover:text-red-500"
+        className="text-slate-600 hover:text-red-500"
       />
     </div>
   )

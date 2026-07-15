@@ -51,15 +51,15 @@ export default function TerritoryMapUpload({
           </div>
         )}
         <label className="block">
-          <span className="text-sm font-medium text-slate-600">Upload a JPG map image</span>
+          <span className="text-sm font-medium text-slate-600">Upload a JPG or PNG map image</span>
           <input
             type="file"
             name="map"
-            accept="image/jpeg"
+            accept="image/jpeg,image/png"
             onChange={handleFileChange}
             className="mt-1 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-[#F0F6FF] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-[#2563EB]"
           />
-          <span className="mt-1 block text-xs text-slate-400">JPG only — up to 5MB.</span>
+          <span className="mt-1 block text-xs text-slate-600">JPG or PNG — up to 5MB.</span>
         </label>
         <button
           type="submit"

@@ -27,7 +27,7 @@ export default function VisitResultBarChart({ resultCounts }: { resultCounts: Re
     .sort((a, b) => b.count - a.count)
 
   if (entries.length === 0) {
-    return <p className="text-center text-sm text-slate-400">No visits were logged today.</p>
+    return <p className="text-center text-sm text-slate-600">No visits were logged today.</p>
   }
 
   const max = entries[0].count

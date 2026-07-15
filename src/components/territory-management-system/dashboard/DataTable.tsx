@@ -64,7 +64,7 @@ export default function DataTable<T extends { id: string }>({
   if (rows.length === 0) {
     return (
       <Card className="p-10 text-center">
-        <p className="text-sm text-slate-400">{emptyMessage}</p>
+        <p className="text-sm text-slate-600">{emptyMessage}</p>
       </Card>
     )
   }
@@ -117,7 +117,7 @@ export default function DataTable<T extends { id: string }>({
 
       {pageCount > 1 && (
         <div className="flex items-center justify-between border-t border-blue-50 px-4 py-3">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-600">
             Page {currentPage} of {pageCount} ({sortedRows.length} total)
           </p>
           <div className="flex items-center gap-2">

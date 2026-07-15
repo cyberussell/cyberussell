@@ -173,6 +173,7 @@ export async function deleteBlock(supabase: SupabaseClient, blockId: string): Pr
 
 const MAP_EXTENSIONS: Record<string, string> = {
   'image/jpeg': 'jpg',
+  'image/png': 'png',
 }
 
 // One map image per territory — clears whatever's already in the territory's folder first,

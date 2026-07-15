@@ -26,7 +26,7 @@ export default function StatCard({
         </div>
       </div>
       <p className="mt-3 text-center text-2xl font-bold text-[#0B1B33] sm:hidden">{value}</p>
-      {hint && <p className="mt-2 text-xs text-slate-400">{hint}</p>}
+      {hint && <p className="mt-2 text-xs text-slate-600">{hint}</p>}
     </Card>
   )
 }

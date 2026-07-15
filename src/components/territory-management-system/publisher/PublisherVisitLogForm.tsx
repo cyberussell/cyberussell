@@ -103,7 +103,7 @@ export default function PublisherVisitLogForm({
             className={inputClass}
           />
         </FormField>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-600">
           Visited {new Date(visitedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
         </p>
         <button

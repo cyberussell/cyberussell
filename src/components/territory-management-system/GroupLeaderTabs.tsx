@@ -149,7 +149,7 @@ export default function GroupLeaderTabs({
                 {stats.partnerships.length} ministry partner{stats.partnerships.length === 1 ? '' : 's'} completed today
               </h2>
               {stats.territories.length > 0 && (
-                <p className="mt-1 text-center text-xs text-slate-400">
+                <p className="mt-1 text-center text-xs text-slate-600">
                   Territories worked: {stats.territories.map((t) => t.name).join(', ')}
                 </p>
               )}
@@ -171,7 +171,7 @@ export default function GroupLeaderTabs({
               <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
                 {publicUrl}
               </a>
-              <p className="text-xs text-slate-400">Valid for today only — a new one is needed tomorrow.</p>
+              <p className="text-xs text-slate-600">Valid for today only — a new one is needed tomorrow.</p>
             </Card>
           )}
 

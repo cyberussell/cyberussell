@@ -1,6 +1,7 @@
 import 'server-only'
 import Papa from 'papaparse'
 import type { TerritoryRecordWithLocation } from './types'
+import { type HeaderMap, type ImportField, IMPORT_FIELD_LABELS, REQUIRED_IMPORT_FIELDS, guessHeaderMap } from './csvShared'
 
 const EXPORT_COLUMNS = [
   'Territory',
@@ -43,12 +44,10 @@ export interface CsvImportRow {
   section: string
   block: string
   address: string
-  unit: string
   residentName: string
   plusCode: string
-  householdMembers: number | null
+  householdMembers: number
   notes: string
-  doNotCall: boolean
 }
 
 export interface CsvImportResult {
@@ -56,60 +55,48 @@ export interface CsvImportResult {
   errors: string[]
 }
 
-// Every column has at least one alias so the same parser serves both the territory-scoped
-// import (address-first, matches the original export headers) and the newer cross-territory
-// import (Name/Territory Name/Household Members, no Address column at all).
-const HEADER_ALIASES = {
-  territoryName: ['Territory Name', 'Territory'],
-  section: ['Section'],
-  block: ['Block'],
-  address: ['Address'],
-  unit: ['Unit'],
-  residentName: ['Name', 'Resident Name'],
-  plusCode: ['Plus Code'],
-  householdMembers: ['Household Members'],
-  notes: ['Note', 'Notes'],
-  doNotCall: ['Do Not Call'],
-} as const
-
-function pick(row: Record<string, string>, keys: readonly string[]): string {
-  for (const key of keys) {
-    if (row[key] !== undefined) return (row[key] ?? '').trim()
-  }
-  return ''
+function pick(row: Record<string, string>, headerMap: HeaderMap, field: ImportField): string {
+  const key = headerMap[field]
+  if (!key || row[key] === undefined) return ''
+  return (row[key] ?? '').trim()
 }
 
 // requireTerritoryName is true for the global Records-page import (no territory pre-selected,
 // so every row must name its own territory) and false for the per-territory import launched
 // from a Territory's own page (territoryId is already fixed, a Territory Name column if
-// present is ignored).
-export function parseRecordsCsv(csvText: string, options: { requireTerritoryName: boolean }): CsvImportResult {
+// present is ignored). headerMap comes from the CsvImportDialog's user-confirmed field-mapping
+// step — when it's missing (shouldn't happen via the real UI, but keeps this function safe to
+// call directly) it falls back to guessing from header text the same way the old parser did.
+export function parseRecordsCsv(
+  csvText: string,
+  options: { requireTerritoryName: boolean; headerMap?: HeaderMap }
+): CsvImportResult {
   const parsed = Papa.parse<Record<string, string>>(csvText, { header: true, skipEmptyLines: true })
   const errors: string[] = parsed.errors.map((e) => `Row ${e.row ?? '?'}: ${e.message}`)
 
   const headers = parsed.meta.fields ?? []
-  const hasAny = (keys: readonly string[]) => keys.some((k) => headers.includes(k))
-  const missingLabels: string[] = []
-  if (!hasAny(HEADER_ALIASES.section)) missingLabels.push('Section')
-  if (!hasAny(HEADER_ALIASES.block)) missingLabels.push('Block')
-  if (options.requireTerritoryName && !hasAny(HEADER_ALIASES.territoryName)) missingLabels.push('Territory Name')
+  const headerMap = options.headerMap ?? guessHeaderMap(headers)
+
+  const requiredFields: ImportField[] = [...REQUIRED_IMPORT_FIELDS, ...(options.requireTerritoryName ? (['territoryName'] as const) : [])]
+  const missingLabels = requiredFields.filter((f) => !headerMap[f]).map((f) => IMPORT_FIELD_LABELS[f])
   if (missingLabels.length > 0) {
-    errors.unshift(
-      `Missing required column(s): ${missingLabels.join(', ')}. Expected headers: ${
-        options.requireTerritoryName ? 'Territory Name, ' : ''
-      }Section, Block, Name, Plus Code, Household Members, Address, Unit, Note, Do Not Call.`
-    )
+    errors.unshift(`Missing required column(s): ${missingLabels.join(', ')}.`)
     return { rows: [], errors }
   }
 
   const rows: CsvImportRow[] = []
   parsed.data.forEach((row, index) => {
     const rowNum = index + 2
-    const territoryName = pick(row, HEADER_ALIASES.territoryName)
-    const section = pick(row, HEADER_ALIASES.section)
-    const block = pick(row, HEADER_ALIASES.block)
+    const territoryName = pick(row, headerMap, 'territoryName')
+    const section = pick(row, headerMap, 'section')
+    const block = pick(row, headerMap, 'block')
+    const plusCode = pick(row, headerMap, 'plusCode')
     if (!section || !block) {
       errors.push(`Row ${rowNum}: Section and Block are required.`)
+      return
+    }
+    if (!plusCode) {
+      errors.push(`Row ${rowNum}: Plus Code is required.`)
       return
     }
     if (options.requireTerritoryName && !territoryName) {
@@ -117,29 +104,22 @@ export function parseRecordsCsv(csvText: string, options: { requireTerritoryName
       return
     }
 
-    const householdMembersRaw = pick(row, HEADER_ALIASES.householdMembers)
-    let householdMembers: number | null = null
-    if (householdMembersRaw) {
-      const n = Number(householdMembersRaw)
-      if (!Number.isInteger(n) || n < 0) {
-        errors.push(`Row ${rowNum}: Household Members must be a whole number.`)
-        return
-      }
-      householdMembers = n
+    const householdMembersRaw = pick(row, headerMap, 'householdMembers')
+    const householdMembers = Number(householdMembersRaw)
+    if (!householdMembersRaw || !Number.isInteger(householdMembers) || householdMembers < 0) {
+      errors.push(`Row ${rowNum}: Household Number must be a whole number.`)
+      return
     }
 
-    const doNotCallRaw = pick(row, HEADER_ALIASES.doNotCall).toLowerCase()
     rows.push({
       territoryName,
       section,
       block,
-      address: pick(row, HEADER_ALIASES.address),
-      unit: pick(row, HEADER_ALIASES.unit),
-      residentName: pick(row, HEADER_ALIASES.residentName),
-      plusCode: pick(row, HEADER_ALIASES.plusCode),
+      address: pick(row, headerMap, 'address'),
+      residentName: pick(row, headerMap, 'residentName'),
+      plusCode,
       householdMembers,
-      notes: pick(row, HEADER_ALIASES.notes),
-      doNotCall: ['yes', 'true', '1'].includes(doNotCallRaw),
+      notes: pick(row, headerMap, 'notes'),
     })
   })
 

@@ -24,7 +24,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
         </div>
         <form
           action={formAction}
-          className="space-y-4 rounded-2xl border border-blue-100/60 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]"
+          className="space-y-4 rounded-2xl border-2 border-black bg-[#E2E8F2] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]"
         >
           <label className="block">
             <span className="text-sm font-medium text-slate-600">Email</span>

@@ -2,6 +2,12 @@
 
 import { useState } from 'react'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
+import {
+  getSelectableResults,
+  SELECTABLE_VISIT_RESULTS,
+  VISIT_RESULT_CONDUCTOR_PROMPT,
+  VISIT_RESULT_LABELS,
+} from '@/lib/territory-management-system/modules/records/schema'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
@@ -13,7 +19,11 @@ export interface NewPublisherRecordPayload {
   unit: string
   residentName: string
   plusCode: string
+  householdMembers: string
   notes: string
+  initialResult: string
+  initialConductorName: string
+  initialNotes: string
 }
 
 // Fully controlled — enqueueing (not a native form action) is how this reaches the server now,
@@ -36,7 +46,16 @@ export default function PublisherRecordForm({
   const [unit, setUnit] = useState('')
   const [residentName, setResidentName] = useState('')
   const [plusCode, setPlusCode] = useState('')
+  const [householdMembers, setHouseholdMembers] = useState('')
   const [notes, setNotes] = useState('')
+  // A brand-new record has no prior visit and is never do_not_call yet, so the full selectable
+  // list applies — same call shape as a fresh admin RecordForm.
+  const [initialResult, setInitialResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
+  const [initialConductorName, setInitialConductorName] = useState('')
+  const [initialNotes, setInitialNotes] = useState('')
+  const selectableResults = getSelectableResults()
+  const initialNotesRequired = initialResult === 'other'
+  const conductorPrompt = initialResult ? VISIT_RESULT_CONDUCTOR_PROMPT[initialResult] : undefined
 
   function handleTerritoryChange(id: string) {
     setTerritoryId(id)
@@ -55,7 +74,24 @@ export default function PublisherRecordForm({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!territoryId || !sectionId || !blockId || !address.trim()) return
-    onSubmit({ territoryId, sectionId, blockId, address: address.trim(), unit, residentName, plusCode, notes })
+    if (conductorPrompt && !initialConductorName.trim()) return
+    if (initialNotesRequired && !initialNotes.trim()) return
+    onSubmit({
+      territoryId,
+      sectionId,
+      blockId,
+      address: address.trim(),
+      unit,
+      residentName,
+      plusCode,
+      householdMembers,
+      notes,
+      initialResult,
+      initialConductorName,
+      // Unlike PublisherVisitLogForm, the conductor name isn't merged into notes client-side —
+      // addPublisherRecordAction does that merge itself once the record (and its id) exists.
+      initialNotes,
+    })
   }
 
   if (!territory) return null
@@ -119,12 +155,61 @@ export default function PublisherRecordForm({
             <input value={residentName} onChange={(e) => setResidentName(e.target.value)} maxLength={120} className={inputClass} />
           </FormField>
         </div>
-        <FormField label="Plus Code" optional>
-          <input value={plusCode} onChange={(e) => setPlusCode(e.target.value)} maxLength={20} className={inputClass} placeholder="e.g. 7FG8+4V" />
-        </FormField>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label="Plus Code" optional>
+            <input value={plusCode} onChange={(e) => setPlusCode(e.target.value)} maxLength={20} className={inputClass} placeholder="e.g. 7FG8+4V" />
+          </FormField>
+          <FormField label="Household Number" optional>
+            <input
+              value={householdMembers}
+              onChange={(e) => setHouseholdMembers(e.target.value)}
+              type="number"
+              min={0}
+              max={99}
+              className={inputClass}
+            />
+          </FormField>
+        </div>
         <FormField label="Notes" optional>
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={500} rows={2} className={inputClass} />
         </FormField>
+        <FormField label="Initial status" optional>
+          <select
+            value={initialResult}
+            onChange={(e) => setInitialResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number] | '')}
+            className={inputClass}
+          >
+            <option value="">Leave blank (Initial Visit)</option>
+            {selectableResults.map((r) => (
+              <option key={r} value={r}>
+                {VISIT_RESULT_LABELS[r]}
+              </option>
+            ))}
+          </select>
+        </FormField>
+        {conductorPrompt && (
+          <FormField label={conductorPrompt}>
+            <input
+              value={initialConductorName}
+              onChange={(e) => setInitialConductorName(e.target.value)}
+              required
+              maxLength={80}
+              className={inputClass}
+            />
+          </FormField>
+        )}
+        {initialResult && (
+          <FormField label="Initial visit notes" optional={!initialNotesRequired}>
+            <textarea
+              value={initialNotes}
+              onChange={(e) => setInitialNotes(e.target.value)}
+              maxLength={500}
+              rows={2}
+              required={initialNotesRequired}
+              className={inputClass}
+            />
+          </FormField>
+        )}
         <div className="flex gap-3">
           <button
             type="button"

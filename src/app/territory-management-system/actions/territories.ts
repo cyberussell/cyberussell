@@ -111,8 +111,8 @@ export async function uploadTerritoryMapAction(_prev: ActionResult, formData: Fo
   const territoryId = String(formData.get('territoryId') ?? '')
   const file = formData.get('map')
   if (!territoryId) return { error: 'Invalid request.' }
-  if (!(file instanceof File) || file.size === 0) return { error: 'Choose a JPG image to upload.' }
-  if (file.type !== 'image/jpeg') return { error: 'Territory map must be a JPG image.' }
+  if (!(file instanceof File) || file.size === 0) return { error: 'Choose a JPG or PNG image to upload.' }
+  if (file.type !== 'image/jpeg' && file.type !== 'image/png') return { error: 'Territory map must be a JPG or PNG image.' }
   if (file.size > MAP_MAX_BYTES) return { error: 'Map image must be under 5MB.' }
 
   const { supabase, congregation } = await requireAdmin()

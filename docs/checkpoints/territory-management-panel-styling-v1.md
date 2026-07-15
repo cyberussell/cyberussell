@@ -1,0 +1,29 @@
+# Territory Management System — Black-Bordered, Darkened Panels Sitewide — v1
+
+**Date:** 2026-07-15
+**Product:** Territory Management System (TMS)
+**Feature:** Russell asked for a black border on every panel for easy identification, plus a darkened panel background, plus updating any text that becomes hard to read as a result. Confirmed via `AskUserQuestion` that "darken the background" meant the panels themselves (not the page shell behind them) before touching anything.
+
+## Files Modified
+- `src/components/territory-management-system/dashboard/Card.tsx` — the shared panel primitive used by nearly every content block in TMS (forms, stat cards, tables, empty states). New exported `panelClass` constant: `border-2 border-black` + `bg-[#E2E8F2]` (up from `border-blue-100/60` + `bg-white`), same shadow as before.
+- ~10 hand-rolled duplicates of the exact same `rounded-2xl border border-blue-100/60 bg-white [+ shadow]` look, found by grep and given the identical treatment: `LoginForm.tsx`, `CsvImportDialog.tsx`, `publisher/PartnershipCard.tsx`, `publisher/AssignmentEndedNotice.tsx`, `publisher/PublisherWorkspaceApp.tsx` (4 separate screens: no-records notice, sync screen, done/thank-you screen, and the empty-list notice), `app/territory-management-system/assignment/[batchToken]/error.tsx`, `app/territory-management-system/forgot-password/page.tsx`, `app/territory-management-system/set-password/page.tsx`
+- Text-contrast bump (`text-slate-400`→`text-slate-600`, `text-slate-300`→`text-slate-500`) in ~20 spots across `PartnershipList.tsx`, `SectionBlockTree.tsx`, `VisitHistoryList.tsx`, `AssignedRecordsList.tsx`, `AssignmentForm.tsx`, `dashboard/DataTable.tsx`, `GroupLeaderTabs.tsx`, `TerritoryMapUpload.tsx`, `dashboard/StatCard.tsx`, `CsvImportDialog.tsx`, `RecordForm.tsx`, `publisher/PublisherVisitLogForm.tsx`, `VisitResultBarChart.tsx`, `publisher/PartnershipCard.tsx`, `RecordsTable.tsx`
+
+## Summary of Changes
+- Confirmed the "black line + darker background" scope with Russell first (panels themselves, not the page shell) since guessing wrong on a sitewide visual change would have meant redoing a large diff.
+- Every actual panel in TMS routes through the shared `Card` component — grepped for hand-rolled copies of the identical class string to catch the ones that don't (login screen, CSV import dialog, the publisher workspace's various full-screen states, error/notice cards) so the treatment is genuinely consistent everywhere, not just wherever `Card` happens to be used.
+- Deliberately **not** touched: the sticky/bottom tab-bar navigation chrome in `GroupLeaderTabs.tsx` (translucent `bg-white/95`, not a content panel), the loading skeleton in `DashboardSkeleton.tsx` (a transient placeholder, not something to "identify"), and colored warning/danger state panels in `MarkMovedForm.tsx` (`bg-amber-50`/`bg-red-50` override `Card`'s own background on purpose, same as before this change — those panels are deliberately tinted for their own reason and were never plain white).
+- Text-contrast fix was scoped precisely rather than a blanket find/replace: only bumped `text-slate-400`/`text-slate-300` instances that render directly against the new darker panel fill. Left alone anywhere the surrounding background didn't actually change — input placeholders (`bg-[#F8FBFF]` fields), badges/chips with their own explicit background, table header rows (`bg-[#F8FBFF]` `thead`), and the two colored `MarkMovedForm` state panels. `text-slate-500` and darker were left as-is (already sufficient contrast against the new `#E2E8F2` fill); the fix specifically targeted the two lightest tiers that were becoming borderline unreadable.
+- `#E2E8F2` was chosen to match the existing hex-literal palette convention already used throughout this codebase (`#0B1B33`, `#F8FBFF`, `#F3F8FF`, etc.) rather than introducing Tailwind's separate named `slate` scale for the fill color itself — visibly darker than both the page background (`#F3F8FF`) and the lighter sub-elements (input fields, badges) that sit inside panels, so the layering reads as intentional.
+- `npx tsc --noEmit` and `npx next build` both clean, zero errors/warnings, every TMS route compiled.
+- Live-verified in the browser preview: `/territory-management-system/login` and `/territory-management-system/forgot-password` (the only two TMS pages that don't require a live Supabase session) both render the black border + darker fill correctly, zero console errors.
+
+## Remaining Work
+None identified for this specific ask — the treatment is applied everywhere a panel exists in TMS's source.
+
+## Known Issues
+- **Not live-verified beyond the two DB-independent pages.** Every other panel (dashboard forms/tables/stat cards, Group Leader Home/Dashboard/Visit Results/Partners tabs, the publisher offline workspace) sits behind Supabase auth or real assignment-batch data and couldn't be exercised in this environment — same standing limitation as every prior TMS session.
+- The text-contrast pass was scoped to the two lightest slate tiers (`400`/`300`) actually observed sitting directly on the new panel fill via manual per-file inspection, not an exhaustive automated contrast audit of the entire product. If Russell spots any other hard-to-read text on a panel during live testing, flag it and it can be targeted directly.
+
+## Next Recommended Task
+Russell live-verifies the black border + darker panel treatment across the pages this environment couldn't reach: the Admin dashboard (territories, records, group leaders, settings, reports), the Group Leader dashboard (all 4 tabs), and the publisher workspace (record list, record detail, add-record, sync, and the final "thank you" screen) — confirming panels are clearly identifiable and all text stays legible. Then deploy when ready, alongside the other pending TMS changes from this session (see `territory-management-map-csv-record-fixes-v1.md`).

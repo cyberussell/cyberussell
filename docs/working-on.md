@@ -1,5 +1,24 @@
 # Current Work
 
+**Territory Management System — Black-bordered/darkened panels sitewide + Map PNG support, CSV field mapping, Initial visit status, black QR (2026-07-15) — code done, tsc + build clean, no migrations needed, blocked on Russell's live click-through — see checkpoints `territory-management-panel-styling-v1.md` and `territory-management-map-csv-record-fixes-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Two requests in the same session. First, 5 items in one message (confirmed via `AskUserQuestion` on the two ambiguous ones — Household Number = same field as `household_members`, not a rename; Plus Code becomes CSV-required and Unit/Do Not Call are dropped from the importer entirely; "default status list" = an initial-visit-status dropdown on Add Record). Then a follow-up: give every panel a black border and a darker fill for easy visual identification, confirmed via `AskUserQuestion` that "darken the background" meant the panels themselves, not the page shell.
+
+Current Status: Code complete.
+- Territory map upload now accepts PNG as well as JPG (the storage layer was already generic — only the hardcoded JPG-only checks were blocking it).
+- CSV import required columns are now Section, Block, Plus Code, Household Number; optional are Name, Notes, Address; Unit and Do Not Call are no longer importable at all.
+- `CsvImportDialog` reworked into pick file → review/accept a header-to-field mapping step → upload with an animated progress bar (Server Actions have no real upload-progress events, documented honestly as an approximation, not byte-accurate).
+- Both Add Record forms (publisher and, for parity, admin) gained a Household Number field and an optional "Initial status" dropdown — picking one logs a real visit right after the record is created, reusing the exact same conductor-name/notes validation `logVisitSchema` already has.
+- Assignment QR code color changed from green to black.
+- **Every panel across TMS** (the shared `Card` component plus ~10 hand-rolled duplicates of its exact look — login card, CSV dialog, publisher end-of-session screens, error/notice cards) now renders with a solid black border and a visibly darker fill (`#E2E8F2` vs. the near-white page background), with `text-slate-400`/`text-slate-300` bumped to `text-slate-600`/`text-slate-500` everywhere that text sits directly on the new darker fill (left untouched inside nested lighter sub-boxes, colored warning/danger state panels, and nav chrome, since those backgrounds didn't change). New `panelClass` constant exported from `Card.tsx` as the single source of truth.
+- `npx tsc --noEmit` and `npx next build` both clean, zero warnings. Live-verified the two DB-independent pages (login, forgot-password) in the browser preview — black border + darker panel render correctly, zero console errors.
+
+**Next recommended task:** Russell live-verifies the rest (see checkpoints for the full checklists) — especially every panel behind Supabase auth (dashboard forms/tables/stat cards, Group Leader tabs, publisher workspace), which couldn't be exercised in this environment — then deploys when ready.
+
+----------------------------------------
+
 **Territory Management System — Partnership `finished_at` signal + 6 UX fixes (2026-07-15) — code done, tsc + build + vitest clean, migration 018 already run by Russell, blocked on live click-through — see checkpoint `territory-management-partnership-finished-at-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

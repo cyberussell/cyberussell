@@ -15,6 +15,6 @@ export async function getAssignmentBatchQrDataUrl(accessToken: string): Promise<
   return QRCode.toDataURL(getAssignmentBatchUrl(accessToken), {
     margin: 1,
     width: 480,
-    color: { dark: '#059669', light: '#FFFFFF' },
+    color: { dark: '#000000', light: '#FFFFFF' },
   })
 }

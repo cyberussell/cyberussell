@@ -20,7 +20,7 @@ export default function AssignedRecordsList({
   onSelect: (recordId: string) => void
 }) {
   if (records.length === 0) {
-    return <Card className="p-6 text-center text-sm text-slate-400">No contact records assigned.</Card>
+    return <Card className="p-6 text-center text-sm text-slate-600">No contact records assigned.</Card>
   }
 
   return (

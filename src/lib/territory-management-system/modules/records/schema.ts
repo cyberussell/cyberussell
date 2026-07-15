@@ -109,26 +109,47 @@ export function mergeConductorIntoNotes(conductorName: string, notes: string): s
 
 // A blank form field arrives as '' — coerce that to undefined so householdMembers stays
 // optional instead of coercing to 0 (a real headcount of "0" is different from "not recorded").
-const householdMembersField = z.preprocess(
+// Exported for assignment/schema.ts's addPublisherRecordSchema, which needs the same coercion.
+export const householdMembersField = z.preprocess(
   (v) => (v === '' || v === null || v === undefined ? undefined : v),
   z.coerce.number().int().min(0).optional()
 )
 
-export const createRecordSchema = z.object({
-  territoryId: z.string().uuid(),
-  sectionId: z.string().uuid(),
-  blockId: z.string().uuid(),
-  // Optional — the new cross-territory CSV import has no address column at all (Plus Code is
-  // the location identifier there instead), so address can no longer be required at the schema
-  // level. Still capped the same as before.
-  address: z.string().max(200).optional().default(''),
-  unit: z.string().max(40).optional().default(''),
-  residentName: z.string().max(120).optional().default(''),
-  plusCode: z.string().max(20).optional().default(''),
-  householdMembers: householdMembersField,
-  notes: z.string().max(500).optional().default(''),
-  doNotCall: z.coerce.boolean().optional().default(false),
-})
+// initialResult/initialConductorName/initialNotes let whoever's adding a brand-new record
+// (admin or publisher) optionally seed its very first visit at creation time, instead of every
+// new record always starting at the implicit blank "Initial Visit" state. A blank initialResult
+// means "don't log a visit" — the two refinements below only kick in once one is actually
+// chosen, reusing the exact same rules as logVisitSchema.
+export const createRecordSchema = z
+  .object({
+    territoryId: z.string().uuid(),
+    sectionId: z.string().uuid(),
+    blockId: z.string().uuid(),
+    // Optional — the new cross-territory CSV import has no address column at all (Plus Code is
+    // the location identifier there instead), so address can no longer be required at the schema
+    // level. Still capped the same as before.
+    address: z.string().max(200).optional().default(''),
+    unit: z.string().max(40).optional().default(''),
+    residentName: z.string().max(120).optional().default(''),
+    plusCode: z.string().max(20).optional().default(''),
+    householdMembers: householdMembersField,
+    notes: z.string().max(500).optional().default(''),
+    doNotCall: z.coerce.boolean().optional().default(false),
+    initialResult: z.string().optional().default(''),
+    initialConductorName: z.string().max(CONDUCTOR_NAME_MAX).optional().default(''),
+    initialNotes: z.string().max(500).optional().default(''),
+  })
+  .refine((data) => !data.initialResult || data.initialResult !== 'other' || data.initialNotes.trim().length > 0, {
+    message: 'Notes are required when the initial status is "Other".',
+    path: ['initialNotes'],
+  })
+  .refine(
+    (data) =>
+      !data.initialResult ||
+      !VISIT_RESULT_CONDUCTOR_PROMPT[data.initialResult as keyof typeof VISIT_RESULT_CONDUCTOR_PROMPT] ||
+      data.initialConductorName.trim().length > 0,
+    { message: 'Please enter who is conducting the Bible Study.', path: ['initialConductorName'] }
+  )
 export type CreateRecordInput = z.input<typeof createRecordSchema>
 
 export const updateRecordSchema = z.object({

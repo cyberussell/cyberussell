@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { householdMembersField, VISIT_RESULT_CONDUCTOR_PROMPT } from '@/lib/territory-management-system/modules/records/schema'
 
 // Shared by actions/assignments.ts (admin) and actions/publisher.ts (public, token-gated).
 
@@ -14,17 +15,36 @@ export const renamePartnershipSchema = z.object({
 })
 export type RenamePartnershipInput = z.input<typeof renamePartnershipSchema>
 
-export const addPublisherRecordSchema = z.object({
-  partnershipToken: z.string().min(1),
-  territoryId: z.string().uuid(),
-  sectionId: z.string().uuid(),
-  blockId: z.string().uuid(),
-  address: z.string().min(1).max(200),
-  unit: z.string().max(40).optional().default(''),
-  residentName: z.string().max(120).optional().default(''),
-  plusCode: z.string().max(20).optional().default(''),
-  notes: z.string().max(500).optional().default(''),
-})
+// initialResult/initialConductorName/initialNotes optionally seed the new record's very first
+// visit at creation time — same idea and validation rules as records/schema.ts's
+// createRecordSchema, mirrored here since the publisher path runs through its own schema file.
+export const addPublisherRecordSchema = z
+  .object({
+    partnershipToken: z.string().min(1),
+    territoryId: z.string().uuid(),
+    sectionId: z.string().uuid(),
+    blockId: z.string().uuid(),
+    address: z.string().min(1).max(200),
+    unit: z.string().max(40).optional().default(''),
+    residentName: z.string().max(120).optional().default(''),
+    plusCode: z.string().max(20).optional().default(''),
+    householdMembers: householdMembersField,
+    notes: z.string().max(500).optional().default(''),
+    initialResult: z.string().optional().default(''),
+    initialConductorName: z.string().max(80).optional().default(''),
+    initialNotes: z.string().max(500).optional().default(''),
+  })
+  .refine((data) => !data.initialResult || data.initialResult !== 'other' || data.initialNotes.trim().length > 0, {
+    message: 'Notes are required when the initial status is "Other".',
+    path: ['initialNotes'],
+  })
+  .refine(
+    (data) =>
+      !data.initialResult ||
+      !VISIT_RESULT_CONDUCTOR_PROMPT[data.initialResult as keyof typeof VISIT_RESULT_CONDUCTOR_PROMPT] ||
+      data.initialConductorName.trim().length > 0,
+    { message: 'Please enter who is conducting the Bible Study.', path: ['initialConductorName'] }
+  )
 export type AddPublisherRecordInput = z.input<typeof addPublisherRecordSchema>
 
 export const logPublisherVisitSchema = z

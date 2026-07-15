@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {sent ? (
-          <div className="rounded-2xl border border-blue-100/60 bg-white p-6 text-center shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]">
+          <div className="rounded-2xl border-2 border-black bg-[#E2E8F2] p-6 text-center shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]">
             <MailCheck className="mx-auto mb-2 h-8 w-8 text-[#2563EB]" aria-hidden />
             <p className="font-medium text-[#0B1B33]">Check your email</p>
             <p className="mt-2 text-sm text-slate-500">
@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form
             action={formAction}
-            className="space-y-4 rounded-2xl border border-blue-100/60 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]"
+            className="space-y-4 rounded-2xl border-2 border-black bg-[#E2E8F2] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]"
           >
             <label className="block">
               <span className="text-sm font-medium text-slate-600">Email</span>

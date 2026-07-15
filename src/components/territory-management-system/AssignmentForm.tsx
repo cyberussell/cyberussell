@@ -111,7 +111,7 @@ export default function AssignmentForm({
         )}
         <FormField label="Territory map(s)">
           {territories.length === 0 ? (
-            <p className="text-sm text-slate-400">No active territories yet.</p>
+            <p className="text-sm text-slate-600">No active territories yet.</p>
           ) : (
             <div className="space-y-2 rounded-lg border border-blue-100 p-3">
               {territories.map((t) => (
@@ -127,7 +127,7 @@ export default function AssignmentForm({
                     />
                     {t.name}
                   </span>
-                  <span className="text-slate-400">{t.approvedCount} approved</span>
+                  <span className="text-slate-600">{t.approvedCount} approved</span>
                 </label>
               ))}
             </div>

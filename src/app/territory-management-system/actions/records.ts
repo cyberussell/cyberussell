@@ -11,6 +11,7 @@ import {
 } from '@/lib/territory-management-system/modules/records/schema'
 import * as recordQueries from '@/lib/territory-management-system/modules/records/queries'
 import { parseRecordsCsv } from '@/lib/territory-management-system/modules/records/csv'
+import type { HeaderMap } from '@/lib/territory-management-system/modules/records/csvShared'
 import { getTerritoryStructure, listTerritories } from '@/lib/territory-management-system/modules/territory/queries'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import { type ActionResult } from './shared'
@@ -27,10 +28,13 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
     householdMembers: formData.get('householdMembers'),
     notes: formData.get('notes'),
     doNotCall: formData.get('doNotCall'),
+    initialResult: formData.get('initialResult'),
+    initialConductorName: formData.get('initialConductorName'),
+    initialNotes: formData.get('initialNotes'),
   })
   if (!parsed.success) return { error: 'Please fill in the required fields.' }
 
-  const { supabase, congregation } = await requireAdmin()
+  const { supabase, congregation, userId } = await requireAdmin()
 
   // RLS only checks that congregation_id on the new row belongs to the caller — it never
   // verifies the territoryId/sectionId/blockId in the (client-editable) hidden form fields
@@ -42,8 +46,25 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
   const block = section?.blocks.find((b) => b.id === parsed.data.blockId)
   if (!territory || !section || !block) return { error: 'Invalid territory, section, or block.' }
 
+  // A blank initialResult here re-derives the full SELECTABLE_VISIT_RESULTS list (a fresh
+  // record has no prior visit and is never do_not_call yet), same re-validation pattern
+  // logVisitAction already applies rather than trusting the submitted value outright.
+  if (parsed.data.initialResult && !(getSelectableResults() as readonly string[]).includes(parsed.data.initialResult)) {
+    return { error: 'Invalid initial status.' }
+  }
+
   try {
-    await recordQueries.createRecord(supabase, congregation.id, parsed.data)
+    const record = await recordQueries.createRecord(supabase, congregation.id, parsed.data)
+    if (parsed.data.initialResult) {
+      await recordQueries.logVisit(supabase, congregation.id, {
+        recordId: record.id,
+        visitedAt: new Date().toISOString(),
+        result: parsed.data.initialResult,
+        notes: mergeConductorIntoNotes(parsed.data.initialConductorName, parsed.data.initialNotes),
+        createdBy: userId,
+        partnerName: null,
+      })
+    }
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Could not create the contact record.' }
   }
@@ -171,9 +192,13 @@ export interface ImportSummary {
 // the global Records page (every row names its own territory via Territory Name, resolved by
 // case-insensitive exact match against this congregation's territories — same matching rule
 // already used for Section/Block below).
-export async function importRecordsAction(territoryId: string | null, csvText: string): Promise<ImportSummary> {
+export async function importRecordsAction(
+  territoryId: string | null,
+  csvText: string,
+  headerMap?: HeaderMap
+): Promise<ImportSummary> {
   const { supabase, congregation } = await requireAdmin()
-  const { rows, errors } = parseRecordsCsv(csvText, { requireTerritoryName: territoryId === null })
+  const { rows, errors } = parseRecordsCsv(csvText, { requireTerritoryName: territoryId === null, headerMap })
 
   const structureCache = new Map<string, TerritoryStructure>()
   const territoryIdByName = new Map<string, string>()
@@ -231,12 +256,14 @@ export async function importRecordsAction(territoryId: string | null, csvText: s
       sectionId: section.id,
       blockId: block.id,
       address: row.address,
-      unit: row.unit,
+      // Unit and Do Not Call are no longer importable columns — every CSV-imported row starts
+      // with no unit and do_not_call unset; both stay editable afterward like any other record.
+      unit: '',
       residentName: row.residentName,
       plusCode: row.plusCode,
       householdMembers: row.householdMembers,
       notes: row.notes,
-      doNotCall: row.doNotCall,
+      doNotCall: false,
     })
   }
 
