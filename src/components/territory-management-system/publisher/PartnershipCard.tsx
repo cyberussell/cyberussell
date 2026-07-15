@@ -3,6 +3,17 @@ import type { PartnershipWithProgress } from '@/lib/territory-management-system/
 
 export default function PartnershipCard({ partnership, batchToken }: { partnership: PartnershipWithProgress; batchToken: string }) {
   const pct = partnership.recordCount > 0 ? Math.round((partnership.completedCount / partnership.recordCount) * 100) : 0
+  // finished_at/ended_early_at (see 018_partnership_finished_at.sql) are the real "genuinely
+  // done" signal — completedCount >= recordCount alone can't be trusted (vacuously true for a
+  // zero-record partnership) and this badge previously never checked completion at all, only
+  // claimed_at, so a 100%-done or early-ended partnership stayed stuck on "In Progress" forever.
+  const done = Boolean(partnership.finished_at || partnership.ended_early_at)
+  const status = done ? 'Done' : partnership.claimed_at ? 'In Progress' : 'Unclaimed'
+  const statusClass = done
+    ? 'bg-emerald-50 text-emerald-600'
+    : partnership.claimed_at
+      ? 'bg-blue-50 text-[#2563EB]'
+      : 'bg-slate-100 text-slate-500'
 
   return (
     <Link
@@ -11,13 +22,7 @@ export default function PartnershipCard({ partnership, batchToken }: { partnersh
     >
       <div className="flex items-center justify-between gap-2">
         <p className="font-semibold text-[#0B1B33]">{partnership.name}</p>
-        <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
-            partnership.claimed_at ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'
-          }`}
-        >
-          {partnership.claimed_at ? 'In Progress' : 'Unclaimed'}
-        </span>
+        <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${statusClass}`}>{status}</span>
       </div>
       <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-blue-50">
         <div className="h-full rounded-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8]" style={{ width: `${pct}%` }} />

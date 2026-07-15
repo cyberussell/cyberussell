@@ -6,6 +6,13 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 
 // Owned entirely by the parent shell (onRename) — it decides whether to enqueue-and-flush or
 // just enqueue, depending on connectivity, so this form has no idea whether it's online.
+// The auto-generated name every partnership starts with ("Ministry Partner 1", set at batch
+// creation — see createAssignment) is a real stored value, not a placeholder, so it always
+// pre-filled the input and the actual placeholder ("Put your names") never had a chance to
+// show. Starting the field empty in that specific case lets the placeholder do its job; once a
+// partnership has a real name, editing it still pre-fills normally.
+const DEFAULT_NAME_PATTERN = /^Ministry Partner \d+$/
+
 export default function PartnershipRenameForm({
   currentName,
   onRename,
@@ -13,7 +20,7 @@ export default function PartnershipRenameForm({
   currentName: string
   onRename: (name: string) => void
 }) {
-  const [name, setName] = useState(currentName)
+  const [name, setName] = useState(DEFAULT_NAME_PATTERN.test(currentName) ? '' : currentName)
   const dirty = name.trim() !== currentName && name.trim().length > 0
 
   return (
