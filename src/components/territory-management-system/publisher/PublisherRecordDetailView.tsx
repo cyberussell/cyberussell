@@ -25,6 +25,7 @@ export default function PublisherRecordDetailView({
   assigned,
   pendingVisits,
   readOnly,
+  sessionEnded,
   saving,
   siblingPartnerships,
   moving,
@@ -39,6 +40,10 @@ export default function PublisherRecordDetailView({
   // True while viewing another Ministry Partner's assignment from this device — address,
   // badges, and full visit history still show, but there's nothing here to log or edit.
   readOnly: boolean
+  // True once this partnership's own ministry session has ended (finished normally or ended
+  // early) — same "viewable, not editable" treatment as readOnly, but for your own session
+  // rather than someone else's.
+  sessionEnded: boolean
   // True while a just-submitted visit is being saved/synced — disables the form and shows a
   // spinner so a slow connection doesn't look like a missed tap.
   saving: boolean
@@ -56,6 +61,7 @@ export default function PublisherRecordDetailView({
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assigned.record.plus_code)}`
     : null
   const latestResult = assigned.visits[0]?.result
+  const editable = !readOnly && !sessionEnded
 
   return (
     <div className="space-y-6">
@@ -91,11 +97,11 @@ export default function PublisherRecordDetailView({
         )}
       </div>
 
-      {!readOnly && !assigned.completed_at && (
+      {editable && !assigned.completed_at && (
         <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
       )}
 
-      {!readOnly && !assigned.completed_at && (
+      {editable && !assigned.completed_at && (
         <MarkMovedForm
           initial={{
             address: assigned.record.address,
@@ -110,7 +116,7 @@ export default function PublisherRecordDetailView({
         />
       )}
 
-      {!readOnly && (
+      {editable && (
         <div id="record-a-visit-form">
           <PublisherVisitLogForm
             latestResult={latestResult}

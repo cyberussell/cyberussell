@@ -19,6 +19,7 @@ export type SyncQueueItemType =
   | 'note'
   | 'updateRecord'
   | 'recommendRemoval'
+  | 'finish'
 export type SyncQueueItemStatus = 'pending' | 'syncing' | 'failed'
 
 export interface SyncQueueItem {

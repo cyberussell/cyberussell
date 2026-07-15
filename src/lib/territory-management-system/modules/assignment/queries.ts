@@ -255,7 +255,7 @@ export async function getBatchSummary(
     // must never reach the Group Leader surface (see 011_partnership_admin_note.sql).
     supabase
       .from('partnerships')
-      .select('id, congregation_id, batch_id, sequence, name, claim_token, claimed_at, ended_early_at, created_at')
+      .select('id, congregation_id, batch_id, sequence, name, claim_token, claimed_at, ended_early_at, finished_at, created_at')
       .eq('batch_id', batchId)
       .order('sequence'),
     supabase.from('congregations').select('timezone').eq('id', congregationId).maybeSingle(),
@@ -432,6 +432,20 @@ export async function terminatePartnershipEarly(
     .update({ ended_early_at: new Date().toISOString() })
     .eq('id', partnershipId)
     .is('ended_early_at', null)
+  if (error) throw error
+}
+
+// The "we're genuinely done" signal, set the moment a publisher reaches Sync & Finish (Skip or
+// Send on the note screen) — reachable from BOTH the normal finish path and the End Early path,
+// since both route through that same note screen. Distinct from ended_early_at (only set by
+// terminatePartnershipEarly above, meaning unfinished records got marked undone); this fires
+// regardless of which path got them there. Idempotent — a second call is a harmless no-op.
+export async function finishPartnership(supabase: SupabaseClient, partnershipId: string): Promise<void> {
+  const { error } = await supabase
+    .from('partnerships')
+    .update({ finished_at: new Date().toISOString() })
+    .eq('id', partnershipId)
+    .is('finished_at', null)
   if (error) throw error
 }
 

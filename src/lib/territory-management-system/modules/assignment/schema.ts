@@ -46,6 +46,13 @@ export const terminatePartnershipEarlySchema = z.object({
 })
 export type TerminatePartnershipEarlyInput = z.input<typeof terminatePartnershipEarlySchema>
 
+// Sent from the note screen's Skip/Send handlers — reachable from both the normal Sync &
+// Finish path and the End Early path, since both route through that screen.
+export const finishPartnershipSchema = z.object({
+  partnershipToken: z.string().min(1),
+})
+export type FinishPartnershipInput = z.input<typeof finishPartnershipSchema>
+
 // destinationPartnershipId is a raw id, not a claim_token — the publisher picks it from a list
 // of sibling partnerships in the same batch (fetched server-side), and never has the
 // destination's own token.

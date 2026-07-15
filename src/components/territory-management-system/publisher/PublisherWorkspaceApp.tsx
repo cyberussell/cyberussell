@@ -75,6 +75,11 @@ export default function PublisherWorkspaceApp({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const readOnly = deviceClaim !== null && deviceClaim !== partnershipToken
+  // Once this partnership's own ministry session has ended (normally finished or ended early),
+  // the record detail view stays fully viewable (address, map, visit history) but the editing
+  // controls (Record a Visit, Mark as Moved, Pass to Another Partner) go away — there's nothing
+  // left to log for the day.
+  const sessionEnded = Boolean(workspace.finished_at || workspace.ended_early_at)
 
   const refreshQueue = useCallback(async () => {
     setQueue(await listQueue(partnershipToken))
@@ -272,16 +277,34 @@ export default function PublisherWorkspaceApp({
     setView({ name: 'note' })
   }
 
+  // Marks the partnership genuinely finished (see finishPartnershipAction) — the actual "end of
+  // ministry" signal the Group Leader's all-done detection and the Record a Visit panel's
+  // read-only gating both depend on. Fires from both note-screen handlers below, since both
+  // Sync & Finish and End Early route through this same screen.
+  async function handleFinish() {
+    const now = new Date().toISOString()
+    setWorkspace((w) => ({ ...w, finished_at: w.finished_at ?? now }))
+    await enqueue(partnershipToken, 'finish', { partnershipToken })
+    await refreshQueue()
+  }
+
   async function handleSendNote(note: string) {
     setSendingNote(true)
     try {
       await enqueue(partnershipToken, 'note', { partnershipToken, note })
+      await handleFinish()
       await refreshQueue()
       if (online) await handleSync()
     } finally {
       setSendingNote(false)
       goToSync()
     }
+  }
+
+  async function handleSkipNote() {
+    await handleFinish()
+    if (online) await handleSync()
+    goToSync()
   }
 
   async function handleTerminate() {
@@ -428,6 +451,7 @@ export default function PublisherWorkspaceApp({
             assigned={selected}
             pendingVisits={pendingVisitsForSelected}
             readOnly={readOnly}
+            sessionEnded={sessionEnded}
             saving={savingVisit}
             siblingPartnerships={workspace.siblingPartnerships}
             moving={movingRecord}
@@ -443,7 +467,7 @@ export default function PublisherWorkspaceApp({
           <PublisherRecordForm territories={territoryStructures} onSubmit={handleAddRecord} onCancel={() => setView({ name: 'list' })} />
         )}
 
-        {view.name === 'note' && <PublisherNoteForm sending={sendingNote} onSend={handleSendNote} onSkip={goToSync} />}
+        {view.name === 'note' && <PublisherNoteForm sending={sendingNote} onSend={handleSendNote} onSkip={handleSkipNote} />}
 
         {view.name === 'sync' && (
           <div className="rounded-2xl border border-blue-100/60 bg-white p-6 text-center shadow-sm">

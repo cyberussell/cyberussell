@@ -64,7 +64,16 @@ export default function GroupLeaderTabs({
   // there's nothing left to scan for — the QR card gives way to a same-day results summary
   // instead. The batch itself isn't deleted (Reports/history still need it); it naturally stops
   // working the next day via the existing assignment_date/isBatchExpired midnight cutoff.
-  const allPartnersDone = stats.partnerships.length > 0 && stats.partnerships.every((p) => p.completedCount >= p.recordCount)
+  //
+  // completedCount >= recordCount is vacuously true for a zero-record ("searching a fresh
+  // territory") partnership the instant the batch is created — before anyone has even claimed
+  // it — which made the QR never show at all for a zero-record territory. finished_at/
+  // ended_early_at (set only when a publisher actually reaches Sync & Finish or ends early) are
+  // the real "genuinely done" signal and take priority; the record-count check still covers a
+  // normal partnership whose publisher never explicitly finishes (closes the tab, say).
+  const allPartnersDone =
+    stats.partnerships.length > 0 &&
+    stats.partnerships.every((p) => Boolean(p.finished_at) || Boolean(p.ended_early_at) || p.completedCount >= p.recordCount)
 
   const router = useRouter()
   // `stats` (and everything else here) is fetched once per Server Component render and passed

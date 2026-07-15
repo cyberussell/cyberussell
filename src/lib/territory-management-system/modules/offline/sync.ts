@@ -7,6 +7,7 @@
 
 import {
   addPublisherRecordAction,
+  finishPartnershipAction,
   logPublisherVisitAction,
   movePartnershipRecordAction,
   recommendRemovalAction,
@@ -49,6 +50,7 @@ async function executeItem(item: SyncQueueItem): Promise<{ ok: boolean; error?: 
   else if (item.type === 'note') result = await submitPartnershipNoteAction({}, formData)
   else if (item.type === 'updateRecord') result = await updatePublisherRecordAction({}, formData)
   else if (item.type === 'recommendRemoval') result = await recommendRemovalAction({}, formData)
+  else if (item.type === 'finish') result = await finishPartnershipAction({}, formData)
   else result = await terminatePartnershipEarlyAction({}, formData)
 
   // 'SAVED' is this codebase's success sentinel (see useServerAction) — everything else in

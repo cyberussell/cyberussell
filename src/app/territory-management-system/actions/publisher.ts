@@ -7,6 +7,7 @@ import { checkRateLimit, clientIp } from '@/lib/territory-management-system/rate
 import { logError } from '@/lib/territory-management-system/errors'
 import {
   addPublisherRecordSchema,
+  finishPartnershipSchema,
   logPublisherVisitSchema,
   movePartnershipRecordSchema,
   recommendRemovalSchema,
@@ -16,6 +17,7 @@ import {
   updatePublisherRecordSchema,
 } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
+  finishPartnership,
   getPartnershipById,
   getPartnershipByToken,
   markPartnershipRecordCompleted,
@@ -224,6 +226,32 @@ export async function terminatePartnershipEarlyAction(_prev: ActionResult, formD
   } catch (e) {
     await logError(partnership.congregation_id, 'terminatePartnershipEarlyAction', e)
     return { error: e instanceof Error ? e.message : 'Could not end the ministry session.' }
+  }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}`)
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// Marks the partnership genuinely finished — called from the note screen's Skip/Send handlers,
+// reachable from both the normal Sync & Finish path and the End Early path (both route through
+// that same screen). Not gated on partnership.expired: a session finishing right at the day
+// boundary should still be able to record that it finished. Doesn't require record ownership
+// checks like most actions here — there's nothing to verify beyond "this token is real."
+export async function finishPartnershipAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = finishPartnershipSchema.safeParse({ partnershipToken: formData.get('partnershipToken') })
+  if (!parsed.success) return { error: 'Invalid request.' }
+  if (!(await checkRateLimit(`tms-finish:${clientIp(await headers())}`, 10))) return { error: 'Too many attempts. Please wait a moment.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+
+  try {
+    await finishPartnership(supabase, partnership.id)
+  } catch (e) {
+    await logError(partnership.congregation_id, 'finishPartnershipAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not finish the ministry session.' }
   }
 
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}`)

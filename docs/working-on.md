@@ -1,5 +1,40 @@
 # Current Work
 
+**Territory Management System — Partnership `finished_at` signal + 6 UX fixes (2026-07-15) — code done, tsc + build + vitest clean, migration 018 already run by Russell, blocked on live click-through — see checkpoint `territory-management-partnership-finished-at-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell reported 6 issues after live-testing the previous pass: (1) a zero-record territory's QR never showed — Home jumped straight to the "all done" summary; (2) partner-name placeholder wording; (3) moving a record to another partnership seemed to block finishing; (4) editing controls stayed visible after a session ended; (5) whether ending a ministry should lock the QR beyond what Delete Assignment already does; (6, follow-up) Skip/Send on the note screen should actually end the ministry, not just show a thank-you screen.
+
+Current Status: Code complete.
+- **Root cause of #1 and likely #3**: no partnership had a real "genuinely done" signal — `completedCount >= recordCount` is vacuously true for a zero-record partnership the instant the batch is created, before anyone claims it, so the Group Leader's `allPartnersDone` check (added last pass) treated it as done immediately and skipped the QR straight to the results summary. New `partnerships.finished_at` (migration 018) is the real signal, set only when a publisher reaches Sync & Finish — fixes both the zero-record QR and gives the Group Leader's "all done" check an honest per-partnership signal regardless of record moves.
+- **#6 wired in**: both the note screen's Skip and Send buttons now call a new `finishPartnershipAction` (reachable from both the normal finish path and End Early, since both already funnel through the note screen) — previously neither button persisted anything, the "Thank you" screen was purely cosmetic.
+- **#4 fixed**: `PublisherRecordDetailView` now hides Record a Visit / Mark as Moved / Pass to Another Partner once `finished_at` or `ended_early_at` is set, while keeping the record header, Google Maps link, and Visit History visible.
+- **#2**: placeholder changed to "Put your names".
+- **#5**: confirmed with Russell — no new code needed, "Delete Assignment" already fully blocks all future access (cascade delete → hard 404).
+- `npx tsc --noEmit`, `npx next build`, `npx vitest run` all clean. Not live-verified (no live Supabase credentials in this environment, same standing limitation as every TMS pass).
+
+**Next recommended task:** Russell live-verifies: generating an assignment for a zero-record territory now shows the QR (not the results summary) until a publisher actually finishes; ending via Skip or Send on the note screen persists `finished_at` and hides the editing panel on revisit; moving a record to another partnership no longer appears to block the source partnership from finishing.
+
+----------------------------------------
+
+**Territory Management System — Full production audit + remediation, round 2 (2026-07-15) — CLOSED, code done, tsc + build + vitest clean, deployed (commits `82a3827`, `fe5c744`), migrations 011-017 + seed all confirmed run — see checkpoint `territory-management-production-audit-remediation-v2.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell hit two real bugs live (a legacy assignment batch permanently un-deletable after the prior session's Group Leader ownership migration; zero-approved-record territories blocked from ever generating an assignment) and asked for a fresh audit + fixes + go/no-go verdict.
+
+Current Status: **Fully closed out — GO for production.** Every migration from this session (011 partnership_admin_note, 012 removal_recommendation, 013 group leader batch ownership, 014 legacy-batch fix, 015 profiles privilege-escalation fix, 016 rate_limits, 017 error_logs) plus the zero-record seed territory are all confirmed run by Russell. No open items remain.
+- **Bug fixed**: 014 treats a NULL-`created_by` batch (predates the ownership migration) as legacy/unowned, manageable by any Group Leader in the congregation — real owners keep the protection.
+- **Critical security finding closed**: 015 revokes `authenticated`'s INSERT/UPDATE on `profiles` — its only RLS policy was row-level-only and `role`/`congregation_id` ARE the real auth gate here (`requireRole()`), so any signed-in user could self-escalate to admin via a direct REST PATCH. Confirmed via full-codebase grep every real profile write already goes through the service-role client.
+- **Bug fixed**: `calculateAssignment` no longer hard-errors on zero eligible records — creates empty-record partnerships instead, so a Group Leader can generate a real assignment for a brand-new/unmapped territory. Publisher workspace shows a dedicated empty-state message, Sync & Finish is available immediately, and territory maps are gated on the territory actually having section/block structure. Seeded a real 0-record/4-section/6-block test territory to verify.
+- **Remaining Medium/Low audit findings closed**: TMS was the only one of the 3 Supabase-backed products with no rate limiting, no error tracking, no health endpoint, no tests — brought to parity with the same patterns already used in LMS/Appointment System (`rate_limits`/`error_logs` tables, `checkRateLimit`/`logError` helpers, `/api/health`, 6 new vitest cases for the assignment engine).
+- `npx tsc --noEmit`, `npx next build`, `npx vitest run` (engine suite) all clean. Deployed and confirmed READY on Vercel across both commits.
+
+**Next recommended task:** Nothing blocking remains from this audit. Optional live click-through (never done this whole multi-session TMS effort due to no Supabase credentials in this environment): confirm the previously-stuck legacy batch deletes cleanly, the seeded zero-record territory generates and shows the new empty-state UI, rapid repeated publisher submissions get rate-limited, and a forced failure shows up in `error_logs`. Otherwise, wait for Russell's next feature request.
+
+----------------------------------------
+
 **Territory Management System — Group Leader concurrent assignment batches (2026-07-15) — code done, tsc + build clean, migration 013 already run by Russell, blocked on live click-through — see checkpoint `territory-management-group-leader-batch-ownership-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

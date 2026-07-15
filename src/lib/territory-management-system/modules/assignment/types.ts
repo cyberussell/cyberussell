@@ -21,6 +21,12 @@ export interface Partnership {
   claim_token: string
   claimed_at: string | null
   ended_early_at: string | null
+  // Set when the publisher reaches Sync & Finish (Skip or Send on the note screen) — the
+  // "we're genuinely done" signal that doesn't depend on record math, so it also covers a
+  // zero-record ("searching a fresh territory") partnership, which would otherwise look done
+  // the instant it's created. Distinct from ended_early_at (which specifically means unfinished
+  // records got marked undone) — a normally-finished session sets this without that.
+  finished_at: string | null
   created_at: string
 }
 
