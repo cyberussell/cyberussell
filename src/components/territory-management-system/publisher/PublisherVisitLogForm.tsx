@@ -20,6 +20,12 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 // saving disables the form while the parent is enqueuing/syncing the just-submitted visit and
 // advancing to the next record — the "saving" indicator itself lives at the top of the screen
 // (PublisherWorkspaceApp), not on this button.
+//
+// visitedAt is never editable here — every batch is single-day (a publisher only ever logs
+// visits for "today"), and nothing downstream reads time-of-day precision beyond a courtesy
+// display in Visit History, so an editable datetime input was one more thing to fumble with on
+// a small screen for no functional benefit. Shown as a plain read-only line instead, still the
+// real value that gets saved.
 export default function PublisherVisitLogForm({
   latestResult,
   doNotCall,
@@ -56,36 +62,24 @@ export default function PublisherVisitLogForm({
     <Card className="p-6">
       <h2 className="mb-4 font-semibold text-[#0B1B33]">Record a Visit</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="Visited at">
-            <input
-              type="datetime-local"
-              required
-              disabled={saving}
-              value={visitedAt}
-              onChange={(e) => setVisitedAt(e.target.value)}
-              className={inputClass}
-            />
-          </FormField>
-          <FormField label="Status">
-            <select
-              required
-              disabled={saving}
-              value={result}
-              onChange={(e) => setResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number])}
-              className={inputClass}
-            >
-              <option value="" disabled>
-                Select a status…
+        <FormField label="Status">
+          <select
+            required
+            disabled={saving}
+            value={result}
+            onChange={(e) => setResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number])}
+            className={inputClass}
+          >
+            <option value="" disabled>
+              Select a status…
+            </option>
+            {selectableResults.map((r) => (
+              <option key={r} value={r}>
+                {VISIT_RESULT_LABELS[r]}
               </option>
-              {selectableResults.map((r) => (
-                <option key={r} value={r}>
-                  {VISIT_RESULT_LABELS[r]}
-                </option>
-              ))}
-            </select>
-          </FormField>
-        </div>
+            ))}
+          </select>
+        </FormField>
         {conductorPrompt && (
           <FormField label={conductorPrompt}>
             <input
@@ -109,6 +103,9 @@ export default function PublisherVisitLogForm({
             className={inputClass}
           />
         </FormField>
+        <p className="text-xs text-slate-400">
+          Visited {new Date(visitedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+        </p>
         <button
           type="submit"
           disabled={saving}
