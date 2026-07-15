@@ -73,7 +73,9 @@ export default function GroupLeaderTabs({
   // normal partnership whose publisher never explicitly finishes (closes the tab, say).
   const allPartnersDone =
     stats.partnerships.length > 0 &&
-    stats.partnerships.every((p) => Boolean(p.finished_at) || Boolean(p.ended_early_at) || p.completedCount >= p.recordCount)
+    stats.partnerships.every(
+      (p) => Boolean(p.finished_at) || Boolean(p.ended_early_at) || (p.recordCount > 0 && p.completedCount >= p.recordCount)
+    )
 
   const router = useRouter()
   // `stats` (and everything else here) is fetched once per Server Component render and passed
