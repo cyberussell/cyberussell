@@ -1,5 +1,21 @@
 # Current Work
 
+**Territory Management System — "Use My Location" button on Moved/Correction panels (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, not yet committed/pushed — see checkpoint `territory-management-plus-code-location-button-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked for the same "Use My Location" Plus Code auto-fill button already on the publisher's Add New Record form to be added to `MarkMovedForm.tsx`'s "Update Contact Record" panel and `RecommendCorrectionForm.tsx`'s "Recommend a Correction" panel (both reached via the "Moved" flow).
+
+Current Status: Code complete.
+- Local `main` was found 8 commits behind `origin/main` at session start (a concurrent session had already built `locatePlusCode()`, the first location button, and the entire `RecommendCorrectionForm.tsx` component) — pulled clean (fast-forward `84e661c..e36735f`) and `npm install`'d before making any changes.
+- Both target forms got the identical button pattern already used in `PublisherRecordForm.tsx`: same icons, same disabled/spinner behavior, same `locatePlusCode()` call, same `toast.error` on failure.
+- `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. Live-verified in the browser via a temporary scratch route (removed before commit) — first panel pixel-matches Russell's screenshot, second panel's button confirmed correct via the accessibility tree, click behavior confirmed correct (denied-permission error path, same as the existing button).
+- **Found and flagged separately (not fixed here)**: no `<Toaster />` is mounted anywhere in the publisher route tree, so every `toast.success`/`toast.error` across the whole publisher workflow has never actually rendered. Spawned as background task `task_d3775285` rather than fixed inline (out of scope for this request, different part of the route tree).
+
+**Next recommended task:** Ready to deploy at Russell's request. Separately, the spawned Toaster-mounting task whenever convenient.
+
+----------------------------------------
+
 **Territory Management System — Publisher-added records get their own visible/editable list (2026-07-15) — code done, tsc + build clean, engine tests 10/10 passing, migration 019 already run by Russell, committed and pushed (`ff45107`), not yet deployed — see checkpoint `territory-management-publisher-added-records-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

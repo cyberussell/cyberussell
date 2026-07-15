@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowRightLeft, RefreshCw, Truck } from 'lucide-react'
+import { toast } from 'sonner'
+import { ArrowRightLeft, LocateFixed, RefreshCw, Truck } from 'lucide-react'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
+import { locatePlusCode } from '@/lib/territory-management-system/plusCode'
 
 export interface MovedRecordFields {
   address: string
@@ -36,6 +38,21 @@ export default function MarkMovedForm({
   const [mode, setMode] = useState<'closed' | 'choose' | 'edit' | 'recommend'>(initialMode)
   const [fields, setFields] = useState(initial)
   const [reason, setReason] = useState('')
+  const [locating, setLocating] = useState(false)
+
+  async function handleUseMyLocation() {
+    setLocating(true)
+    try {
+      const result = await locatePlusCode()
+      if ('error' in result) {
+        toast.error(result.error)
+      } else {
+        setFields((f) => ({ ...f, plusCode: result.code }))
+      }
+    } finally {
+      setLocating(false)
+    }
+  }
 
   if (mode === 'closed') {
     return (
@@ -121,13 +138,26 @@ export default function MarkMovedForm({
             </FormField>
           </div>
           <FormField label="Plus Code" optional>
-            <input
-              value={fields.plusCode}
-              onChange={(e) => setFields((f) => ({ ...f, plusCode: e.target.value }))}
-              maxLength={20}
-              disabled={submitting}
-              className={inputClass}
-            />
+            <div className="flex gap-2">
+              <input
+                value={fields.plusCode}
+                onChange={(e) => setFields((f) => ({ ...f, plusCode: e.target.value }))}
+                maxLength={20}
+                disabled={submitting}
+                className={`${inputClass} min-w-0 flex-1`}
+                placeholder="e.g. 7FG8+4V"
+              />
+              <button
+                type="button"
+                onClick={handleUseMyLocation}
+                disabled={submitting || locating}
+                title="Use my current location"
+                aria-label="Use my current location"
+                className="flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 text-sm font-medium text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-50"
+              >
+                {locating ? <RefreshCw className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
+              </button>
+            </div>
           </FormField>
           <FormField label="Notes" optional>
             <textarea

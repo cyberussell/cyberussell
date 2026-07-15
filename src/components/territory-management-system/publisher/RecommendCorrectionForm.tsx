@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { PencilLine, RefreshCw } from 'lucide-react'
+import { toast } from 'sonner'
+import { LocateFixed, PencilLine, RefreshCw } from 'lucide-react'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
+import { locatePlusCode } from '@/lib/territory-management-system/plusCode'
 
 export interface CorrectionFields {
   plusCode: string
@@ -31,6 +33,21 @@ export default function RecommendCorrectionForm({
   const [open, setOpen] = useState(initialOpen)
   const [plusCode, setPlusCode] = useState(currentPlusCode)
   const [reason, setReason] = useState('')
+  const [locating, setLocating] = useState(false)
+
+  async function handleUseMyLocation() {
+    setLocating(true)
+    try {
+      const result = await locatePlusCode()
+      if ('error' in result) {
+        toast.error(result.error)
+      } else {
+        setPlusCode(result.code)
+      }
+    } finally {
+      setLocating(false)
+    }
+  }
 
   if (!open) {
     return (
@@ -51,14 +68,26 @@ export default function RecommendCorrectionForm({
       <p className="mt-1 text-sm text-slate-500">Wrong Plus Code or other info? Let the Admin know what it should be.</p>
       <div className="mt-4 space-y-4">
         <FormField label="Correct Plus Code">
-          <input
-            value={plusCode}
-            onChange={(e) => setPlusCode(e.target.value)}
-            maxLength={20}
-            disabled={submitting}
-            className={inputClass}
-            placeholder="e.g. 7FG8+4V"
-          />
+          <div className="flex gap-2">
+            <input
+              value={plusCode}
+              onChange={(e) => setPlusCode(e.target.value)}
+              maxLength={20}
+              disabled={submitting}
+              className={`${inputClass} min-w-0 flex-1`}
+              placeholder="e.g. 7FG8+4V"
+            />
+            <button
+              type="button"
+              onClick={handleUseMyLocation}
+              disabled={submitting || locating}
+              title="Use my current location"
+              aria-label="Use my current location"
+              className="flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 text-sm font-medium text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-50"
+            >
+              {locating ? <RefreshCw className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
+            </button>
+          </div>
         </FormField>
         <FormField label="Note to Admin">
           <textarea
