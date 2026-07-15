@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useActionState } from 'react'
 import { signIn } from '@/app/territory-management-system/actions/auth'
@@ -12,12 +13,14 @@ export default function LoginForm({ notice }: { notice?: string }) {
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#F3F8FF] px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#38BDF8] text-2xl font-bold text-white">
-            T
-          </div>
+          <Image src="/tms-logo.png" alt="Territory Management System" width={56} height={56} className="mb-3 rounded-2xl" priority />
           <span className="text-2xl font-bold text-[#0B1B33]">
             Territory <span className="text-[#2563EB]">Management System</span>
           </span>
+          {/* Single-congregation deployment today — hardcode until a second congregation is
+              actually onboarded, at which point this login page needs to stop assuming one. */}
+          <span className="mt-1 text-sm font-semibold text-slate-600">Mallig Tagalog Congregation</span>
+          <span className="text-xs text-slate-400">Mallig, Isabela</span>
         </div>
         <form
           action={formAction}
@@ -54,6 +57,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
             {pending ? 'Logging in…' : 'Log in'}
           </button>
         </form>
+        <p className="mt-4 text-center text-xs text-slate-400">Owned and managed by Cyberussell.com</p>
       </div>
     </div>
   )
