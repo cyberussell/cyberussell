@@ -1,7 +1,9 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { createServerSupabase } from '@/lib/territory-management-system/supabase-server'
+import { checkRateLimit, clientIp } from '@/lib/territory-management-system/rateLimit'
 import type { UserRole } from '@/lib/territory-management-system/modules/auth/types'
 import { type ActionResult } from './shared'
 
@@ -14,6 +16,11 @@ const ROLE_REDIRECT: Record<UserRole, string> = {
 }
 
 export async function signIn(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const ip = clientIp(await headers())
+  if (!(await checkRateLimit(`tms-login:${ip}`, 10))) {
+    return { error: 'Too many login attempts. Please wait a minute and try again.' }
+  }
+
   const email = String(formData.get('email') ?? '')
   const password = String(formData.get('password') ?? '')
   const supabase = await createServerSupabase()

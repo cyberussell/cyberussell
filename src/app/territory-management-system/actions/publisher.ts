@@ -1,7 +1,10 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
 import { createAdminSupabase } from '@/lib/territory-management-system/supabase-server'
+import { checkRateLimit, clientIp } from '@/lib/territory-management-system/rateLimit'
+import { logError } from '@/lib/territory-management-system/errors'
 import {
   addPublisherRecordSchema,
   logPublisherVisitSchema,
@@ -46,6 +49,7 @@ export async function renamePartnershipAction(_prev: ActionResult, formData: For
     name: formData.get('name'),
   })
   if (!parsed.success) return { error: 'Enter a valid partnership name.' }
+  if (!(await checkRateLimit(`tms-rename:${clientIp(await headers())}`, 10))) return { error: 'Too many attempts. Please wait a moment.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -72,6 +76,7 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
     const notesIssue = parsed.error.issues.find((i) => i.path.includes('notes'))
     return { error: notesIssue?.message ?? 'Please fill in the visit details correctly.' }
   }
+  if (!(await checkRateLimit(`tms-visit:${clientIp(await headers())}`, 40))) return { error: 'Too many attempts. Please wait a moment.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -104,6 +109,7 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
     })
     await markPartnershipRecordCompleted(supabase, partnership.id, parsed.data.recordId)
   } catch (e) {
+    await logError(partnership.congregation_id, 'logPublisherVisitAction', e)
     return { error: e instanceof Error ? e.message : 'Could not log the visit.' }
   }
 
@@ -126,6 +132,7 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
     notes: formData.get('notes'),
   })
   if (!parsed.success) return { error: 'Please fill in the required fields.' }
+  if (!(await checkRateLimit(`tms-add-record:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -158,6 +165,7 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
       source: 'publisher',
     })
   } catch (e) {
+    await logError(partnership.congregation_id, 'addPublisherRecordAction', e)
     return { error: e instanceof Error ? e.message : 'Could not add the contact record.' }
   }
 
@@ -175,6 +183,7 @@ export async function movePartnershipRecordAction(_prev: ActionResult, formData:
     destinationPartnershipId: formData.get('destinationPartnershipId'),
   })
   if (!parsed.success) return { error: 'Invalid request.' }
+  if (!(await checkRateLimit(`tms-move-record:${clientIp(await headers())}`, 20))) return { error: 'Too many attempts. Please wait a moment.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -192,6 +201,7 @@ export async function movePartnershipRecordAction(_prev: ActionResult, formData:
   try {
     await movePartnershipRecord(supabase, partnership.id, destination.id, parsed.data.recordId)
   } catch (e) {
+    await logError(partnership.congregation_id, 'movePartnershipRecordAction', e)
     return { error: e instanceof Error ? e.message : 'Could not move the contact record.' }
   }
 
@@ -202,6 +212,7 @@ export async function movePartnershipRecordAction(_prev: ActionResult, formData:
 export async function terminatePartnershipEarlyAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = terminatePartnershipEarlySchema.safeParse({ partnershipToken: formData.get('partnershipToken') })
   if (!parsed.success) return { error: 'Invalid request.' }
+  if (!(await checkRateLimit(`tms-terminate:${clientIp(await headers())}`, 5))) return { error: 'Too many attempts. Please wait a moment.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -211,6 +222,7 @@ export async function terminatePartnershipEarlyAction(_prev: ActionResult, formD
   try {
     await terminatePartnershipEarly(supabase, partnership.congregation_id, partnership.id, partnership.name)
   } catch (e) {
+    await logError(partnership.congregation_id, 'terminatePartnershipEarlyAction', e)
     return { error: e instanceof Error ? e.message : 'Could not end the ministry session.' }
   }
 
@@ -229,6 +241,7 @@ export async function submitPartnershipNoteAction(_prev: ActionResult, formData:
     note: formData.get('note'),
   })
   if (!parsed.success) return { error: 'Please enter a note.' }
+  if (!(await checkRateLimit(`tms-note:${clientIp(await headers())}`, 5))) return { error: 'Too many attempts. Please wait a moment.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -237,6 +250,7 @@ export async function submitPartnershipNoteAction(_prev: ActionResult, formData:
   try {
     await submitPartnershipNote(supabase, partnership.id, parsed.data.note)
   } catch (e) {
+    await logError(partnership.congregation_id, 'submitPartnershipNoteAction', e)
     return { error: e instanceof Error ? e.message : 'Could not send the note.' }
   }
 
@@ -259,6 +273,7 @@ export async function updatePublisherRecordAction(_prev: ActionResult, formData:
     notes: formData.get('notes'),
   })
   if (!parsed.success) return { error: 'Please fill in the required fields.' }
+  if (!(await checkRateLimit(`tms-update-record:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -291,6 +306,7 @@ export async function updatePublisherRecordAction(_prev: ActionResult, formData:
     })
     await markPartnershipRecordCompleted(supabase, partnership.id, parsed.data.recordId)
   } catch (e) {
+    await logError(partnership.congregation_id, 'updatePublisherRecordAction', e)
     return { error: e instanceof Error ? e.message : 'Could not update the contact record.' }
   }
 
@@ -308,6 +324,7 @@ export async function recommendRemovalAction(_prev: ActionResult, formData: Form
     reason: formData.get('reason'),
   })
   if (!parsed.success) return { error: 'Please enter a reason for the recommendation.' }
+  if (!(await checkRateLimit(`tms-recommend-removal:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -329,6 +346,7 @@ export async function recommendRemovalAction(_prev: ActionResult, formData: Form
     })
     await markPartnershipRecordCompleted(supabase, partnership.id, parsed.data.recordId)
   } catch (e) {
+    await logError(partnership.congregation_id, 'recommendRemovalAction', e)
     return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }
   }
 
