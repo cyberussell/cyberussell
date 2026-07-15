@@ -37,6 +37,7 @@ export default function PublisherWorkspaceApp({
   const [workspace, setWorkspace] = useState(initialWorkspace)
   const [view, setView] = useState<View>({ name: 'list' })
   const [downloaded, setDownloaded] = useState(false)
+  const [savingVisit, setSavingVisit] = useState(false)
   const [queue, setQueue] = useState<SyncQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
   const [mapUrls, setMapUrls] = useState<Record<string, string>>({})
@@ -156,14 +157,19 @@ export default function PublisherWorkspaceApp({
   }
 
   async function handleLogVisit(recordId: string, visitedAt: string, result: string, notes: string) {
-    const updatedRecords = workspace.records.map((r) =>
-      r.record.id === recordId ? { ...r, completed_at: r.completed_at ?? new Date().toISOString() } : r
-    )
-    setWorkspace((w) => ({ ...w, records: updatedRecords }))
-    await enqueue(partnershipToken, 'visit', { partnershipToken, recordId, visitedAt, result, notes })
-    await refreshQueue()
-    if (online) handleSync()
-    goToNextRecord(recordId, updatedRecords)
+    setSavingVisit(true)
+    try {
+      const updatedRecords = workspace.records.map((r) =>
+        r.record.id === recordId ? { ...r, completed_at: r.completed_at ?? new Date().toISOString() } : r
+      )
+      setWorkspace((w) => ({ ...w, records: updatedRecords }))
+      await enqueue(partnershipToken, 'visit', { partnershipToken, recordId, visitedAt, result, notes })
+      await refreshQueue()
+      if (online) await handleSync()
+      goToNextRecord(recordId, updatedRecords)
+    } finally {
+      setSavingVisit(false)
+    }
   }
 
   // After logging a visit, jump straight to the next record still needing one instead of
@@ -303,6 +309,7 @@ export default function PublisherWorkspaceApp({
             assigned={selected}
             pendingVisits={pendingVisitsForSelected}
             readOnly={readOnly}
+            saving={savingVisit}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
           />
         )}

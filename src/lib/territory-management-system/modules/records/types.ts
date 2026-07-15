@@ -5,6 +5,8 @@ export type VisitResult =
   | 'return_visit'
   | 'started_bible_study'
   | 'bible_study'
+  | 'progressing'
+  | 'discontinued'
   | 'not_home'
   | 'do_not_call'
   | 'moved'

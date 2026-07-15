@@ -7,6 +7,8 @@ export const VISIT_RESULTS = [
   'return_visit',
   'started_bible_study',
   'bible_study',
+  'progressing',
+  'discontinued',
   'not_home',
   'do_not_call',
   'moved',
@@ -21,11 +23,30 @@ export const VISIT_RESULTS = [
 // manually) it's excluded from the dropdown both visit-log forms present to a human.
 export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter((r) => r !== 'undone' && r !== 'initial_visit')
 
+// Once a record's most recent visit is 'bible_study' (confirmed ongoing — not the first-time
+// 'started_bible_study'), the next visit's Status choices narrow to just these three follow-up
+// outcomes instead of the full list — 'progressing' keeps counting as "ongoing" for this check,
+// so the narrowed list stays in place across every subsequent visit until the study ends one way
+// or the other.
+export const BIBLE_STUDY_ONGOING_RESULTS = ['bible_study', 'progressing'] as const
+export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'moved'] as const
+
+export function getSelectableResults(
+  latestResult?: string | null
+): readonly (typeof SELECTABLE_VISIT_RESULTS)[number][] {
+  if (latestResult && (BIBLE_STUDY_ONGOING_RESULTS as readonly string[]).includes(latestResult)) {
+    return BIBLE_STUDY_FOLLOWUP_RESULTS
+  }
+  return SELECTABLE_VISIT_RESULTS
+}
+
 export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string> = {
   initial_visit: 'Initial Visit',
-  return_visit: 'Return Visit',
+  return_visit: 'Visited Again',
   started_bible_study: 'Started Bible Study',
   bible_study: 'Bible Study',
+  progressing: 'Progressing',
+  discontinued: 'Discontinued',
   not_home: 'Not At Home',
   do_not_call: 'Do Not Call',
   moved: 'Moved',
@@ -41,6 +62,8 @@ export const VISIT_RESULT_STYLES: Record<(typeof VISIT_RESULTS)[number], string>
   return_visit: 'bg-sky-50 text-sky-600',
   started_bible_study: 'bg-indigo-50 text-indigo-600',
   bible_study: 'bg-violet-50 text-violet-600',
+  progressing: 'bg-emerald-50 text-emerald-600',
+  discontinued: 'bg-gray-100 text-gray-500',
   not_home: 'bg-slate-100 text-slate-600',
   do_not_call: 'bg-red-50 text-red-600',
   moved: 'bg-amber-50 text-amber-600',
@@ -54,6 +77,7 @@ export const VISIT_RESULT_STYLES: Record<(typeof VISIT_RESULTS)[number], string>
 export const VISIT_RESULT_CONDUCTOR_PROMPT: Partial<Record<(typeof VISIT_RESULTS)[number], string>> = {
   started_bible_study: 'Name of the publisher',
   bible_study: 'Who is conducting the Bible Study?',
+  progressing: 'Who is conducting the Bible Study?',
 }
 
 const CONDUCTOR_NAME_MAX = 80

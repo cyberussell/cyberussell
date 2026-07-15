@@ -14,7 +14,7 @@ import PublisherVisitLogForm from './PublisherVisitLogForm'
 // Study there) — this card's full-panel treatment is a distinct, one-off UX request.
 function cardToneClass(latestResult: string | undefined): string {
   if (latestResult === 'do_not_call') return 'border-red-300 bg-red-50'
-  if (latestResult === 'bible_study') return 'border-emerald-300 bg-emerald-50'
+  if (latestResult === 'bible_study' || latestResult === 'progressing') return 'border-emerald-300 bg-emerald-50'
   return 'border-blue-100/60 bg-white'
 }
 
@@ -22,6 +22,7 @@ export default function PublisherRecordDetailView({
   assigned,
   pendingVisits,
   readOnly,
+  saving,
   onLogVisit,
 }: {
   assigned: PartnershipRecordDetail
@@ -29,6 +30,9 @@ export default function PublisherRecordDetailView({
   // True while viewing another Ministry Partner's assignment from this device — address,
   // badges, and full visit history still show, but there's nothing here to log or edit.
   readOnly: boolean
+  // True while a just-submitted visit is being saved/synced — disables the form and shows a
+  // spinner so a slow connection doesn't look like a missed tap.
+  saving: boolean
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
 }) {
   const mapsUrl = assigned.record.plus_code
@@ -50,6 +54,11 @@ export default function PublisherRecordDetailView({
           Sec {assigned.record.section?.label ?? '—'} / Blk {assigned.record.block?.label ?? '—'}
         </p>
         {assigned.record.resident_name && <p className="mt-2 text-sm text-slate-600">{assigned.record.resident_name}</p>}
+        {assigned.record.household_members != null && (
+          <p className="mt-2 text-sm text-slate-500">
+            Household members: {assigned.record.household_members}
+          </p>
+        )}
         {assigned.record.notes && <p className="mt-2 text-sm text-slate-500">{assigned.record.notes}</p>}
         {assigned.record.do_not_call && <p className="mt-2 text-sm font-medium text-red-500">Do Not Call</p>}
         {mapsUrl && (
@@ -67,7 +76,7 @@ export default function PublisherRecordDetailView({
 
       {!readOnly && (
         <div id="record-a-visit-form">
-          <PublisherVisitLogForm onLogVisit={onLogVisit} />
+          <PublisherVisitLogForm latestResult={latestResult} saving={saving} onLogVisit={onLogVisit} />
         </div>
       )}
 

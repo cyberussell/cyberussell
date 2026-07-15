@@ -34,7 +34,7 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ r
       />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RecordEditForm record={record} />
-        <VisitLogForm recordId={record.id} />
+        <VisitLogForm recordId={record.id} latestResult={latestVisit?.result} />
       </div>
       <div>
         <h2 className="mb-4 font-semibold text-[#0B1B33]">Visit History</h2>

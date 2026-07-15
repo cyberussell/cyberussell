@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { logVisitAction } from '@/app/territory-management-system/actions/records'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import {
+  getSelectableResults,
   SELECTABLE_VISIT_RESULTS,
   VISIT_RESULT_CONDUCTOR_PROMPT,
   VISIT_RESULT_LABELS,
@@ -12,9 +13,12 @@ import { nowLocalDatetime } from '@/lib/territory-management-system/modules/reco
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
-export default function VisitLogForm({ recordId }: { recordId: string }) {
+// latestResult narrows the Status choices once a record is already an ongoing Bible Study — see
+// getSelectableResults in records/schema.ts.
+export default function VisitLogForm({ recordId, latestResult }: { recordId: string; latestResult?: string | null }) {
   const { dispatch, pending, error, successMessage } = useServerAction(logVisitAction, ['SAVED'], 'Visit logged.')
   const [result, setResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
+  const selectableResults = getSelectableResults(latestResult)
   const notesRequired = result === 'other'
   const conductorPrompt = result ? VISIT_RESULT_CONDUCTOR_PROMPT[result] : undefined
 
@@ -27,7 +31,7 @@ export default function VisitLogForm({ recordId }: { recordId: string }) {
           <FormField label="Visited at">
             <input name="visitedAt" type="datetime-local" required defaultValue={nowLocalDatetime()} className={inputClass} />
           </FormField>
-          <FormField label="Result">
+          <FormField label="Status">
             <select
               name="result"
               required
@@ -36,9 +40,9 @@ export default function VisitLogForm({ recordId }: { recordId: string }) {
               className={inputClass}
             >
               <option value="" disabled>
-                Select a result…
+                Select a status…
               </option>
-              {SELECTABLE_VISIT_RESULTS.map((r) => (
+              {selectableResults.map((r) => (
                 <option key={r} value={r}>
                   {VISIT_RESULT_LABELS[r]}
                 </option>

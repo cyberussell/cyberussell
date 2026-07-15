@@ -12,5 +12,9 @@ export function getAssignmentBatchUrl(accessToken: string): string {
 // Scanning this with an ordinary phone camera opens the batch's public partnership list
 // directly — no in-app scanner needed, no publisher account required.
 export async function getAssignmentBatchQrDataUrl(accessToken: string): Promise<string> {
-  return QRCode.toDataURL(getAssignmentBatchUrl(accessToken), { margin: 1, width: 480 })
+  return QRCode.toDataURL(getAssignmentBatchUrl(accessToken), {
+    margin: 1,
+    width: 480,
+    color: { dark: '#059669', light: '#FFFFFF' },
+  })
 }
