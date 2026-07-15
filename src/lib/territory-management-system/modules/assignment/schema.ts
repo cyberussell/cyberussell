@@ -1,7 +1,16 @@
 import { z } from 'zod'
-import { householdMembersField, VISIT_RESULT_CONDUCTOR_PROMPT } from '@/lib/territory-management-system/modules/records/schema'
+import { VISIT_RESULT_CONDUCTOR_PROMPT } from '@/lib/territory-management-system/modules/records/schema'
 
 // Shared by actions/assignments.ts (admin) and actions/publisher.ts (public, token-gated).
+
+// Unlike records/schema.ts's shared householdMembersField (which leaves a blank value as
+// unset — used by Admin's own Add/Edit Record forms), the publisher's Add/Edit-Added-Record
+// forms default a blank Household Number to 1 rather than leaving it unset — confirmed with
+// Russell, deliberately scoped to just these two publisher-facing schemas.
+const publisherHouseholdMembersField = z.preprocess(
+  (v) => (v === '' || v === null || v === undefined ? 1 : v),
+  z.coerce.number().int().min(0)
+)
 
 export const createAssignmentSchema = z.object({
   territoryIds: z.array(z.string().uuid()).min(1, 'Select at least one territory.'),
@@ -28,11 +37,11 @@ export const addPublisherRecordSchema = z
     territoryId: z.string().uuid(),
     sectionId: z.string().uuid(),
     blockId: z.string().uuid(),
-    address: z.string().min(1).max(200),
+    address: z.string().max(200).optional().default(''),
     unit: z.string().max(40).optional().default(''),
     residentName: z.string().max(120).optional().default(''),
-    plusCode: z.string().max(20).optional().default(''),
-    householdMembers: householdMembersField,
+    plusCode: z.string().min(1, 'Plus Code is required.').max(20),
+    householdMembers: publisherHouseholdMembersField,
     notes: z.string().max(500).optional().default(''),
     initialResult: z.string().optional().default(''),
     initialConductorName: z.string().max(80).optional().default(''),
@@ -133,11 +142,11 @@ export const editPublisherAddedRecordSchema = z.object({
   territoryId: z.string().uuid(),
   sectionId: z.string().uuid(),
   blockId: z.string().uuid(),
-  address: z.string().min(1).max(200),
+  address: z.string().max(200).optional().default(''),
   unit: z.string().max(40).optional().default(''),
   residentName: z.string().max(120).optional().default(''),
-  plusCode: z.string().max(20).optional().default(''),
-  householdMembers: householdMembersField,
+  plusCode: z.string().min(1, 'Plus Code is required.').max(20),
+  householdMembers: publisherHouseholdMembersField,
   notes: z.string().max(500).optional().default(''),
 })
 export type EditPublisherAddedRecordInput = z.input<typeof editPublisherAddedRecordSchema>

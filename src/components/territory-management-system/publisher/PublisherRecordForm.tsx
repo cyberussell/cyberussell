@@ -83,7 +83,7 @@ export default function PublisherRecordForm({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!territoryId || !sectionId || !blockId || !address.trim()) return
+    if (!territoryId || !sectionId || !blockId || !plusCode.trim()) return
     if (conductorPrompt && !initialConductorName.trim()) return
     if (initialNotesRequired && !initialNotes.trim()) return
     onSubmit({
@@ -151,11 +151,10 @@ export default function PublisherRecordForm({
             ))}
           </select>
         </FormField>
-        <FormField label="Address">
+        <FormField label="Address" optional>
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            required
             maxLength={200}
             className={inputClass}
             placeholder="123 Main St"
@@ -170,8 +169,15 @@ export default function PublisherRecordForm({
           </FormField>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="Plus Code" optional>
-            <input value={plusCode} onChange={(e) => setPlusCode(e.target.value)} maxLength={20} className={inputClass} placeholder="e.g. 7FG8+4V" />
+          <FormField label="Plus Code">
+            <input
+              value={plusCode}
+              onChange={(e) => setPlusCode(e.target.value)}
+              required
+              maxLength={20}
+              className={inputClass}
+              placeholder="e.g. 7FG8+4V"
+            />
           </FormField>
           <FormField label="Household Number" optional>
             <input
@@ -181,6 +187,7 @@ export default function PublisherRecordForm({
               min={0}
               max={99}
               className={inputClass}
+              placeholder="Default: 1"
             />
           </FormField>
         </div>
