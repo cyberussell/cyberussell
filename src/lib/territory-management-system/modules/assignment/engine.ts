@@ -30,8 +30,16 @@ export function calculateAssignment(
   if (!Number.isInteger(partnershipCount) || partnershipCount < 1) {
     return { error: 'Enter at least 1 partnership.' }
   }
+  // Zero eligible records isn't an error — it's the "brand-new/unmapped territory" scenario:
+  // publishers still get a real assignment (QR, partnerships, a workspace), just with nothing
+  // pre-assigned to visit. They spend the day searching the area and adding new contact
+  // records instead of revisiting existing ones (see PublisherWorkspaceApp's empty-records
+  // messaging).
   if (eligibleRecordIds.length === 0) {
-    return { error: 'No approved records are available in the selected territories.' }
+    return {
+      partnerships: Array.from({ length: partnershipCount }, (_, i) => ({ sequence: i + 1, recordIds: [] })),
+      unassignedCount: 0,
+    }
   }
   if (eligibleRecordIds.length < partnershipCount) {
     return {

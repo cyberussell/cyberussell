@@ -189,15 +189,20 @@ export async function createAssignment(
       .single()
     if (partnershipError) return { error: partnershipError.message }
 
-    const { error: recordsError } = await supabase.from('partnership_records').insert(
-      partnershipPlan.recordIds.map((recordId, index) => ({
-        congregation_id: congregationId,
-        partnership_id: partnership.id,
-        record_id: recordId,
-        sequence: index + 1,
-      }))
-    )
-    if (recordsError) return { error: recordsError.message }
+    // A "searching a fresh territory" partnership has zero recordIds by design (see engine.ts)
+    // — .insert([]) is a no-op worth skipping outright rather than trusting every Supabase
+    // client version to handle an empty array insert gracefully.
+    if (partnershipPlan.recordIds.length > 0) {
+      const { error: recordsError } = await supabase.from('partnership_records').insert(
+        partnershipPlan.recordIds.map((recordId, index) => ({
+          congregation_id: congregationId,
+          partnership_id: partnership.id,
+          record_id: recordId,
+          sequence: index + 1,
+        }))
+      )
+      if (recordsError) return { error: recordsError.message }
+    }
   }
 
   return { batchId, unassignedCount: plan.unassignedCount }

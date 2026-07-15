@@ -303,7 +303,17 @@ export default function PublisherWorkspaceApp({
   const selected = view.name === 'detail' ? (workspace.records.find((r) => r.record.id === view.recordId) ?? null) : null
   const pendingVisitsForSelected =
     view.name === 'detail' ? queue.filter((q) => q.type === 'visit' && q.payload.recordId === view.recordId) : []
-  const allDone = workspace.records.length > 0 && workspace.records.every((r) => r.completed_at)
+  // A "searching a fresh territory" partnership starts with zero assigned records by design
+  // (see engine.ts) — vacuously "done" the moment it's claimed, since there's nothing to visit,
+  // so Sync & Finish is available right away rather than only reachable via End Early.
+  const allDone = workspace.records.every((r) => r.completed_at)
+  // Only hide a territory's map when it genuinely has no section/block structure at all — a
+  // defensive guard, not the normal zero-records case (a fresh territory still has real
+  // sections/blocks from the moment it's created; TerritoryMapViewer just has nothing useful to
+  // render without them).
+  const territoriesWithStructure = new Set(
+    territoryStructures.filter((s) => s.sections.length > 0).map((s) => s.id)
+  )
   const showSessionChrome = view.name !== 'note' && view.name !== 'sync' && view.name !== 'done'
 
   return (
@@ -339,19 +349,22 @@ export default function PublisherWorkspaceApp({
           <>
             {!readOnly && <PartnershipRenameForm currentName={workspace.name} onRename={handleRename} />}
 
-            {Object.keys(mapUrls).length > 0 && (
-              <div className="space-y-3">
-                <h2 className="font-semibold text-[#0B1B33]">Territory Map{Object.keys(mapUrls).length > 1 ? 's' : ''}</h2>
-                {workspace.territories.map((t) =>
-                  mapUrls[t.id] ? (
-                    <div key={t.id}>
-                      <p className="mb-1 text-xs text-slate-500">{t.name}</p>
-                      <TerritoryMapViewer mapImageUrl={mapUrls[t.id]} territoryName={t.name} />
-                    </div>
-                  ) : null
-                )}
-              </div>
-            )}
+            {(() => {
+              const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
+              return (
+                mappableTerritories.length > 0 && (
+                  <div className="space-y-3">
+                    <h2 className="font-semibold text-[#0B1B33]">Territory Map{mappableTerritories.length > 1 ? 's' : ''}</h2>
+                    {mappableTerritories.map((t) => (
+                      <div key={t.id}>
+                        <p className="mb-1 text-xs text-slate-500">{t.name}</p>
+                        <TerritoryMapViewer mapImageUrl={mapUrls[t.id]} territoryName={t.name} />
+                      </div>
+                    ))}
+                  </div>
+                )
+              )
+            })()}
 
             {!readOnly && allDone && (
               <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center shadow-sm">
@@ -366,14 +379,23 @@ export default function PublisherWorkspaceApp({
               </div>
             )}
 
-            <div>
-              <h2 className="mb-3 font-semibold text-[#0B1B33]">Assigned Contact Records</h2>
-              <AssignedRecordsList
-                records={workspace.records}
-                failedRecordIds={new Set(queue.filter((q) => q.status === 'failed' && q.payload.recordId).map((q) => q.payload.recordId))}
-                onSelect={(recordId) => setView({ name: 'detail', recordId })}
-              />
-            </div>
+            {workspace.records.length > 0 ? (
+              <div>
+                <h2 className="mb-3 font-semibold text-[#0B1B33]">Assigned Contact Records</h2>
+                <AssignedRecordsList
+                  records={workspace.records}
+                  failedRecordIds={new Set(queue.filter((q) => q.status === 'failed' && q.payload.recordId).map((q) => q.payload.recordId))}
+                  onSelect={(recordId) => setView({ name: 'detail', recordId })}
+                />
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-blue-100/60 bg-white p-4 text-center shadow-sm">
+                <p className="text-sm font-semibold text-[#0B1B33]">This territory has no records yet.</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Searching the area and adding new contact records is today&apos;s activity.
+                </p>
+              </div>
+            )}
 
             {!readOnly && territoryStructures.length > 0 && (
               <button

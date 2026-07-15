@@ -53,8 +53,11 @@ export async function deleteGroupLeaderAssignmentAction(batchId: string): Promis
   // RLS already blocks deleting a batch created_by someone else — this app-side check is
   // defense in depth (same "always independently re-verify, don't rely on RLS alone" rule this
   // codebase follows everywhere else) and avoids a silent, unexplained no-op if it's ever hit.
+  // A batch created before 013_group_leader_assignment_ownership.sql has created_by = null
+  // (no way to know who made it retroactively) — treated as legacy/unowned, manageable by any
+  // Group Leader, same as 014_legacy_batch_ownership_fix.sql's matching RLS carve-out.
   const { data: batch } = await supabase.from('assignment_batches').select('created_by').eq('id', batchId).maybeSingle()
-  if (batch?.created_by === userId) await deleteBatch(supabase, batchId)
+  if (batch && (batch.created_by === userId || batch.created_by === null)) await deleteBatch(supabase, batchId)
   revalidatePath('/territory-management-system/group-leader/dashboard')
   redirect('/territory-management-system/group-leader/dashboard')
 }
