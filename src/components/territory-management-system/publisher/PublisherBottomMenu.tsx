@@ -52,13 +52,9 @@ export default function PublisherBottomMenu({
     badge?: number | null
     onClick?: () => void
     href?: string
-  }[] = [
-    { key: 'partners', label: 'All Partners', icon: Users, active: false, href: `/territory-management-system/assignment/${batchToken}` },
-    { key: 'records', label: 'Assigned Records', icon: ClipboardList, active: view === 'list', onClick: onGoToRecords },
-  ]
-  if (view === 'detail') {
-    items.push({ key: 'visit', label: 'Record a Visit', icon: ClipboardCheck, active: true, onClick: onGoToVisitForm })
-  }
+  }[] = []
+
+  // Download/Sync go on the left, ahead of the navigation items.
   if (showSync) {
     items.push({
       key: 'download',
@@ -80,6 +76,14 @@ export default function PublisherBottomMenu({
     })
   }
 
+  items.push(
+    { key: 'partners', label: 'All Partners', icon: Users, active: false, href: `/territory-management-system/assignment/${batchToken}` },
+    { key: 'records', label: 'Assigned Records', icon: ClipboardList, active: view === 'list', onClick: onGoToRecords }
+  )
+  if (view === 'detail') {
+    items.push({ key: 'visit', label: 'Record a Visit', icon: ClipboardCheck, active: true, onClick: onGoToVisitForm })
+  }
+
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-20 flex border-t border-blue-100/60 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-1px_8px_rgba(15,23,42,0.06)] backdrop-blur"
@@ -88,23 +92,22 @@ export default function PublisherBottomMenu({
       {items.map((item) => {
         const Icon = item.icon
         const content = (
-          <>
-            <span className="relative">
-              <Icon className={`h-5 w-5 ${item.spin ? 'animate-spin' : ''}`} strokeWidth={item.active ? 2.5 : 2} aria-hidden />
-              {!!item.badge && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white">
-                  {item.badge}
-                </span>
-              )}
-            </span>
-            {item.label}
-          </>
+          <span className="relative">
+            <Icon className={`h-5 w-5 ${item.spin ? 'animate-spin' : ''}`} strokeWidth={item.active ? 2.5 : 2} aria-hidden />
+            {!!item.badge && (
+              <span className="absolute -right-1.5 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white">
+                {item.badge}
+              </span>
+            )}
+          </span>
         )
-        const className = `flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold leading-tight transition disabled:opacity-40 ${
+        // Icon-only — no visible label text below the icon. aria-label/title keep it
+        // identifiable for screen readers and on long-press/hover.
+        const className = `flex flex-1 items-center justify-center py-3.5 transition disabled:opacity-40 ${
           item.active ? 'text-[#2563EB]' : 'text-slate-400'
         }`
         return item.href ? (
-          <Link key={item.key} href={item.href} className={className}>
+          <Link key={item.key} href={item.href} className={className} aria-label={item.label} title={item.label}>
             {content}
           </Link>
         ) : (
@@ -114,6 +117,8 @@ export default function PublisherBottomMenu({
             onClick={item.onClick}
             disabled={item.disabled}
             className={className}
+            aria-label={item.label}
+            title={item.label}
             aria-current={item.active ? 'page' : undefined}
           >
             {content}

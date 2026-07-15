@@ -171,7 +171,7 @@ export async function listVisits(supabase: SupabaseClient, recordId: string): Pr
 export async function logVisit(
   supabase: SupabaseClient,
   congregationId: string,
-  input: { recordId: string; visitedAt: string; result: string; notes: string; createdBy: string | null }
+  input: { recordId: string; visitedAt: string; result: string; notes: string; createdBy: string | null; partnerName: string | null }
 ): Promise<void> {
   const { error } = await supabase.from('territory_record_visits').insert({
     congregation_id: congregationId,
@@ -180,6 +180,7 @@ export async function logVisit(
     result: input.result,
     notes: input.notes,
     created_by: input.createdBy,
+    partner_name: input.partnerName,
   })
   if (error) throw error
 

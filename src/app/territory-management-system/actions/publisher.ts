@@ -76,6 +76,7 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
       result: parsed.data.result,
       notes: parsed.data.notes,
       createdBy: null,
+      partnerName: partnership.name || null,
     })
     await markPartnershipRecordCompleted(supabase, partnership.id, parsed.data.recordId)
   } catch (e) {
@@ -150,7 +151,7 @@ export async function terminatePartnershipEarlyAction(_prev: ActionResult, formD
   if (partnership.expired) return { error: 'This assignment has ended for the day.' }
 
   try {
-    await terminatePartnershipEarly(supabase, partnership.congregation_id, partnership.id)
+    await terminatePartnershipEarly(supabase, partnership.congregation_id, partnership.id, partnership.name)
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Could not end the ministry session.' }
   }

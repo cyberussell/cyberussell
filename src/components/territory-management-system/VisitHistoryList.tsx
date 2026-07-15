@@ -18,7 +18,9 @@ export default function VisitHistoryList({ visits }: { visits: RecordVisitWithAu
             </span>
           </div>
           {visit.notes && <p className="mt-2 text-sm text-slate-600">{visit.notes}</p>}
-          {visit.created_by_name && <p className="mt-2 text-xs text-slate-400">Logged by {visit.created_by_name}</p>}
+          {(visit.created_by_name || visit.partner_name) && (
+            <p className="mt-2 text-xs text-slate-400">Visited by {visit.created_by_name ?? visit.partner_name}</p>
+          )}
         </Card>
       ))}
     </div>

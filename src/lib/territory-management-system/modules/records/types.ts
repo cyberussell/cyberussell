@@ -44,6 +44,7 @@ export interface RecordVisit {
   result: VisitResult
   notes: string
   created_by: string | null
+  partner_name: string | null
   created_at: string
 }
 

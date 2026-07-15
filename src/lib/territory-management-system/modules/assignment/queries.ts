@@ -293,7 +293,12 @@ export async function renamePartnership(supabase: SupabaseClient, partnershipId:
 // Ends a Ministry Partner's session early. Every assigned record they hadn't gotten to yet gets
 // a real 'undone' visit logged — so Reports reflects it was genuinely left unfinished rather
 // than silently missing — and is stamped completed, same as any other visited record.
-export async function terminatePartnershipEarly(supabase: SupabaseClient, congregationId: string, partnershipId: string): Promise<void> {
+export async function terminatePartnershipEarly(
+  supabase: SupabaseClient,
+  congregationId: string,
+  partnershipId: string,
+  partnershipName: string
+): Promise<void> {
   const { data: unfinished } = await supabase
     .from('partnership_records')
     .select('record_id')
@@ -307,6 +312,7 @@ export async function terminatePartnershipEarly(supabase: SupabaseClient, congre
       result: 'undone',
       notes: '',
       createdBy: null,
+      partnerName: partnershipName || null,
     })
     await markPartnershipRecordCompleted(supabase, partnershipId, row.record_id)
   }

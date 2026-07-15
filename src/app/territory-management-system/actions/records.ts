@@ -121,6 +121,7 @@ export async function logVisitAction(_prev: ActionResult, formData: FormData): P
       result: parsed.data.result,
       notes: mergeConductorIntoNotes(parsed.data.conductorName, parsed.data.notes),
       createdBy: userId,
+      partnerName: null,
     })
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Could not log the visit.' }
