@@ -51,6 +51,11 @@
 **Assignment generation — oldest-visited-first rotation (same-session follow-up):**
 - `src/lib/territory-management-system/modules/assignment/queries.ts` — `fetchEligibleRecordIds`'s within-block tiebreaker changed from record `created_at` (never changes, so it handed the same first N records to every generation) to each record's latest visit date, oldest/never-visited first — new `getLatestVisitDatesByRecord` helper. Confirmed with Russell via `AskUserQuestion`: staleness metric is last-visited (not created_at), and territory → section → block grouping stays the primary walking order — staleness only breaks ties within a block, doesn't reorder which block comes first.
 
+**Home summary — bar chart instead of donut, partner-count headline, territories worked (same-session follow-up):**
+- `src/components/territory-management-system/VisitResultPieChart.tsx` renamed to `VisitResultBarChart.tsx` — now a horizontal bar chart sorted highest-to-lowest (Russell's feedback: faster to compare than a donut on mobile), same status colors, count at the end of each bar.
+- `src/lib/territory-management-system/modules/reports/queries.ts` — `BatchStats` gained `territories: { id, name }[]` (already fetched inside `getBatchStats` via `getBatchSummary`, just not previously exposed).
+- `GroupLeaderTabs.tsx` — headline now reads "N ministry partner(s) completed today" using `stats.partnerships.length` (confirmed with Russell via `AskUserQuestion` — not the sum of visit counts, which was a different, larger number in his example), plus a "Territories worked: ..." line from `stats.territories`.
+
 ## Summary of Changes
 
 Confirmed the reported bug's root cause by reading code (no live Supabase access this session, same standing limitation as every prior TMS pass): `logPublisherVisitAction` validated against the permanently-narrow `SELECTABLE_VISIT_RESULTS` list instead of re-deriving what the client's own form actually offers (`getSelectableResults(latestResult)`), so Progressing/Discontinued were always rejected for ongoing Bible Study records — not a missing migration. Fixed, and generalized the same re-derivation to also cover Do Not Call narrowing on both the publisher and (previously unvalidated) admin paths.

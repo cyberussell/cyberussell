@@ -1,5 +1,5 @@
 import { requireGroupLeader } from '@/lib/territory-management-system/modules/auth/queries'
-import { getApprovedRecordCounts, getBatchForDate } from '@/lib/territory-management-system/modules/assignment/queries'
+import { getApprovedRecordCounts, getBatchForGroupLeaderAndDate } from '@/lib/territory-management-system/modules/assignment/queries'
 import { listTerritories } from '@/lib/territory-management-system/modules/territory/queries'
 import { getBatchStats } from '@/lib/territory-management-system/modules/reports/queries'
 import { getAssignmentBatchQrDataUrl, getAssignmentBatchUrl } from '@/lib/territory-management-system/modules/assignment/qr'
@@ -10,10 +10,12 @@ import AssignmentForm from '@/components/territory-management-system/AssignmentF
 
 export const dynamic = 'force-dynamic'
 
+// "Today's assignment" now means "my own batch today" — multiple Group Leaders can each run
+// their own concurrent batch the same day (013_group_leader_assignment_ownership.sql).
 export default async function GroupLeaderDashboardPage() {
-  const { supabase, congregation } = await requireGroupLeader()
+  const { supabase, congregation, userId } = await requireGroupLeader()
   const today = todayInTimezone(congregation.timezone)
-  const batch = await getBatchForDate(supabase, congregation.id, today)
+  const batch = await getBatchForGroupLeaderAndDate(supabase, congregation.id, userId, today)
 
   const [territories, approvedCounts] = await Promise.all([
     listTerritories(supabase, congregation.id),

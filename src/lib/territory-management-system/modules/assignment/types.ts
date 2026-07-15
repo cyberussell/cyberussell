@@ -6,6 +6,9 @@ export interface AssignmentBatch {
   assignment_date: string
   requested_partnership_count: number
   access_token: string
+  // Nullable — batches created before 013_group_leader_assignment_ownership.sql have no
+  // creator on record. Every batch created going forward always sets this.
+  created_by: string | null
   created_at: string
 }
 

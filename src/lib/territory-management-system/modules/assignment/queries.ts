@@ -104,6 +104,23 @@ export async function getApprovedRecordCounts(
   return counts
 }
 
+// Territories already claimed by ANY Group Leader's active batch today (congregation-wide,
+// not scoped to one creator) — used to block a second Group Leader from double-assigning the
+// same territory. Called after the caller's own prior batch for today (if regenerating) has
+// already been deleted, so this never conflicts with itself.
+async function getTerritoryIdsInUseToday(supabase: SupabaseClient, congregationId: string, assignmentDate: string): Promise<Set<string>> {
+  const { data: batches } = await supabase
+    .from('assignment_batches')
+    .select('id')
+    .eq('congregation_id', congregationId)
+    .eq('assignment_date', assignmentDate)
+  const batchIds = (batches ?? []).map((b) => b.id as string)
+  if (batchIds.length === 0) return new Set()
+
+  const { data: links } = await supabase.from('assignment_batch_territories').select('territory_id').in('batch_id', batchIds)
+  return new Set((links ?? []).map((l) => l.territory_id as string))
+}
+
 export interface CreateAssignmentResult {
   batchId: string
   unassignedCount: number
@@ -112,7 +129,7 @@ export interface CreateAssignmentResult {
 export async function createAssignment(
   supabase: SupabaseClient,
   congregationId: string,
-  input: { territoryIds: string[]; partnershipCount: number; assignmentDate: string }
+  input: { territoryIds: string[]; partnershipCount: number; assignmentDate: string; createdBy: string }
 ): Promise<CreateAssignmentResult | AssignmentError> {
   // The territory checkboxes are ordinary client-editable form values — confirm every
   // selected id actually belongs to this congregation before it's written into
@@ -120,12 +137,22 @@ export async function createAssignment(
   // territory/queries.ts's addSection/addBlock.
   const { data: ownedTerritories } = await supabase
     .from('territories')
-    .select('id')
+    .select('id, name')
     .eq('congregation_id', congregationId)
     .in('id', input.territoryIds)
-  const ownedIds = new Set((ownedTerritories ?? []).map((t) => t.id as string))
-  const territoryIds = input.territoryIds.filter((id) => ownedIds.has(id))
+  const ownedById = new Map((ownedTerritories ?? []).map((t) => [t.id as string, t.name as string]))
+  const territoryIds = input.territoryIds.filter((id) => ownedById.has(id))
   if (territoryIds.length === 0) return { error: 'Select at least one valid territory.' }
+
+  // No two Group Leaders' active batches on the same day may cover the same territory —
+  // confirmed with Russell: a hard block with a clear error, not a silent auto-filter.
+  const inUseTerritoryIds = await getTerritoryIdsInUseToday(supabase, congregationId, input.assignmentDate)
+  const conflictingNames = territoryIds.filter((id) => inUseTerritoryIds.has(id)).map((id) => ownedById.get(id) ?? id)
+  if (conflictingNames.length > 0) {
+    const list = conflictingNames.join(', ')
+    const verb = conflictingNames.length === 1 ? 'is' : 'are'
+    return { error: `${list} ${verb} already assigned in another Group Leader's active batch today. Choose different territories.` }
+  }
 
   const eligibleRecordIds = await fetchEligibleRecordIds(supabase, congregationId, territoryIds)
   const plan = calculateAssignment(eligibleRecordIds, input.partnershipCount)
@@ -137,6 +164,7 @@ export async function createAssignment(
       congregation_id: congregationId,
       assignment_date: input.assignmentDate,
       requested_partnership_count: input.partnershipCount,
+      created_by: input.createdBy,
     })
     .select('id')
     .single()
@@ -180,9 +208,13 @@ export async function deleteBatch(supabase: SupabaseClient, batchId: string): Pr
   if (error) throw error
 }
 
-export async function getBatchForDate(
+// Each Group Leader now has at most one batch per congregation per day (see
+// 013_group_leader_assignment_ownership.sql) — "today's batch" means "my own batch today,"
+// not "the congregation's one shared batch" the way it used to.
+export async function getBatchForGroupLeaderAndDate(
   supabase: SupabaseClient,
   congregationId: string,
+  groupLeaderId: string,
   assignmentDate: string
 ): Promise<AssignmentBatch | null> {
   const { data } = await supabase
@@ -190,6 +222,7 @@ export async function getBatchForDate(
     .select('*')
     .eq('congregation_id', congregationId)
     .eq('assignment_date', assignmentDate)
+    .eq('created_by', groupLeaderId)
     .maybeSingle()
   return (data as AssignmentBatch | null) ?? null
 }

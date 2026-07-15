@@ -1,5 +1,23 @@
 # Current Work
 
+**Territory Management System — Group Leader concurrent assignment batches (2026-07-15) — code done, tsc + build clean, migration 013 already run by Russell, blocked on live click-through — see checkpoint `territory-management-group-leader-batch-ownership-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked whether a second Group Leader could generate a QR/assignment, worried about two TGLs covering the same territory "at the end of the week." Investigation found it was worse than asked: there was exactly one shared batch per congregation per day (no per-creator ownership at all), so a second TGL regenerating could silently delete the first TGL's entire batch, not just risk a territory overlap.
+
+Current Status: Code complete.
+- Migration `013_group_leader_assignment_ownership.sql` — **Russell has already run this.** Adds `assignment_batches.created_by`, moves uniqueness to `(congregation_id, assignment_date, created_by)`, and splits RLS on all 4 assignment tables into congregation-wide reads / creator-scoped writes via new `owns_assignment_batch()`/`owns_partnership()` helpers.
+- `createAssignment` now hard-blocks (confirmed via `AskUserQuestion`, not an auto-filtered picker) any territory already claimed by another Group Leader's active batch that day, with a named-territory error message.
+- `getBatchForDate` → `getBatchForGroupLeaderAndDate`; "today's assignment" on the Group Leader dashboard now means "my own batch," not the congregation's one shared batch.
+- `deleteGroupLeaderAssignmentAction` gained an explicit app-side ownership check on top of the new RLS protection.
+- Publisher-facing (QR/token) writes are unaffected — those run on the service-role client, bypassing RLS entirely.
+- `npx tsc --noEmit` and `npx next build` both clean. Not live-verified (no live Supabase credentials in this environment, same standing limitation as every TMS session).
+
+**Next recommended task:** Russell live-verifies with two real Group Leader accounts per the checkpoint's checklist: concurrent batches on different territories both work independently; selecting an already-claimed territory gets the clear conflict error instead of silently succeeding or wiping out the other Group Leader's batch; deleting only ever affects your own batch.
+
+----------------------------------------
+
 **Territory Management System — Bible Study bug fix + Undo Last Visit, Admin Notes, Do Not Call narrowing, Moved-out flagging, Home pie chart, Bible verse (2026-07-15) — code done, tsc + build clean, blocked on migrations 011/012 + Russell's live click-through — see checkpoint `territory-management-bible-study-notes-flagging-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

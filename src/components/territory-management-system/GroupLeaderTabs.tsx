@@ -30,7 +30,7 @@ import StatCard from '@/components/territory-management-system/dashboard/StatCar
 import Card from '@/components/territory-management-system/dashboard/Card'
 import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'
 import PartnershipList from '@/components/territory-management-system/PartnershipList'
-import VisitResultPieChart from '@/components/territory-management-system/VisitResultPieChart'
+import VisitResultBarChart from '@/components/territory-management-system/VisitResultBarChart'
 import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
 
 type Tab = 'home' | 'dashboard' | 'results' | 'progress'
@@ -134,9 +134,17 @@ export default function GroupLeaderTabs({
                 ariaLabel="Delete Assignment"
                 className="absolute right-4 top-4 text-red-400 hover:text-red-600"
               />
-              <h2 className="mb-1 text-center font-semibold text-[#0B1B33]">All Ministry Partners Are Done</h2>
-              <p className="mb-6 text-center text-xs text-slate-400">Today&apos;s visit results, at a glance.</p>
-              <VisitResultPieChart resultCounts={stats.resultCounts} />
+              <h2 className="text-center font-semibold text-[#0B1B33]">
+                {stats.partnerships.length} ministry partner{stats.partnerships.length === 1 ? '' : 's'} completed today
+              </h2>
+              {stats.territories.length > 0 && (
+                <p className="mt-1 text-center text-xs text-slate-400">
+                  Territories worked: {stats.territories.map((t) => t.name).join(', ')}
+                </p>
+              )}
+              <div className="mt-6">
+                <VisitResultBarChart resultCounts={stats.resultCounts} />
+              </div>
             </Card>
           ) : (
             <Card className="relative flex flex-col items-center gap-3 p-6 text-center">
