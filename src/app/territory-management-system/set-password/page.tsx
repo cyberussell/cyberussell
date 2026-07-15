@@ -57,7 +57,7 @@ export default function SetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#F3F8FF] px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#C9D8EE] px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
           <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#38BDF8] text-2xl font-bold text-white">
@@ -66,11 +66,11 @@ export default function SetPasswordPage() {
           <span className="text-2xl font-bold text-[#0B1B33]">
             Territory <span className="text-[#2563EB]">Management System</span>
           </span>
-          <p className="mt-2 text-sm text-slate-500">Set your password.</p>
+          <p className="mt-2 text-sm text-slate-700">Set your password.</p>
         </div>
 
         {success ? (
-          <div className="rounded-2xl border-2 border-black bg-[#E2E8F2] p-6 text-center shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]">
+          <div className="rounded-2xl border border-gray-300 bg-white p-6 text-center shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)]">
             <CircleCheck className="mx-auto mb-2 h-8 w-8 text-emerald-500" aria-hidden />
             <p className="font-medium text-[#0B1B33]">Password set</p>
             <p className="mt-2 text-sm text-slate-500">Redirecting you to log in…</p>
@@ -88,7 +88,7 @@ export default function SetPasswordPage() {
         ) : (
           <form
             onSubmit={handleSubmit}
-            className="space-y-4 rounded-2xl border-2 border-black bg-[#E2E8F2] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]"
+            className="space-y-4 rounded-2xl border border-gray-300 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)]"
           >
             <label className="block">
               <span className="text-sm font-medium text-slate-600">New password</span>

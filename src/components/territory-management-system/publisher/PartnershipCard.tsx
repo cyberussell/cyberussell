@@ -18,7 +18,7 @@ export default function PartnershipCard({ partnership, batchToken }: { partnersh
   return (
     <Link
       href={`/territory-management-system/assignment/${batchToken}/${partnership.claim_token}`}
-      className="block rounded-2xl border-2 border-black bg-[#E2E8F2] p-4 shadow-sm transition hover:border-[#38BDF8]/40"
+      className="block rounded-2xl border border-gray-300 bg-white p-4 shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)] transition hover:border-[#38BDF8]/40"
     >
       <div className="flex items-center justify-between gap-2">
         <p className="font-semibold text-[#0B1B33]">{partnership.name}</p>

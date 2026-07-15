@@ -116,7 +116,7 @@ export default function CsvImportDialog({ territoryId }: { territoryId?: string 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={handleClose}>
           <div
-            className="w-full max-w-lg rounded-2xl border-2 border-black bg-[#E2E8F2] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]"
+            className="w-full max-w-lg rounded-2xl border border-gray-300 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">

@@ -6,8 +6,8 @@ import { CalendarX } from 'lucide-react'
 // fresh assignment for today, which gets its own new tokens.
 export default function AssignmentEndedNotice() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F3F8FF] px-4">
-      <div className="w-full max-w-sm rounded-2xl border-2 border-black bg-[#E2E8F2] p-8 text-center shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-[#C9D8EE] px-4">
+      <div className="w-full max-w-sm rounded-2xl border border-gray-300 bg-white p-8 text-center shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)]">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
           <CalendarX className="h-6 w-6" />
         </div>

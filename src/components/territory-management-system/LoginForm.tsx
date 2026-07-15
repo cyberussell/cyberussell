@@ -10,7 +10,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(signIn, {})
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#F3F8FF] px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#C9D8EE] px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
           <Image src="/tms-logo.png" alt="Territory Management System" width={56} height={56} className="mb-3 rounded-2xl" priority />
@@ -19,12 +19,12 @@ export default function LoginForm({ notice }: { notice?: string }) {
           </span>
           {/* Single-congregation deployment today — hardcode until a second congregation is
               actually onboarded, at which point this login page needs to stop assuming one. */}
-          <span className="mt-1 text-sm font-semibold text-slate-600">Mallig Tagalog Congregation</span>
-          <span className="text-xs text-slate-400">Mallig, Isabela</span>
+          <span className="mt-1 text-sm font-semibold text-slate-700">Mallig Tagalog Congregation</span>
+          <span className="text-xs text-slate-600">Mallig, Isabela</span>
         </div>
         <form
           action={formAction}
-          className="space-y-4 rounded-2xl border-2 border-black bg-[#E2E8F2] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)]"
+          className="space-y-4 rounded-2xl border border-gray-300 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)]"
         >
           <label className="block">
             <span className="text-sm font-medium text-slate-600">Email</span>
@@ -57,7 +57,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
             {pending ? 'Logging in…' : 'Log in'}
           </button>
         </form>
-        <p className="mt-4 text-center text-xs text-slate-400">Owned and managed by Cyberussell.com</p>
+        <p className="mt-4 text-center text-xs text-slate-600">Owned and managed by Cyberussell.com</p>
       </div>
     </div>
   )

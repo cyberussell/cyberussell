@@ -342,7 +342,7 @@ export default function PublisherWorkspaceApp({
   const showSessionChrome = view.name !== 'note' && view.name !== 'sync' && view.name !== 'done'
 
   return (
-    <div className="min-h-screen bg-[#F3F8FF] px-4 pb-24 pt-8">
+    <div className="min-h-screen bg-[#C9D8EE] px-4 pb-24 pt-8">
       {/* Saving indicator lives here, floating at the top of the screen — not on the "Log
           Visit" button itself — so it's visible the instant the view jumps to the next record. */}
       {savingVisit && (
@@ -363,7 +363,7 @@ export default function PublisherWorkspaceApp({
 
         {view.name === 'list' && !readOnly && !workspace.claimed_at && (
           <>
-            <div className="rounded-2xl border-2 border-black bg-[#E2E8F2] p-4 text-center text-sm text-slate-600 shadow-sm">
+            <div className="rounded-2xl border border-gray-300 bg-white p-4 text-center text-sm text-slate-600 shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)]">
               Enter your name(s) below to begin — your assigned contact records will appear once saved.
             </div>
             <PartnershipRenameForm currentName={workspace.name} onRename={handleRename} />
@@ -382,7 +382,7 @@ export default function PublisherWorkspaceApp({
                     <h2 className="font-semibold text-[#0B1B33]">Territory Map{mappableTerritories.length > 1 ? 's' : ''}</h2>
                     {mappableTerritories.map((t) => (
                       <div key={t.id}>
-                        <p className="mb-1 text-xs text-slate-500">{t.name}</p>
+                        <p className="mb-1 text-xs text-slate-700">{t.name}</p>
                         <TerritoryMapViewer mapImageUrl={mapUrls[t.id]} territoryName={t.name} />
                       </div>
                     ))}
@@ -414,7 +414,7 @@ export default function PublisherWorkspaceApp({
                 />
               </div>
             ) : (
-              <div className="rounded-2xl border-2 border-black bg-[#E2E8F2] p-4 text-center shadow-sm">
+              <div className="rounded-2xl border border-gray-300 bg-white p-4 text-center shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)]">
                 <p className="text-sm font-semibold text-[#0B1B33]">This territory has no records yet.</p>
                 <p className="mt-1 text-sm text-slate-500">
                   Searching the area and adding new contact records is today&apos;s activity.
@@ -472,7 +472,7 @@ export default function PublisherWorkspaceApp({
         {view.name === 'note' && <PublisherNoteForm sending={sendingNote} onSend={handleSendNote} onSkip={handleSkipNote} />}
 
         {view.name === 'sync' && (
-          <div className="rounded-2xl border-2 border-black bg-[#E2E8F2] p-6 text-center shadow-sm">
+          <div className="rounded-2xl border border-gray-300 bg-white p-6 text-center shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)]">
             <h2 className="font-semibold text-[#0B1B33]">Syncing your work…</h2>
             <p className="mt-1 text-sm text-slate-500">
               {pendingCount > 0
@@ -496,7 +496,7 @@ export default function PublisherWorkspaceApp({
         )}
 
         {view.name === 'done' && (
-          <div className="rounded-2xl border-2 border-black bg-[#E2E8F2] p-8 text-center shadow-sm">
+          <div className="rounded-2xl border border-gray-300 bg-white p-8 text-center shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)]">
             <PartyPopper className="mx-auto h-12 w-12 text-[#2563EB]" />
             <h2 className="mt-4 text-lg font-semibold text-[#0B1B33]">Thank you for your service today!</h2>
             <p className="mt-2 text-sm text-slate-500">Your work has been saved.</p>

@@ -1,10 +1,26 @@
 # Current Work
 
-**Territory Management System — Black-bordered/darkened panels sitewide + Map PNG support, CSV field mapping, Initial visit status, black QR (2026-07-15) — code done, tsc + build clean, no migrations needed, blocked on Russell's live click-through — see checkpoints `territory-management-panel-styling-v1.md` and `territory-management-map-csv-record-fixes-v1.md` for full detail:**
+**Repo — corrupted git object found during commit, pre-existing, not blocking (2026-07-15):**
+
+Current Product: None — repo-wide git infrastructure, not tied to any of the 7 products.
+
+Current Issue: While committing the TMS session below, git's background auto-gc reported a corrupted loose object: `error: inflate: data stream error (incorrect header check)` / `fatal: loose object 43b454bd740612dccc6a9b604b5a4afa39d7d36c (stored in .git/objects/43/b454bd740612dccc6a9b604b5a4afa39d7d36c) is corrupt`. `git gc` also left a `.git/gc.log` that blocks further automatic cleanup until removed.
+
+Status: Investigated, confirmed not blocking, not fixed.
+- `git show HEAD` and `git log origin/main..main` confirmed the new TMS commit itself was clean — the corrupt object is not part of it.
+- `git fsck --no-progress` showed the corrupt object as a **missing tree** (something references it, unlike the many other harmless `dangling` objects also listed — leftover cruft from resets/rebases across this repo's history).
+- `git rev-list --objects main` also failed on the same object, meaning it's reachable somewhere in `main`'s ancestry (not confirmed which commit) — but `git push origin main` still completed successfully, confirming origin already has a valid copy and the corruption didn't block the actual push.
+- Likely origin: this repo has several stale `claude/*` branches and old worktrees under `.claude/worktrees/` (`territory-management-foundation-6a5bc9`, `territory-management-review-b4f888`, `tms-login-issue-6a8176`, `elated-rosalind-2e2b24`) sharing the same object store — one of these is the more probable culprit than `main` itself.
+
+**Next recommended task:** Not urgent — pushes to `main` are unaffected. When there's a good window, a separate session should: (1) remove `.git/gc.log` so automatic cleanup resumes, (2) identify and prune the stale `claude/*` branches/worktrees no longer needed, (3) re-run `git fsck` to confirm the corrupt object disappears once nothing references it, or restore it from a clean clone/backup if something still does. Treat this as real git surgery — scope and confirm with Russell before deleting any branch or worktree, per the standing destructive-operations rule.
+
+----------------------------------------
+
+**Territory Management System — Panel styling revised: darken the page not the panel, gray glow border, ordinal "Nth Record to Visit" header + Map PNG support, CSV field mapping, Initial visit status, black QR (2026-07-15) — code done, tsc + build clean, no migrations needed, NOT yet committed/pushed/deployed — see checkpoints `territory-management-panel-styling-v2.md`, `territory-management-panel-styling-v1.md`, and `territory-management-map-csv-record-fixes-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
-Current Feature: Two requests in the same session. First, 5 items in one message (confirmed via `AskUserQuestion` on the two ambiguous ones — Household Number = same field as `household_members`, not a rename; Plus Code becomes CSV-required and Unit/Do Not Call are dropped from the importer entirely; "default status list" = an initial-visit-status dropdown on Add Record). Then a follow-up: give every panel a black border and a darker fill for easy visual identification, confirmed via `AskUserQuestion` that "darken the background" meant the panels themselves, not the page shell.
+Current Feature: Three requests in the same session. First, 5 items in one message (confirmed via `AskUserQuestion` — Household Number = same field as `household_members`; Plus Code becomes CSV-required, Unit/Do Not Call dropped from the importer; "default status list" = an initial-visit-status dropdown on Add Record). Second, v1 of a panel-identification pass (black border + darkened panel fill, confirmed via `AskUserQuestion` at the time). Third — after Russell live-tested v1 on the deployed site and sent a screenshot — a correction: darken the *page* background instead of the panel, use a gray border with a subtle glow instead of solid black, and add a new ordinal header ("1st Record to Visit", "2nd Record to Visit", etc., bold Anton font) to the publisher record detail view's top card.
 
 Current Status: Code complete.
 - Territory map upload now accepts PNG as well as JPG (the storage layer was already generic — only the hardcoded JPG-only checks were blocking it).
@@ -12,10 +28,11 @@ Current Status: Code complete.
 - `CsvImportDialog` reworked into pick file → review/accept a header-to-field mapping step → upload with an animated progress bar (Server Actions have no real upload-progress events, documented honestly as an approximation, not byte-accurate).
 - Both Add Record forms (publisher and, for parity, admin) gained a Household Number field and an optional "Initial status" dropdown — picking one logs a real visit right after the record is created, reusing the exact same conductor-name/notes validation `logVisitSchema` already has.
 - Assignment QR code color changed from green to black.
-- **Every panel across TMS** (the shared `Card` component plus ~10 hand-rolled duplicates of its exact look — login card, CSV dialog, publisher end-of-session screens, error/notice cards) now renders with a solid black border and a visibly darker fill (`#E2E8F2` vs. the near-white page background), with `text-slate-400`/`text-slate-300` bumped to `text-slate-600`/`text-slate-500` everywhere that text sits directly on the new darker fill (left untouched inside nested lighter sub-boxes, colored warning/danger state panels, and nav chrome, since those backgrounds didn't change). New `panelClass` constant exported from `Card.tsx` as the single source of truth.
-- `npx tsc --noEmit` and `npx next build` both clean, zero warnings. Live-verified the two DB-independent pages (login, forgot-password) in the browser preview — black border + darker panel render correctly, zero console errors.
+- **Panel styling, final (v2) direction**: every panel (`Card` component + ~10 hand-rolled duplicates) is back to a white fill with a `border-gray-300` outline plus a soft glow shadow (`0_0_18px_-3px_rgba(148,163,184,0.6)`) instead of v1's solid black border/`#E2E8F2` fill. The page background itself is what got darkened instead (`bg-[#F3F8FF]` → `bg-[#C9D8EE]`) across all 11 page-wrapper files, with a fresh contrast pass (`slate-400/500` → `slate-600/700`) on whatever text sits directly on the page rather than inside a panel.
+- **New**: the publisher record detail view's top record card now shows an Anton-font ordinal header ("1st Record to Visit", "2nd Record to Visit", …) driven by the record's existing `sequence` field — no new data needed. Font color is the standard dark-navy `#0B1B33` used sitewide, which stays legible against all four of that card's tone-color variants.
+- `npx tsc --noEmit` and `npx next build` both clean, zero warnings. Live-verified the two DB-independent pages (login, forgot-password) in the browser preview against Russell's screenshot feedback — darker page, white glow-bordered panel, zero console errors. The new ordinal header could not be live-verified (behind Supabase auth + real assignment data), confirmed via `tsc`/build and code review only.
 
-**Next recommended task:** Russell live-verifies the rest (see checkpoints for the full checklists) — especially every panel behind Supabase auth (dashboard forms/tables/stat cards, Group Leader tabs, publisher workspace), which couldn't be exercised in this environment — then deploys when ready.
+**Next recommended task:** Not committed/pushed/deployed yet — Russell reviews this revision (the earlier v1 panel look, plus the map/CSV/record items, are already live from the previous push `925f2db`; this v2 panel revision is only local right now) and says the word before it ships. Then live-verify the ordinal header specifically, since it couldn't be checked in this environment.
 
 ----------------------------------------
 

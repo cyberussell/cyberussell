@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Anton } from 'next/font/google'
 import { ArrowRightLeft, MapPin, Truck } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
@@ -12,6 +13,28 @@ import PublisherVisitLogForm from './PublisherVisitLogForm'
 import MoveRecordForm from './MoveRecordForm'
 import MarkMovedForm, { type MovedRecordFields } from './MarkMovedForm'
 
+// A heavy, condensed display face just for the "Nth Record to Visit" header — deliberately not
+// mixed into the site's normal Syne/Inter body faces (see root layout.tsx), since this is a
+// one-off, one-line label rather than running text.
+const anton = Anton({ subsets: ['latin'], weight: '400', display: 'swap' })
+
+// 1 -> "1st", 2 -> "2nd", 3 -> "3rd", 4 -> "4th", 11-13 -> "11th"/"12th"/"13th" (the standard
+// English ordinal-suffix exception for the teens).
+function ordinal(n: number): string {
+  const v = n % 100
+  if (v >= 11 && v <= 13) return `${n}th`
+  switch (n % 10) {
+    case 1:
+      return `${n}st`
+    case 2:
+      return `${n}nd`
+    case 3:
+      return `${n}rd`
+    default:
+      return `${n}th`
+  }
+}
+
 // Full-card tone driven by the record's latest logged visit result — a glance-level warning
 // (Do Not Call), good-news highlight (Bible Study), or moved-out flag that's more visible than
 // a small badge alone. Deliberately its own local mapping rather than records/schema.ts's shared
@@ -21,7 +44,7 @@ function cardToneClass(latestResult: string | undefined): string {
   if (latestResult === 'do_not_call') return 'border-red-300 bg-red-50'
   if (latestResult === 'bible_study' || latestResult === 'progressing') return 'border-emerald-300 bg-emerald-50'
   if (latestResult === 'moved') return 'border-amber-300 bg-amber-50'
-  return 'border-blue-100/60 bg-white'
+  return 'border-gray-300 bg-white'
 }
 
 export default function PublisherRecordDetailView({
@@ -80,7 +103,12 @@ export default function PublisherRecordDetailView({
 
   return (
     <div className="space-y-6">
-      <div className={`rounded-2xl border p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_24px_-16px_rgba(37,99,235,0.25)] ${cardToneClass(latestResult)}`}>
+      <div
+        className={`rounded-2xl border p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)] ${cardToneClass(latestResult)}`}
+      >
+        <p className={`${anton.className} mb-2 text-xl uppercase tracking-wide text-[#0B1B33]`}>
+          {ordinal(assigned.sequence)} Record to Visit
+        </p>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h1 className="font-semibold text-[#0B1B33]">
             {assigned.record.address || assigned.record.plus_code || 'Unlabeled record'}
