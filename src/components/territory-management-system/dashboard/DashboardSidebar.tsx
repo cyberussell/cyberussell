@@ -3,7 +3,18 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Map, ClipboardList, Users, BarChart3, Settings as SettingsIcon, LogOut, Menu, X } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Map,
+  ClipboardList,
+  Users,
+  BarChart3,
+  Settings as SettingsIcon,
+  LogOut,
+  Menu,
+  X,
+  MessageSquareText,
+} from 'lucide-react'
 import { signOut } from '@/app/territory-management-system/actions/auth'
 
 const NAV_ITEMS = [
@@ -12,6 +23,9 @@ const NAV_ITEMS = [
   { label: 'Contact Records', href: '/territory-management-system/dashboard/records', icon: ClipboardList },
   { label: 'Group Leaders', href: '/territory-management-system/dashboard/group-leaders', icon: Users },
   { label: 'Reports', href: '/territory-management-system/dashboard/reports', icon: BarChart3 },
+  // Publisher end-of-ministry notes — admin-only, deliberately not visible anywhere in the
+  // Group Leader dashboard (see 011_partnership_admin_note.sql).
+  { label: 'Notes', href: '/territory-management-system/dashboard/notes', icon: MessageSquareText },
   { label: 'Settings', href: '/territory-management-system/dashboard/settings', icon: SettingsIcon },
 ]
 

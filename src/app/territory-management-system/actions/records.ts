@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/territory-management-system/modules/auth/queries'
 import {
   createRecordSchema,
+  getSelectableResults,
   logVisitSchema,
   mergeConductorIntoNotes,
   updateRecordSchema,
@@ -81,6 +82,7 @@ export async function deleteRecordAction(recordId: string): Promise<void> {
   const { supabase } = await requireAdmin()
   await recordQueries.deleteRecord(supabase, recordId)
   revalidatePath('/territory-management-system/dashboard/records')
+  revalidatePath('/territory-management-system/dashboard/records/flagged')
 }
 
 export async function approveRecordAction(recordId: string): Promise<void> {
@@ -99,6 +101,23 @@ export async function rejectRecordAction(recordId: string): Promise<void> {
   revalidatePath('/territory-management-system/dashboard/records')
 }
 
+// Generic "Undo Last Visit" — not limited to Bible Study mis-tags, since the underlying
+// mechanism (delete the most recent visit row) is the same for any wrong status a publisher
+// or admin logged.
+export async function undoLastVisitAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.deleteLatestVisit(supabase, recordId)
+  revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
+}
+
+// Admin dismisses a publisher's "Recommend for Admin Removal" without deleting the record —
+// clears it off the Flagged for Removal list.
+export async function dismissRemovalRecommendationAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.dismissRemovalRecommendation(supabase, recordId)
+  revalidatePath('/territory-management-system/dashboard/records/flagged')
+}
+
 export async function logVisitAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = logVisitSchema.safeParse({
     recordId: formData.get('recordId'),
@@ -114,6 +133,17 @@ export async function logVisitAction(_prev: ActionResult, formData: FormData): P
   }
 
   const { supabase, congregation, userId } = await requireAdmin()
+
+  // Same narrowing the admin's own VisitLogForm applies client-side (Bible Study follow-up /
+  // Do Not Call) — re-derived server-side so a stale or crafted form submission can't log a
+  // result outside what's actually valid for this record's current state.
+  const [latestResult, doNotCall] = await Promise.all([
+    recordQueries.getLatestVisitResult(supabase, parsed.data.recordId),
+    recordQueries.getRecordDoNotCall(supabase, parsed.data.recordId),
+  ])
+  const selectable = getSelectableResults(latestResult, doNotCall)
+  if (!(selectable as readonly string[]).includes(parsed.data.result)) return { error: 'Invalid visit result.' }
+
   try {
     await recordQueries.logVisit(supabase, congregation.id, {
       recordId: parsed.data.recordId,

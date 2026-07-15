@@ -13,12 +13,21 @@ import { nowLocalDatetime } from '@/lib/territory-management-system/modules/reco
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
-// latestResult narrows the Status choices once a record is already an ongoing Bible Study — see
-// getSelectableResults in records/schema.ts.
-export default function VisitLogForm({ recordId, latestResult }: { recordId: string; latestResult?: string | null }) {
+// latestResult narrows the Status choices once a record is already an ongoing Bible Study, and
+// doNotCall narrows to exactly Do Not Call/Moved/Visited Again — see getSelectableResults in
+// records/schema.ts.
+export default function VisitLogForm({
+  recordId,
+  latestResult,
+  doNotCall,
+}: {
+  recordId: string
+  latestResult?: string | null
+  doNotCall?: boolean
+}) {
   const { dispatch, pending, error, successMessage } = useServerAction(logVisitAction, ['SAVED'], 'Visit logged.')
   const [result, setResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
-  const selectableResults = getSelectableResults(latestResult)
+  const selectableResults = getSelectableResults(latestResult, doNotCall)
   const notesRequired = result === 'other'
   const conductorPrompt = result ? VISIT_RESULT_CONDUCTOR_PROMPT[result] : undefined
 

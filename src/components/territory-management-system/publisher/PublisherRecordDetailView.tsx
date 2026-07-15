@@ -7,15 +7,17 @@ import VisitResultBadge from '@/components/territory-management-system/VisitResu
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherVisitLogForm from './PublisherVisitLogForm'
 import MoveRecordForm from './MoveRecordForm'
+import MarkMovedForm, { type MovedRecordFields } from './MarkMovedForm'
 
 // Full-card tone driven by the record's latest logged visit result — a glance-level warning
-// (Do Not Call) or good-news highlight (Bible Study) that's more visible than a small badge
-// alone. Deliberately its own local mapping rather than records/schema.ts's shared
+// (Do Not Call), good-news highlight (Bible Study), or moved-out flag that's more visible than
+// a small badge alone. Deliberately its own local mapping rather than records/schema.ts's shared
 // VISIT_RESULT_STYLES (that one backs badge pills everywhere else and stays violet for Bible
 // Study there) — this card's full-panel treatment is a distinct, one-off UX request.
 function cardToneClass(latestResult: string | undefined): string {
   if (latestResult === 'do_not_call') return 'border-red-300 bg-red-50'
   if (latestResult === 'bible_study' || latestResult === 'progressing') return 'border-emerald-300 bg-emerald-50'
+  if (latestResult === 'moved') return 'border-amber-300 bg-amber-50'
   return 'border-blue-100/60 bg-white'
 }
 
@@ -26,8 +28,11 @@ export default function PublisherRecordDetailView({
   saving,
   siblingPartnerships,
   moving,
+  markingMoved,
   onLogVisit,
   onMoveRecord,
+  onUpdateMoved,
+  onRecommendRemoval,
 }: {
   assigned: PartnershipRecordDetail
   pendingVisits: SyncQueueItem[]
@@ -39,8 +44,13 @@ export default function PublisherRecordDetailView({
   saving: boolean
   siblingPartnerships: { id: string; name: string }[]
   moving: boolean
+  // True while either "Mark as Moved" path (Update Contact Record / Recommend for Admin
+  // Removal) is being saved/synced.
+  markingMoved: boolean
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
   onMoveRecord: (destinationPartnershipId: string) => void
+  onUpdateMoved: (fields: MovedRecordFields) => void
+  onRecommendRemoval: (reason: string) => void
 }) {
   const mapsUrl = assigned.record.plus_code
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assigned.record.plus_code)}`
@@ -85,9 +95,29 @@ export default function PublisherRecordDetailView({
         <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
       )}
 
+      {!readOnly && !assigned.completed_at && (
+        <MarkMovedForm
+          initial={{
+            address: assigned.record.address,
+            unit: assigned.record.unit,
+            residentName: assigned.record.resident_name,
+            plusCode: assigned.record.plus_code ?? '',
+            notes: assigned.record.notes,
+          }}
+          submitting={markingMoved}
+          onUpdate={onUpdateMoved}
+          onRecommend={onRecommendRemoval}
+        />
+      )}
+
       {!readOnly && (
         <div id="record-a-visit-form">
-          <PublisherVisitLogForm latestResult={latestResult} saving={saving} onLogVisit={onLogVisit} />
+          <PublisherVisitLogForm
+            latestResult={latestResult}
+            doNotCall={assigned.record.do_not_call}
+            saving={saving}
+            onLogVisit={onLogVisit}
+          />
         </div>
       )}
 

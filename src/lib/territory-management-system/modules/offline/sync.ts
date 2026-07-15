@@ -9,8 +9,11 @@ import {
   addPublisherRecordAction,
   logPublisherVisitAction,
   movePartnershipRecordAction,
+  recommendRemovalAction,
   renamePartnershipAction,
+  submitPartnershipNoteAction,
   terminatePartnershipEarlyAction,
+  updatePublisherRecordAction,
 } from '@/app/territory-management-system/actions/publisher'
 import type { SyncQueueItem } from './db'
 import { listQueue, removeFromQueue, updateQueueItem } from './queue'
@@ -43,6 +46,9 @@ async function executeItem(item: SyncQueueItem): Promise<{ ok: boolean; error?: 
   else if (item.type === 'visit') result = await logPublisherVisitAction({}, formData)
   else if (item.type === 'addRecord') result = await addPublisherRecordAction({}, formData)
   else if (item.type === 'moveRecord') result = await movePartnershipRecordAction({}, formData)
+  else if (item.type === 'note') result = await submitPartnershipNoteAction({}, formData)
+  else if (item.type === 'updateRecord') result = await updatePublisherRecordAction({}, formData)
+  else if (item.type === 'recommendRemoval') result = await recommendRemovalAction({}, formData)
   else result = await terminatePartnershipEarlyAction({}, formData)
 
   // 'SAVED' is this codebase's success sentinel (see useServerAction) — everything else in

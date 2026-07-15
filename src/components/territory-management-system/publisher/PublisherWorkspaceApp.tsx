@@ -17,8 +17,15 @@ import PartnershipRenameForm from './PartnershipRenameForm'
 import AssignedRecordsList from './AssignedRecordsList'
 import PublisherRecordDetailView from './PublisherRecordDetailView'
 import PublisherRecordForm, { type NewPublisherRecordPayload } from './PublisherRecordForm'
+import PublisherNoteForm from './PublisherNoteForm'
 
-type View = { name: 'list' } | { name: 'detail'; recordId: string } | { name: 'addRecord' } | { name: 'sync' } | { name: 'done' }
+type View =
+  | { name: 'list' }
+  | { name: 'detail'; recordId: string }
+  | { name: 'addRecord' }
+  | { name: 'note' }
+  | { name: 'sync' }
+  | { name: 'done' }
 
 // The offline-first app shell: everything after the initial server-rendered load happens as
 // in-memory view-state changes here, never a new Next.js page navigation — that's what makes
@@ -39,6 +46,8 @@ export default function PublisherWorkspaceApp({
   const [downloaded, setDownloaded] = useState(false)
   const [savingVisit, setSavingVisit] = useState(false)
   const [movingRecord, setMovingRecord] = useState(false)
+  const [sendingNote, setSendingNote] = useState(false)
+  const [markingMoved, setMarkingMoved] = useState(false)
   const [queue, setQueue] = useState<SyncQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
   const [mapUrls, setMapUrls] = useState<Record<string, string>>({})
@@ -192,6 +201,44 @@ export default function PublisherWorkspaceApp({
     }
   }
 
+  // Both "Mark as Moved" paths behave like logging a visit (completes the record, advances to
+  // the next one) — they just route through updatePublisherRecordAction/recommendRemovalAction
+  // instead of logPublisherVisitAction directly (those two also log the underlying 'moved'
+  // visit themselves, server-side).
+  async function handleUpdateMoved(recordId: string, fields: { address: string; unit: string; residentName: string; plusCode: string; notes: string }) {
+    setMarkingMoved(true)
+    try {
+      const updatedRecords = workspace.records.map((r) =>
+        r.record.id === recordId ? { ...r, completed_at: r.completed_at ?? new Date().toISOString() } : r
+      )
+      setWorkspace((w) => ({ ...w, records: updatedRecords }))
+      await enqueue(partnershipToken, 'updateRecord', { partnershipToken, recordId, ...fields })
+      await refreshQueue()
+      if (online) await handleSync()
+      toast.success('Contact record updated.')
+      goToNextRecord(recordId, updatedRecords)
+    } finally {
+      setMarkingMoved(false)
+    }
+  }
+
+  async function handleRecommendRemoval(recordId: string, reason: string) {
+    setMarkingMoved(true)
+    try {
+      const updatedRecords = workspace.records.map((r) =>
+        r.record.id === recordId ? { ...r, completed_at: r.completed_at ?? new Date().toISOString() } : r
+      )
+      setWorkspace((w) => ({ ...w, records: updatedRecords }))
+      await enqueue(partnershipToken, 'recommendRemoval', { partnershipToken, recordId, reason })
+      await refreshQueue()
+      if (online) await handleSync()
+      toast.success('Recommendation sent to the Admin.')
+      goToNextRecord(recordId, updatedRecords)
+    } finally {
+      setMarkingMoved(false)
+    }
+  }
+
   // After logging a visit, jump straight to the next record still needing one instead of
   // making the publisher go back to the list and pick it themselves. "Next" means the next
   // incomplete record after this one in assigned sequence order, wrapping to check earlier
@@ -219,6 +266,24 @@ export default function PublisherWorkspaceApp({
     if (online) handleSync()
   }
 
+  // Both the normal "Sync & Finish" path and "End My Ministry Early" route through the note
+  // screen first — it's genuinely optional (Skip goes straight to Sync), not a required step.
+  function goToNote() {
+    setView({ name: 'note' })
+  }
+
+  async function handleSendNote(note: string) {
+    setSendingNote(true)
+    try {
+      await enqueue(partnershipToken, 'note', { partnershipToken, note })
+      await refreshQueue()
+      if (online) await handleSync()
+    } finally {
+      setSendingNote(false)
+      goToSync()
+    }
+  }
+
   async function handleTerminate() {
     const now = new Date().toISOString()
     setWorkspace((w) => ({
@@ -228,7 +293,7 @@ export default function PublisherWorkspaceApp({
     }))
     await enqueue(partnershipToken, 'terminate', { partnershipToken })
     await refreshQueue()
-    goToSync()
+    goToNote()
   }
 
   function scrollToVisitForm() {
@@ -239,7 +304,7 @@ export default function PublisherWorkspaceApp({
   const pendingVisitsForSelected =
     view.name === 'detail' ? queue.filter((q) => q.type === 'visit' && q.payload.recordId === view.recordId) : []
   const allDone = workspace.records.length > 0 && workspace.records.every((r) => r.completed_at)
-  const showSessionChrome = view.name !== 'sync' && view.name !== 'done'
+  const showSessionChrome = view.name !== 'note' && view.name !== 'sync' && view.name !== 'done'
 
   return (
     <div className="min-h-screen bg-[#F3F8FF] px-4 pb-24 pt-8">
@@ -293,7 +358,7 @@ export default function PublisherWorkspaceApp({
                 <p className="text-sm font-semibold text-emerald-700">All assigned records are done!</p>
                 <button
                   type="button"
-                  onClick={goToSync}
+                  onClick={goToNote}
                   className="mt-3 w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
                 >
                   Sync &amp; Finish
@@ -344,14 +409,19 @@ export default function PublisherWorkspaceApp({
             saving={savingVisit}
             siblingPartnerships={workspace.siblingPartnerships}
             moving={movingRecord}
+            markingMoved={markingMoved}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
             onMoveRecord={(destinationPartnershipId) => handleMoveRecord(selected.record.id, destinationPartnershipId)}
+            onUpdateMoved={(fields) => handleUpdateMoved(selected.record.id, fields)}
+            onRecommendRemoval={(reason) => handleRecommendRemoval(selected.record.id, reason)}
           />
         )}
 
         {view.name === 'addRecord' && (
           <PublisherRecordForm territories={territoryStructures} onSubmit={handleAddRecord} onCancel={() => setView({ name: 'list' })} />
         )}
+
+        {view.name === 'note' && <PublisherNoteForm sending={sendingNote} onSend={handleSendNote} onSkip={goToSync} />}
 
         {view.name === 'sync' && (
           <div className="rounded-2xl border border-blue-100/60 bg-white p-6 text-center shadow-sm">
@@ -382,13 +452,22 @@ export default function PublisherWorkspaceApp({
             <PartyPopper className="mx-auto h-12 w-12 text-[#2563EB]" />
             <h2 className="mt-4 text-lg font-semibold text-[#0B1B33]">Thank you for your service today!</h2>
             <p className="mt-2 text-sm text-slate-500">Your work has been saved.</p>
+            <blockquote className="mt-6 border-t border-blue-100/60 pt-6 text-base font-bold italic text-[#0B1B33]">
+              &ldquo;Go, therefore, and make disciples of people of all the nations, baptizing them in the name of the Father
+              and of the Son and of the holy spirit, teaching them to observe all the things I have commanded you. And look! I
+              am with you all the days until the conclusion of the system of things.&rdquo;
+            </blockquote>
+            <p className="mt-2 text-sm font-medium text-slate-500">Matthew 28:19, 20</p>
+            {workspace.congregationName && (
+              <p className="mt-6 text-sm font-semibold text-[#2563EB]">{workspace.congregationName}</p>
+            )}
           </div>
         )}
       </div>
 
       <PublisherBottomMenu
         batchToken={batchToken}
-        view={view.name === 'sync' || view.name === 'done' ? 'list' : view.name}
+        view={view.name === 'note' || view.name === 'sync' || view.name === 'done' ? 'list' : view.name}
         onGoToRecords={() => setView({ name: 'list' })}
         onGoToVisitForm={scrollToVisitForm}
         showSync={showSessionChrome}

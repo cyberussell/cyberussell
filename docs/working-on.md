@@ -1,5 +1,24 @@
 # Current Work
 
+**Territory Management System — Bible Study bug fix + Undo Last Visit, Admin Notes, Do Not Call narrowing, Moved-out flagging, Home pie chart, Bible verse (2026-07-15) — code done, tsc + build clean, blocked on migrations 011/012 + Russell's live click-through — see checkpoint `territory-management-bible-study-notes-flagging-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell reported a real bug (Bible Study follow-up visits — Progressing/Discontinued — failing to sync with "Invalid visit result") via two screenshots, then asked for 6 features in the same message: (1) admin can undo a record's last visit, (2) publishers can leave an optional end-of-ministry note visible only to Admin, (3) Do Not Call records narrow to exactly 3 statuses, (4) marking a record Moved forces either an inline contact-info correction or a required-reason removal recommendation to Admin, (5) the Group Leader Home tab shows a pie chart once every partner is done instead of the QR, (6) the publisher's final screen shows the Matthew 28:19,20 quote + congregation name. Confirmed 4 ambiguous design decisions via `AskUserQuestion` before building (generic Undo vs. Bible-Study-only, batch deletion vs. hide-only, inline edit vs. admin-only edit, notes page vs. folded into Reports) — all 4 recommended options were chosen.
+
+Current Status: Code complete.
+- **Root cause of the reported bug**: `logPublisherVisitAction` (`actions/publisher.ts`) validated against the permanently-narrow `SELECTABLE_VISIT_RESULTS` list instead of re-deriving `getSelectableResults(latestResult)` the way the client's own form does — not a missing migration, a real server-side validation gap. Fixed, and the same re-derivation now also covers Do Not Call narrowing on both the publisher and the previously-unvalidated admin path.
+- **Found and closed a real information-leak risk while building the admin-notes feature**: `getBatchSummary`'s partnerships query was `select('*')`, which would have let the new `admin_note` column reach the Group Leader's own dashboard via an existing RLS policy ("group leader reads partnerships") — pinned to an explicit column list before adding the note columns, so the Group Leader surface never sees them.
+- Both `'moved'` paths (Update Contact Record / Recommend for Admin Removal) still log a real `moved` visit underneath, so stats/card-tone stay consistent regardless of which path a publisher takes.
+- Home tab's pie chart replaces the QR once every partnership is done, but **the batch is not deleted** (Russell's confirmed choice) — Reports/Partners tab keep working; the existing `isBatchExpired()` midnight-in-congregation-timezone check already covered "resets daily."
+- `npx tsc --noEmit` and `npx next build` both clean across the whole repo. **Live-verified only the one DB-independent route** (`/territory-management-system/login`) in the browser preview — zero console errors. Every other changed surface sits behind Supabase auth or real assignment-batch data, same standing limitation as every prior TMS session (no live Supabase credentials in this environment).
+
+**Same-session follow-up (2026-07-15):** Russell asked that assignment generation rotate through all records instead of always handing out the same first N per block. `fetchEligibleRecordIds` (`assignment/queries.ts`) now tiebreaks within each section/block by oldest-last-visited-first (never-visited records first) instead of by `created_at` (which never changes, so it never rotated anything) — confirmed both the staleness metric and that section/block stays the primary grouping via `AskUserQuestion` before building. New `getLatestVisitDatesByRecord` helper. `npx tsc --noEmit` and `npx next build` clean; not live-verified (no live TMS Supabase credentials in this environment, same standing limitation).
+
+**Next recommended task:** Russell runs migrations `011_partnership_admin_note.sql` and `012_removal_recommendation.sql` in the TMS Supabase SQL Editor, then live-verifies all 7 items per the checkpoint's checklist (bug fix, Undo Last Visit, end-of-ministry notes staying admin-only, Do Not Call's 3-status dropdown, both Moved-out paths + the Flagged for Removal page, the Home pie chart appearing/batch surviving, and the final Bible-quote screen) — plus the new rotation behavior: generate two successive batches over the same territory and confirm records visited in batch 1 sort toward the back of their block in batch 2.
+
+----------------------------------------
+
 **Territory Management System — Group Leader login failure diagnosis (2026-07-14) — investigation only, no code changed, blocked on Russell checking Supabase Auth dashboard settings:**
 
 Current Product: Territory Management System (TMS).

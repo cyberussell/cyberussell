@@ -10,7 +10,15 @@ import { openDB, type DBSchema, type IDBPDatabase } from 'idb'
 const DB_NAME = 'tms-offline'
 const DB_VERSION = 1
 
-export type SyncQueueItemType = 'rename' | 'visit' | 'addRecord' | 'terminate' | 'moveRecord'
+export type SyncQueueItemType =
+  | 'rename'
+  | 'visit'
+  | 'addRecord'
+  | 'terminate'
+  | 'moveRecord'
+  | 'note'
+  | 'updateRecord'
+  | 'recommendRemoval'
 export type SyncQueueItemStatus = 'pending' | 'syncing' | 'failed'
 
 export interface SyncQueueItem {

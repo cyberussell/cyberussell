@@ -114,6 +114,59 @@ export async function setRecordStatus(supabase: SupabaseClient, recordId: string
   if (error) throw error
 }
 
+// Publisher-facing "Mark as Moved" → "Recommend for Admin Removal" path — the reason is
+// required at the schema level (assignment/schema.ts), never optional.
+export async function recommendRecordForRemoval(
+  supabase: SupabaseClient,
+  recordId: string,
+  reason: string,
+  recommendedBy: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('territory_records')
+    .update({ removal_recommended_at: new Date().toISOString(), removal_recommended_reason: reason, removal_recommended_by: recommendedBy })
+    .eq('id', recordId)
+  if (error) throw error
+}
+
+// Admin dismisses a removal recommendation without deleting the record (e.g. it turned out to
+// be a mistake) — clears the flag so it drops off the Flagged for Removal list.
+export async function dismissRemovalRecommendation(supabase: SupabaseClient, recordId: string): Promise<void> {
+  const { error } = await supabase
+    .from('territory_records')
+    .update({ removal_recommended_at: null, removal_recommended_reason: null, removal_recommended_by: null })
+    .eq('id', recordId)
+  if (error) throw error
+}
+
+export async function listFlaggedForRemoval(supabase: SupabaseClient, congregationId: string): Promise<TerritoryRecordWithLocation[]> {
+  const { data } = await supabase
+    .from('territory_records')
+    .select(RECORD_WITH_LOCATION_SELECT)
+    .eq('congregation_id', congregationId)
+    .not('removal_recommended_at', 'is', null)
+    .order('removal_recommended_at', { ascending: false })
+  return (data ?? []) as unknown as TerritoryRecordWithLocation[]
+}
+
+// Admin-only "Undo Last Visit" — deletes the single most recent visit entry so the record
+// reverts to whatever its status was before (e.g. a mis-tagged Bible Study). Since logVisit
+// keeps only one row per calendar day (same-day edits overwrite in place), the latest row by
+// visited_at is always exactly "the last thing logged," so a plain delete is safe here — no
+// risk of leaving a same-day duplicate behind.
+export async function deleteLatestVisit(supabase: SupabaseClient, recordId: string): Promise<void> {
+  const { data: latest } = await supabase
+    .from('territory_record_visits')
+    .select('id')
+    .eq('record_id', recordId)
+    .order('visited_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (!latest) return
+  const { error } = await supabase.from('territory_record_visits').delete().eq('id', (latest as { id: string }).id)
+  if (error) throw error
+}
+
 interface ImportRow {
   territoryId: string
   sectionId: string
@@ -153,6 +206,27 @@ export async function importRecords(supabase: SupabaseClient, congregationId: st
   )
   if (error) throw error
   return rows.length
+}
+
+// Cheap variant of listVisits for callers that only need the most recent result (e.g. to
+// re-derive getSelectableResults() server-side) — no need to pull full history + the
+// profiles join for that.
+export async function getLatestVisitResult(supabase: SupabaseClient, recordId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('territory_record_visits')
+    .select('result')
+    .eq('record_id', recordId)
+    .order('visited_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  return (data as { result: string } | null)?.result ?? null
+}
+
+// Cheap do_not_call-only read — same rationale as getLatestVisitResult, used to re-derive
+// getSelectableResults() server-side without pulling the full record + location joins.
+export async function getRecordDoNotCall(supabase: SupabaseClient, recordId: string): Promise<boolean> {
+  const { data } = await supabase.from('territory_records').select('do_not_call').eq('id', recordId).maybeSingle()
+  return (data as { do_not_call: boolean } | null)?.do_not_call ?? false
 }
 
 export async function listVisits(supabase: SupabaseClient, recordId: string): Promise<RecordVisitWithAuthor[]> {

@@ -28,6 +28,12 @@ export interface TerritoryRecord {
   do_not_call: boolean
   status: RecordStatus
   source: RecordSource
+  // Set when a publisher marks this record "Moved" and chooses "Recommend for Admin Removal"
+  // instead of correcting the contact info themselves — see 012_removal_recommendation.sql.
+  // removal_recommended_by is the partnership's name (no publisher accounts to key off of).
+  removal_recommended_at: string | null
+  removal_recommended_reason: string | null
+  removal_recommended_by: string | null
   created_at: string
   updated_at: string
 }

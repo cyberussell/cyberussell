@@ -50,6 +50,7 @@ export interface PartnershipRecordDetail {
 
 export interface PartnershipWorkspace extends Partnership {
   batch: AssignmentBatch
+  congregationName: string
   records: PartnershipRecordDetail[]
   territories: { id: string; name: string; map_image_url: string | null }[]
   // Same meaning as BatchSummary.expired — checked again server-side before every

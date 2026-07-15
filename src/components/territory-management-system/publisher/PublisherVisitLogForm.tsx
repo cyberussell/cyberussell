@@ -12,16 +12,22 @@ import { nowLocalDatetime } from '@/lib/territory-management-system/modules/reco
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
-// latestResult narrows the Status choices once a record is already an ongoing Bible Study — see
-// getSelectableResults in records/schema.ts. saving disables the form while the parent is
-// enqueuing/syncing the just-submitted visit and advancing to the next record — the "saving"
-// indicator itself lives at the top of the screen (PublisherWorkspaceApp), not on this button.
+// latestResult narrows the Status choices once a record is already an ongoing Bible Study, and
+// doNotCall narrows to Do Not Call/Visited Again — see getSelectableResults in records/schema.ts.
+// 'moved' is additionally excluded here regardless of doNotCall: a publisher marking a record
+// moved goes through the separate forced follow-up flow (Mark as Moved, on the record detail
+// view), not this plain dropdown — see PublisherRecordDetailView.
+// saving disables the form while the parent is enqueuing/syncing the just-submitted visit and
+// advancing to the next record — the "saving" indicator itself lives at the top of the screen
+// (PublisherWorkspaceApp), not on this button.
 export default function PublisherVisitLogForm({
   latestResult,
+  doNotCall,
   saving,
   onLogVisit,
 }: {
   latestResult?: string | null
+  doNotCall?: boolean
   saving: boolean
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
 }) {
@@ -29,7 +35,7 @@ export default function PublisherVisitLogForm({
   const [result, setResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
   const [conductorName, setConductorName] = useState('')
   const [notes, setNotes] = useState('')
-  const selectableResults = getSelectableResults(latestResult)
+  const selectableResults = getSelectableResults(latestResult, doNotCall).filter((r) => r !== 'moved')
   const notesRequired = result === 'other'
   const conductorPrompt = result ? VISIT_RESULT_CONDUCTOR_PROMPT[result] : undefined
 

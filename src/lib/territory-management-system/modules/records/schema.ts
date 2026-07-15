@@ -35,9 +35,17 @@ export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter(
 export const BIBLE_STUDY_ONGOING_RESULTS = ['bible_study', 'progressing'] as const
 export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'moved'] as const
 
+// A record flagged do_not_call narrows to exactly these three outcomes, regardless of its
+// latest visit result — takes priority over the Bible Study narrowing below (the two states
+// are mutually exclusive in practice: a record already marked do_not_call never has an ongoing
+// Bible Study to follow up on).
+export const DO_NOT_CALL_RESULTS = ['do_not_call', 'moved', 'return_visit'] as const
+
 export function getSelectableResults(
-  latestResult?: string | null
+  latestResult?: string | null,
+  doNotCall?: boolean
 ): readonly Exclude<(typeof VISIT_RESULTS)[number], 'undone' | 'initial_visit'>[] {
+  if (doNotCall) return DO_NOT_CALL_RESULTS
   if (latestResult && (BIBLE_STUDY_ONGOING_RESULTS as readonly string[]).includes(latestResult)) {
     return BIBLE_STUDY_FOLLOWUP_RESULTS
   }

@@ -30,6 +30,7 @@ import StatCard from '@/components/territory-management-system/dashboard/StatCar
 import Card from '@/components/territory-management-system/dashboard/Card'
 import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'
 import PartnershipList from '@/components/territory-management-system/PartnershipList'
+import VisitResultPieChart from '@/components/territory-management-system/VisitResultPieChart'
 import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
 
 type Tab = 'home' | 'dashboard' | 'results' | 'progress'
@@ -58,6 +59,12 @@ export default function GroupLeaderTabs({
   const base = 'flex-1 rounded-xl px-2 py-3 text-center text-sm font-semibold leading-tight transition'
   const active = 'bg-[#2563EB] text-white'
   const inactive = 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
+
+  // Once every Ministry Partner has either finished their assigned records or ended early,
+  // there's nothing left to scan for — the QR card gives way to a same-day results summary
+  // instead. The batch itself isn't deleted (Reports/history still need it); it naturally stops
+  // working the next day via the existing assignment_date/isBatchExpired midnight cutoff.
+  const allPartnersDone = stats.partnerships.length > 0 && stats.partnerships.every((p) => p.completedCount >= p.recordCount)
 
   const router = useRouter()
   // `stats` (and everything else here) is fetched once per Server Component render and passed
@@ -119,21 +126,35 @@ export default function GroupLeaderTabs({
 
       {tab === 'home' && (
         <div className="space-y-8">
-          <Card className="relative flex flex-col items-center gap-3 p-6 text-center">
-            <ConfirmDeleteButton
-              action={deleteGroupLeaderAssignmentAction.bind(null, batchId)}
-              confirmMessage="Delete today's assignment? Publishers who scanned the QR code will lose access."
-              ariaLabel="Delete Assignment"
-              className="absolute right-4 top-4 text-red-400 hover:text-red-600"
-            />
-            <h2 className="font-semibold text-[#0B1B33]">Assignment QR Code</h2>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={qrDataUrl} alt="Assignment QR code" className="h-80 w-80 sm:h-40 sm:w-40" />
-            <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
-              {publicUrl}
-            </a>
-            <p className="text-xs text-slate-400">Valid for today only — a new one is needed tomorrow.</p>
-          </Card>
+          {allPartnersDone ? (
+            <Card className="relative p-6">
+              <ConfirmDeleteButton
+                action={deleteGroupLeaderAssignmentAction.bind(null, batchId)}
+                confirmMessage="Delete today's assignment? Publishers who scanned the QR code will lose access."
+                ariaLabel="Delete Assignment"
+                className="absolute right-4 top-4 text-red-400 hover:text-red-600"
+              />
+              <h2 className="mb-1 text-center font-semibold text-[#0B1B33]">All Ministry Partners Are Done</h2>
+              <p className="mb-6 text-center text-xs text-slate-400">Today&apos;s visit results, at a glance.</p>
+              <VisitResultPieChart resultCounts={stats.resultCounts} />
+            </Card>
+          ) : (
+            <Card className="relative flex flex-col items-center gap-3 p-6 text-center">
+              <ConfirmDeleteButton
+                action={deleteGroupLeaderAssignmentAction.bind(null, batchId)}
+                confirmMessage="Delete today's assignment? Publishers who scanned the QR code will lose access."
+                ariaLabel="Delete Assignment"
+                className="absolute right-4 top-4 text-red-400 hover:text-red-600"
+              />
+              <h2 className="font-semibold text-[#0B1B33]">Assignment QR Code</h2>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={qrDataUrl} alt="Assignment QR code" className="h-80 w-80 sm:h-40 sm:w-40" />
+              <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
+                {publicUrl}
+              </a>
+              <p className="text-xs text-slate-400">Valid for today only — a new one is needed tomorrow.</p>
+            </Card>
+          )}
 
           <div className="mx-auto max-w-md text-center">
             <h2 className="mb-4 font-semibold text-[#0B1B33]">Regenerate Assignment</h2>

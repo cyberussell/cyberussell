@@ -6,8 +6,11 @@ import {
   addPublisherRecordSchema,
   logPublisherVisitSchema,
   movePartnershipRecordSchema,
+  recommendRemovalSchema,
   renamePartnershipSchema,
+  submitPartnershipNoteSchema,
   terminatePartnershipEarlySchema,
+  updatePublisherRecordSchema,
 } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
   getPartnershipById,
@@ -16,10 +19,19 @@ import {
   movePartnershipRecord,
   partnershipHasRecord,
   renamePartnership,
+  submitPartnershipNote,
   terminatePartnershipEarly,
 } from '@/lib/territory-management-system/modules/assignment/queries'
-import { createRecord, logVisit } from '@/lib/territory-management-system/modules/records/queries'
-import { SELECTABLE_VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
+import {
+  createRecord,
+  getLatestVisitResult,
+  getRecordById,
+  getRecordDoNotCall,
+  logVisit,
+  recommendRecordForRemoval,
+  updateRecord,
+} from '@/lib/territory-management-system/modules/records/queries'
+import { getSelectableResults } from '@/lib/territory-management-system/modules/records/schema'
 import { getTerritoryStructure } from '@/lib/territory-management-system/modules/territory/queries'
 import { type ActionResult } from './shared'
 
@@ -60,9 +72,6 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
     const notesIssue = parsed.error.issues.find((i) => i.path.includes('notes'))
     return { error: notesIssue?.message ?? 'Please fill in the visit details correctly.' }
   }
-  // 'undone' is written only by terminatePartnershipEarlyAction — not a result a publisher can
-  // pick manually, so it's excluded from the selectable list this checks against.
-  if (!(SELECTABLE_VISIT_RESULTS as readonly string[]).includes(parsed.data.result)) return { error: 'Invalid visit result.' }
 
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
@@ -71,6 +80,18 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
 
   const owns = await partnershipHasRecord(supabase, partnership.id, parsed.data.recordId)
   if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
+
+  // Re-derive the selectable results the same way the client's form does (from the record's
+  // latest visit result + do_not_call flag) rather than checking a static list — a static list
+  // can't account for the Bible Study follow-up or Do Not Call narrowing (getSelectableResults),
+  // which is exactly what caused Progressing/Discontinued to be wrongly rejected here before
+  // this fix.
+  const [latestResult, doNotCall] = await Promise.all([
+    getLatestVisitResult(supabase, parsed.data.recordId),
+    getRecordDoNotCall(supabase, parsed.data.recordId),
+  ])
+  const selectable = getSelectableResults(latestResult, doNotCall)
+  if (!(selectable as readonly string[]).includes(parsed.data.result)) return { error: 'Invalid visit result.' }
 
   try {
     await logVisit(supabase, partnership.congregation_id, {
@@ -194,6 +215,123 @@ export async function terminatePartnershipEarlyAction(_prev: ActionResult, formD
   }
 
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}`)
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// Optional end-of-ministry note to the Admin — skippable, so this is only ever enqueued when
+// the publisher actually writes something (see PublisherWorkspaceApp's note screen). Not
+// gated on partnership.expired like the other actions here: a session finishing right at the
+// day boundary should still be able to leave its note.
+export async function submitPartnershipNoteAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = submitPartnershipNoteSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    note: formData.get('note'),
+  })
+  if (!parsed.success) return { error: 'Please enter a note.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+
+  try {
+    await submitPartnershipNote(supabase, partnership.id, parsed.data.note)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Could not send the note.' }
+  }
+
+  return { error: 'SAVED' }
+}
+
+// "Mark as Moved" → "Update Contact Record" path — territory/section/block are never touched
+// (same location, corrected contact info), and household_members/do_not_call are read from the
+// existing row and passed straight through so this narrower form can't accidentally clear them.
+// Still logs a real 'moved' visit underneath so the card tone/stats stay consistent with the
+// other "Mark as Moved" path.
+export async function updatePublisherRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = updatePublisherRecordSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    recordId: formData.get('recordId'),
+    address: formData.get('address'),
+    unit: formData.get('unit'),
+    residentName: formData.get('residentName'),
+    plusCode: formData.get('plusCode'),
+    notes: formData.get('notes'),
+  })
+  if (!parsed.success) return { error: 'Please fill in the required fields.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+
+  const owns = await partnershipHasRecord(supabase, partnership.id, parsed.data.recordId)
+  if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
+
+  const existing = await getRecordById(supabase, partnership.congregation_id, parsed.data.recordId)
+  if (!existing) return { error: 'Contact record not found.' }
+
+  try {
+    await updateRecord(supabase, parsed.data.recordId, {
+      address: parsed.data.address,
+      unit: parsed.data.unit,
+      residentName: parsed.data.residentName,
+      plusCode: parsed.data.plusCode,
+      householdMembers: existing.household_members ?? undefined,
+      notes: parsed.data.notes,
+      doNotCall: existing.do_not_call,
+    })
+    await logVisit(supabase, partnership.congregation_id, {
+      recordId: parsed.data.recordId,
+      visitedAt: new Date().toISOString(),
+      result: 'moved',
+      notes: 'Contact record updated after move.',
+      createdBy: null,
+      partnerName: partnership.name || null,
+    })
+    await markPartnershipRecordCompleted(supabase, partnership.id, parsed.data.recordId)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Could not update the contact record.' }
+  }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// "Mark as Moved" → "Recommend for Admin Removal" path — the reason is required (enforced by
+// recommendRemovalSchema), never an optional note. Also logs a real 'moved' visit, same as the
+// Update Contact Record path above, so both paths leave the record in the same visible state.
+export async function recommendRemovalAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = recommendRemovalSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    recordId: formData.get('recordId'),
+    reason: formData.get('reason'),
+  })
+  if (!parsed.success) return { error: 'Please enter a reason for the recommendation.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+
+  const owns = await partnershipHasRecord(supabase, partnership.id, parsed.data.recordId)
+  if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
+
+  try {
+    await recommendRecordForRemoval(supabase, parsed.data.recordId, parsed.data.reason, partnership.name || 'Unnamed partnership')
+    await logVisit(supabase, partnership.congregation_id, {
+      recordId: parsed.data.recordId,
+      visitedAt: new Date().toISOString(),
+      result: 'moved',
+      notes: parsed.data.reason,
+      createdBy: null,
+      partnerName: partnership.name || null,
+    })
+    await markPartnershipRecordCompleted(supabase, partnership.id, parsed.data.recordId)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }
+  }
+
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
   return { error: 'SAVED' }
 }

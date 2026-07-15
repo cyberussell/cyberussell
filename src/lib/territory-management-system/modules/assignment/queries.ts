@@ -14,8 +14,16 @@ import type {
 
 // Fetches the eligible ('approved') record pool across the selected territories, in the
 // canonical walking order the sequential engine relies on: territory selection order, then
-// section sort_order, then block sort_order, then record creation order. This ordering lives
-// here (DB-facing), not in the pure engine, which only ever sees a pre-sorted id list.
+// section sort_order, then block sort_order, then (within a block) oldest-last-visited-first —
+// a record never visited at all sorts before every visited one. This is what actually produces
+// rotation across successive assignment generations: a record's created_at never changes (so
+// tiebreaking on that, the old behavior, would hand the same first N records in a block to
+// every single assignment), but a record's latest visit date does, so a record worked today
+// naturally sorts toward the back of its block next time and a long-neglected one surfaces
+// first. Confirmed with Russell: section/block grouping stays the primary walking order (so a
+// partnership's route stays geographically coherent) — staleness only breaks ties within a
+// block, it doesn't reorder which block comes first. This ordering lives here (DB-facing), not
+// in the pure engine, which only ever sees a pre-sorted id list.
 async function fetchEligibleRecordIds(
   supabase: SupabaseClient,
   congregationId: string,
@@ -37,6 +45,11 @@ async function fetchEligibleRecordIds(
     block: { sort_order: number } | null
   }>
 
+  const latestVisitByRecord = await getLatestVisitDatesByRecord(
+    supabase,
+    rows.map((r) => r.id)
+  )
+
   rows.sort((a, b) => {
     const territoryDiff = (territoryRank.get(a.territory_id) ?? 0) - (territoryRank.get(b.territory_id) ?? 0)
     if (territoryDiff !== 0) return territoryDiff
@@ -44,10 +57,32 @@ async function fetchEligibleRecordIds(
     if (sectionDiff !== 0) return sectionDiff
     const blockDiff = (a.block?.sort_order ?? 0) - (b.block?.sort_order ?? 0)
     if (blockDiff !== 0) return blockDiff
+    // '' sorts before any real ISO timestamp, so a never-visited record (no entry in the map)
+    // is treated as infinitely old and always comes first within its block.
+    const visitDiff = (latestVisitByRecord.get(a.id) ?? '').localeCompare(latestVisitByRecord.get(b.id) ?? '')
+    if (visitDiff !== 0) return visitDiff
     return a.created_at.localeCompare(b.created_at)
   })
 
   return rows.map((r) => r.id)
+}
+
+// One query for the whole eligible pool rather than per-record, then reduced in JS to "first
+// (newest) row per record_id" — same de-dup pattern already used by reports/queries.ts's
+// activeBibleStudies count, kept consistent rather than introducing a GROUP BY variant.
+async function getLatestVisitDatesByRecord(supabase: SupabaseClient, recordIds: string[]): Promise<Map<string, string>> {
+  if (recordIds.length === 0) return new Map()
+  const { data } = await supabase
+    .from('territory_record_visits')
+    .select('record_id, visited_at')
+    .in('record_id', recordIds)
+    .order('visited_at', { ascending: false })
+
+  const latest = new Map<string, string>()
+  for (const row of (data ?? []) as { record_id: string; visited_at: string }[]) {
+    if (!latest.has(row.record_id)) latest.set(row.record_id, row.visited_at)
+  }
+  return latest
 }
 
 // Per-territory approved-record counts, for the New Assignment form's live "how many
@@ -177,7 +212,14 @@ export async function getBatchSummary(
 
   const [{ data: territoryLinks }, { data: partnerships }, { data: congregation }] = await Promise.all([
     supabase.from('assignment_batch_territories').select('territory:territories(id, name)').eq('batch_id', batchId),
-    supabase.from('partnerships').select('*').eq('batch_id', batchId).order('sequence'),
+    // Explicit column list, not select('*') — this feeds both the Admin dashboard and the
+    // Group Leader's stats.partnerships (via getBatchStats), and admin_note/admin_note_at
+    // must never reach the Group Leader surface (see 011_partnership_admin_note.sql).
+    supabase
+      .from('partnerships')
+      .select('id, congregation_id, batch_id, sequence, name, claim_token, claimed_at, ended_early_at, created_at')
+      .eq('batch_id', batchId)
+      .order('sequence'),
     supabase.from('congregations').select('timezone').eq('id', congregationId).maybeSingle(),
   ])
 
@@ -223,7 +265,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   const { data: batch } = await supabase.from('assignment_batches').select('*').eq('id', partnership.batch_id).maybeSingle()
   if (!batch) return null
 
-  const { data: congregation } = await supabase.from('congregations').select('timezone').eq('id', partnership.congregation_id).maybeSingle()
+  const { data: congregation } = await supabase.from('congregations').select('name, timezone').eq('id', partnership.congregation_id).maybeSingle()
   const expired = isBatchExpired(batch.assignment_date, congregation?.timezone ?? 'UTC')
 
   const { data: partnershipRecords } = await supabase
@@ -268,6 +310,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   return {
     ...(partnership as Partnership),
     batch: batch as AssignmentBatch,
+    congregationName: congregation?.name ?? '',
     records,
     territories: [...territoryMap.values()],
     expired,
@@ -352,6 +395,45 @@ export async function terminatePartnershipEarly(
     .eq('id', partnershipId)
     .is('ended_early_at', null)
   if (error) throw error
+}
+
+// End-of-ministry note to the Admin — skippable, so this is only ever called when a publisher
+// actually writes something. Visible to the Admin only (see listPartnershipNotesForCongregation
+// below); the Group Leader has no read path to this column anywhere in the app.
+export async function submitPartnershipNote(supabase: SupabaseClient, partnershipId: string, note: string): Promise<void> {
+  const { error } = await supabase
+    .from('partnerships')
+    .update({ admin_note: note, admin_note_at: new Date().toISOString() })
+    .eq('id', partnershipId)
+  if (error) throw error
+}
+
+export interface PartnershipNote {
+  id: string
+  name: string
+  admin_note: string
+  admin_note_at: string
+  assignment_date: string
+}
+
+// Admin-only read of every submitted end-of-ministry note across all of this congregation's
+// batches (not scoped to today) — a note from last week is still worth an admin seeing it.
+export async function listPartnershipNotesForCongregation(supabase: SupabaseClient, congregationId: string): Promise<PartnershipNote[]> {
+  const { data } = await supabase
+    .from('partnerships')
+    .select('id, name, admin_note, admin_note_at, batch:assignment_batches(assignment_date)')
+    .eq('congregation_id', congregationId)
+    .not('admin_note', 'is', null)
+    .order('admin_note_at', { ascending: false })
+  return ((data ?? []) as unknown as Array<{ id: string; name: string; admin_note: string; admin_note_at: string; batch: { assignment_date: string } | null }>).map(
+    (row) => ({
+      id: row.id,
+      name: row.name,
+      admin_note: row.admin_note,
+      admin_note_at: row.admin_note_at,
+      assignment_date: row.batch?.assignment_date ?? '',
+    })
+  )
 }
 
 // Guard used before any publisher-facing record mutation — the concrete enforcement of
