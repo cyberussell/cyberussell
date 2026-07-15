@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
+import { LocateFixed, RefreshCw } from 'lucide-react'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import {
   getSelectableResults,
@@ -8,6 +10,7 @@ import {
   VISIT_RESULT_CONDUCTOR_PROMPT,
   VISIT_RESULT_LABELS,
 } from '@/lib/territory-management-system/modules/records/schema'
+import { locatePlusCode } from '@/lib/territory-management-system/plusCode'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
@@ -58,6 +61,7 @@ export default function PublisherRecordForm({
   const [plusCode, setPlusCode] = useState(initialValues?.plusCode ?? '')
   const [householdMembers, setHouseholdMembers] = useState(initialValues?.householdMembers ?? '')
   const [notes, setNotes] = useState(initialValues?.notes ?? '')
+  const [locating, setLocating] = useState(false)
   // A brand-new record has no prior visit and is never do_not_call yet, so the full selectable
   // list applies — same call shape as a fresh admin RecordForm.
   const [initialResult, setInitialResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
@@ -79,6 +83,23 @@ export default function PublisherRecordForm({
     setSectionId(id)
     const s = territory?.sections.find((x) => x.id === id)
     setBlockId(s?.blocks[0]?.id ?? '')
+  }
+
+  // Reads the device's GPS position and converts it to a Plus Code entirely client-side (no
+  // network call, no API key — see lib/plusCode.ts) — a quick way to fill in the now-required
+  // Plus Code field while standing at the door, without needing to look it up manually.
+  async function handleUseMyLocation() {
+    setLocating(true)
+    try {
+      const result = await locatePlusCode()
+      if ('error' in result) {
+        toast.error(result.error)
+      } else {
+        setPlusCode(result.code)
+      }
+    } finally {
+      setLocating(false)
+    }
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -170,14 +191,26 @@ export default function PublisherRecordForm({
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField label="Plus Code">
-            <input
-              value={plusCode}
-              onChange={(e) => setPlusCode(e.target.value)}
-              required
-              maxLength={20}
-              className={inputClass}
-              placeholder="e.g. 7FG8+4V"
-            />
+            <div className="flex gap-2">
+              <input
+                value={plusCode}
+                onChange={(e) => setPlusCode(e.target.value)}
+                required
+                maxLength={20}
+                className={`${inputClass} min-w-0 flex-1`}
+                placeholder="e.g. 7FG8+4V"
+              />
+              <button
+                type="button"
+                onClick={handleUseMyLocation}
+                disabled={locating}
+                title="Use my current location"
+                aria-label="Use my current location"
+                className="flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 text-sm font-medium text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-50"
+              >
+                {locating ? <RefreshCw className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
+              </button>
+            </div>
           </FormField>
           <FormField label="Household Number" optional>
             <input
