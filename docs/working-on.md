@@ -1,5 +1,21 @@
 # Current Work
 
+**Territory Management System — Assignment generation capacity cap (2026-07-15) — code done, tsc + vitest (50/50) + build clean, not yet committed/pushed — see checkpoint `territory-management-assignment-capacity-cap-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked that generating an assignment consider the max partnerships that can actually be filled based on approved contact records vs. publishers-going-out/group-size, remembering the existing 6-records-per-partnership cap — block generation with a warning instead of silently leaving records unassigned when selected territories have more approved records than the configured group can hold.
+
+Current Status: Code complete.
+- `calculateAssignment` (`src/lib/territory-management-system/modules/assignment/engine.ts`) now returns an error when `eligibleRecordIds.length > partnershipCount * maxPerPartnership` (capacity = partnerships × 6 by default) — previously this silently truncated the excess into `unassignedCount`, a deliberate original design choice that Russell explicitly asked to change to a hard block.
+- `AssignmentForm.tsx` mirrors the same check client-side: shows a red "Too many approved records…" warning in the existing preview box and disables the Generate Assignment button when the selected territories' approved-record total exceeds capacity.
+- Updated `engine.test.ts` — one pre-existing test had exercised the old silent-truncation behavior as a passing case; changed it to a within-capacity scenario and added two new tests (over-capacity errors, exactly-at-capacity still succeeds).
+- No migration needed (pure calculation logic). `npx tsc --noEmit` clean, `npx vitest run` 50/50 passing, `npx next build` clean across all routes.
+
+**Next recommended task:** Not committed/pushed/deployed. Russell live-verifies: selecting territories whose approved-record total exceeds `partnershipCount × 6` shows the warning and disables Generate; increasing publishers/group size or deselecting a territory clears it and lets generation proceed normally. Then commit/push/deploy at Russell's request.
+
+----------------------------------------
+
 **Repo — corrupted git object found during commit, pre-existing, not blocking (2026-07-15):**
 
 Current Product: None — repo-wide git infrastructure, not tied to any of the 7 products.
@@ -16,7 +32,7 @@ Status: Investigated, confirmed not blocking, not fixed.
 
 ----------------------------------------
 
-**Territory Management System — Panel styling revised: darken the page not the panel, gray glow border, ordinal "Nth Record to Visit" header + Map PNG support, CSV field mapping, Initial visit status, black QR (2026-07-15) — code done, tsc + build clean, no migrations needed, NOT yet committed/pushed/deployed — see checkpoints `territory-management-panel-styling-v2.md`, `territory-management-panel-styling-v1.md`, and `territory-management-map-csv-record-fixes-v1.md` for full detail:**
+**Territory Management System — Panel styling revised: darken the page not the panel, gray glow border, ordinal "Nth Record to Visit" header + Map PNG support, CSV field mapping, Initial visit status, black QR (2026-07-15) — code done, tsc + build clean, no migrations needed, committed and pushed (`82e7c56`), Vercel auto-deploy should be building — see checkpoints `territory-management-panel-styling-v2.md`, `territory-management-panel-styling-v1.md`, and `territory-management-map-csv-record-fixes-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
@@ -32,7 +48,7 @@ Current Status: Code complete.
 - **New**: the publisher record detail view's top record card now shows an Anton-font ordinal header ("1st Record to Visit", "2nd Record to Visit", …) driven by the record's existing `sequence` field — no new data needed. Font color is the standard dark-navy `#0B1B33` used sitewide, which stays legible against all four of that card's tone-color variants.
 - `npx tsc --noEmit` and `npx next build` both clean, zero warnings. Live-verified the two DB-independent pages (login, forgot-password) in the browser preview against Russell's screenshot feedback — darker page, white glow-bordered panel, zero console errors. The new ordinal header could not be live-verified (behind Supabase auth + real assignment data), confirmed via `tsc`/build and code review only.
 
-**Next recommended task:** Not committed/pushed/deployed yet — Russell reviews this revision (the earlier v1 panel look, plus the map/CSV/record items, are already live from the previous push `925f2db`; this v2 panel revision is only local right now) and says the word before it ships. Then live-verify the ordinal header specifically, since it couldn't be checked in this environment.
+**Next recommended task:** Committed, pushed to `main` (`82e7c56`), and deployed at Russell's request. Russell live-verifies on the deployed site — especially the ordinal header on the publisher record detail view, which couldn't be checked in this environment before pushing.
 
 ----------------------------------------
 

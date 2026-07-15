@@ -46,6 +46,12 @@ export function calculateAssignment(
       error: `Insufficient records: ${eligibleRecordIds.length} approved record(s) available, but ${partnershipCount} partnership(s) requested — every partnership needs at least 1 record.`,
     }
   }
+  const maxCapacity = partnershipCount * maxPerPartnership
+  if (eligibleRecordIds.length > maxCapacity) {
+    return {
+      error: `Too many approved records: ${eligibleRecordIds.length} available, but ${partnershipCount} partnership(s) × ${maxPerPartnership} max per partnership = ${maxCapacity} capacity. Increase publishers going out or group size, or select fewer territories.`,
+    }
+  }
 
   const partnerships: AssignmentPartnershipPlan[] = []
   let cursor = 0

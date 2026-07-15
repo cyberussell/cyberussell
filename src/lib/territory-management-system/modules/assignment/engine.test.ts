@@ -15,14 +15,31 @@ describe('calculateAssignment', () => {
 
   it('fills partnerships sequentially, in input order, up to the max per partnership', () => {
     const records = Array.from({ length: 10 }, (_, i) => `r${i}`)
-    const result = calculateAssignment(records, 2, 4)
+    const result = calculateAssignment(records, 3, 4)
     expect(isAssignmentError(result)).toBe(false)
     if (isAssignmentError(result)) return
     expect(result.partnerships).toEqual([
       { sequence: 1, recordIds: ['r0', 'r1', 'r2', 'r3'] },
       { sequence: 2, recordIds: ['r4', 'r5', 'r6', 'r7'] },
+      { sequence: 3, recordIds: ['r8', 'r9'] },
     ])
-    expect(result.unassignedCount).toBe(2)
+    expect(result.unassignedCount).toBe(0)
+  })
+
+  it('rejects more records than the partnerships can hold at the max-per-partnership cap', () => {
+    const records = Array.from({ length: 10 }, (_, i) => `r${i}`)
+    const result = calculateAssignment(records, 2, 4)
+    expect(isAssignmentError(result)).toBe(true)
+    if (!isAssignmentError(result)) return
+    expect(result.error).toContain('Too many approved records')
+  })
+
+  it('allows exactly the max capacity without erroring', () => {
+    const records = Array.from({ length: 8 }, (_, i) => `r${i}`)
+    const result = calculateAssignment(records, 2, 4)
+    expect(isAssignmentError(result)).toBe(false)
+    if (isAssignmentError(result)) return
+    expect(result.unassignedCount).toBe(0)
   })
 
   it('fills each partnership to the max before moving to the next, giving the last one the remainder', () => {

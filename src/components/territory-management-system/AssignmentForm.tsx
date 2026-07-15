@@ -85,6 +85,8 @@ export default function AssignmentForm({
     () => territories.filter((t) => selected.includes(t.id)).reduce((sum, t) => sum + t.approvedCount, 0),
     [territories, selected]
   )
+  const maxCapacity = partnershipCount * DEFAULT_MAX_PER_PARTNERSHIP
+  const exceedsCapacity = eligibleTotal > maxCapacity
 
   function toggle(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -141,16 +143,23 @@ export default function AssignmentForm({
         <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">
           {publisherCount} publisher{publisherCount === 1 ? '' : 's'} in groups of {groupSize} → {partnershipCount} partnership
           {partnershipCount === 1 ? '' : 's'}. {eligibleTotal} approved contact record{eligibleTotal === 1 ? '' : 's'} available
-          across the selected territories — up to {partnershipCount * DEFAULT_MAX_PER_PARTNERSHIP} will be assigned (
+          across the selected territories — up to {maxCapacity} will be assigned (
           {DEFAULT_MAX_PER_PARTNERSHIP} per partnership max).
           {eligibleTotal > 0 && eligibleTotal < partnershipCount && (
             <p className="mt-1 font-medium text-red-500">Not enough contact records for {partnershipCount} Partners.</p>
+          )}
+          {exceedsCapacity && (
+            <p className="mt-1 font-medium text-red-500">
+              Too many approved records ({eligibleTotal}) for {partnershipCount} partnership{partnershipCount === 1 ? '' : 's'} ×{' '}
+              {DEFAULT_MAX_PER_PARTNERSHIP} max ({maxCapacity} capacity). Increase publishers going out or group size, or select
+              fewer territories.
+            </p>
           )}
         </div>
         {error && <p className="text-sm text-red-500">{error}</p>}
         <button
           type="submit"
-          disabled={pending || selected.length === 0}
+          disabled={pending || selected.length === 0 || exceedsCapacity}
           className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {pending ? 'Generating…' : 'Generate Assignment'}
