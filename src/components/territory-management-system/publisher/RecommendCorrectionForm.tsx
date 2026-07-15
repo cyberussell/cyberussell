@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MapPinned, RefreshCw } from 'lucide-react'
+import { PencilLine, RefreshCw } from 'lucide-react'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
@@ -39,8 +39,8 @@ export default function RecommendCorrectionForm({
         onClick={() => setOpen(true)}
         className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
       >
-        <MapPinned className="h-4 w-4" />
-        Update
+        <PencilLine className="h-4 w-4" />
+        Correction
       </button>
     )
   }

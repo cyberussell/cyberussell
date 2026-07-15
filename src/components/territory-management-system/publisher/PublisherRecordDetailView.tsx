@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Anton } from 'next/font/google'
-import { ArrowRightLeft, MapPin, MapPinned, Truck } from 'lucide-react'
+import { ArrowRightLeft, MapPin, PencilLine, Truck } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
@@ -83,7 +83,7 @@ export default function PublisherRecordDetailView({
   // True while either "Mark as Moved" path (Update Contact Record / Recommend for Admin
   // Removal) is being saved/synced.
   markingMoved: boolean
-  // True while the "Update" (Recommend a Correction) form is being saved/synced.
+  // True while the "Correction" (Recommend a Correction) form is being saved/synced.
   recommendingCorrection: boolean
   // The record's own territory map — resolved by the parent (preferring an offline-cached
   // blob over the live URL, same as the workspace list view's Territory Map(s) section).
@@ -104,7 +104,7 @@ export default function PublisherRecordDetailView({
   // "Pass to Another Partner" and "Mark as Moved" fully expanded at once, but on a phone that's
   // a lot of scrolling past two big cards to reach Record a Visit. Collapsed behind a two-button
   // row instead; tapping one reveals its panel in place of the row.
-  const [mobileAction, setMobileAction] = useState<'none' | 'move' | 'moved' | 'update'>('none')
+  const [mobileAction, setMobileAction] = useState<'none' | 'move' | 'moved' | 'correction'>('none')
   const movedFields = {
     address: assigned.record.address,
     unit: assigned.record.unit,
@@ -194,11 +194,11 @@ export default function PublisherRecordDetailView({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMobileAction('update')}
+                  onClick={() => setMobileAction('correction')}
                   className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
                 >
-                  <MapPinned className="h-4 w-4" />
-                  Update
+                  <PencilLine className="h-4 w-4" />
+                  Correction
                 </button>
               </div>
             )}
@@ -224,7 +224,7 @@ export default function PublisherRecordDetailView({
                 />
               </div>
             )}
-            {mobileAction === 'update' && (
+            {mobileAction === 'correction' && (
               <div className="space-y-3">
                 <button type="button" onClick={() => setMobileAction('none')} className="text-xs font-medium text-slate-400 hover:underline">
                   ‹ Back
