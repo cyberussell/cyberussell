@@ -1,9 +1,9 @@
 import { VISIT_RESULT_LABELS, VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
 import type { VisitResult } from '@/lib/territory-management-system/modules/records/types'
 
-// Plain hex equivalents of VISIT_RESULT_STYLES' tailwind classes — SVG fill/stroke can't consume
-// tailwind utility classes directly, so this is a deliberate, separate small mapping rather than
-// trying to parse one out of the other.
+// Plain hex equivalents of VISIT_RESULT_STYLES' tailwind classes — inline bar widths/dots can't
+// consume tailwind utility classes directly, so this is a deliberate, separate small mapping
+// rather than trying to parse one out of the other.
 const RESULT_COLORS: Record<VisitResult, string> = {
   initial_visit: '#3B82F6',
   return_visit: '#0EA5E9',
@@ -18,55 +18,34 @@ const RESULT_COLORS: Record<VisitResult, string> = {
   undone: '#D1D5DB',
 }
 
-// No chart library in this codebase (matches the Appointment System's Reports, also plain
-// SVG/CSS) — a donut built from stacked <circle> strokes, each dash-offset to the end of the
-// previous slice, is simpler and more reliable here than hand-computing arc paths.
-export default function VisitResultPieChart({ resultCounts }: { resultCounts: Record<VisitResult, number> }) {
-  const entries = VISIT_RESULTS.map((r) => ({ result: r, count: resultCounts[r] ?? 0 })).filter((e) => e.count > 0)
-  const total = entries.reduce((sum, e) => sum + e.count, 0)
+// Horizontal bars, highest count first — reads faster than a donut at a glance (especially on
+// mobile, per Russell's feedback replacing the original pie chart) and every category stays
+// individually readable regardless of how many statuses are in play.
+export default function VisitResultBarChart({ resultCounts }: { resultCounts: Record<VisitResult, number> }) {
+  const entries = VISIT_RESULTS.map((r) => ({ result: r, count: resultCounts[r] ?? 0 }))
+    .filter((e) => e.count > 0)
+    .sort((a, b) => b.count - a.count)
 
-  if (total === 0) {
+  if (entries.length === 0) {
     return <p className="text-center text-sm text-slate-400">No visits were logged today.</p>
   }
 
-  const radius = 70
-  const strokeWidth = 28
-  const circumference = 2 * Math.PI * radius
-  let cumulative = 0
+  const max = entries[0].count
 
   return (
-    <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
-      <svg viewBox="0 0 180 180" className="h-48 w-48 shrink-0 -rotate-90">
-        <circle cx="90" cy="90" r={radius} fill="none" stroke="#F1F5F9" strokeWidth={strokeWidth} />
-        {entries.map((e) => {
-          const fraction = e.count / total
-          const dashArray = `${fraction * circumference} ${circumference - fraction * circumference}`
-          const dashOffset = -cumulative * circumference
-          cumulative += fraction
-          return (
-            <circle
-              key={e.result}
-              cx="90"
-              cy="90"
-              r={radius}
-              fill="none"
-              stroke={RESULT_COLORS[e.result]}
-              strokeWidth={strokeWidth}
-              strokeDasharray={dashArray}
-              strokeDashoffset={dashOffset}
+    <div className="space-y-3">
+      {entries.map((e) => (
+        <div key={e.result} className="flex items-center gap-3">
+          <span className="w-32 shrink-0 truncate text-sm text-slate-600 sm:w-36">{VISIT_RESULT_LABELS[e.result]}</span>
+          <div className="h-4 flex-1 overflow-hidden rounded-full bg-slate-100">
+            <div
+              className="h-full rounded-full"
+              style={{ width: `${(e.count / max) * 100}%`, backgroundColor: RESULT_COLORS[e.result] }}
             />
-          )
-        })}
-      </svg>
-      <ul className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
-        {entries.map((e) => (
-          <li key={e.result} className="flex items-center gap-2 text-sm text-slate-600">
-            <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: RESULT_COLORS[e.result] }} />
-            {VISIT_RESULT_LABELS[e.result]}
-            <span className="text-slate-400">({e.count})</span>
-          </li>
-        ))}
-      </ul>
+          </div>
+          <span className="w-6 shrink-0 text-right text-sm font-semibold text-[#0B1B33]">{e.count}</span>
+        </div>
+      ))}
     </div>
   )
 }
