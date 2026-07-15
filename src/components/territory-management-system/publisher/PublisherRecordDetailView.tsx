@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Anton } from 'next/font/google'
-import { ArrowRightLeft, MapPin, Truck } from 'lucide-react'
+import { ArrowRightLeft, MapPin, MapPinned, Truck } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
@@ -13,6 +13,7 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherVisitLogForm from './PublisherVisitLogForm'
 import MoveRecordForm from './MoveRecordForm'
 import MarkMovedForm, { type MovedRecordFields } from './MarkMovedForm'
+import RecommendCorrectionForm, { type CorrectionFields } from './RecommendCorrectionForm'
 
 // A heavy, condensed display face just for the "Nth Record to Visit" header — deliberately not
 // mixed into the site's normal Syne/Inter body faces (see root layout.tsx), since this is a
@@ -57,11 +58,13 @@ export default function PublisherRecordDetailView({
   siblingPartnerships,
   moving,
   markingMoved,
+  recommendingCorrection,
   mapUrl,
   onLogVisit,
   onMoveRecord,
   onUpdateMoved,
   onRecommendRemoval,
+  onRecommendCorrection,
 }: {
   assigned: PartnershipRecordDetail
   pendingVisits: SyncQueueItem[]
@@ -80,6 +83,8 @@ export default function PublisherRecordDetailView({
   // True while either "Mark as Moved" path (Update Contact Record / Recommend for Admin
   // Removal) is being saved/synced.
   markingMoved: boolean
+  // True while the "Update" (Recommend a Correction) form is being saved/synced.
+  recommendingCorrection: boolean
   // The record's own territory map — resolved by the parent (preferring an offline-cached
   // blob over the live URL, same as the workspace list view's Territory Map(s) section).
   // Undefined/empty when the territory has no map uploaded, or hasn't been resolved yet.
@@ -88,6 +93,7 @@ export default function PublisherRecordDetailView({
   onMoveRecord: (destinationPartnershipId: string) => void
   onUpdateMoved: (fields: MovedRecordFields) => void
   onRecommendRemoval: (reason: string) => void
+  onRecommendCorrection: (fields: CorrectionFields) => void
 }) {
   const mapsUrl = assigned.record.plus_code
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assigned.record.plus_code)}`
@@ -98,7 +104,7 @@ export default function PublisherRecordDetailView({
   // "Pass to Another Partner" and "Mark as Moved" fully expanded at once, but on a phone that's
   // a lot of scrolling past two big cards to reach Record a Visit. Collapsed behind a two-button
   // row instead; tapping one reveals its panel in place of the row.
-  const [mobileAction, setMobileAction] = useState<'none' | 'move' | 'moved'>('none')
+  const [mobileAction, setMobileAction] = useState<'none' | 'move' | 'moved' | 'update'>('none')
   const movedFields = {
     address: assigned.record.address,
     unit: assigned.record.unit,
@@ -155,31 +161,44 @@ export default function PublisherRecordDetailView({
 
       {editable && !assigned.completed_at && (
         <>
-          {/* Desktop/tablet: both forms fully expanded, plenty of room */}
+          {/* Desktop/tablet: all forms fully expanded, plenty of room */}
           <div className="hidden space-y-6 sm:block">
             <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
             <MarkMovedForm initial={movedFields} submitting={markingMoved} onUpdate={onUpdateMoved} onRecommend={onRecommendRemoval} />
+            <RecommendCorrectionForm
+              currentPlusCode={assigned.record.plus_code ?? ''}
+              submitting={recommendingCorrection}
+              onSubmit={onRecommendCorrection}
+            />
           </div>
 
-          {/* Mobile: collapsed behind a two-button row until one is tapped */}
+          {/* Mobile: collapsed behind a three-button row until one is tapped */}
           <div className="sm:hidden">
             {mobileAction === 'none' && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() => setMobileAction('move')}
-                  className="flex items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+                  className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
                 >
                   <ArrowRightLeft className="h-4 w-4" />
-                  Pass to Other
+                  Pass
                 </button>
                 <button
                   type="button"
                   onClick={() => setMobileAction('moved')}
-                  className="flex items-center justify-center gap-2 rounded-lg border border-amber-200 bg-amber-50 py-2.5 text-sm font-semibold text-amber-700 transition hover:border-amber-300"
+                  className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 py-2.5 text-sm font-semibold text-amber-700 transition hover:border-amber-300"
                 >
                   <Truck className="h-4 w-4" />
-                  Mark as Moved
+                  Moved
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileAction('update')}
+                  className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+                >
+                  <MapPinned className="h-4 w-4" />
+                  Update
                 </button>
               </div>
             )}
@@ -202,6 +221,19 @@ export default function PublisherRecordDetailView({
                   submitting={markingMoved}
                   onUpdate={onUpdateMoved}
                   onRecommend={onRecommendRemoval}
+                />
+              </div>
+            )}
+            {mobileAction === 'update' && (
+              <div className="space-y-3">
+                <button type="button" onClick={() => setMobileAction('none')} className="text-xs font-medium text-slate-400 hover:underline">
+                  ‹ Back
+                </button>
+                <RecommendCorrectionForm
+                  currentPlusCode={assigned.record.plus_code ?? ''}
+                  submitting={recommendingCorrection}
+                  onSubmit={onRecommendCorrection}
+                  initialOpen
                 />
               </div>
             )}

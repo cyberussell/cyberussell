@@ -39,6 +39,13 @@ export interface TerritoryRecord {
   // Powers the publisher's own "My Added Records" list, kept separate from partnership_records
   // (today's assigned-record list) and from the pending-review gate (still Admin-only).
   created_by_partnership_id: string | null
+  // Set when a publisher taps "Update" on an assigned record (e.g. a wrong Plus Code) and
+  // recommends a correction — see 020_correction_recommendation.sql. Same review-gated shape
+  // as removal_recommended_* above: the record itself is untouched until the Admin applies it.
+  correction_recommended_at: string | null
+  correction_recommended_plus_code: string | null
+  correction_recommended_reason: string | null
+  correction_recommended_by: string | null
   created_at: string
   updated_at: string
 }

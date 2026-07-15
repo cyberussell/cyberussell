@@ -126,6 +126,17 @@ export const recommendRemovalSchema = z.object({
 })
 export type RecommendRemovalInput = z.input<typeof recommendRemovalSchema>
 
+// The "Update" button — recommends a corrected Plus Code (the most common wrong-data case)
+// plus a required reason, without editing the record directly (same review-gated shape as
+// recommendRemovalSchema above — the Admin applies or dismisses it).
+export const recommendCorrectionSchema = z.object({
+  partnershipToken: z.string().min(1),
+  recordId: z.string().uuid(),
+  plusCode: z.string().min(1, 'Plus Code is required.').max(20),
+  reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
+})
+export type RecommendCorrectionInput = z.input<typeof recommendCorrectionSchema>
+
 // Deleting a record the publisher added themselves — only reachable while their own ministry
 // session is still active (see deletePublisherAddedRecordAction).
 export const deletePublisherAddedRecordSchema = z.object({

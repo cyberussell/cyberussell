@@ -139,6 +139,23 @@ export async function dismissRemovalRecommendationAction(recordId: string): Prom
   revalidatePath('/territory-management-system/dashboard/records/flagged')
 }
 
+// Admin applies a publisher's "Update" (correction) recommendation — writes the recommended
+// Plus Code onto the record and clears the flag.
+export async function applyRecordCorrectionAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.applyRecordCorrection(supabase, recordId)
+  revalidatePath('/territory-management-system/dashboard/records/flagged')
+  revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
+}
+
+// Admin dismisses a correction recommendation without applying it — clears the flag, leaves
+// the record's own Plus Code untouched.
+export async function dismissCorrectionRecommendationAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.dismissCorrectionRecommendation(supabase, recordId)
+  revalidatePath('/territory-management-system/dashboard/records/flagged')
+}
+
 export async function logVisitAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = logVisitSchema.safeParse({
     recordId: formData.get('recordId'),

@@ -197,6 +197,74 @@ export async function listFlaggedForRemoval(supabase: SupabaseClient, congregati
   return (data ?? []) as unknown as TerritoryRecordWithLocation[]
 }
 
+// Publisher-facing "Update" path — recommends a corrected Plus Code (the most common wrong-data
+// case) plus a reason, without editing the record directly. Overwrites any prior
+// recommendation on this record rather than accumulating a history — same "latest wins" shape
+// as recommendRecordForRemoval above.
+export async function recommendRecordCorrection(
+  supabase: SupabaseClient,
+  recordId: string,
+  plusCode: string,
+  reason: string,
+  recommendedBy: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('territory_records')
+    .update({
+      correction_recommended_at: new Date().toISOString(),
+      correction_recommended_plus_code: plusCode,
+      correction_recommended_reason: reason,
+      correction_recommended_by: recommendedBy,
+    })
+    .eq('id', recordId)
+  if (error) throw error
+}
+
+// Admin dismisses a correction recommendation without applying it (e.g. it turned out to be
+// wrong) — clears the flag, leaves the record's own plus_code untouched.
+export async function dismissCorrectionRecommendation(supabase: SupabaseClient, recordId: string): Promise<void> {
+  const { error } = await supabase
+    .from('territory_records')
+    .update({ correction_recommended_at: null, correction_recommended_plus_code: null, correction_recommended_reason: null, correction_recommended_by: null })
+    .eq('id', recordId)
+  if (error) throw error
+}
+
+// Admin applies a correction recommendation — writes the recommended Plus Code onto the
+// record's real plus_code and clears the recommendation flag in the same update. Reads the
+// recommended value first since Supabase's update() can't copy one column's value into another
+// server-side without a raw SQL/RPC call.
+export async function applyRecordCorrection(supabase: SupabaseClient, recordId: string): Promise<void> {
+  const { data: existing } = await supabase
+    .from('territory_records')
+    .select('correction_recommended_plus_code')
+    .eq('id', recordId)
+    .maybeSingle()
+  if (!existing?.correction_recommended_plus_code) return
+  const { error } = await supabase
+    .from('territory_records')
+    .update({
+      plus_code: existing.correction_recommended_plus_code,
+      correction_recommended_at: null,
+      correction_recommended_plus_code: null,
+      correction_recommended_reason: null,
+      correction_recommended_by: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', recordId)
+  if (error) throw error
+}
+
+export async function listFlaggedForCorrection(supabase: SupabaseClient, congregationId: string): Promise<TerritoryRecordWithLocation[]> {
+  const { data } = await supabase
+    .from('territory_records')
+    .select(RECORD_WITH_LOCATION_SELECT)
+    .eq('congregation_id', congregationId)
+    .not('correction_recommended_at', 'is', null)
+    .order('correction_recommended_at', { ascending: false })
+  return (data ?? []) as unknown as TerritoryRecordWithLocation[]
+}
+
 // Admin-only "Undo Last Visit" — deletes the single most recent visit entry so the record
 // reverts to whatever its status was before (e.g. a mis-tagged Bible Study). Since logVisit
 // keeps only one row per calendar day (same-day edits overwrite in place), the latest row by

@@ -12,6 +12,7 @@ import {
   finishPartnershipSchema,
   logPublisherVisitSchema,
   movePartnershipRecordSchema,
+  recommendCorrectionSchema,
   recommendRemovalSchema,
   renamePartnershipSchema,
   submitPartnershipNoteSchema,
@@ -36,6 +37,7 @@ import {
   getRecordById,
   getRecordDoNotCall,
   logVisit,
+  recommendRecordCorrection,
   recommendRecordForRemoval,
   recordAddedByPartnership,
   updateRecord,
@@ -410,6 +412,40 @@ export async function recommendRemovalAction(_prev: ActionResult, formData: Form
     await markPartnershipRecordCompleted(supabase, partnership.id, parsed.data.recordId)
   } catch (e) {
     await logError(partnership.congregation_id, 'recommendRemovalAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }
+  }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// The "Update" button — recommends a corrected Plus Code (or other wrong info) for an assigned
+// record, without editing it directly. Unlike the "Mark as Moved" paths above, this is NOT a
+// ministry-visit outcome — the household situation hasn't changed, only the recorded data is
+// wrong — so it deliberately does not log a visit or mark the record completed. The Admin
+// reviews and applies (or dismisses) it from the Flagged for Correction list.
+export async function recommendCorrectionAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = recommendCorrectionSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    recordId: formData.get('recordId'),
+    plusCode: formData.get('plusCode'),
+    reason: formData.get('reason'),
+  })
+  if (!parsed.success) return { error: 'Please fill in the Plus Code and a reason for the recommendation.' }
+  if (!(await checkRateLimit(`tms-recommend-correction:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+
+  const owns = await partnershipHasRecord(supabase, partnership.id, parsed.data.recordId)
+  if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
+
+  try {
+    await recommendRecordCorrection(supabase, parsed.data.recordId, parsed.data.plusCode, parsed.data.reason, partnership.name || 'Unnamed partnership')
+  } catch (e) {
+    await logError(partnership.congregation_id, 'recommendCorrectionAction', e)
     return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }
   }
 

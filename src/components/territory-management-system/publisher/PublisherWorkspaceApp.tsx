@@ -18,6 +18,7 @@ import PartnershipRenameForm from './PartnershipRenameForm'
 import AssignedRecordsList from './AssignedRecordsList'
 import AddedRecordsList from './AddedRecordsList'
 import PublisherRecordDetailView from './PublisherRecordDetailView'
+import type { CorrectionFields } from './RecommendCorrectionForm'
 import PublisherAddedRecordDetailView from './PublisherAddedRecordDetailView'
 import PublisherRecordForm, { type NewPublisherRecordPayload } from './PublisherRecordForm'
 import PublisherNoteForm from './PublisherNoteForm'
@@ -54,6 +55,7 @@ export default function PublisherWorkspaceApp({
   const [movingRecord, setMovingRecord] = useState(false)
   const [sendingNote, setSendingNote] = useState(false)
   const [markingMoved, setMarkingMoved] = useState(false)
+  const [recommendingCorrection, setRecommendingCorrection] = useState(false)
   const [deletingAddedRecord, setDeletingAddedRecord] = useState(false)
   const [queue, setQueue] = useState<SyncQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
@@ -254,6 +256,21 @@ export default function PublisherWorkspaceApp({
     }
   }
 
+  // Unlike the "Mark as Moved" recommendations above, this isn't a ministry-visit outcome — the
+  // record stays exactly as-is (still incomplete if it was) and nothing here changes what's
+  // displayed, since the Admin hasn't applied the correction yet.
+  async function handleRecommendCorrection(recordId: string, fields: CorrectionFields) {
+    setRecommendingCorrection(true)
+    try {
+      await enqueue(partnershipToken, 'recommendCorrection', { partnershipToken, recordId, plusCode: fields.plusCode, reason: fields.reason })
+      await refreshQueue()
+      if (online) await handleSync()
+      toast.success('Correction recommendation sent to the Admin.')
+    } finally {
+      setRecommendingCorrection(false)
+    }
+  }
+
   // After logging a visit, jump straight to the next record still needing one instead of
   // making the publisher go back to the list and pick it themselves. "Next" means the next
   // incomplete record after this one in assigned sequence order, wrapping to check earlier
@@ -294,6 +311,10 @@ export default function PublisherWorkspaceApp({
       removal_recommended_at: null,
       removal_recommended_reason: null,
       removal_recommended_by: null,
+      correction_recommended_at: null,
+      correction_recommended_plus_code: null,
+      correction_recommended_reason: null,
+      correction_recommended_by: null,
       created_by_partnership_id: workspace.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -560,11 +581,13 @@ export default function PublisherWorkspaceApp({
             siblingPartnerships={workspace.siblingPartnerships}
             moving={movingRecord}
             markingMoved={markingMoved}
+            recommendingCorrection={recommendingCorrection}
             mapUrl={selected.record.territory ? mapUrls[selected.record.territory.id] : undefined}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
             onMoveRecord={(destinationPartnershipId) => handleMoveRecord(selected.record.id, destinationPartnershipId)}
             onUpdateMoved={(fields) => handleUpdateMoved(selected.record.id, fields)}
             onRecommendRemoval={(reason) => handleRecommendRemoval(selected.record.id, reason)}
+            onRecommendCorrection={(fields) => handleRecommendCorrection(selected.record.id, fields)}
           />
         )}
 

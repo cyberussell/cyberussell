@@ -45,7 +45,7 @@ export default function MarkMovedForm({
         className="flex w-full items-center justify-center gap-2 rounded-lg border border-amber-200 bg-amber-50 py-2.5 text-sm font-semibold text-amber-700 transition hover:border-amber-300"
       >
         <Truck className="h-4 w-4" />
-        Mark as Moved
+        Moved
       </button>
     )
   }
@@ -86,7 +86,10 @@ export default function MarkMovedForm({
     return (
       <Card className="border-amber-200 bg-amber-50 p-6">
         <h2 className="font-semibold text-[#0B1B33]">Update Contact Record</h2>
-        <p className="mt-1 text-sm text-slate-500">A new resident likely lives here now — update who/what is here.</p>
+        <p className="mt-1 text-sm text-slate-500">
+          A new local foreign resident likely lives here now — update who/what is here. If it is local, recommend this record
+          for admin removal
+        </p>
         <div className="mt-4 space-y-4">
           <FormField label="Address">
             <input
