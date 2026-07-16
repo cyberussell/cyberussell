@@ -21,7 +21,7 @@ export default function TerritoryReportTable({ rows }: { rows: TerritoryReportRo
       <table className="w-full border-collapse text-sm">
         <thead className="bg-gray-50">
           <tr className="border-b border-gray-200">
-            <th className={thClass}>Territory</th>
+            <th className={thClass}>Barangay Name</th>
             <th className={thClass}>Started Bible Study</th>
             <th className={thClass}>Bible Study</th>
             <th className={thClass}>Total Households</th>
@@ -31,7 +31,7 @@ export default function TerritoryReportTable({ rows }: { rows: TerritoryReportRo
         <tbody>
           {rows.map((r) => (
             <tr key={r.id} className="border-b border-gray-200 last:border-0">
-              <td className={`${tdClass} font-medium`}>{r.name}</td>
+              <td className={`${tdClass} font-medium`}>{r.barangayName}</td>
               <td className={tdClass}>{r.startedBibleStudy}</td>
               <td className={tdClass}>{r.bibleStudy}</td>
               <td className={tdClass}>{r.totalHouseholds}</td>

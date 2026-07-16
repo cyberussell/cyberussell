@@ -20,7 +20,7 @@ export async function createTerritory(_prev: ActionResult, formData: FormData): 
     sectionCount: formData.get('sectionCount'),
     blocksPerSection: formData.get('blocksPerSection'),
   })
-  if (!parsed.success) return { error: 'Please fill in all fields correctly.' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in all fields correctly.' }
 
   const { supabase, congregation } = await requireAdmin()
   let territoryId: string
@@ -41,7 +41,7 @@ export async function updateTerritoryDetails(_prev: ActionResult, formData: Form
     description: formData.get('description'),
     status: formData.get('status'),
   })
-  if (!parsed.success) return { error: 'Please fill in all fields correctly.' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in all fields correctly.' }
   const { territoryId, ...updates } = parsed.data
 
   const { supabase } = await requireAdmin()

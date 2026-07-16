@@ -7,9 +7,22 @@ import { CircleCheck } from 'lucide-react'
 import { createBrowserSupabase } from '@/lib/territory-management-system/supabase'
 
 // Shared by both entry points that land here with a Supabase-established session from an
-// emailed link — accepting a Group Leader invite, and finishing a password reset. Password
-// reset fires PASSWORD_RECOVERY; an invite acceptance can fire either PASSWORD_RECOVERY or
-// SIGNED_IN depending on the Supabase-js version, so this page listens for both.
+// emailed link — accepting a Group Leader invite, and finishing a password reset. The two
+// arrive as genuinely different URL shapes and need different handling:
+//
+// - Password reset (resetPasswordForEmail, server-side, PKCE) lands as `?code=...` — the
+//   @supabase/ssr browser client below auto-detects and exchanges this on its own, firing a
+//   real PASSWORD_RECOVERY event.
+// - A Group Leader invite (admin.inviteUserByEmail) is *always* an implicit-flow link —
+//   `#access_token=...&refresh_token=...&type=invite` in the hash — because Supabase's own SDK
+//   documents PKCE as unsupported for invites (the browser that requests an invite and the one
+//   that accepts it are different, breaking PKCE's security model). @supabase/ssr hardcodes
+//   `flowType: 'pkce'` on every client it creates with no way to override it, so its own
+//   internal URL auto-detection throws on an implicit-flow URL and silently swallows the
+//   session — neither PASSWORD_RECOVERY nor SIGNED_IN ever fires, no matter how long you wait.
+//   Confirmed by reading @supabase/ssr and @supabase/auth-js's own source, not guessed.
+//   Worked around by parsing the hash ourselves and calling setSession() directly, which
+//   doesn't go through that broken auto-detection path at all.
 export default function SetPasswordPage() {
   const router = useRouter()
   const [ready, setReady] = useState(false)
@@ -22,7 +35,25 @@ export default function SetPasswordPage() {
   const readyRef = useRef(false)
 
   useEffect(() => {
+    // Read the raw hash before creating the Supabase client — the client's own (failed) attempt
+    // to auto-process this same URL shouldn't be relied on to leave it untouched.
+    const hashParams = new URLSearchParams(window.location.hash.slice(1))
+    const accessToken = hashParams.get('access_token')
+    const refreshToken = hashParams.get('refresh_token')
+
     const supabase = createBrowserSupabase()
+
+    if (accessToken && refreshToken) {
+      supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(({ error: sessionError }) => {
+        if (!sessionError) {
+          readyRef.current = true
+          setReady(true)
+          // Drop the tokens from the visible URL/browser history now that they're consumed.
+          window.history.replaceState(null, '', window.location.pathname)
+        }
+      })
+    }
+
     // An invite link authenticates the browser the same way a password-recovery link does —
     // Supabase fires PASSWORD_RECOVERY or SIGNED_IN depending on version, so both are treated
     // as a valid arrival here (an existing session from being already logged in elsewhere in

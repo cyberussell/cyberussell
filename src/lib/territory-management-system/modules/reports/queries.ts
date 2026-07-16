@@ -157,6 +157,7 @@ export async function getBatchStats(
 export interface TerritoryReportRow {
   id: string
   name: string
+  barangayName: string
   startedBibleStudy: number
   bibleStudy: number
   totalHouseholds: number
@@ -172,7 +173,10 @@ export interface TerritoryReportRow {
 // regardless of status, matching territory/queries.ts's existing record_count meaning. Sorted by
 // Total Households descending, per Russell's request.
 export async function getTerritoryReportRows(supabase: SupabaseClient, congregationId: string): Promise<TerritoryReportRow[]> {
-  const { data: territories } = await supabase.from('territories').select('id, name').eq('congregation_id', congregationId)
+  const { data: territories } = await supabase
+    .from('territories')
+    .select('id, name, description')
+    .eq('congregation_id', congregationId)
   if (!territories || territories.length === 0) return []
 
   const { data: records } = await supabase
@@ -222,6 +226,7 @@ export async function getTerritoryReportRows(supabase: SupabaseClient, congregat
     .map((t) => ({
       id: t.id as string,
       name: t.name as string,
+      barangayName: (t.description as string) || '—',
       startedBibleStudy: bibleStudyCounts.get(t.id)?.startedBibleStudy ?? 0,
       bibleStudy: bibleStudyCounts.get(t.id)?.bibleStudy ?? 0,
       totalHouseholds: totals.get(t.id)?.totalHouseholds ?? 0,

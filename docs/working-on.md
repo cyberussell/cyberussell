@@ -1,5 +1,22 @@
 # Current Work
 
+**Territory Management System — Real invite-flow fix + map short-code recovery + Territory/Barangay field rename (2026-07-16) — code done, tsc + vitest (52/52) + build clean, NOT live-verified this pass (Browser pane's safety classifier was down the whole verification window, ~6 min across two retries), not yet committed/pushed — see checkpoint `territory-management-invite-flow-map-recovery-field-rename-v1.md` for full detail (supersedes the password-token portion of the prior checkpoint below):**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell reported the earlier password-token fix didn't actually work (still "invalid or expired"), the Household Distribution map still showed no pins despite approved records having Plus Codes, and asked to relabel Territory create/edit forms + two tables: "Territory name" → "Territory Number", "Description" → "Barangay Name" (now required everywhere, including existing territories), plus a new Barangay Name column on the Territories list and a renamed column on the Reports per-territory table.
+
+Current Status: Code complete.
+- **Invite link — real root cause found and fixed**, superseding the prior timing-only fix. Confirmed by reading `@supabase/ssr`/`@supabase/auth-js`'s own installed source (not conjecture): the SSR browser client hardcodes `flowType: 'pkce'` unoverridably, but `inviteUserByEmail()` is documented by Supabase itself as never using PKCE — every invite link is implicit-flow (`#access_token=...`), which a PKCE-forced client throws on internally and silently swallows, so no auth event ever fires regardless of timeout length. Fixed in `set-password/page.tsx` by manually parsing the URL hash and calling `setSession()` directly, bypassing the broken auto-detection.
+- **Map — fixed short-code Plus Codes** (e.g. "5JJ6+F8", the realistic manually-typed format) via `open-location-code`'s `recoverNearest()`, using a centroid of already-decoded full codes in the same fetch as the reference point. Added the missing TS declaration for `recoverNearest` (present at runtime, just undeclared).
+- **Territory/Barangay rename**: confirmed scope via `AskUserQuestion` (Barangay Name required everywhere including edits of old territories; add a Barangay Name column to the Territories list table). Updated `territory/schema.ts`, `TerritoryForm.tsx`, `TerritoryDetailsForm.tsx`, `TerritoriesTable.tsx`, `TerritoryReportTable.tsx`/`getTerritoryReportRows` — labels + validation only, no DB column rename.
+- `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. **Could not live-verify this pass** — the Browser pane's safety classifier was unavailable for the entire verification window despite two separate wait-and-retry cycles, a first for this session. Verified instead via direct reading of the installed `@supabase/ssr`/`@supabase/auth-js`/`open-location-code` package source, a higher bar than typical code review.
+- Spawned background task `task_c9c18348`: LMS's `accept-invite/page.tsx` has the identical PKCE/implicit bug, not fixed here (out of scope).
+
+**Next recommended task:** Not committed/pushed. Once pushed and deployed: (1) re-invite a Group Leader and confirm set-password now actually works — least-verified fix in this batch; (2) confirm the map shows pins for existing short-code records; (3) confirm Barangay Name is required on new and edited territories.
+
+----------------------------------------
+
 **Territory Management System — Map upload body-size fix + password token premature-expiry fix (2026-07-16) — code done, tsc + vitest (52/52) + build clean, committed and pushed (`5d62383`), deployed — see checkpoint `territory-management-map-upload-limit-password-token-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

@@ -14,11 +14,11 @@ export default function TerritoryDetailsForm({ territory }: { territory: Territo
       <h2 className="mb-4 font-semibold text-[#0B1B33]">Territory details</h2>
       <form action={dispatch} className="space-y-4">
         <input type="hidden" name="territoryId" value={territory.id} />
-        <FormField label="Name">
+        <FormField label="Territory Number">
           <input name="name" required maxLength={120} defaultValue={territory.name} className={inputClass} />
         </FormField>
-        <FormField label="Description" optional>
-          <textarea name="description" maxLength={500} rows={3} defaultValue={territory.description} className={inputClass} />
+        <FormField label="Barangay Name">
+          <textarea name="description" required maxLength={500} rows={3} defaultValue={territory.description} className={inputClass} />
         </FormField>
         <FormField label="Status">
           <select name="status" defaultValue={territory.status} className={inputClass}>

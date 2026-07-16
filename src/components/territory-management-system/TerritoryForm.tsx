@@ -18,11 +18,11 @@ export default function TerritoryForm() {
   return (
     <Card className="max-w-2xl p-6">
       <form action={dispatch} className="space-y-4">
-        <FormField label="Territory name">
+        <FormField label="Territory Number">
           <input name="name" required maxLength={120} className={inputClass} placeholder="e.g. Territory 12" />
         </FormField>
-        <FormField label="Description" optional>
-          <textarea name="description" maxLength={500} rows={3} className={inputClass} />
+        <FormField label="Barangay Name">
+          <textarea name="description" required maxLength={500} rows={3} className={inputClass} />
         </FormField>
         <div className="grid grid-cols-2 gap-4">
           <FormField label="Number of sections">

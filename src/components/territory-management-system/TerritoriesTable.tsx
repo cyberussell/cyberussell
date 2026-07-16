@@ -21,7 +21,7 @@ export default function TerritoriesTable({ territories }: { territories: Territo
       <DataTable
         columns={[
           {
-            header: 'Name',
+            header: 'Territory Number',
             cell: (t) => (
               <Link
                 href={`/territory-management-system/dashboard/territories/${t.id}`}
@@ -31,6 +31,11 @@ export default function TerritoriesTable({ territories }: { territories: Territo
               </Link>
             ),
             sortValue: (t) => t.name,
+          },
+          {
+            header: 'Barangay Name',
+            cell: (t) => t.description || '—',
+            sortValue: (t) => t.description,
           },
           {
             header: 'Status',
