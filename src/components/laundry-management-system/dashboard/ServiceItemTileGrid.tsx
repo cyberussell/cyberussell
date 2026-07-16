@@ -1,9 +1,9 @@
 'use client'
 
 import { Minus, Plus } from 'lucide-react'
-import type { ServiceCatalogItem } from '@/lib/laundry-management-system/modules/catalog/types'
+import { effectivePrice, isPromoActive, type ServiceCatalogItem } from '@/lib/laundry-management-system/modules/catalog/types'
 import { formatCurrency } from '@/lib/laundry-management-system/format'
-import Avatar from './Avatar'
+import CatalogItemIcon from './CatalogItemIcon'
 
 // Tap-to-add POS-style item grid — controlled by the parent (WalkInOrderForm)
 // rather than react-hook-form, since a tap grid with running quantities
@@ -32,6 +32,8 @@ export default function ServiceItemTileGrid({
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       {items.map((item) => {
         const qty = cart[item.id] ?? 0
+        const onSale = isPromoActive(item)
+        const price = effectivePrice(item)
         return (
           <div
             key={item.id}
@@ -39,10 +41,17 @@ export default function ServiceItemTileGrid({
               qty > 0 ? 'border-[#22D3EE] bg-[#F0FDFA]' : 'border-teal-100 bg-white'
             }`}
           >
-            <Avatar name={item.name} size="md" />
+            <CatalogItemIcon item={item} size="md" />
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-[#0B1B33]">{item.name}</p>
-              <p className="text-xs text-slate-400">{formatCurrency(item.price, currency)}</p>
+              {onSale ? (
+                <p className="text-xs">
+                  <span className="mr-1 text-slate-400 line-through">{formatCurrency(item.price, currency)}</span>
+                  <span className="font-medium text-[#0D9488]">{formatCurrency(price, currency)}</span>
+                </p>
+              ) : (
+                <p className="text-xs text-slate-400">{formatCurrency(item.price, currency)}</p>
+              )}
             </div>
             {qty === 0 ? (
               <button

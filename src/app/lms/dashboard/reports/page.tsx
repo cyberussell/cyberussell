@@ -145,7 +145,7 @@ async function BasicReport({
                 <li key={item.id} className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2 text-[#0B1B33]">
                     <PackageX className="h-4 w-4 text-red-400" />
-                    {item.name}
+                    {item.displayName}
                   </span>
                   <span className="text-red-500">
                     {item.quantity} {item.unit} left

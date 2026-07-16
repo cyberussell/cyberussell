@@ -10,7 +10,7 @@ import { formatCurrency } from '@/lib/laundry-management-system/format'
 import type { Branch } from '@/lib/laundry-management-system/modules/tenant/types'
 import type { Customer } from '@/lib/laundry-management-system/modules/customer/types'
 import type { StaffMember } from '@/lib/laundry-management-system/modules/staff/types'
-import type { ServiceCatalogItem } from '@/lib/laundry-management-system/modules/catalog/types'
+import { effectivePrice, type ServiceCatalogItem } from '@/lib/laundry-management-system/modules/catalog/types'
 import Card from './Card'
 import FormField, { inputClass, selectAppearance } from './FormField'
 import Avatar from './Avatar'
@@ -77,7 +77,7 @@ export default function WalkInOrderForm({
         .filter(([, quantity]) => quantity > 0)
         .map(([catalogItemId, quantity]) => {
           const item = catalogItems.find((i) => i.id === catalogItemId)
-          return { catalogItemId, quantity, name: item?.name ?? '', unitPrice: item?.price ?? 0 }
+          return { catalogItemId, quantity, name: item?.name ?? '', unitPrice: item ? effectivePrice(item) : 0 }
         }),
     [cart, catalogItems]
   )

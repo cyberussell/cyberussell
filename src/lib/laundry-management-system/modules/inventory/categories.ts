@@ -11,7 +11,9 @@ export const INVENTORY_CATEGORY_LABELS: Record<InventoryCategory, string> = {
   other: 'Other Consumables',
 }
 
-export function groupByCategory(items: InventoryItem[]): { category: InventoryCategory; items: InventoryItem[] }[] {
+// Generic over T so callers passing InventoryItemWithVariants (the shape
+// listInventory now returns) keep the variants field on each grouped item.
+export function groupByCategory<T extends InventoryItem>(items: T[]): { category: InventoryCategory; items: T[] }[] {
   return INVENTORY_CATEGORIES.map((category) => ({
     category,
     items: items.filter((item) => item.category === category),
