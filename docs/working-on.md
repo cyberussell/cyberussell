@@ -1,6 +1,6 @@
 # Current Work
 
-**Laundry Management System — Staff invite switched to temp-password pattern, marketing fix deployed, QR bug found (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch routes, migration 019 written but NOT applied, not committed — see checkpoint `laundry-management-system-staff-temp-password-v1.md` for full detail:**
+**Laundry Management System — Staff invite switched to temp-password pattern, marketing fix deployed, QR bug found (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch routes, migration 019 applied by Russell, committed and pushed (`f1794fe`), Vercel auto-deploy triggered — see checkpoint `laundry-management-system-staff-temp-password-v1.md` for full detail:**
 
 Current Product: Laundry Management System (LMS).
 
@@ -14,7 +14,7 @@ Current Status: All three done; the temp-password rework is the substantial piec
 - `npx tsc --noEmit`, `npx next build`, `npx vitest run` (52/52) all clean. Live-verified via scratch routes: the merged Staff page (invite form with temp-password field, table with Reset Password action), and `ChangePasswordForm` rendering correctly in LMS's dark theme.
 - **Found, not deleted**: `src/app/lms/staff/accept-invite/page.tsx` (the old email-invite-link page) is now dead code — confirmed zero remaining references anywhere. Left in place rather than deleted, same caution as the other stray/dead files flagged this session.
 
-**Next recommended task:** Not committed or deployed. Russell (1) runs migration `019`, (2) live-verifies the full loop (invite → temp password → forced change-password → real dashboard access), (3) decides on the QR-for-customers fix (`task_be93814b`) and the now-dead accept-invite route, (4) commit + deploy at his request.
+**Next recommended task:** Committed, pushed (`f1794fe`), and deployed at Russell's request. Migration `019` applied. Russell live-verifies the full loop (invite → temp password → forced change-password → real dashboard access) on the deployed site, and separately decides on the QR-for-customers fix (`task_be93814b`) and the now-dead accept-invite route.
 
 ----------------------------------------
 
