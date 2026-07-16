@@ -1,6 +1,6 @@
 # Current Work
 
-**Territory Management System — Admin-overridable temporary password (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch route, not yet committed/pushed — see checkpoint `territory-management-custom-temp-password-v1.md` for full detail:**
+**Territory Management System — Admin-overridable temporary password (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch route, committed and pushed (`db3f1e9`), deployed — see checkpoint `territory-management-custom-temp-password-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
@@ -12,7 +12,7 @@ Current Status: Code complete.
 - Server-side re-validates the 8-character minimum on the reset path even though the client already checks it.
 - `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. Live-verified the new field renders correctly via a scratch route.
 
-**Next recommended task:** Ready to deploy at Russell's request.
+**Next recommended task:** Deployed (`db3f1e9`). Russell invites a Group Leader with a custom temp password and confirms it's what they actually receive/log in with.
 
 ----------------------------------------
 
