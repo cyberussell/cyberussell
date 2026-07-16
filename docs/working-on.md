@@ -1,6 +1,6 @@
 # Current Work
 
-**Territory Management System — Real invite-flow fix + map short-code recovery + Territory/Barangay field rename (2026-07-16) — code done, tsc + vitest (52/52) + build clean, NOT live-verified this pass (Browser pane's safety classifier was down the whole verification window, ~6 min across two retries), not yet committed/pushed — see checkpoint `territory-management-invite-flow-map-recovery-field-rename-v1.md` for full detail (supersedes the password-token portion of the prior checkpoint below):**
+**Territory Management System — Real invite-flow fix + map short-code recovery + Territory/Barangay field rename (2026-07-16) — code done, tsc + vitest (52/52) + build clean, NOT live-verified (Browser pane's safety classifier was down the whole verification window), committed and pushed (`eb61e23`), deployed at Russell's request — see checkpoint `territory-management-invite-flow-map-recovery-field-rename-v1.md` for full detail (supersedes the password-token portion of the prior checkpoint below):**
 
 Current Product: Territory Management System (TMS).
 
@@ -13,7 +13,7 @@ Current Status: Code complete.
 - `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. **Could not live-verify this pass** — the Browser pane's safety classifier was unavailable for the entire verification window despite two separate wait-and-retry cycles, a first for this session. Verified instead via direct reading of the installed `@supabase/ssr`/`@supabase/auth-js`/`open-location-code` package source, a higher bar than typical code review.
 - Spawned background task `task_c9c18348`: LMS's `accept-invite/page.tsx` has the identical PKCE/implicit bug, not fixed here (out of scope).
 
-**Next recommended task:** Not committed/pushed. Once pushed and deployed: (1) re-invite a Group Leader and confirm set-password now actually works — least-verified fix in this batch; (2) confirm the map shows pins for existing short-code records; (3) confirm Barangay Name is required on new and edited territories.
+**Next recommended task:** Deployed (`eb61e23`) at Russell's explicit request despite no live verification this pass. Russell should prioritize re-testing: (1) re-invite a Group Leader and confirm set-password now actually works — least-verified fix in this batch, and the one blocking real usage; (2) confirm the map shows pins for existing short-code records; (3) confirm Barangay Name is required on new and edited territories.
 
 ----------------------------------------
 
