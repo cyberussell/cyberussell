@@ -31,7 +31,7 @@ export default function PriorityToggle({ orderId, isPriority }: { orderId: strin
       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
         optimisticPriority
           ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
-          : 'border border-blue-100 bg-white text-slate-500 hover:border-[#38BDF8]/40'
+          : 'border border-teal-100 bg-white text-slate-500 hover:border-[#22D3EE]/40'
       }`}
     >
       <Zap className="h-3.5 w-3.5" />

@@ -19,7 +19,7 @@ export default async function CustomersPage() {
         action={
           <Link
             href="/lms/dashboard/customers/new"
-            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
           >
             <UserPlus className="h-4 w-4" />
             Add Customer

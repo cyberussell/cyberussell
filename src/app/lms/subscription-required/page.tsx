@@ -47,7 +47,7 @@ export default async function SubscriptionRequiredPage() {
           <div className="mt-6 flex flex-col gap-3">
             <a
               href="https://www.cyberussell.com/services/inquire"
-              className="rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+              className="rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
             >
               Contact us to reactivate
             </a>

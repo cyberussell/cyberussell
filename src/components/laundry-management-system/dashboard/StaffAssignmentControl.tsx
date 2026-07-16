@@ -25,7 +25,7 @@ export default function StaffAssignmentControl({
       <button
         type="submit"
         disabled={pending}
-        className="h-fit rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm font-medium text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-50"
+        className="h-fit rounded-lg border border-teal-100 bg-white px-3 py-2 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40 disabled:opacity-50"
       >
         {pending ? 'Saving…' : 'Save'}
       </button>

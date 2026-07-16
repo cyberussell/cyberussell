@@ -11,8 +11,8 @@ export default function UpgradePrompt({ feature, label }: { feature: FeatureFlag
 
   return (
     <Card className="mx-auto max-w-lg p-10 text-center">
-      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#F0F6FF]">
-        <Lock className="h-5 w-5 text-[#2563EB]" />
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#CCFBF1]">
+        <Lock className="h-5 w-5 text-[#0D9488]" />
       </div>
       <h2 className="text-lg font-semibold text-[#0B1B33]">{label} is a {plan.name} feature</h2>
       <p className="mt-2 text-sm text-slate-500">
@@ -21,7 +21,9 @@ export default function UpgradePrompt({ feature, label }: { feature: FeatureFlag
       </p>
       <Link
         href="/lms#pricing"
-        className="mt-5 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-5 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
       >
         See {plan.name} plan pricing
       </Link>

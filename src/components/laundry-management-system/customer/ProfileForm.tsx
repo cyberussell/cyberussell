@@ -16,7 +16,7 @@ export default function ProfileForm({ customer }: { customer: Customer }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       action={formAction}
-      className="space-y-4 rounded-3xl border border-blue-100/60 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+      className="space-y-4 rounded-3xl border border-teal-100/60 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
     >
       <input type="hidden" name="customerId" value={customer.id} />
       <Field label="Full name" name="fullName" defaultValue={customer.full_name} />
@@ -29,7 +29,7 @@ export default function ProfileForm({ customer }: { customer: Customer }) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+        className="w-full rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
       >
         {pending ? 'Saving…' : 'Save changes'}
       </button>
@@ -56,7 +56,7 @@ function Field({
         type={type}
         defaultValue={defaultValue}
         required={name !== 'email'}
-        className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
+        className="mt-1 w-full rounded-lg border border-teal-100 bg-[#F0FDFA] px-3 py-2 text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none"
       />
     </label>
   )

@@ -41,7 +41,7 @@ export default function OrderStatusControl({ orderId, status }: { orderId: strin
           onChange={handleChange}
           disabled={pending}
           aria-label="Change order status"
-          className="rounded-md border border-blue-100 bg-white px-1.5 py-1 text-xs text-slate-600 focus:border-[#38BDF8] focus:outline-none disabled:opacity-50"
+          className="rounded-md border border-teal-100 bg-white px-1.5 py-1 text-xs text-slate-600 focus:border-[#22D3EE] focus:outline-none disabled:opacity-50"
         >
           <option value="" disabled>
             Move to…

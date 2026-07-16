@@ -15,7 +15,7 @@ export default function FilterPills<V>({
   variant?: 'brand' | 'dark'
 }) {
   const activeClass =
-    variant === 'dark' ? 'bg-[#0B1B33] text-white' : 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white'
+    variant === 'dark' ? 'bg-[#0B1B33] text-white' : 'bg-gradient-to-r from-[#0D9488] to-[#22D3EE] text-white'
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -26,7 +26,7 @@ export default function FilterPills<V>({
           className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
             option.value === active
               ? activeClass
-              : 'border border-blue-100 bg-white text-slate-500 hover:border-[#38BDF8]/40'
+              : 'border border-teal-100 bg-white text-slate-500 hover:border-[#22D3EE]/40'
           }`}
         >
           {option.label}

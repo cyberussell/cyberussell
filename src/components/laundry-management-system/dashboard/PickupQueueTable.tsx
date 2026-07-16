@@ -30,7 +30,7 @@ function PickupScheduleForm({ order }: { order: OrderWithDriver }) {
           name="pickupAddress"
           defaultValue={order.pickup_address}
           placeholder="Address"
-          className="mt-1 w-48 rounded-lg border border-blue-100 bg-[#F8FBFF] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
+          className="mt-1 w-48 rounded-lg border border-teal-100 bg-[#F0FDFA] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none"
         />
       </label>
       <label className="block">
@@ -39,13 +39,13 @@ function PickupScheduleForm({ order }: { order: OrderWithDriver }) {
           type="datetime-local"
           name="pickupScheduledAt"
           defaultValue={toDatetimeLocal(order.pickup_scheduled_at)}
-          className="mt-1 rounded-lg border border-blue-100 bg-[#F8FBFF] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
+          className="mt-1 rounded-lg border border-teal-100 bg-[#F0FDFA] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none"
         />
       </label>
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-sm font-medium text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-50"
+        className="rounded-lg border border-teal-100 bg-white px-3 py-1.5 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40 disabled:opacity-50"
       >
         {pending ? 'Saving…' : 'Save'}
       </button>
@@ -95,7 +95,7 @@ export default function PickupQueueTable({
         <Card key={order.id} className="p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <Link href={`${orderBasePath}/${order.id}`} className="font-semibold text-[#2563EB] hover:underline">
+              <Link href={`${orderBasePath}/${order.id}`} className="font-semibold text-[#0D9488] hover:underline">
                 {order.order_number}
               </Link>
               <span className="ml-2 text-sm text-slate-500">
@@ -105,7 +105,7 @@ export default function PickupQueueTable({
             <button
               onClick={() => handleMarkPickedUp(order.id)}
               disabled={pending && markingId === order.id}
-              className="rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] px-3 py-1.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+              className="rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-3 py-1.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
             >
               {pending && markingId === order.id ? 'Marking…' : 'Mark Picked Up'}
             </button>

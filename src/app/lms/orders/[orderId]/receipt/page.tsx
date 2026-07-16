@@ -17,14 +17,14 @@ export default async function ReceiptPage({ params }: { params: Promise<{ orderI
   const qrDataUrl = await getOrderQrDataUrl(order.order_number)
 
   return (
-    <div className="min-h-screen bg-[#F3F8FF] px-4 py-10 print:bg-white print:p-0">
-      <div className="mx-auto max-w-md rounded-2xl border border-blue-100 bg-white p-8 shadow-sm print:rounded-none print:border-0 print:shadow-none">
+    <div className="min-h-screen bg-[#F0FDFA] px-4 py-10 print:bg-white print:p-0">
+      <div className="mx-auto max-w-md rounded-2xl border border-teal-100 bg-white p-8 shadow-sm print:rounded-none print:border-0 print:shadow-none">
         <div className="mb-6 flex items-center justify-between print:hidden">
           <h1 className="text-lg font-semibold text-[#0B1B33]">Receipt</h1>
           <div className="flex items-center gap-2">
             <a
               href={`/lms/orders/${order.id}/receipt/pdf`}
-              className="flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-4 py-2 text-sm font-medium text-[#2563EB] transition hover:border-[#38BDF8]/40"
+              className="flex items-center gap-2 rounded-lg border border-teal-100 bg-white px-4 py-2 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40"
             >
               <Download className="h-4 w-4" />
               PDF

@@ -22,7 +22,7 @@ export default function BusinessSwitcher({
           key={c.id}
           href={`${basePath}?customer=${c.id}`}
           className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-            c.id === activeId ? 'bg-[#0B1B33] text-white' : 'border border-blue-100 bg-white text-slate-500'
+            c.id === activeId ? 'bg-[#0B1B33] text-white' : 'border border-teal-100 bg-white text-slate-500'
           }`}
         >
           {c.business.name}

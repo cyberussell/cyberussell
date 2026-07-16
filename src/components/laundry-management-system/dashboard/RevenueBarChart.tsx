@@ -10,7 +10,7 @@ export default function RevenueBarChart({ series, currency }: { series: SeriesPo
         return (
           <div key={point.date} className="group relative flex-1">
             <div
-              className="w-full rounded-t-sm bg-gradient-to-t from-[#2563EB] to-[#38BDF8] transition-opacity group-hover:opacity-80"
+              className="w-full rounded-t-sm bg-gradient-to-t from-[#0D9488] to-[#22D3EE] transition-opacity group-hover:opacity-80"
               style={{ height: `${heightPct}%` }}
             />
             <div className="pointer-events-none absolute -top-9 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-[#0B1B33] px-2 py-1 text-xs text-white group-hover:block">

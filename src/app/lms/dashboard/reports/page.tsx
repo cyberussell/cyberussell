@@ -45,8 +45,8 @@ function TabLink({ tab, label, active }: { tab: string; label: string; active: b
       href={tabHref(tab)}
       className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
         active
-          ? 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white'
-          : 'border border-blue-100 bg-white text-slate-500 hover:border-[#38BDF8]/40'
+          ? 'bg-gradient-to-r from-[#0D9488] to-[#22D3EE] text-white'
+          : 'border border-teal-100 bg-white text-slate-500 hover:border-[#22D3EE]/40'
       }`}
     >
       {label}
@@ -129,9 +129,9 @@ async function BasicReport({
                     <span className="text-[#0B1B33]">{s.serviceLabel}</span>
                     <span className="text-slate-500">{s.count}</span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-[#F0F6FF]">
+                  <div className="h-2 w-full rounded-full bg-[#CCFBF1]">
                     <div
-                      className="h-2 rounded-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8]"
+                      className="h-2 rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE]"
                       style={{ width: `${(s.count / maxServiceCount) * 100}%` }}
                     />
                   </div>
@@ -231,9 +231,9 @@ async function AdvancedReport({
                   <span className="text-[#0B1B33]">{r.serviceLabel}</span>
                   <span className="text-slate-500">{formatCurrency(r.revenue, currency)}</span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-[#F0F6FF]">
+                <div className="h-2 w-full rounded-full bg-[#CCFBF1]">
                   <div
-                    className="h-2 rounded-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8]"
+                    className="h-2 rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE]"
                     style={{ width: `${(r.revenue / max) * 100}%` }}
                   />
                 </div>
@@ -281,7 +281,7 @@ function SimpleTable({ columns, rows, emptyMessage }: { columns: string[]; rows:
   if (rows.length === 0) return <p className="text-sm text-slate-400">{emptyMessage}</p>
   return (
     <table className="w-full text-left text-sm">
-      <thead className="border-b border-blue-100/60 bg-[#F8FBFF]">
+      <thead className="border-b border-teal-100/60 bg-[#F0FDFA]">
         <tr>
           {columns.map((c) => (
             <th key={c} className="whitespace-nowrap px-4 py-3 font-medium text-slate-500">
@@ -292,7 +292,7 @@ function SimpleTable({ columns, rows, emptyMessage }: { columns: string[]; rows:
       </thead>
       <tbody>
         {rows.map((row, i) => (
-          <tr key={i} className="border-b border-blue-50 last:border-0">
+          <tr key={i} className="border-b border-teal-50 last:border-0">
             {row.map((cell, j) => (
               <td key={j} className="whitespace-nowrap px-4 py-3 text-[#0B1B33]">
                 {cell}

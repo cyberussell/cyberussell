@@ -20,7 +20,7 @@ export default function PriorityQueueTable({
     {
       header: 'Order #',
       cell: (o) => (
-        <Link href={`${orderBasePath}/${o.id}`} className="font-medium text-[#2563EB] hover:underline">
+        <Link href={`${orderBasePath}/${o.id}`} className="font-medium text-[#0D9488] hover:underline">
           {o.order_number}
         </Link>
       ),

@@ -14,7 +14,7 @@ export default function CustomerSearchTable({ customers, basePath }: { customers
       header: 'Name',
       sortValue: (c) => c.full_name.toLowerCase(),
       cell: (c) => (
-        <Link href={`${basePath}/${c.id}`} className="font-medium text-[#2563EB] hover:underline">
+        <Link href={`${basePath}/${c.id}`} className="font-medium text-[#0D9488] hover:underline">
           {c.full_name}
         </Link>
       ),

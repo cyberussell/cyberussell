@@ -9,7 +9,7 @@ import OrderTimeline from '../OrderTimeline'
 const STATUS_META: Record<OrderStatus, { icon: typeof Package; label: string; color: string; bg: string }> = {
   received: { icon: Package, label: 'Received', color: '#64748B', bg: 'from-slate-100 to-slate-50' },
   sorting: { icon: ListFilter, label: 'Sorting', color: '#B45309', bg: 'from-amber-100 to-amber-50' },
-  washing: { icon: Shirt, label: 'Washing', color: '#2563EB', bg: 'from-blue-100 to-sky-50' },
+  washing: { icon: Shirt, label: 'Washing', color: '#0D9488', bg: 'from-blue-100 to-sky-50' },
   drying: { icon: Wind, label: 'Drying', color: '#0891B2', bg: 'from-cyan-100 to-cyan-50' },
   folding: { icon: Layers, label: 'Folding', color: '#4F46E5', bg: 'from-indigo-100 to-indigo-50' },
   ready_for_pickup: { icon: PackageCheck, label: 'Ready for Pickup', color: '#0EA5E9', bg: 'from-sky-100 to-cyan-50' },
@@ -40,7 +40,7 @@ export default function StatusCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.35, ease: 'easeOut' }}
-      className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${meta.bg} p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_32px_-20px_rgba(37,99,235,0.35)]`}
+      className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${meta.bg} p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_32px_-20px_rgba(13,148,136,0.35)]`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">

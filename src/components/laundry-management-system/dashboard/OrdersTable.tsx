@@ -61,7 +61,7 @@ export default function OrdersTable({
       header: 'Order #',
       sortValue: (o) => o.order_number,
       cell: (o) => (
-        <Link href={`${basePath}/${o.id}`} className="font-medium text-[#2563EB] hover:underline">
+        <Link href={`${basePath}/${o.id}`} className="font-medium text-[#0D9488] hover:underline">
           {o.order_number}
         </Link>
       ),
@@ -95,7 +95,7 @@ export default function OrdersTable({
           href={`/lms/orders/${o.id}/receipt`}
           title="Print receipt"
           aria-label={`Print receipt for order ${o.order_number}`}
-          className="inline-flex items-center gap-1 text-slate-400 hover:text-[#2563EB] transition"
+          className="inline-flex items-center gap-1 text-slate-400 hover:text-[#0D9488] transition"
         >
           <Printer className="h-4 w-4" />
         </Link>

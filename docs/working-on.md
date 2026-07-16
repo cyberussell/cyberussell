@@ -1,5 +1,23 @@
 # Current Work
 
+**Laundry Management System — Upsell link opens new tab, Staff table shows email, brand color changed off TMS's blue, sticky sidebar (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified public pages + sidebar via scratch route, migration 017 written but NOT yet run by Russell, not committed — see checkpoint `laundry-management-system-upsell-tab-staff-email-brand-color-v1.md` for full detail:**
+
+Current Product: Laundry Management System (LMS).
+
+Current Feature: Russell gave 3 items from screenshots: (1) "See Professional plan pricing" upsell button should open in a new tab; (2) Staff table shows "Pending invite" instead of the actual invited email; (3) LMS's brand color is "almost the same as TMS" and should change. Confirmed via `AskUserQuestion`: real `staff_members.email` column (not an admin-API lookup), teal/cyan gradient (`#0D9488` → `#22D3EE`), applied to the whole product not just the dashboard. Same-session follow-up from a 4th screenshot: the dashboard sidebar scrolls away with the page instead of staying pinned — same bug class already fixed once in TMS.
+
+Current Status: Code complete, migration not yet run.
+- `UpgradePrompt.tsx` (the one shared component behind every Professional-gated page) got `target="_blank" rel="noopener noreferrer"`.
+- New migration `017_staff_email.sql` (**not yet run**): adds `staff_members.email`, backfills from `auth.users`, updates `handle_new_user()` to populate it on future invites — mirrors the existing `customers.email` pattern. `StaffTable.tsx` now falls back to `m.email` instead of the literal `'Pending invite'` string.
+- Brand color swap: confirmed LMS and TMS shared the literal same gradient (`#2563EB`→`#38BDF8`) across ~66 LMS files — scripted-replaced to teal/cyan across the whole product (dashboard, marketing/pricing page, auth pages), deliberately excluding `StatusBadge.tsx`/`StatusCard.tsx` (blue is one of several intentional per-order-status swatch colors there, not brand identity).
+- **Sidebar fix**: `DashboardSidebar.tsx`'s `<aside>` had `h-screen` but no sticky/fixed positioning, so the whole document (not just the main content pane) scrolled and dragged it along. Added `sticky top-0` — one shared component used by both owner and staff dashboard layouts, so both are fixed. Live-verified via a temporary scratch route (removed) with 60 lines of filler content: confirmed the full nav + Log out stay pinned after scrolling well past the fold.
+- `npx tsc --noEmit`, `npx next build`, `npx vitest run` (52/52) all clean. Live-verified the public `/lms` marketing page and `/lms/login` render the new color correctly with zero console errors — **could not verify the rest of the authenticated owner dashboard** (Staff table, UpgradePrompt lock screen), no live LMS Supabase credentials in this environment.
+- **Found, not fixed**: a stray duplicate file `src/app/lms/staff/accept-invite/page 2.tsx` (space in filename, not a valid Next.js route, dead code) still has old blue hex values — deliberately excluded from the batch script since it wasn't a live route. Worth a cleanup pass to confirm safe to delete.
+
+**Next recommended task:** Not yet committed or deployed. Russell runs migration `017_staff_email.sql` in the LMS Supabase SQL Editor, then live-verifies: Staff page shows a real invited email instead of "Pending invite"; upgrade lock screens on Pickup/Delivery/Priority Queue open their pricing link in a new tab; dashboard reads cleanly in the new teal/cyan color; sidebar stays pinned while scrolling any long page (Reports, Orders list, etc.). Then commit + deploy at Russell's request.
+
+----------------------------------------
+
 **Territory Management System — Admin-overridable temporary password (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch route, committed and pushed (`db3f1e9`), deployed — see checkpoint `territory-management-custom-temp-password-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

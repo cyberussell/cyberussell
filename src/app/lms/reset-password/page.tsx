@@ -60,21 +60,21 @@ export default function ResetPasswordPage() {
       <main className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <Link href="/lms" className="block text-center text-2xl font-bold text-white mb-2">
-            Laundry <span className="text-[#38BDF8]">Management System</span>
+            Laundry <span className="text-[#22D3EE]">Management System</span>
           </Link>
           <p className="text-center text-white/40 mb-8 text-sm">Set a new password.</p>
 
           {success ? (
-            <div className="rounded-xl border border-[#38BDF8]/30 bg-[#38BDF8]/10 p-6 text-center">
-              <CircleCheck className="mx-auto mb-2 h-8 w-8 text-[#38BDF8]" aria-hidden />
-              <p className="text-[#38BDF8] font-medium">Password updated</p>
+            <div className="rounded-xl border border-[#22D3EE]/30 bg-[#22D3EE]/10 p-6 text-center">
+              <CircleCheck className="mx-auto mb-2 h-8 w-8 text-[#22D3EE]" aria-hidden />
+              <p className="text-[#22D3EE] font-medium">Password updated</p>
               <p className="text-white/60 text-sm mt-2">Redirecting you to log in…</p>
             </div>
           ) : expired && !ready ? (
             <div className="rounded-xl border border-amber-400/30 bg-amber-500/10 p-6 text-center">
               <p className="text-amber-200 font-medium">This reset link is invalid or has expired.</p>
               <p className="text-white/60 text-sm mt-2">
-                <Link href="/lms/forgot-password" className="underline text-[#38BDF8]">
+                <Link href="/lms/forgot-password" className="underline text-[#22D3EE]">
                   Request a new one
                 </Link>
                 .
@@ -91,7 +91,7 @@ export default function ResetPasswordPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="8+ characters"
-                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-white/30 focus:border-[#38BDF8] focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-white/30 focus:border-[#22D3EE] focus:outline-none"
                 />
               </label>
               <label className="block">
@@ -102,14 +102,14 @@ export default function ResetPasswordPage() {
                   minLength={8}
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white focus:border-[#38BDF8] focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white focus:border-[#22D3EE] focus:outline-none"
                 />
               </label>
               {error && <p className="text-sm text-red-400">{error}</p>}
               <button
                 type="submit"
                 disabled={pending || !ready}
-                className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 font-semibold text-white hover:brightness-110 hover:shadow-[0_0_20px_rgba(56,189,248,0.35)] disabled:opacity-50 transition-all"
+                className="w-full rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white hover:brightness-110 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] disabled:opacity-50 transition-all"
               >
                 {!ready ? 'Verifying reset link…' : pending ? 'Updating…' : 'Update password'}
               </button>

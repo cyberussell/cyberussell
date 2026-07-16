@@ -55,9 +55,9 @@ export default function DashboardSidebar({
   const navItems = buildNavItems(basePath).filter((item) => hasPermission(role, item.permission))
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-blue-100/60 bg-white">
-      <div className="flex items-center gap-3 border-b border-blue-100/60 px-6 py-5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#38BDF8] text-sm font-bold text-white">
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-teal-100/60 bg-white">
+      <div className="flex items-center gap-3 border-b border-teal-100/60 px-6 py-5">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0D9488] to-[#22D3EE] text-sm font-bold text-white">
           {businessName.charAt(0).toUpperCase()}
         </div>
         <div className="min-w-0">
@@ -75,8 +75,8 @@ export default function DashboardSidebar({
               href={item.href}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                 active
-                  ? 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white shadow-[0_4px_12px_-2px_rgba(37,99,235,0.35)]'
-                  : 'text-slate-600 hover:bg-[#F0F6FF] hover:text-[#0B1B33]'
+                  ? 'bg-gradient-to-r from-[#0D9488] to-[#22D3EE] text-white shadow-[0_4px_12px_-2px_rgba(13,148,136,0.35)]'
+                  : 'text-slate-600 hover:bg-[#CCFBF1] hover:text-[#0B1B33]'
               }`}
             >
               <item.icon className="h-5 w-5" />
@@ -84,7 +84,7 @@ export default function DashboardSidebar({
               {locked && (
                 <span
                   className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-wide ${
-                    active ? 'bg-white/20 text-white' : 'bg-[#F0F6FF] text-[#2563EB]'
+                    active ? 'bg-white/20 text-white' : 'bg-[#CCFBF1] text-[#0D9488]'
                   }`}
                 >
                   PRO
@@ -94,10 +94,10 @@ export default function DashboardSidebar({
           )
         })}
       </nav>
-      <form action={signOut} className="border-t border-blue-100/60 p-3">
+      <form action={signOut} className="border-t border-teal-100/60 p-3">
         <button
           type="submit"
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-[#F0F6FF] hover:text-[#0B1B33]"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-[#CCFBF1] hover:text-[#0B1B33]"
         >
           <LogOut className="h-5 w-5" />
           Log out

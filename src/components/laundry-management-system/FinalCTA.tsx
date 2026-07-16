@@ -17,7 +17,7 @@ export default function FinalCTA() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="relative rounded-[24px] overflow-hidden bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] border border-white/20 px-8 md:px-14 py-16 md:py-20 text-center"
+        className="relative rounded-[24px] overflow-hidden bg-gradient-to-br from-[#0D9488] to-[#06B6D4] border border-white/20 px-8 md:px-14 py-16 md:py-20 text-center"
       >
         <CornerBubbleAccent />
         <h2 className="font-sans text-[28px] md:text-[42px] font-bold text-white mb-4 leading-tight max-w-2xl mx-auto">
@@ -31,7 +31,7 @@ export default function FinalCTA() {
             href="https://www.cyberussell.com/portfolio/lms"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_24px_rgba(56,189,248,0.4)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#0D9488] to-[#22D3EE] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_24px_rgba(34,211,238,0.4)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-7 py-3.5 rounded-xl"
           >
             View Laundry Portfolio <ArrowRight size={16} />
           </a>

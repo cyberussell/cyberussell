@@ -16,9 +16,9 @@ export default function Hero() {
 
       <div className="max-w-4xl mx-auto text-center">
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}>
-          <span className="inline-flex items-center gap-2 bg-white/70 border border-[#38BDF8]/30 rounded-full px-4 py-1.5 mb-8">
-            <Sparkles size={13} className="text-[#0284C7]" />
-            <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0369A1] uppercase tracking-[2px]">
+          <span className="inline-flex items-center gap-2 bg-white/70 border border-[#22D3EE]/30 rounded-full px-4 py-1.5 mb-8">
+            <Sparkles size={13} className="text-[#0891B2]" />
+            <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0F766E] uppercase tracking-[2px]">
               Laundry Management System
             </span>
           </span>
@@ -55,7 +55,7 @@ export default function Hero() {
         </motion.p>
 
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4} className="flex justify-center mb-10">
-          <span className="inline-flex items-center gap-2 bg-white/70 border border-[#2563EB]/20 rounded-full px-5 py-2.5">
+          <span className="inline-flex items-center gap-2 bg-white/70 border border-[#0D9488]/20 rounded-full px-5 py-2.5">
             <span className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#0B1B33]">
               Starting at ₱399/month <span className="text-[#0B1B33]/45 font-medium">per branch</span>
             </span>
@@ -67,7 +67,7 @@ export default function Hero() {
             href="https://www.cyberussell.com/portfolio/lms"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_24px_rgba(56,189,248,0.4)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-8 py-4 rounded-xl"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#0D9488] to-[#22D3EE] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_24px_rgba(34,211,238,0.4)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-8 py-4 rounded-xl"
           >
             View Laundry Portfolio <ArrowRight size={16} />
           </a>

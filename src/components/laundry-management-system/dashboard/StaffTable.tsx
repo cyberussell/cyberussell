@@ -7,7 +7,7 @@ type StaffRow = StaffMember & { profile: { full_name: string } | null }
 
 export default function StaffTable({ staff }: { staff: StaffRow[] }) {
   const columns: DataTableColumn<StaffRow>[] = [
-    { header: 'Name', cell: (m) => m.profile?.full_name || 'Pending invite' },
+    { header: 'Name', cell: (m) => m.profile?.full_name || m.email },
     { header: 'Title', cell: (m) => m.title || '—' },
     {
       header: 'Status',

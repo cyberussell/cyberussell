@@ -16,7 +16,7 @@ import FilterPills from './FilterPills'
 import TableSearchInput from './TableSearchInput'
 
 const inputClass =
-  'w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none'
+  'w-full rounded-lg border border-teal-100 bg-[#F0FDFA] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none'
 
 type View = 'all' | 'restock'
 
@@ -137,7 +137,7 @@ export default function InventoryManager({ items }: { items: InventoryItem[] }) 
           <button
             type="submit"
             disabled={pending}
-            className="col-span-2 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50 sm:col-span-1"
+            className="col-span-2 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50 sm:col-span-1"
           >
             <Plus className="h-4 w-4" />
             Add
@@ -177,7 +177,7 @@ export default function InventoryManager({ items }: { items: InventoryItem[] }) 
             <h3 className="mb-2 px-1 text-sm font-semibold text-[#0B1B33]">{INVENTORY_CATEGORY_LABELS[group.category]}</h3>
             <Card className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-blue-100/60 bg-[#F8FBFF]">
+                <thead className="border-b border-teal-100/60 bg-[#F0FDFA]">
                   <tr>
                     <th className="px-4 py-3 font-medium text-slate-500">Name</th>
                     <th className="px-4 py-3 font-medium text-slate-500">Category</th>
@@ -258,7 +258,7 @@ function InventoryRow({
 
   if (editing) {
     return (
-      <tr className="border-b border-blue-50 last:border-0">
+      <tr className="border-b border-teal-50 last:border-0">
         <td className="px-4 py-2">
           <input value={draft.name} onChange={(e) => setDraft((v) => ({ ...v, name: e.target.value }))} className={inputClass} />
         </td>
@@ -316,7 +316,7 @@ function InventoryRow({
   }
 
   return (
-    <tr className="border-b border-blue-50 last:border-0 hover:bg-[#F8FBFF]/60">
+    <tr className="border-b border-teal-50 last:border-0 hover:bg-[#F0FDFA]/60">
       <td className="px-4 py-3 text-[#0B1B33]">{item.name}</td>
       <td className="px-4 py-3 text-slate-500">{INVENTORY_CATEGORY_LABELS[item.category]}</td>
       <td className="px-4 py-3 text-slate-500">{item.unit}</td>
@@ -330,7 +330,7 @@ function InventoryRow({
           <button
             onClick={onEdit}
             aria-label={`Edit ${item.name}`}
-            className="rounded-md p-1.5 text-slate-400 hover:bg-[#F0F6FF] hover:text-[#2563EB]"
+            className="rounded-md p-1.5 text-slate-400 hover:bg-[#CCFBF1] hover:text-[#0D9488]"
           >
             <Pencil className="h-4 w-4" />
           </button>

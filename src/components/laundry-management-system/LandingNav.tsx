@@ -17,7 +17,7 @@ export default function LandingNav() {
     <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-[#0B1B33]/10">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 md:px-10 py-4" aria-label="Main">
         <Link href="/lms" className="font-sans text-[17px] font-bold text-[#0B1B33] tracking-tight">
-          Laundry Management <span className="text-[#0284C7]">System</span>
+          Laundry Management <span className="text-[#0891B2]">System</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-7">
@@ -41,7 +41,7 @@ export default function LandingNav() {
           </Link>
           <Link
             href="/lms/signup"
-            className="inline-flex items-center justify-center bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_20px_rgba(56,189,248,0.35)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[13.5px] px-5 py-2.5 rounded-lg"
+            className="inline-flex items-center justify-center bg-gradient-to-r from-[#0D9488] to-[#22D3EE] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[13.5px] px-5 py-2.5 rounded-lg"
           >
             Start Now
           </Link>
@@ -49,7 +49,7 @@ export default function LandingNav() {
 
         <button
           type="button"
-          className="md:hidden rounded-lg p-2 text-[#0B1B33]/70 hover:bg-[#0B1B33]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38BDF8]"
+          className="md:hidden rounded-lg p-2 text-[#0B1B33]/70 hover:bg-[#0B1B33]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]"
           aria-expanded={open}
           aria-controls="lms-mobile-menu"
           aria-label={open ? "Close menu" : "Open menu"}
@@ -84,7 +84,7 @@ export default function LandingNav() {
             <Link
               href="/lms/signup"
               onClick={() => setOpen(false)}
-              className="mt-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] px-3 py-2.5 text-center font-[family-name:var(--font-inter)] font-bold text-[14px] text-white"
+              className="mt-2 rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-3 py-2.5 text-center font-[family-name:var(--font-inter)] font-bold text-[14px] text-white"
             >
               Start Now
             </Link>

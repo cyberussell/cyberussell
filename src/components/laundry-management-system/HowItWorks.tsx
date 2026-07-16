@@ -20,7 +20,7 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="px-6 md:px-10 py-20 max-w-5xl mx-auto scroll-mt-24">
       <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-14">
-        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0369A1] uppercase tracking-[3px]">How It Works</span>
+        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0F766E] uppercase tracking-[3px]">How It Works</span>
         <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-[#0B1B33] mt-2">From Booking to Pickup, Fully Tracked</h2>
       </motion.div>
 
@@ -40,8 +40,8 @@ export default function HowItWorks() {
               {i < STEPS.length - 1 && (
                 <div className="hidden lg:block absolute top-7 left-[calc(50%+32px)] w-[calc(100%-64px)] h-px bg-[#0B1B33]/10" />
               )}
-              <div className="relative z-10 w-14 h-14 rounded-2xl bg-white/80 backdrop-blur-md border border-[#38BDF8]/25 shadow-sm flex items-center justify-center">
-                <Icon size={22} className="text-[#2563EB]" strokeWidth={1.6} />
+              <div className="relative z-10 w-14 h-14 rounded-2xl bg-white/80 backdrop-blur-md border border-[#22D3EE]/25 shadow-sm flex items-center justify-center">
+                <Icon size={22} className="text-[#0D9488]" strokeWidth={1.6} />
               </div>
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0B1B33]/35 uppercase tracking-[2px]">
                 Step {i + 1}

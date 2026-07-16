@@ -24,7 +24,7 @@ export default function FAQ() {
   return (
     <section id="faq" className="px-6 md:px-10 py-20 max-w-2xl mx-auto scroll-mt-24">
       <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-14">
-        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0369A1] uppercase tracking-[3px]">FAQ</span>
+        <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0F766E] uppercase tracking-[3px]">FAQ</span>
         <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-[#0B1B33] mt-2">Frequently Asked Questions</h2>
       </motion.div>
 
@@ -39,7 +39,7 @@ export default function FAQ() {
               whileInView="show"
               viewport={{ once: true }}
               custom={i}
-              className="bg-white/70 backdrop-blur-md border border-[#38BDF8]/20 rounded-2xl overflow-hidden shadow-sm"
+              className="bg-white/70 backdrop-blur-md border border-[#22D3EE]/20 rounded-2xl overflow-hidden shadow-sm"
             >
               <button
                 type="button"

@@ -51,12 +51,12 @@ export default function BusinessHoursInput({
 
   const labelClass = light ? 'text-sm text-slate-600' : 'text-sm text-white/60'
   const containerClass = light
-    ? 'mt-1 space-y-1.5 rounded-lg border border-blue-100 bg-[#F8FBFF] p-3'
+    ? 'mt-1 space-y-1.5 rounded-lg border border-teal-100 bg-[#F0FDFA] p-3'
     : 'mt-1 space-y-1.5 rounded-lg border border-white/10 bg-white/5 p-3'
   const dayLabelClass = light ? 'w-9 text-slate-500' : 'w-9 text-white/60'
   const checkboxLabelClass = light ? 'flex items-center gap-1.5 text-slate-400' : 'flex items-center gap-1.5 text-white/50'
   const timeInputClass = light
-    ? 'rounded border border-blue-100 bg-white px-1.5 py-0.5 text-[#0B1B33]'
+    ? 'rounded border border-teal-100 bg-white px-1.5 py-0.5 text-[#0B1B33]'
     : 'rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-white'
   const dashClass = light ? 'text-slate-300' : 'text-white/30'
 
@@ -74,7 +74,7 @@ export default function BusinessHoursInput({
                   type="checkbox"
                   checked={day.closed}
                   onChange={(e) => updateDay(key, { closed: e.target.checked })}
-                  className="accent-[#38BDF8]"
+                  className="accent-[#22D3EE]"
                 />
                 Closed
               </label>

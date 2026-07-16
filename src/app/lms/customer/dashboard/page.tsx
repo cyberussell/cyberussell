@@ -43,8 +43,8 @@ export default async function CustomerHomePage({
       </p>
 
       {activeOrders.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-blue-200 bg-white/60 p-8 text-center">
-          <Sparkles className="mx-auto mb-2 h-6 w-6 text-[#38BDF8]" />
+        <div className="rounded-3xl border border-dashed border-teal-200 bg-white/60 p-8 text-center">
+          <Sparkles className="mx-auto mb-2 h-6 w-6 text-[#22D3EE]" />
           <p className="text-sm text-slate-500">No active orders right now at {active.business.name}.</p>
         </div>
       ) : (
@@ -57,7 +57,7 @@ export default async function CustomerHomePage({
 
       <Link
         href={`${BASE_PATH}/orders?customer=${active.id}`}
-        className="mt-6 block text-center text-sm font-semibold text-[#2563EB]"
+        className="mt-6 block text-center text-sm font-semibold text-[#0D9488]"
       >
         View order history →
       </Link>

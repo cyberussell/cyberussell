@@ -4,7 +4,7 @@
 // <input>/<select>/<textarea> to form state, so wrapping it in yet another
 // component would add indirection without removing any real duplication.
 export const inputClass =
-  'w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] placeholder:text-slate-400 focus:border-[#38BDF8] focus:outline-none'
+  'w-full rounded-lg border border-teal-100 bg-[#F0FDFA] px-3 py-2 text-[#0B1B33] placeholder:text-slate-400 focus:border-[#22D3EE] focus:outline-none'
 
 export default function FormField({
   label,

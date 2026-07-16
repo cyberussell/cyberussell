@@ -14,10 +14,10 @@ export default function NotificationsPanel({ events }: { events: NotificationEve
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Notifications"
-        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-blue-100/60 bg-white shadow-sm transition hover:border-[#38BDF8]/40"
+        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-teal-100/60 bg-white shadow-sm transition hover:border-[#22D3EE]/40"
       >
         <Bell className="h-5 w-5 text-[#0B1B33]" />
-        {events.length > 0 && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#2563EB]" />}
+        {events.length > 0 && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#0D9488]" />}
       </button>
 
       <AnimatePresence>
@@ -55,7 +55,7 @@ export default function NotificationsPanel({ events }: { events: NotificationEve
                       initial={{ opacity: 0, x: -12 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.04 }}
-                      className="rounded-2xl bg-[#F8FBFF] p-3.5"
+                      className="rounded-2xl bg-[#F0FDFA] p-3.5"
                     >
                       <p className="text-sm text-[#0B1B33]">{event.message}</p>
                       <p className="mt-1 text-xs text-slate-400">{new Date(event.timestamp).toLocaleString('en-US')}</p>

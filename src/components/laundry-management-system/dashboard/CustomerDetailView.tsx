@@ -35,7 +35,7 @@ export default function CustomerDetailView({
     {
       header: 'Order #',
       cell: (o) => (
-        <Link href={`${orderBasePath}/${o.id}`} className="font-medium text-[#2563EB] hover:underline">
+        <Link href={`${orderBasePath}/${o.id}`} className="font-medium text-[#0D9488] hover:underline">
           {o.order_number}
         </Link>
       ),
@@ -58,7 +58,7 @@ export default function CustomerDetailView({
           <Field label="Total orders" value={orders.length} />
         </div>
         {customer.notes && (
-          <div className="mt-4 border-t border-blue-50 pt-4">
+          <div className="mt-4 border-t border-teal-50 pt-4">
             <p className="text-xs font-medium text-slate-400">Notes</p>
             <p className="mt-1 text-sm text-[#0B1B33]">{customer.notes}</p>
           </div>

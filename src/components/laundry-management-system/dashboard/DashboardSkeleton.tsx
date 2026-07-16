@@ -1,7 +1,7 @@
 import Card from './Card'
 
 function Shimmer({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse rounded-md bg-blue-100/60 ${className}`} />
+  return <div className={`animate-pulse rounded-md bg-teal-100/60 ${className}`} />
 }
 
 export default function DashboardSkeleton() {
@@ -16,11 +16,11 @@ export default function DashboardSkeleton() {
       </div>
 
       <Card className="overflow-hidden">
-        <div className="border-b border-blue-100/60 bg-[#F8FBFF] px-4 py-3">
+        <div className="border-b border-teal-100/60 bg-[#F0FDFA] px-4 py-3">
           <Shimmer className="h-4 w-full max-w-md" />
         </div>
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-4 border-b border-blue-50 px-4 py-4 last:border-0">
+          <div key={i} className="flex items-center gap-4 border-b border-teal-50 px-4 py-4 last:border-0">
             <Shimmer className="h-4 w-24" />
             <Shimmer className="h-4 w-32" />
             <Shimmer className="h-4 w-20" />

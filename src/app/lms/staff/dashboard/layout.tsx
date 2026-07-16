@@ -8,7 +8,7 @@ export default async function StaffDashboardLayout({ children }: { children: Rea
   const { business } = await requireStaffAccess()
 
   return (
-    <div className="flex min-h-screen bg-[#F3F8FF]">
+    <div className="flex min-h-screen bg-[#F0FDFA]">
       <DashboardSidebar
         businessName={business.name}
         role="staff"

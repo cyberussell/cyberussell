@@ -49,8 +49,8 @@ export default async function CustomerOrdersPage({
             href={`${BASE_PATH}/orders?customer=${active.id}${f.key === 'all' ? '' : `&filter=${f.key}`}`}
             className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
               activeFilter === f.key
-                ? 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white'
-                : 'border border-blue-100 bg-white text-slate-500'
+                ? 'bg-gradient-to-r from-[#0D9488] to-[#22D3EE] text-white'
+                : 'border border-teal-100 bg-white text-slate-500'
             }`}
           >
             {f.label}
@@ -59,7 +59,7 @@ export default async function CustomerOrdersPage({
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-blue-200 bg-white/60 p-8 text-center">
+        <div className="rounded-3xl border border-dashed border-teal-200 bg-white/60 p-8 text-center">
           <p className="text-sm text-slate-500">No orders match this filter.</p>
         </div>
       ) : (

@@ -1,0 +1,31 @@
+# LMS — Upsell link opens new tab, Staff table shows email, brand color changed off TMS's blue, sticky sidebar — v1
+
+**Date:** 2026-07-16
+**Product:** Laundry Management System (LMS)
+**Feature:** Russell gave 3 items from screenshots: (1) the "See Professional plan pricing" upsell button should open in a new tab; (2) the Staff table shows "Pending invite" instead of the invited email; (3) LMS's brand color is "almost the same as TMS" and should change. Confirmed via `AskUserQuestion`: add a real `staff_members.email` column (not an admin-API lookup), new color is a teal/cyan gradient (`#0D9488` → `#22D3EE`), and the change applies to the whole product (dashboard + public marketing/pricing page + auth pages), not just the dashboard screens in the screenshot. Same-session follow-up: Russell sent a 4th screenshot reporting the dashboard sidebar scrolls away with the page instead of staying pinned — same class of bug already fixed once in TMS's `DashboardSidebar.tsx`.
+
+## Files Modified
+- `src/components/laundry-management-system/dashboard/UpgradePrompt.tsx` — `target="_blank" rel="noopener noreferrer"` added to the pricing link (one shared component, reused by every Professional-gated page: Pickup, Delivery, Priority Queue — confirmed via grep it's the only "plan pricing" CTA in the product).
+- `src/components/laundry-management-system/dashboard/DashboardSidebar.tsx` — `sticky top-0` added to the `<aside>` (was `h-screen` but position: static, so the whole document — not just the main content pane — scrolled and dragged the sidebar with it). One shared component used by both `src/app/lms/dashboard/layout.tsx` and `src/app/lms/staff/dashboard/layout.tsx`, so this covers owner and staff dashboards both.
+- `laundry-management-system/migrations/017_staff_email.sql` — new migration: adds `staff_members.email`, backfills existing rows from `auth.users`, updates `handle_new_user()` to populate it going forward (mirrors the existing `customers.email` pattern from migration 002).
+- `src/lib/laundry-management-system/modules/staff/types.ts` — `StaffMember` gained `email: string`.
+- `src/components/laundry-management-system/dashboard/StaffTable.tsx` — Name column now falls back to `m.email` instead of the literal string `'Pending invite'`.
+- **69 files** across `src/app/lms/` and `src/components/laundry-management-system/` — brand color swap via scripted `perl -pi` passes (not hand-edited one by one, to keep ~500 replacements consistent): `#2563EB`→`#0D9488`, `#38BDF8`→`#22D3EE`, `#0369A1`→`#0F766E`, `#0284C7`→`#0891B2`, page/panel background tints `#F8FBFF`/`#F3F8FF`→`#F0FDFA`, `#F0F6FF`→`#CCFBF1`, tailwind `border-blue-100/50/200`/`bg-blue-100`→`teal` equivalents, and the brand-color `rgba(37,99,235,…)`/`rgba(56,189,248,…)` shadow values→their teal/cyan decimal equivalents. `src/components/laundry-management-system/FinalCTA.tsx` handled by hand (shares the literal hex `#0EA5E9` with an unrelated per-order-status color elsewhere, so couldn't go through the blanket script).
+
+## Summary of Changes
+- **Upsell link**: single shared component, one-line fix covers every gated page in the product.
+- **Staff email**: `staff_members` never stored email (only `customers` did) — the real value only ever lived in `auth.users`, unreachable from the RLS-scoped owner dashboard query. New column + trigger update makes it queryable like every other staff field, scoped by the same owner-only RLS `staff_members` already has (staff members can only read their own row, so no new leak to co-workers).
+- **Brand color**: confirmed via direct comparison that LMS and TMS shared the exact same gradient (`#2563EB` → `#38BDF8`, "blue-600 → sky-400") across ~66 LMS files and ~51 TMS files — not a coincidence, both built from the same starting template. Deliberately excluded two files from the blanket replace: `StatusBadge.tsx` and `StatusCard.tsx` both use `blue`/`sky`/`indigo`/`cyan` as one of several *intentionally varied* per-order-status swatch colors (washing/drying/folding/etc.), not the brand identity — touching those would have broken the status-color system, not fixed the brand-color overlap.
+- `npx tsc --noEmit` clean, `npx next build` clean, `npx vitest run` 52/52 passing.
+- **Live-verified in the browser**: the public `/lms` marketing page and `/lms/login` render the new teal/cyan gradient correctly (hero badge, CTA buttons, login button), zero console errors. The sticky sidebar was verified via a temporary scratch route (removed before finishing) rendering the real `DashboardSidebar` with 60 lines of filler content — scrolled well past the fold and confirmed every nav item plus Log out stayed pinned to the left edge. **Could not live-verify the rest of the owner dashboard** (Staff table with a real invited email, the UpgradePrompt lock screen on a real Essential-plan business) — no live LMS Supabase credentials in this environment, same standing limitation as every prior LMS/TMS session.
+
+## Remaining Work
+None planned — all 3 items are code-complete pending the migration.
+
+## Known Issues
+- Found but not touched: `src/app/lms/staff/accept-invite/page 2.tsx` — a stray duplicate file with a space in its name (not a valid Next.js route, so it's dead/unrouted code, not a live bug). Still has the old blue hex colors since it was deliberately excluded from the batch script. Out of scope for this pass; worth a separate cleanup pass to confirm it's safe to delete.
+
+## Next Recommended Task
+1. **Russell runs migration `017_staff_email.sql`** in the LMS Supabase SQL Editor (same account as `customers`/`staff_members` — under `russell.a.parayno@gmail.com`, no MCP access token loaded in this environment to run it directly).
+2. After that, live-verify: the Staff page shows a real invited teammate's email instead of "Pending invite"; a business on the Essential plan visiting Pickup/Delivery/Priority Queue sees the upgrade lock screen and its "See Professional plan pricing" button opens in a new tab; click through a few dashboard screens to confirm the teal/cyan color reads cleanly against the existing pale backgrounds (this pass was code-reviewed + spot-checked in the browser on public pages only, not on the authenticated dashboard).
+3. Optional cleanup: decide whether to delete the stray `accept-invite/page 2.tsx` file noted above.

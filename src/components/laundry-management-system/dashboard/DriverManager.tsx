@@ -9,7 +9,7 @@ import type { Driver } from '@/lib/laundry-management-system/modules/drivers/typ
 import Card from './Card'
 
 const inputClass =
-  'w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none'
+  'w-full rounded-lg border border-teal-100 bg-[#F0FDFA] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none'
 
 // Owner-only driver roster CRUD, embedded in the Delivery Management page —
 // same shape as InventoryManager (add form + editable table rows).
@@ -84,7 +84,7 @@ export default function DriverManager({ drivers }: { drivers: Driver[] }) {
           <button
             type="submit"
             disabled={pending}
-            className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Add
@@ -99,7 +99,7 @@ export default function DriverManager({ drivers }: { drivers: Driver[] }) {
       ) : (
         <Card className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-blue-100/60 bg-[#F8FBFF]">
+            <thead className="border-b border-teal-100/60 bg-[#F0FDFA]">
               <tr>
                 <th className="px-4 py-3 font-medium text-slate-500">Name</th>
                 <th className="px-4 py-3 font-medium text-slate-500">Phone</th>
@@ -174,7 +174,7 @@ function DriverRow({
 
   if (editing) {
     return (
-      <tr className="border-b border-blue-50 last:border-0">
+      <tr className="border-b border-teal-50 last:border-0">
         <td className="px-4 py-2">
           <input value={draft.name} onChange={(e) => setDraft((v) => ({ ...v, name: e.target.value }))} className={inputClass} />
         </td>
@@ -218,7 +218,7 @@ function DriverRow({
   }
 
   return (
-    <tr className="border-b border-blue-50 last:border-0 hover:bg-[#F8FBFF]/60">
+    <tr className="border-b border-teal-50 last:border-0 hover:bg-[#F0FDFA]/60">
       <td className="px-4 py-3 text-[#0B1B33]">{driver.name}</td>
       <td className="px-4 py-3 text-slate-500">{driver.phone || '—'}</td>
       <td className="px-4 py-3 text-slate-500">{driver.vehicle_info || '—'}</td>
@@ -232,7 +232,7 @@ function DriverRow({
           <button
             onClick={onEdit}
             aria-label={`Edit ${driver.name}`}
-            className="rounded-md p-1.5 text-slate-400 hover:bg-[#F0F6FF] hover:text-[#2563EB]"
+            className="rounded-md p-1.5 text-slate-400 hover:bg-[#CCFBF1] hover:text-[#0D9488]"
           >
             <Pencil className="h-4 w-4" />
           </button>

@@ -29,13 +29,13 @@ function DeliveryScheduleForm({ orderId, deliveryScheduledAt }: { orderId: strin
           type="datetime-local"
           name="deliveryScheduledAt"
           defaultValue={toDatetimeLocal(deliveryScheduledAt)}
-          className="mt-1 rounded-lg border border-blue-100 bg-[#F8FBFF] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
+          className="mt-1 rounded-lg border border-teal-100 bg-[#F0FDFA] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none"
         />
       </label>
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-sm font-medium text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-50"
+        className="rounded-lg border border-teal-100 bg-white px-3 py-1.5 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40 disabled:opacity-50"
       >
         {pending ? 'Saving…' : 'Save'}
       </button>
@@ -69,7 +69,7 @@ export default function DeliveryQueueTable({
         <Card key={order.id} className="p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <Link href={`${orderBasePath}/${order.id}`} className="font-semibold text-[#2563EB] hover:underline">
+              <Link href={`${orderBasePath}/${order.id}`} className="font-semibold text-[#0D9488] hover:underline">
                 {order.order_number}
               </Link>
               <span className="ml-2 text-sm text-slate-500">

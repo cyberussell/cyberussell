@@ -4,6 +4,7 @@ export interface StaffMember {
   branch_id: string | null
   profile_id: string
   title: string
+  email: string
   active: boolean
   created_at: string
 }

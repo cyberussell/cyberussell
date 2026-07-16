@@ -48,7 +48,7 @@ export default async function OrderDetailView({
         action={
           <Link
             href={receiptHref}
-            className="flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-4 py-2 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+            className="flex items-center gap-2 rounded-lg border border-teal-100 bg-white px-4 py-2 text-sm font-semibold text-[#0D9488] transition hover:border-[#22D3EE]/40"
           >
             <Printer className="h-4 w-4" />
             Receipt
@@ -82,12 +82,12 @@ export default async function OrderDetailView({
           </div>
           <div className="flex shrink-0 flex-col items-center gap-1 self-center sm:self-start">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={qrDataUrl} alt={`QR code for order ${order.order_number}`} className="h-28 w-28 rounded-lg border border-blue-100" />
+            <img src={qrDataUrl} alt={`QR code for order ${order.order_number}`} className="h-28 w-28 rounded-lg border border-teal-100" />
             <p className="text-center text-[11px] text-slate-400">Scan to look up</p>
           </div>
         </div>
         {order.notes && (
-          <div className="mt-4 border-t border-blue-50 pt-4">
+          <div className="mt-4 border-t border-teal-50 pt-4">
             <p className="text-xs font-medium text-slate-400">Notes</p>
             <p className="mt-1 text-sm text-[#0B1B33]">{order.notes}</p>
           </div>
