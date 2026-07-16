@@ -1,6 +1,6 @@
 # Current Work
 
-**Territory Management System — Map upload body-size fix + password token premature-expiry fix (2026-07-16) — code done, tsc + vitest (52/52) + build clean, not yet committed/pushed — see checkpoint `territory-management-map-upload-limit-password-token-v1.md` for full detail:**
+**Territory Management System — Map upload body-size fix + password token premature-expiry fix (2026-07-16) — code done, tsc + vitest (52/52) + build clean, committed and pushed (`5d62383`), deployed — see checkpoint `territory-management-map-upload-limit-password-token-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
@@ -12,7 +12,7 @@ Current Status: Code complete.
 - **Password token premature expiry — real bug, fixed by porting an already-proven fix from LMS.** `set-password/page.tsx` only listened for the `PASSWORD_RECOVERY` auth event with a hardcoded 4s timeout before declaring the link expired — an invite-acceptance link can fire `SIGNED_IN` instead depending on Supabase-js version, and 4s is provably too short on a slow connection. `src/app/lms/staff/accept-invite/page.tsx` hit and fixed this exact issue previously (listen for both events, bump to 8s); ported byte-for-byte to TMS.
 - `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. Password-token fix couldn't be live-verified (no TMS Supabase env vars in this environment — confirmed by trying, same standing limitation as every prior TMS session) — verified via code review + exact match against LMS's proven fix instead.
 
-**Next recommended task:** Ready to deploy at Russell's request. After deploying: re-test a >1MB territory map upload; re-test a Group Leader invite → set-password flow (if it still fails, two more hypotheses need Russell to check the Supabase Dashboard directly — redirect-URL allowlist and OTP expiry setting, neither checkable from this environment); confirm whether Group Leader deletion resolves the request as-is or if the 6-month gate itself needs revisiting.
+**Next recommended task:** Deployed (`5d62383`). Russell re-tests: a >1MB territory map upload; a Group Leader invite → set-password flow (if it still fails, two more hypotheses need Russell to check the Supabase Dashboard directly — redirect-URL allowlist and OTP expiry setting, neither checkable from this environment); confirm whether Group Leader deletion resolves the request as-is or if the 6-month gate itself needs revisiting.
 
 ----------------------------------------
 
