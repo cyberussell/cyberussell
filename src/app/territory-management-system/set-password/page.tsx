@@ -7,8 +7,9 @@ import { CircleCheck } from 'lucide-react'
 import { createBrowserSupabase } from '@/lib/territory-management-system/supabase'
 
 // Shared by both entry points that land here with a Supabase-established session from an
-// emailed link — accepting a Group Leader invite, and finishing a password reset. Both fire the
-// same PASSWORD_RECOVERY auth event, so one page covers both flows.
+// emailed link — accepting a Group Leader invite, and finishing a password reset. Password
+// reset fires PASSWORD_RECOVERY; an invite acceptance can fire either PASSWORD_RECOVERY or
+// SIGNED_IN depending on the Supabase-js version, so this page listens for both.
 export default function SetPasswordPage() {
   const router = useRouter()
   const [ready, setReady] = useState(false)
@@ -22,20 +23,27 @@ export default function SetPasswordPage() {
 
   useEffect(() => {
     const supabase = createBrowserSupabase()
-    // Only the PASSWORD_RECOVERY event proves this page was reached via a valid emailed link —
-    // an existing session (e.g. already logged in elsewhere in this browser) looks identical to
-    // a real recovery session if checked via getSession() alone.
+    // An invite link authenticates the browser the same way a password-recovery link does —
+    // Supabase fires PASSWORD_RECOVERY or SIGNED_IN depending on version, so both are treated
+    // as a valid arrival here (an existing session from being already logged in elsewhere in
+    // this browser looks identical to a real recovery session if checked via getSession()
+    // alone, which is why this listens for the actual auth event instead).
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
+      if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
         readyRef.current = true
         setReady(true)
       }
     })
+    // 8s, not 4 — a slow connection's auth event can genuinely take a few seconds to arrive,
+    // and 4s was long enough to flash a scary "invalid or expired" message for a link that was
+    // actually still fine (the UI self-corrects once `ready` does fire, but that flicker alone
+    // could make someone abandon a working invite). Same fix already proven in the LMS's
+    // sibling accept-invite page.
     const timeout = setTimeout(() => {
       if (!readyRef.current) setExpired(true)
-    }, 4000)
+    }, 8000)
     return () => {
       subscription.unsubscribe()
       clearTimeout(timeout)

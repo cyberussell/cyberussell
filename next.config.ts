@@ -9,6 +9,20 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Next.js's default Server Action body limit is 1MB — far below the 5MB the Territory
+  // Management System's map-upload UI already advertises ("JPG or PNG — up to 5MB"), and below
+  // that app-level check's own MAP_MAX_BYTES constant. A file over 1MB never even reached that
+  // check; the framework itself rejected the whole request with a raw 413 before the Server
+  // Action ran, surfacing as an unhelpful "Something went wrong" error boundary instead of the
+  // friendly "Map image must be under 5MB." message the action already returns. This is a
+  // global setting (Next.js has no per-route body limit), so it raises the ceiling for every
+  // Server Action across all products — the existing 5MB app-level check is still what actually
+  // enforces the real limit.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "6mb",
+    },
+  },
   images: {
     remotePatterns: [
       // Covers any Supabase project's public storage URLs (LMS business
