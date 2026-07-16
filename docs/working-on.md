@@ -1,6 +1,21 @@
 # Current Work
 
-**Territory Management System — Sticky sidebar, temp-password accounts, partial assignment generation, territory label append (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch route, not yet committed/pushed — see checkpoint `territory-management-sticky-sidebar-temp-password-partial-assignment-v1.md` for full detail:**
+**Laundry Management System — Staff invite link PKCE/implicit flow fix (2026-07-16) — code done, tsc + vitest (52/52) + build clean, not live-verified (same standing no-live-credentials limitation as TMS), not yet committed/pushed — see checkpoint `laundry-management-system-staff-invite-flow-fix-v1.md` for full detail:**
+
+Current Product: Laundry Management System (LMS).
+
+Current Feature: Ports the exact invite-link root-cause fix already diagnosed and applied in TMS's `set-password/page.tsx` this session (see the TMS checkpoint below) to LMS's `src/app/lms/staff/accept-invite/page.tsx`, which had the identical bug — confirmed via direct code comparison, not re-diagnosed from scratch.
+
+Current Status: Code complete.
+- `createBrowserSupabase()` in `src/lib/laundry-management-system/supabase.ts` has the same bare `createBrowserClient(url, anonKey)` shape (no `flowType` override) that caused TMS's bug — `@supabase/ssr` hardcodes PKCE unoverridably, but `inviteUserByEmail()` always produces implicit-flow (`#access_token=...`) links, which a PKCE-forced client silently fails to process.
+- `accept-invite/page.tsx` now parses the URL hash manually and calls `setSession()` directly before the client's own auto-detection can fail on it — same fix pattern as TMS, minus the `?code=` PKCE fallback TMS also needed (this page is invite-only, no shared password-reset use).
+- `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. Not live-tested (no LMS Supabase env vars in this environment).
+
+**Next recommended task:** Ready to deploy at Russell's request. Send a real staff invite afterward and confirm the link now works. Separately, worth deciding whether LMS should also adopt TMS's temp-password model instead of email-link invites entirely.
+
+----------------------------------------
+
+**Territory Management System — Sticky sidebar, temp-password accounts, partial assignment generation, territory label append (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch route, committed locally (`7209072`), NOT pushed yet — waiting on Russell to apply migration 021 to the live DB first (deploying before that breaks all logins) — see checkpoint `territory-management-sticky-sidebar-temp-password-partial-assignment-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 

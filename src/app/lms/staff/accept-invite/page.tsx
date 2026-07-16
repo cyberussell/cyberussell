@@ -19,7 +19,37 @@ export default function AcceptStaffInvitePage() {
   const readyRef = useRef(false)
 
   useEffect(() => {
+    // Read the raw hash before creating the Supabase client — the client's own (failed) attempt
+    // to auto-process this same URL shouldn't be relied on to leave it untouched.
+    const hashParams = new URLSearchParams(window.location.hash.slice(1))
+    const accessToken = hashParams.get('access_token')
+    const refreshToken = hashParams.get('refresh_token')
+
     const supabase = createBrowserSupabase()
+
+    // A staff invite (admin.inviteUserByEmail) is *always* an implicit-flow link —
+    // `#access_token=...&refresh_token=...&type=invite` in the hash — because Supabase's own
+    // SDK documents PKCE as unsupported for invites (the browser that requests an invite and
+    // the one that accepts it are different, breaking PKCE's security model). @supabase/ssr
+    // hardcodes `flowType: 'pkce'` on every client it creates with no way to override it, so its
+    // own internal URL auto-detection throws on this URL shape and silently swallows the
+    // session — neither PASSWORD_RECOVERY nor SIGNED_IN ever fires, no matter how long you wait
+    // (confirmed by reading @supabase/ssr and @supabase/auth-js's own source, not guessed — see
+    // docs/checkpoints/territory-management-invite-flow-map-recovery-field-rename-v1.md for the
+    // full root-cause writeup, originally diagnosed for TMS's identical set-password page).
+    // Worked around by parsing the hash ourselves and calling setSession() directly, which
+    // doesn't go through that broken auto-detection path at all.
+    if (accessToken && refreshToken) {
+      supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(({ error: sessionError }) => {
+        if (!sessionError) {
+          readyRef.current = true
+          setReady(true)
+          // Drop the tokens from the visible URL/browser history now that they're consumed.
+          window.history.replaceState(null, '', window.location.pathname)
+        }
+      })
+    }
+
     // An invite link authenticates the browser the same way a password-recovery
     // link does — Supabase fires PASSWORD_RECOVERY or SIGNED_IN depending on
     // version, so both are treated as a valid arrival here.
