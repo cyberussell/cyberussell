@@ -24,7 +24,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ orderI
           <div className="flex items-center gap-2">
             <a
               href={`/lms/orders/${order.id}/receipt/pdf`}
-              className="flex items-center gap-2 rounded-lg border border-teal-100 bg-white px-4 py-2 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40"
+              className="flex items-center gap-2 rounded-full border border-teal-100 bg-white px-4 py-2 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40"
             >
               <Download className="h-4 w-4" />
               PDF
@@ -61,10 +61,21 @@ export default async function ReceiptPage({ params }: { params: Promise<{ orderI
             <span className="text-slate-500">Customer</span>
             <span className="text-[#0B1B33]">{order.customer?.full_name || order.walk_in_name || 'Walk-in customer'}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-slate-500">Service</span>
-            <span className="text-[#0B1B33]">{order.service_label}</span>
-          </div>
+          {order.items.length > 0 ? (
+            order.items.map((item) => (
+              <div key={item.id} className="flex justify-between">
+                <span className="text-slate-500">
+                  {item.name} × {item.quantity}
+                </span>
+                <span className="text-[#0B1B33]">{formatCurrency(item.line_total, business.currency)}</span>
+              </div>
+            ))
+          ) : (
+            <div className="flex justify-between">
+              <span className="text-slate-500">Service</span>
+              <span className="text-[#0B1B33]">{order.service_label}</span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-slate-500">Status</span>
             <span className="text-[#0B1B33] capitalize">{order.status.replace('_', ' ')}</span>

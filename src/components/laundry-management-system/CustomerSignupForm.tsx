@@ -36,7 +36,7 @@ export default function CustomerSignupForm({ businessName, slug }: { businessNam
               </p>
             </div>
           ) : (
-            <form action={formAction} className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
+            <form action={formAction} className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
               <input type="hidden" name="slug" value={slug} />
               <Field label="Full name" name="fullName" placeholder="Juan Dela Cruz" />
               <Field label="Phone" name="phone" placeholder="0917 123 4567" />
@@ -46,7 +46,7 @@ export default function CustomerSignupForm({ businessName, slug }: { businessNam
               <button
                 type="submit"
                 disabled={pending}
-                className="w-full rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white hover:brightness-110 disabled:opacity-50 transition-all"
+                className="w-full rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white hover:brightness-110 disabled:opacity-50 transition-all"
               >
                 {pending ? 'Creating your account…' : 'Create my account'}
               </button>

@@ -47,14 +47,14 @@ export default async function SubscriptionRequiredPage() {
           <div className="mt-6 flex flex-col gap-3">
             <a
               href="https://www.cyberussell.com/services/inquire"
-              className="rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+              className="rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
             >
               Contact us to reactivate
             </a>
             <form action={signOut}>
               <button
                 type="submit"
-                className="w-full rounded-lg border border-white/10 py-2.5 text-sm font-medium text-white/60 transition hover:border-white/20 hover:text-white"
+                className="w-full rounded-full border border-white/10 py-2.5 text-sm font-medium text-white/60 transition hover:border-white/20 hover:text-white"
               >
                 Sign out
               </button>

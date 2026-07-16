@@ -1,9 +1,9 @@
-import Link from 'next/link'
 import { UserPlus } from 'lucide-react'
 import { requireOwnerBusiness } from '@/lib/laundry-management-system/modules/auth/queries'
 import { listCustomers } from '@/lib/laundry-management-system/modules/customer/queries'
 import PageHeader from '@/components/laundry-management-system/dashboard/PageHeader'
 import CustomerSearchTable from '@/components/laundry-management-system/dashboard/CustomerSearchTable'
+import { ButtonLink } from '@/components/laundry-management-system/dashboard/Button'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,13 +17,10 @@ export default async function CustomersPage() {
         title="Customers"
         subtitle="Everyone who's ordered from your business."
         action={
-          <Link
-            href="/lms/dashboard/customers/new"
-            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
-          >
+          <ButtonLink href="/lms/dashboard/customers/new" size="sm">
             <UserPlus className="h-4 w-4" />
             Add Customer
-          </Link>
+          </ButtonLink>
         }
       />
       <CustomerSearchTable customers={customers} basePath="/lms/dashboard/customers" />

@@ -7,6 +7,7 @@ import StatCard from '@/components/laundry-management-system/dashboard/StatCard'
 import RecentListCard from '@/components/laundry-management-system/dashboard/RecentListCard'
 import QuickActionsGrid from '@/components/laundry-management-system/dashboard/QuickActionsGrid'
 import StatusBadge from '@/components/laundry-management-system/dashboard/StatusBadge'
+import Avatar from '@/components/laundry-management-system/dashboard/Avatar'
 
 export const dynamic = 'force-dynamic'
 
@@ -46,20 +47,24 @@ export default async function StaffDashboardPage() {
           title="Recent Orders"
           items={recentOrders}
           emptyMessage="No orders yet — create your first walk-in order."
-          renderItem={(order) => (
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-[#0B1B33]">{order.service_label}</p>
-                <p className="truncate text-xs text-slate-400">
-                  {order.customer?.full_name || order.walk_in_name || 'Walk-in customer'}
-                </p>
+          renderItem={(order) => {
+            const customerName = order.customer?.full_name || order.walk_in_name || 'Walk-in customer'
+            return (
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <Avatar name={customerName} size="sm" />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-[#0B1B33]">{order.service_label}</p>
+                    <p className="truncate text-xs text-slate-400">{customerName}</p>
+                  </div>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <span className="text-sm font-medium text-[#0B1B33]">{formatCurrency(order.amount, business.currency)}</span>
+                  <StatusBadge status={order.status} />
+                </div>
               </div>
-              <div className="flex shrink-0 items-center gap-2">
-                <span className="text-sm font-medium text-[#0B1B33]">{formatCurrency(order.amount, business.currency)}</span>
-                <StatusBadge status={order.status} />
-              </div>
-            </div>
-          )}
+            )
+          }}
         />
       </div>
     </div>

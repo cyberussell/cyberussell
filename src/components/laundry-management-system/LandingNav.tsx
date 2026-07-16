@@ -41,7 +41,7 @@ export default function LandingNav() {
           </Link>
           <Link
             href="/lms/signup"
-            className="inline-flex items-center justify-center bg-gradient-to-r from-[#0D9488] to-[#22D3EE] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[13.5px] px-5 py-2.5 rounded-lg"
+            className="inline-flex items-center justify-center bg-gradient-to-r from-[#0D9488] to-[#22D3EE] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[13.5px] px-5 py-2.5 rounded-full"
           >
             Start Now
           </Link>
@@ -49,7 +49,7 @@ export default function LandingNav() {
 
         <button
           type="button"
-          className="md:hidden rounded-lg p-2 text-[#0B1B33]/70 hover:bg-[#0B1B33]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]"
+          className="md:hidden rounded-full p-2 text-[#0B1B33]/70 hover:bg-[#0B1B33]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]"
           aria-expanded={open}
           aria-controls="lms-mobile-menu"
           aria-label={open ? "Close menu" : "Open menu"}
@@ -84,7 +84,7 @@ export default function LandingNav() {
             <Link
               href="/lms/signup"
               onClick={() => setOpen(false)}
-              className="mt-2 rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-3 py-2.5 text-center font-[family-name:var(--font-inter)] font-bold text-[14px] text-white"
+              className="mt-2 rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-3 py-2.5 text-center font-[family-name:var(--font-inter)] font-bold text-[14px] text-white"
             >
               Start Now
             </Link>

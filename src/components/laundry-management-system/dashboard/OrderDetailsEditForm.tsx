@@ -7,7 +7,7 @@ import { updateDetailsSchema, type UpdateDetailsInput } from '@/lib/laundry-mana
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Order } from '@/lib/laundry-management-system/modules/orders/types'
 import Card from './Card'
-import FormField, { inputClass } from './FormField'
+import FormField, { inputClass, selectAppearance } from './FormField'
 
 function toDateInputValue(iso: string | null): string {
   if (!iso) return ''
@@ -56,7 +56,7 @@ export default function OrderDetailsEditForm({ order }: { order: Order }) {
         </div>
 
         <FormField label="Payment Status" error={errors.paymentStatus?.message}>
-          <select {...register('paymentStatus')} className={inputClass}>
+          <select {...register('paymentStatus')} className={`${inputClass} ${selectAppearance}`}>
             <option value="unpaid">Unpaid</option>
             <option value="paid">Paid</option>
           </select>
@@ -72,7 +72,7 @@ export default function OrderDetailsEditForm({ order }: { order: Order }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+          className="rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {pending ? 'Saving…' : 'Save changes'}
         </button>

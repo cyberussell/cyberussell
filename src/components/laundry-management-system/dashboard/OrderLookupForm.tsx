@@ -25,12 +25,12 @@ export default function OrderLookupForm() {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Look up order # (ORD-000001)"
-          className="w-56 rounded-lg border border-teal-100 bg-white py-2 pl-9 pr-3 text-sm text-[#0B1B33] placeholder:text-slate-400 focus:border-[#22D3EE] focus:outline-none"
+          className="w-56 rounded-full border border-teal-100 bg-white py-2 pl-9 pr-3 text-sm text-[#0B1B33] placeholder:text-slate-400 focus:border-[#22D3EE] focus:outline-none"
         />
       </div>
       <button
         type="submit"
-        className="rounded-lg border border-teal-100 bg-white px-3 py-2 text-sm font-semibold text-[#0D9488] transition hover:border-[#22D3EE]/40"
+        className="rounded-full border border-teal-100 bg-white px-3 py-2 text-sm font-semibold text-[#0D9488] transition hover:border-[#22D3EE]/40"
       >
         Go
       </button>

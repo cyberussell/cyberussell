@@ -6,9 +6,11 @@ import { CURRENCIES } from '@/app/lms/actions/shared'
 import type { ActionResult } from '@/app/lms/actions/shared'
 import type { Business } from '@/lib/laundry-management-system/modules/tenant/types'
 import Card from './Card'
+import { selectAppearance } from './FormField'
 
 const fieldClass =
   'mt-1 w-full rounded-lg border border-teal-100 bg-[#F0FDFA] px-3 py-2 text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none'
+const selectClass = `${fieldClass} ${selectAppearance}`
 
 export default function BusinessProfileForm({ business }: { business: Business }) {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(updateBusinessProfile, {})
@@ -33,7 +35,7 @@ export default function BusinessProfileForm({ business }: { business: Business }
         <div className="grid grid-cols-2 gap-3">
           <label className="block">
             <span className="text-sm font-medium text-slate-600">Currency</span>
-            <select name="currency" defaultValue={business.currency} className={fieldClass}>
+            <select name="currency" defaultValue={business.currency} className={selectClass}>
               {CURRENCIES.map((c) => (
                 <option key={c} value={c}>
                   {c}
@@ -51,7 +53,7 @@ export default function BusinessProfileForm({ business }: { business: Business }
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+          className="rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {pending ? 'Saving…' : 'Save changes'}
         </button>

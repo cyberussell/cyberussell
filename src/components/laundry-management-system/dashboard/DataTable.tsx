@@ -75,7 +75,7 @@ export default function DataTable<T extends { id: string }>({
         <thead className="border-b border-teal-100/60 bg-[#F0FDFA]">
           <tr>
             {columns.map((col) => (
-              <th key={col.header} className="whitespace-nowrap px-4 py-3 font-medium text-slate-500">
+              <th key={col.header} className="whitespace-nowrap px-5 py-4 font-medium text-slate-500">
                 {col.sortValue ? (
                   <button
                     onClick={() => toggleSort(col)}
@@ -103,7 +103,7 @@ export default function DataTable<T extends { id: string }>({
           {pageRows.map((row) => (
             <tr key={row.id} className="border-b border-teal-50 last:border-0 hover:bg-[#F0FDFA]/60">
               {columns.map((col) => (
-                <td key={col.header} className={`px-4 py-3 text-[#0B1B33] ${col.className ?? ''}`}>
+                <td key={col.header} className={`px-5 py-3.5 text-[#0B1B33] ${col.className ?? ''}`}>
                   {col.cell(row)}
                 </td>
               ))}

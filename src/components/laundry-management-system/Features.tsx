@@ -46,13 +46,13 @@ function FeatureCard({ item, index }: { item: (typeof FEATURES)[0]; index: numbe
       whileInView="show"
       viewport={{ once: true, margin: "-40px" }}
       custom={index}
-      className="relative overflow-hidden bg-white/70 backdrop-blur-md border border-[#22D3EE]/20 hover:border-[#22D3EE]/40 rounded-2xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-[2px] shadow-sm hover:shadow-[0_0_30px_rgba(34,211,238,0.18)]"
+      className="relative overflow-hidden bg-white/70 backdrop-blur-md border border-[#22D3EE]/20 hover:border-[#22D3EE]/40 rounded-3xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-[2px] shadow-sm hover:shadow-[0_0_30px_rgba(34,211,238,0.18)]"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute -top-4 -right-4 w-16 h-16 rounded-full bg-[#22D3EE]/20 blur-xl"
       />
-      <div className="w-11 h-11 rounded-xl bg-[#0D9488]/15 border border-[#22D3EE]/25 flex items-center justify-center">
+      <div className="w-11 h-11 rounded-full bg-[#0D9488]/15 border border-[#22D3EE]/25 flex items-center justify-center">
         <Icon size={19} className="text-[#0D9488]" strokeWidth={1.6} />
       </div>
       <h3 className="font-sans text-[15px] font-bold text-[#0B1B33]">{item.title}</h3>

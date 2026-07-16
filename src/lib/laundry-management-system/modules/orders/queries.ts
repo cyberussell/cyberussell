@@ -2,7 +2,8 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { DashboardStats, Order, OrderStatus, OrderWithDriver, OrderWithRelations, StaffDashboardStats } from './types'
 
-const ORDER_WITH_RELATIONS_SELECT = '*, customer:customers(full_name, phone), assigned_staff:staff_members(id, title, profile:profiles(full_name))'
+const ORDER_WITH_RELATIONS_SELECT =
+  '*, customer:customers(full_name, phone), assigned_staff:staff_members(id, title, profile:profiles(full_name)), items:order_items(*)'
 const ORDER_WITH_DRIVER_SELECT = '*, customer:customers(full_name, phone), driver:drivers(id, name, phone)'
 import { ORDER_STATUS_SEQUENCE } from './stateMachine'
 import { countCustomers } from '../customer/queries'

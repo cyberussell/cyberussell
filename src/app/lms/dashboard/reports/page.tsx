@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { PackageX } from 'lucide-react'
 import { requireOwnerBusiness } from '@/lib/laundry-management-system/modules/auth/queries'
 import { getReportsData, type ReportPeriod } from '@/lib/laundry-management-system/modules/reports/queries'
@@ -15,6 +14,8 @@ import PageHeader from '@/components/laundry-management-system/dashboard/PageHea
 import Card from '@/components/laundry-management-system/dashboard/Card'
 import RevenueBarChart from '@/components/laundry-management-system/dashboard/RevenueBarChart'
 import UpgradePrompt from '@/components/laundry-management-system/dashboard/UpgradePrompt'
+import DataTable, { type DataTableColumn } from '@/components/laundry-management-system/dashboard/DataTable'
+import { ButtonLink } from '@/components/laundry-management-system/dashboard/Button'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,16 +42,9 @@ function tabHref(tab: string) {
 
 function TabLink({ tab, label, active }: { tab: string; label: string; active: boolean }) {
   return (
-    <Link
-      href={tabHref(tab)}
-      className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-        active
-          ? 'bg-gradient-to-r from-[#0D9488] to-[#22D3EE] text-white'
-          : 'border border-teal-100 bg-white text-slate-500 hover:border-[#22D3EE]/40'
-      }`}
-    >
+    <ButtonLink href={tabHref(tab)} size="sm" variant={active ? 'primary' : 'secondary'}>
       {label}
-    </Link>
+    </ButtonLink>
   )
 }
 
@@ -129,9 +123,9 @@ async function BasicReport({
                     <span className="text-[#0B1B33]">{s.serviceLabel}</span>
                     <span className="text-slate-500">{s.count}</span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-[#CCFBF1]">
+                  <div className="h-2.5 w-full rounded-full bg-[#CCFBF1]">
                     <div
-                      className="h-2 rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE]"
+                      className="h-2.5 rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE]"
                       style={{ width: `${(s.count / maxServiceCount) * 100}%` }}
                     />
                   </div>
@@ -180,14 +174,14 @@ async function AdvancedReport({
   if (tab === 'branch-performance') {
     const rows = await getBranchPerformance(supabase, businessId)
     return (
-      <Card className="overflow-x-auto p-6">
+      <div>
         <h2 className="mb-4 font-semibold text-[#0B1B33]">Branch Performance</h2>
         <SimpleTable
           columns={['Branch', 'Orders', 'Revenue']}
           rows={rows.map((r) => [r.branchName, String(r.orders), formatCurrency(r.revenue, currency)])}
           emptyMessage="No branches yet."
         />
-      </Card>
+      </div>
     )
   }
 
@@ -199,7 +193,7 @@ async function AdvancedReport({
         : [...customers].sort((a, b) => b.totalSpend - a.totalSpend)
     const top = sorted.slice(0, 10)
     return (
-      <Card className="overflow-x-auto p-6">
+      <div>
         <h2 className="mb-4 font-semibold text-[#0B1B33]">{tab === 'top-customers' ? 'Top Customers' : 'Customer Lifetime Value'}</h2>
         <SimpleTable
           columns={['Customer', 'Orders', 'Total Spend', 'Last Order']}
@@ -211,7 +205,7 @@ async function AdvancedReport({
           ])}
           emptyMessage="No customer orders yet."
         />
-      </Card>
+      </div>
     )
   }
 
@@ -231,9 +225,9 @@ async function AdvancedReport({
                   <span className="text-[#0B1B33]">{r.serviceLabel}</span>
                   <span className="text-slate-500">{formatCurrency(r.revenue, currency)}</span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-[#CCFBF1]">
+                <div className="h-2.5 w-full rounded-full bg-[#CCFBF1]">
                   <div
-                    className="h-2 rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE]"
+                    className="h-2.5 rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE]"
                     style={{ width: `${(r.revenue / max) * 100}%` }}
                   />
                 </div>
@@ -248,59 +242,38 @@ async function AdvancedReport({
   if (tab === 'employee-productivity') {
     const rows = await getEmployeeProductivity(supabase, businessId)
     return (
-      <Card className="overflow-x-auto p-6">
+      <div>
         <h2 className="mb-4 font-semibold text-[#0B1B33]">Employee Productivity</h2>
         <SimpleTable
           columns={['Staff', 'Orders Handled', 'Completed', 'Revenue (completed)']}
           rows={rows.map((r) => [r.staffName, String(r.ordersHandled), String(r.ordersCompleted), formatCurrency(r.revenue, currency)])}
           emptyMessage="No orders assigned to staff yet."
         />
-      </Card>
+      </div>
     )
   }
 
   // monthly-service-requests
   const { services, rows } = await getMonthlyServiceRequests(supabase, businessId)
   return (
-    <Card className="overflow-x-auto p-6">
+    <div>
       <h2 className="mb-4 font-semibold text-[#0B1B33]">Monthly Service Requests</h2>
-      {services.length === 0 ? (
-        <p className="text-sm text-slate-400">No orders in the last 12 months.</p>
-      ) : (
-        <SimpleTable
-          columns={['Month', ...services]}
-          rows={rows.map((r) => [r.month, ...services.map((s) => String(r.counts[s] ?? 0))])}
-          emptyMessage="No orders in the last 12 months."
-        />
-      )}
-    </Card>
+      <SimpleTable
+        columns={['Month', ...services]}
+        rows={rows.map((r) => [r.month, ...services.map((s) => String(r.counts[s] ?? 0))])}
+        emptyMessage="No orders in the last 12 months."
+      />
+    </div>
   )
 }
 
+// Generic tabular report data (arbitrary/dynamic columns, no natural row id) —
+// adapted onto the shared DataTable rather than hand-rolling table markup.
 function SimpleTable({ columns, rows, emptyMessage }: { columns: string[]; rows: string[][]; emptyMessage: string }) {
-  if (rows.length === 0) return <p className="text-sm text-slate-400">{emptyMessage}</p>
-  return (
-    <table className="w-full text-left text-sm">
-      <thead className="border-b border-teal-100/60 bg-[#F0FDFA]">
-        <tr>
-          {columns.map((c) => (
-            <th key={c} className="whitespace-nowrap px-4 py-3 font-medium text-slate-500">
-              {c}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row, i) => (
-          <tr key={i} className="border-b border-teal-50 last:border-0">
-            {row.map((cell, j) => (
-              <td key={j} className="whitespace-nowrap px-4 py-3 text-[#0B1B33]">
-                {cell}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
+  const tableRows = rows.map((cells, i) => ({ id: String(i), cells }))
+  const tableColumns: DataTableColumn<{ id: string; cells: string[] }>[] = columns.map((label, i) => ({
+    header: label,
+    cell: (row) => row.cells[i],
+  }))
+  return <DataTable columns={tableColumns} rows={tableRows} emptyMessage={emptyMessage} />
 }

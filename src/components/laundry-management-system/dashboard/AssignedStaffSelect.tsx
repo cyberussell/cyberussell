@@ -1,4 +1,5 @@
 import type { StaffMember } from '@/lib/laundry-management-system/modules/staff/types'
+import { selectAppearance } from './FormField'
 
 export default function AssignedStaffSelect({
   staff,
@@ -17,7 +18,7 @@ export default function AssignedStaffSelect({
       <select
         name={name}
         defaultValue={defaultValue}
-        className="mt-1 w-full rounded-lg border border-teal-100 bg-[#F0FDFA] px-3 py-2 text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none"
+        className={`mt-1 w-full rounded-lg border border-teal-100 bg-[#F0FDFA] px-3 py-2 text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none ${selectAppearance}`}
       >
         <option value="">Unassigned</option>
         {staff.map((s) => (

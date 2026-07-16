@@ -8,15 +8,7 @@ import PageHeader from './PageHeader'
 import Card from './Card'
 import DataTable, { type DataTableColumn } from './DataTable'
 import StatusBadge from './StatusBadge'
-
-function Field({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div>
-      <p className="text-xs font-medium text-slate-400">{label}</p>
-      <p className="mt-0.5 text-sm font-medium text-[#0B1B33]">{value}</p>
-    </div>
-  )
-}
+import Field from './Field'
 
 // One shared detail view for both owner and staff customer pages — same pattern
 // as OrderDetailView: each page resolves its own auth and passes role-specific props in.

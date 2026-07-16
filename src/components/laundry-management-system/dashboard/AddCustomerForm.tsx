@@ -47,7 +47,7 @@ export default function AddCustomerForm() {
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+          className="w-full rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {pending ? 'Adding…' : 'Add customer'}
         </button>

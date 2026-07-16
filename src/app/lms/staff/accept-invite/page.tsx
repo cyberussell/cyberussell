@@ -111,7 +111,7 @@ export default function AcceptStaffInvitePage() {
               <p className="text-white/60 text-sm mt-2">Ask your business owner to send a new invite.</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
+            <form onSubmit={handleSubmit} className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
               <label className="block">
                 <span className="text-sm text-white/60">Password</span>
                 <input
@@ -139,7 +139,7 @@ export default function AcceptStaffInvitePage() {
               <button
                 type="submit"
                 disabled={pending || !ready}
-                className="w-full rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white hover:brightness-110 disabled:opacity-50 transition-all"
+                className="w-full rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white hover:brightness-110 disabled:opacity-50 transition-all"
               >
                 {!ready ? 'Verifying invite link…' : pending ? 'Setting password…' : 'Set password & continue'}
               </button>

@@ -1,5 +1,41 @@
 # Current Work
 
+**Laundry Management System — Multi-item price catalog + POS-style order cart (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch routes, migration 018 written but NOT applied/verified (no live Supabase credentials in this environment), not committed — see checkpoint `laundry-management-system-pos-cart-catalog-v1.md` for full detail:**
+
+Current Product: Laundry Management System (LMS).
+
+Current Feature: After the layout-only redesign below, Russell clarified he wanted the real POS interaction from his reference screenshot — staff tapping item tiles with +/- quantity steppers, not just a re-laid-out form. Confirmed via two `AskUserQuestion` rounds this is a genuine new feature: owner-only price catalog, multi-line orders, available on every plan tier, soft-delete catalog items, new top-level sidebar entry. Planned via `EnterPlanMode` with two `Explore` passes + a `Plan` agent pass over the real schema before writing code.
+
+Current Status: Code complete, migration not yet applied or verified.
+- New migration `018_service_catalog_and_order_items.sql` (**not yet run**): `service_catalog_items` (owner CRUD, staff read-only) + `order_items` tables, a trigger keeping `orders.amount`/`service_label` in sync so 7+ existing revenue/report queries needed zero changes, and a transactional RPC (`create_walk_in_order_with_items`) that looks up price/name server-side by `catalog_item_id` rather than trusting the client — closes a real bypass since the RPC is callable directly, not only through the app.
+- New owner-only Service Catalog page/manager (mirrors `InventoryManager.tsx`'s pattern), new `ServiceItemTileGrid.tsx` (the actual tap-to-add POS grid), `WalkInOrderForm.tsx` reworked to use it with a live running-total summary panel. `OrderDetailView`/receipt page/receipt PDF all handle both legacy single-service orders and new multi-item orders.
+- `npx tsc --noEmit`, `npx next build`, `npx vitest run` (52/52) all clean. Live-verified via scratch routes: catalog CRUD, tapping multiple tiles with steppers, running total computed correctly (Jeans×2 + Dress×1 = ₱150), removing an item back to 0, mobile 2-column reflow. Zero console errors.
+- **Could not verify**: the migration itself against a real database — RLS actually applying, the RPC's security behavior, the trigger's real behavior. No live Supabase credentials in this environment, same standing limitation as every migration this whole session.
+
+**Next recommended task:** Not committed or deployed. Russell (1) runs migration `018` in the LMS Supabase SQL Editor, (2) verifies RLS/RPC security properties per the checkpoint's checklist before trusting this in production — staff can't write to the catalog, a cross-business `catalog_item_id` is rejected, `orders.amount` syncs correctly — this is the one piece of this feature genuinely unverified end-to-end, (3) live click-through as owner (add catalog items) and staff (take a real order), (4) commit + deploy. Separately: the 3 per-service breakdown reports (Top Services, Revenue by Service, Monthly Service Requests) are known to degrade for multi-item orders — deliberately deferred, worth a future pass.
+
+----------------------------------------
+
+**Laundry Management System — System-wide visual redesign (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified marketing/login directly + owner/staff/customer dashboards via scratch routes, not committed — see checkpoint `laundry-management-system-redesign-v1.md` for full detail:**
+
+Current Product: Laundry Management System (LMS).
+
+Current Feature: Russell shared a reference dashboard screenshot (purple fintech-style: gradient KPI cards, circular donut, avatar/team panel, pill nav/search, heavy rounding) and asked for LMS to be redesigned in that layout/design/effects direction, explicitly keeping LMS's existing teal-to-cyan brand instead of the reference's purple. Confirmed via `AskUserQuestion`: add a persistent top bar (real search + profile), scope is the whole product (owner/staff/customer dashboards, marketing page, all auth screens). Planned via `EnterPlanMode`/`ExitPlanMode` first given the ~60-file size.
+
+Current Status: Code complete, all 10 planned phases done.
+- New shared primitives (`Avatar`, `Button`/`ButtonLink`, `DonutChart`, `TopBar`, `Field`) plus updates to existing ones (`Card` rounder/softer, `StatCard` circular chip + new `HeroStatCard`, `QuickActionsGrid` circular chip, `DashboardSidebar` full-pill nav + Upgrade-to-Pro mini-card, `DataTable` padding) — these cascade the new look through most of the product for free.
+- Owner Dashboard rebuilt 2-column: hero revenue cards + stat grid + quick actions + recent lists on the left, a real completion-rate donut + "Team on duty" avatar list on the right. Staff Dashboard got the same visual language.
+- Folded 3 real pre-existing inconsistencies back onto shared components while redesigning them: `InventoryManager`'s raw `<table>` and Reports' local `SimpleTable` now both go through `DataTable`; a `Field` helper duplicated in two files is now one shared component.
+- Customer mobile dashboard's `PickupScheduleCard`/`ProfileForm` now use the real `Card` primitive instead of hand-rolled duplicate classNames.
+- Marketing page and every auth screen got the rounder/pill visual language (no structural or copy changes) — marketing page deliberately NOT forced onto the dashboard's `Button` component since it has its own distinct, already-good glass-card aesthetic.
+- Found ~20 more dashboard forms/widgets beyond the plan's explicit list sharing the same inline gradient-CTA/bordered-button classNames — pill-ified all of them via a scripted exact-string pass so the whole product's buttons are consistently rounded, not half-and-half.
+- `npx tsc --noEmit`, `npx next build`, `npx vitest run` (52/52) all clean throughout. Live-verified in the browser: public `/lms` marketing page and `/lms/login` directly (pill buttons, circular icons, rounder cards, dark auth backdrop preserved, zero console errors); owner Dashboard, staff Dashboard, and customer mobile dashboard via temporary scratch routes with mock data (removed before finishing, same pattern as the earlier sticky-sidebar check this session).
+- **Found, not fixed**: same stray `src/app/lms/staff/accept-invite/page 2.tsx` noted earlier this session — still has old colors/square buttons, still dead code, still out of scope.
+
+**Next recommended task:** Not committed or deployed. Russell reviews the look — especially the new top-bar search (real order lookup, not decorative) and the Dashboard's new donut/team panel, genuinely new UI rather than a re-skin — ideally live-clicking the real dashboards once deployed, since authenticated screens could only be verified via mock scratch routes in this environment. Then commit + deploy at Russell's request.
+
+----------------------------------------
+
 **Laundry Management System — Upsell link opens new tab, Staff table shows email, brand color changed off TMS's blue, sticky sidebar (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified public pages + sidebar via scratch route, migration 017 written but NOT yet run by Russell, committed and pushed (`4bfe7ed`), not yet deployed — see checkpoint `laundry-management-system-upsell-tab-staff-email-brand-color-v1.md` for full detail:**
 
 Current Product: Laundry Management System (LMS).

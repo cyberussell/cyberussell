@@ -11,15 +11,7 @@ import OrderDetailsEditForm from './OrderDetailsEditForm'
 import StaffAssignmentControl from './StaffAssignmentControl'
 import PriorityToggle from './PriorityToggle'
 import OrderTimeline from '../OrderTimeline'
-
-function Field({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div>
-      <p className="text-xs font-medium text-slate-400">{label}</p>
-      <p className="mt-0.5 text-sm font-medium text-[#0B1B33]">{value}</p>
-    </div>
-  )
-}
+import Field from './Field'
 
 // One shared detail view for both owner and staff order pages — each page
 // just resolves its own auth/permissions and passes the right props in.
@@ -48,7 +40,7 @@ export default async function OrderDetailView({
         action={
           <Link
             href={receiptHref}
-            className="flex items-center gap-2 rounded-lg border border-teal-100 bg-white px-4 py-2 text-sm font-semibold text-[#0D9488] transition hover:border-[#22D3EE]/40"
+            className="flex items-center gap-2 rounded-full border border-teal-100 bg-white px-4 py-2 text-sm font-semibold text-[#0D9488] transition hover:border-[#22D3EE]/40"
           >
             <Printer className="h-4 w-4" />
             Receipt
@@ -76,7 +68,7 @@ export default async function OrderDetailView({
               }
             />
             <Field label="Weight" value={order.weight_kg ? `${order.weight_kg} kg` : '—'} />
-            <Field label="Service Type" value={order.service_label} />
+            {order.items.length === 0 && <Field label="Service Type" value={order.service_label} />}
             <Field label="Amount" value={formatCurrency(order.amount, currency)} />
             <Field label="Payment Status" value={order.payment_status === 'paid' ? 'Paid' : 'Unpaid'} />
           </div>
@@ -86,6 +78,21 @@ export default async function OrderDetailView({
             <p className="text-center text-[11px] text-slate-400">Scan to look up</p>
           </div>
         </div>
+        {order.items.length > 0 && (
+          <div className="mt-4 border-t border-teal-50 pt-4">
+            <p className="mb-2 text-xs font-medium text-slate-400">Items</p>
+            <ul className="space-y-1.5">
+              {order.items.map((item) => (
+                <li key={item.id} className="flex items-center justify-between text-sm">
+                  <span className="text-[#0B1B33]">
+                    {item.name} <span className="text-slate-400">× {item.quantity}</span>
+                  </span>
+                  <span className="font-medium text-[#0B1B33]">{formatCurrency(item.line_total, currency)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {order.notes && (
           <div className="mt-4 border-t border-teal-50 pt-4">
             <p className="text-xs font-medium text-slate-400">Notes</p>

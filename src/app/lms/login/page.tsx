@@ -32,7 +32,7 @@ export default function LoginPage() {
               Laundry <span className="text-[#22D3EE]">Management System</span>
             </span>
           </Link>
-          <form action={formAction} className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
+          <form action={formAction} className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
             <label className="block">
               <span className="text-sm text-white/60">Email</span>
               <input
@@ -81,7 +81,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={pending}
-              className="w-full rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white hover:brightness-110 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] disabled:opacity-50 transition-all"
+              className="w-full rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white hover:brightness-110 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] disabled:opacity-50 transition-all"
             >
               {pending ? 'Logging in…' : 'Log in'}
             </button>

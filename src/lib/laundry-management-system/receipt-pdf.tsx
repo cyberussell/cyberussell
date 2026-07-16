@@ -49,10 +49,21 @@ export function ReceiptDocument({
           <Text style={styles.label}>Customer</Text>
           <Text>{order.customer?.full_name || order.walk_in_name || 'Walk-in customer'}</Text>
         </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Service</Text>
-          <Text>{order.service_label}</Text>
-        </View>
+        {order.items.length > 0 ? (
+          order.items.map((item) => (
+            <View style={styles.row} key={item.id}>
+              <Text style={styles.label}>
+                {item.name} × {item.quantity}
+              </Text>
+              <Text>{formatCurrency(item.line_total, business.currency)}</Text>
+            </View>
+          ))
+        ) : (
+          <View style={styles.row}>
+            <Text style={styles.label}>Service</Text>
+            <Text>{order.service_label}</Text>
+          </View>
+        )}
         <View style={styles.row}>
           <Text style={styles.label}>Status</Text>
           <Text>{order.status.replace('_', ' ')}</Text>

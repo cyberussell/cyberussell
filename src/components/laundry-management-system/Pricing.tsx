@@ -112,7 +112,7 @@ function PlanCard({ plan, index }: { plan: Plan; index: number }) {
 
       <a
         href={`/services/inquire?service=${encodeURIComponent(`Laundry Management System - ${plan.name}`)}`}
-        className={`inline-flex items-center justify-center gap-2 font-[family-name:var(--font-inter)] font-bold text-[15px] px-6 py-3.5 rounded-xl transition-all hover:-translate-y-[2px] ${
+        className={`inline-flex items-center justify-center gap-2 font-[family-name:var(--font-inter)] font-bold text-[15px] px-6 py-3.5 rounded-full transition-all hover:-translate-y-[2px] ${
           plan.highlight
             ? "bg-gradient-to-r from-[#0D9488] to-[#22D3EE] hover:brightness-110 hover:shadow-[0_0_24px_rgba(34,211,238,0.4)] text-white"
             : "bg-white hover:bg-[#F0F9FF] border border-[#0D9488]/25 hover:border-[#0D9488]/40 text-[#0B1B33] shadow-sm"

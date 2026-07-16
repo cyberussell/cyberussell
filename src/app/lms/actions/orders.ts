@@ -42,8 +42,7 @@ export async function createWalkInOrder(_prev: ActionResult, formData: FormData)
     assignedStaffId: formData.get('assignedStaffId') || undefined,
     walkInName: formData.get('walkInName'),
     walkInPhone: formData.get('walkInPhone'),
-    serviceLabel: formData.get('serviceLabel'),
-    amount: formData.get('amount'),
+    items: formData.get('items'),
     weightKg: formData.get('weightKg') || undefined,
     expectedCompletionAt: formData.get('expectedCompletionAt') || undefined,
     paymentStatus: formData.get('paymentStatus') || undefined,
@@ -52,15 +51,14 @@ export async function createWalkInOrder(_prev: ActionResult, formData: FormData)
     pickupAddress: formData.get('pickupAddress') || undefined,
     pickupScheduledAt: formData.get('pickupScheduledAt') || undefined,
   })
-  if (!parsed.success) return { error: 'Please fill in the service and amount correctly.' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please check the order details.' }
   const {
     branchId,
     customerId,
     assignedStaffId,
     walkInName,
     walkInPhone,
-    serviceLabel,
-    amount,
+    items,
     weightKg,
     expectedCompletionAt,
     paymentStatus,
@@ -79,23 +77,27 @@ export async function createWalkInOrder(_prev: ActionResult, formData: FormData)
   // checkbox itself is only rendered when the feature is available.
   const canRequestPickup = pickupRequested && hasFeature(business, 'feature_pickup_delivery')
 
-  const { error } = await supabase.from('orders').insert({
-    business_id: business.id,
-    branch_id: branchId,
-    customer_id: customerId || null,
-    assigned_staff_id: assignedStaffId || null,
-    walk_in_name: walkInName,
-    walk_in_phone: walkInPhone,
-    service_label: serviceLabel,
-    amount,
-    weight_kg: weightKg || null,
-    expected_completion_at: expectedCompletionAt ? new Date(expectedCompletionAt).toISOString() : null,
-    payment_status: paymentStatus,
-    notes,
-    created_by: userId,
-    pickup_requested: canRequestPickup,
-    pickup_address: canRequestPickup ? pickupAddress : '',
-    pickup_scheduled_at: canRequestPickup && pickupScheduledAt ? new Date(pickupScheduledAt).toISOString() : null,
+  // Order header + line items are inserted together in one Postgres function
+  // (create_walk_in_order_with_items, migration 018) — the Supabase JS client
+  // can't span a transaction across two separate .insert() calls, and prices
+  // are looked up authoritatively inside that function by catalog_item_id
+  // rather than trusted from this payload (items only ever carries id+qty).
+  const { error } = await supabase.rpc('create_walk_in_order_with_items', {
+    p_business_id: business.id,
+    p_branch_id: branchId,
+    p_customer_id: customerId || null,
+    p_assigned_staff_id: assignedStaffId || null,
+    p_walk_in_name: walkInName,
+    p_walk_in_phone: walkInPhone,
+    p_weight_kg: weightKg || null,
+    p_expected_completion_at: expectedCompletionAt ? new Date(expectedCompletionAt).toISOString() : null,
+    p_payment_status: paymentStatus,
+    p_notes: notes,
+    p_created_by: userId,
+    p_pickup_requested: canRequestPickup,
+    p_pickup_address: canRequestPickup ? pickupAddress : '',
+    p_pickup_scheduled_at: canRequestPickup && pickupScheduledAt ? new Date(pickupScheduledAt).toISOString() : null,
+    p_items: items.map((item) => ({ catalog_item_id: item.catalogItemId, quantity: item.quantity })),
   })
   if (error) return { error: error.message }
 

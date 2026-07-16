@@ -25,7 +25,7 @@ export default function CustomerBottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
-              className={`flex flex-col items-center gap-0.5 rounded-xl px-5 py-2 text-xs font-medium transition ${
+              className={`flex flex-col items-center gap-0.5 rounded-full px-5 py-2 text-xs font-medium transition ${
                 active ? 'text-[#0D9488]' : 'text-slate-400 hover:text-slate-500'
               }`}
             >

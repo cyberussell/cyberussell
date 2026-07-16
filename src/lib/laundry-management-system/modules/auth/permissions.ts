@@ -14,6 +14,7 @@ export type Permission =
   | 'view_financial_reports'
   | 'change_business_settings'
   | 'manage_inventory'
+  | 'manage_service_catalog'
   | 'assign_order_staff'
   | 'manage_pickup'
   | 'manage_delivery'

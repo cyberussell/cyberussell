@@ -15,12 +15,15 @@ import {
   Truck,
   Zap,
   History,
+  Sparkles,
+  Tags,
 } from 'lucide-react'
 import { signOut } from '@/app/lms/actions/auth'
 import { hasPermission, type Permission } from '@/lib/laundry-management-system/modules/auth/permissions'
 import type { BusinessRole } from '@/lib/laundry-management-system/modules/auth/queries'
-import { hasFeature, type FeatureFlag } from '@/lib/laundry-management-system/modules/billing/entitlements'
+import { hasFeature, PLANS, type FeatureFlag } from '@/lib/laundry-management-system/modules/billing/entitlements'
 import type { PlanTier } from '@/lib/laundry-management-system/modules/tenant/types'
+import Avatar from './Avatar'
 
 function buildNavItems(
   basePath: string
@@ -33,6 +36,7 @@ function buildNavItems(
     { label: 'Priority Queue', href: `${basePath}/priority-queue`, icon: Zap, permission: 'view_priority_queue', feature: 'feature_priority_queue' },
     { label: 'Customers', href: `${basePath}/customers`, icon: Users, permission: 'view_customers' },
     { label: 'Inventory', href: `${basePath}/inventory`, icon: Boxes, permission: 'manage_inventory' },
+    { label: 'Service Catalog', href: `${basePath}/catalog`, icon: Tags, permission: 'manage_service_catalog' },
     { label: 'Staff', href: `${basePath}/staff`, icon: UserCog, permission: 'manage_staff' },
     { label: 'Reports', href: `${basePath}/reports`, icon: BarChart3, permission: 'view_financial_reports' },
     { label: 'Activity', href: `${basePath}/activity`, icon: History, permission: 'view_activity_log' },
@@ -45,23 +49,39 @@ export default function DashboardSidebar({
   role = 'owner',
   basePath = '/lms/dashboard',
   planTier = 'essential',
+  mobileOpen = false,
+  onClose,
 }: {
   businessName: string
   role?: BusinessRole
   basePath?: string
   planTier?: PlanTier
+  mobileOpen?: boolean
+  onClose?: () => void
 }) {
   const pathname = usePathname()
   const navItems = buildNavItems(basePath).filter((item) => hasPermission(role, item.permission))
 
   return (
-    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-teal-100/60 bg-white">
+    <>
+      {mobileOpen && (
+        <div
+          role="presentation"
+          onClick={onClose}
+          className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+        />
+      )}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex h-screen w-64 shrink-0 flex-col border-r border-teal-100/60 bg-white transition-transform duration-200 lg:sticky lg:top-0 lg:translate-x-0 ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
       <div className="flex items-center gap-3 border-b border-teal-100/60 px-6 py-5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0D9488] to-[#22D3EE] text-sm font-bold text-white">
-          {businessName.charAt(0).toUpperCase()}
-        </div>
+        <Avatar name={businessName} size="md" />
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-[#0B1B33]">{businessName}</p>
+          <p className="line-clamp-2 text-sm font-semibold leading-tight text-[#0B1B33]" title={businessName}>
+            {businessName}
+          </p>
           <p className="text-xs text-slate-400">{role === 'owner' ? 'Owner' : 'Staff'}</p>
         </div>
       </div>
@@ -73,7 +93,8 @@ export default function DashboardSidebar({
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+              onClick={onClose}
+              className={`flex items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium transition ${
                 active
                   ? 'bg-gradient-to-r from-[#0D9488] to-[#22D3EE] text-white shadow-[0_4px_12px_-2px_rgba(13,148,136,0.35)]'
                   : 'text-slate-600 hover:bg-[#CCFBF1] hover:text-[#0B1B33]'
@@ -94,15 +115,33 @@ export default function DashboardSidebar({
           )
         })}
       </nav>
+      {role === 'owner' && planTier === 'essential' && (
+        <div className="mx-3 mb-3 rounded-3xl bg-gradient-to-br from-[#0D9488] to-[#22D3EE] p-4 text-white">
+          <Sparkles className="h-5 w-5" />
+          <p className="mt-2 text-sm font-semibold">Upgrade to {PLANS.professional.name}</p>
+          <p className="mt-1 text-xs text-white/80">
+            Unlock pickup, delivery, priority queue &amp; more for ₱{PLANS.professional.priceMonthly.toLocaleString('en-PH')}/mo.
+          </p>
+          <Link
+            href="/lms#pricing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold transition hover:bg-white/25"
+          >
+            See pricing
+          </Link>
+        </div>
+      )}
       <form action={signOut} className="border-t border-teal-100/60 p-3">
         <button
           type="submit"
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-[#CCFBF1] hover:text-[#0B1B33]"
+          className="flex w-full items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-[#CCFBF1] hover:text-[#0B1B33]"
         >
           <LogOut className="h-5 w-5" />
           Log out
         </button>
       </form>
-    </aside>
+      </aside>
+    </>
   )
 }

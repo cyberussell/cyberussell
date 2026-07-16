@@ -23,7 +23,7 @@ export default function UpgradePrompt({ feature, label }: { feature: FeatureFlag
         href="/lms#pricing"
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-5 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+        className="mt-5 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
       >
         See {plan.name} plan pricing
       </Link>

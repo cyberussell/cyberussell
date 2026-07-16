@@ -6,6 +6,7 @@ import { createBusiness } from '../../actions/tenant'
 import { CURRENCIES, type ActionResult } from '../../actions/shared'
 import { AuthHeader, AuthFooter } from '@/components/laundry-management-system/AuthChrome'
 import BusinessHoursInput from '@/components/laundry-management-system/BusinessHoursInput'
+import { selectAppearance } from '@/components/laundry-management-system/dashboard/FormField'
 
 export default function CreateBusinessPage() {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(createBusiness, {})
@@ -21,7 +22,7 @@ export default function CreateBusinessPage() {
           <p className="text-center text-white/40 mb-8 text-sm">
             Tell us about your laundry business — you can add more branches later.
           </p>
-          <form action={formAction} className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
+          <form action={formAction} className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
             <Field label="Business name" name="name" placeholder="Aling Maria Laundry Shop" />
             <Field label="Branch name" name="branchName" placeholder="Main Branch" />
             <Field label="Contact number" name="phone" placeholder="0917 123 4567" />
@@ -32,7 +33,7 @@ export default function CreateBusinessPage() {
                 <select
                   name="currency"
                   defaultValue="PHP"
-                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white focus:border-[#22D3EE] focus:outline-none"
+                  className={`mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white focus:border-[#22D3EE] focus:outline-none ${selectAppearance}`}
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c} value={c} className="bg-[#0A0A14]">
@@ -57,7 +58,7 @@ export default function CreateBusinessPage() {
             <button
               type="submit"
               disabled={pending}
-              className="w-full rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white hover:brightness-110 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] disabled:opacity-50 transition-all"
+              className="w-full rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white hover:brightness-110 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] disabled:opacity-50 transition-all"
             >
               {pending ? 'Setting up your business…' : 'Continue'}
             </button>

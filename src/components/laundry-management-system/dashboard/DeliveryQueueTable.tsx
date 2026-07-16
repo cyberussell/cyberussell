@@ -9,6 +9,7 @@ import { formatCurrency } from '@/lib/laundry-management-system/format'
 import Card from './Card'
 import OrderStatusControl from './OrderStatusControl'
 import DriverAssignmentControl from './DriverAssignmentControl'
+import Avatar from './Avatar'
 
 function toDatetimeLocal(iso: string | null): string {
   if (!iso) return ''
@@ -35,7 +36,7 @@ function DeliveryScheduleForm({ orderId, deliveryScheduledAt }: { orderId: strin
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg border border-teal-100 bg-white px-3 py-1.5 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40 disabled:opacity-50"
+        className="rounded-full border border-teal-100 bg-white px-3 py-1.5 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40 disabled:opacity-50"
       >
         {pending ? 'Saving…' : 'Save'}
       </button>
@@ -68,14 +69,17 @@ export default function DeliveryQueueTable({
       {orders.map((order) => (
         <Card key={order.id} className="p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <Link href={`${orderBasePath}/${order.id}`} className="font-semibold text-[#0D9488] hover:underline">
-                {order.order_number}
-              </Link>
-              <span className="ml-2 text-sm text-slate-500">
-                {order.customer?.full_name || order.walk_in_name || 'Walk-in customer'}
-              </span>
-              <span className="ml-2 text-sm text-slate-500">{formatCurrency(order.amount, currency)}</span>
+            <div className="flex items-center gap-3">
+              <Avatar name={order.customer?.full_name || order.walk_in_name || 'Walk-in customer'} size="sm" />
+              <div>
+                <Link href={`${orderBasePath}/${order.id}`} className="font-semibold text-[#0D9488] hover:underline">
+                  {order.order_number}
+                </Link>
+                <span className="ml-2 text-sm text-slate-500">
+                  {order.customer?.full_name || order.walk_in_name || 'Walk-in customer'}
+                </span>
+                <span className="ml-2 text-sm text-slate-500">{formatCurrency(order.amount, currency)}</span>
+              </div>
             </div>
             <OrderStatusControl orderId={order.id} status={order.status} />
           </div>

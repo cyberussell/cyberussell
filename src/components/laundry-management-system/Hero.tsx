@@ -67,7 +67,7 @@ export default function Hero() {
             href="https://www.cyberussell.com/portfolio/lms"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#0D9488] to-[#22D3EE] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_24px_rgba(34,211,238,0.4)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-8 py-4 rounded-xl"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#0D9488] to-[#22D3EE] hover:brightness-110 hover:-translate-y-[2px] hover:shadow-[0_0_24px_rgba(34,211,238,0.4)] transition-all text-white font-[family-name:var(--font-inter)] font-bold text-[15px] px-8 py-4 rounded-full"
           >
             View Laundry Portfolio <ArrowRight size={16} />
           </a>

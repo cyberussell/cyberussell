@@ -18,7 +18,7 @@ export default function TableSearchInput({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="w-full rounded-lg border border-teal-100 bg-white py-2 pl-9 pr-3 text-sm text-[#0B1B33] placeholder:text-slate-400 focus:border-[#22D3EE] focus:outline-none"
+        className="w-full rounded-full border border-teal-100 bg-white py-2 pl-9 pr-3 text-sm text-[#0B1B33] placeholder:text-slate-400 focus:border-[#22D3EE] focus:outline-none"
       />
     </div>
   )

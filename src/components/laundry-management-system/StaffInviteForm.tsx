@@ -7,7 +7,7 @@ import { inviteStaffSchema, type InviteStaffInput } from '@/lib/laundry-manageme
 import { useServerAction } from '@/lib/laundry-management-system/hooks/useServerAction'
 import type { Branch } from '@/lib/laundry-management-system/modules/tenant/types'
 import Card from '@/components/laundry-management-system/dashboard/Card'
-import FormField, { inputClass } from '@/components/laundry-management-system/dashboard/FormField'
+import FormField, { inputClass, selectAppearance } from '@/components/laundry-management-system/dashboard/FormField'
 
 export default function StaffInviteForm({ branches }: { branches: Branch[] }) {
   const { dispatch, pending, error, successMessage } = useServerAction(inviteStaff, ['INVITED'], 'Invite sent.')
@@ -40,7 +40,7 @@ export default function StaffInviteForm({ branches }: { branches: Branch[] }) {
         </FormField>
         {branches.length > 0 && (
           <FormField label="Branch" optional error={errors.branchId?.message}>
-            <select {...register('branchId')} className={inputClass}>
+            <select {...register('branchId')} className={`${inputClass} ${selectAppearance}`}>
               <option value="">Any branch</option>
               {branches.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -55,7 +55,7 @@ export default function StaffInviteForm({ branches }: { branches: Branch[] }) {
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+          className="w-full rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {pending ? 'Sending invite…' : 'Send invite'}
         </button>

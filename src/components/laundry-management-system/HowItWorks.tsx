@@ -40,7 +40,7 @@ export default function HowItWorks() {
               {i < STEPS.length - 1 && (
                 <div className="hidden lg:block absolute top-7 left-[calc(50%+32px)] w-[calc(100%-64px)] h-px bg-[#0B1B33]/10" />
               )}
-              <div className="relative z-10 w-14 h-14 rounded-2xl bg-white/80 backdrop-blur-md border border-[#22D3EE]/25 shadow-sm flex items-center justify-center">
+              <div className="relative z-10 w-14 h-14 rounded-full bg-white/80 backdrop-blur-md border border-[#22D3EE]/25 shadow-sm flex items-center justify-center">
                 <Icon size={22} className="text-[#0D9488]" strokeWidth={1.6} />
               </div>
               <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0B1B33]/35 uppercase tracking-[2px]">

@@ -10,6 +10,8 @@ import type { OrderWithDriver } from '@/lib/laundry-management-system/modules/or
 import type { Driver } from '@/lib/laundry-management-system/modules/drivers/types'
 import Card from './Card'
 import DriverAssignmentControl from './DriverAssignmentControl'
+import Avatar from './Avatar'
+import Button from './Button'
 
 function toDatetimeLocal(iso: string | null): string {
   if (!iso) return ''
@@ -45,7 +47,7 @@ function PickupScheduleForm({ order }: { order: OrderWithDriver }) {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg border border-teal-100 bg-white px-3 py-1.5 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40 disabled:opacity-50"
+        className="rounded-full border border-teal-100 bg-white px-3 py-1.5 text-sm font-medium text-[#0D9488] transition hover:border-[#22D3EE]/40 disabled:opacity-50"
       >
         {pending ? 'Saving…' : 'Save'}
       </button>
@@ -94,21 +96,20 @@ export default function PickupQueueTable({
       {orders.map((order) => (
         <Card key={order.id} className="p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <Link href={`${orderBasePath}/${order.id}`} className="font-semibold text-[#0D9488] hover:underline">
-                {order.order_number}
-              </Link>
-              <span className="ml-2 text-sm text-slate-500">
-                {order.customer?.full_name || order.walk_in_name || 'Walk-in customer'}
-              </span>
+            <div className="flex items-center gap-3">
+              <Avatar name={order.customer?.full_name || order.walk_in_name || 'Walk-in customer'} size="sm" />
+              <div>
+                <Link href={`${orderBasePath}/${order.id}`} className="font-semibold text-[#0D9488] hover:underline">
+                  {order.order_number}
+                </Link>
+                <span className="ml-2 text-sm text-slate-500">
+                  {order.customer?.full_name || order.walk_in_name || 'Walk-in customer'}
+                </span>
+              </div>
             </div>
-            <button
-              onClick={() => handleMarkPickedUp(order.id)}
-              disabled={pending && markingId === order.id}
-              className="rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-3 py-1.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
-            >
+            <Button size="sm" onClick={() => handleMarkPickedUp(order.id)} disabled={pending && markingId === order.id}>
               {pending && markingId === order.id ? 'Marking…' : 'Mark Picked Up'}
-            </button>
+            </Button>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <PickupScheduleForm order={order} />

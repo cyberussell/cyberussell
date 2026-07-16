@@ -82,9 +82,24 @@ export interface OrderDriverRef {
   phone: string
 }
 
+export interface OrderItem {
+  id: string
+  order_id: string
+  catalog_item_id: string | null
+  name: string
+  unit_price: number
+  quantity: number
+  line_total: number
+  created_at: string
+}
+
+// `items` is empty for orders created before this feature shipped — every
+// display component branches on `items.length` to fall back to the legacy
+// single service_label/amount view for those.
 export type OrderWithRelations = Order & {
   customer: OrderCustomerRef | null
   assigned_staff: OrderAssignedStaffRef | null
+  items: OrderItem[]
 }
 
 export type OrderWithDriver = Order & {

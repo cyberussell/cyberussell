@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { updateCustomerProfile } from '@/app/lms/actions/customer'
 import type { ActionResult } from '@/app/lms/actions/shared'
 import type { Customer } from '@/lib/laundry-management-system/modules/customer/types'
+import { CARD_CLASS } from '../dashboard/Card'
+import Button from '../dashboard/Button'
 
 export default function ProfileForm({ customer }: { customer: Customer }) {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(updateCustomerProfile, {})
@@ -16,7 +18,7 @@ export default function ProfileForm({ customer }: { customer: Customer }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       action={formAction}
-      className="space-y-4 rounded-3xl border border-teal-100/60 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+      className={`space-y-4 p-5 ${CARD_CLASS}`}
     >
       <input type="hidden" name="customerId" value={customer.id} />
       <Field label="Full name" name="fullName" defaultValue={customer.full_name} />
@@ -26,13 +28,9 @@ export default function ProfileForm({ customer }: { customer: Customer }) {
       {state.error && !saved && <p className="text-sm text-red-500">{state.error}</p>}
       {saved && <p className="text-sm text-emerald-600">Saved!</p>}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
-      >
+      <Button type="submit" disabled={pending} className="w-full">
         {pending ? 'Saving…' : 'Save changes'}
-      </button>
+      </Button>
     </motion.form>
   )
 }

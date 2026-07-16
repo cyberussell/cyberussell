@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { Customer } from '@/lib/laundry-management-system/modules/customer/types'
 import DataTable, { type DataTableColumn } from './DataTable'
 import TableSearchInput from './TableSearchInput'
+import Avatar from './Avatar'
 
 export default function CustomerSearchTable({ customers, basePath }: { customers: Customer[]; basePath: string }) {
   const [query, setQuery] = useState('')
@@ -14,7 +15,8 @@ export default function CustomerSearchTable({ customers, basePath }: { customers
       header: 'Name',
       sortValue: (c) => c.full_name.toLowerCase(),
       cell: (c) => (
-        <Link href={`${basePath}/${c.id}`} className="font-medium text-[#0D9488] hover:underline">
+        <Link href={`${basePath}/${c.id}`} className="flex items-center gap-3 font-medium text-[#0D9488] hover:underline">
+          <Avatar name={c.full_name} size="sm" />
           {c.full_name}
         </Link>
       ),

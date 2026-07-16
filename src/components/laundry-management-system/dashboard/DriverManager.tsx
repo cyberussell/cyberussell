@@ -7,9 +7,11 @@ import { toast } from 'sonner'
 import { createDriver, updateDriver, deleteDriver } from '@/app/lms/actions/drivers'
 import type { Driver } from '@/lib/laundry-management-system/modules/drivers/types'
 import Card from './Card'
+import { selectAppearance } from './FormField'
 
 const inputClass =
   'w-full rounded-lg border border-teal-100 bg-[#F0FDFA] px-2.5 py-1.5 text-sm text-[#0B1B33] focus:border-[#22D3EE] focus:outline-none'
+const selectClass = `${inputClass} ${selectAppearance}`
 
 // Owner-only driver roster CRUD, embedded in the Delivery Management page —
 // same shape as InventoryManager (add form + editable table rows).
@@ -84,7 +86,7 @@ export default function DriverManager({ drivers }: { drivers: Driver[] }) {
           <button
             type="submit"
             disabled={pending}
-            className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Add
@@ -192,7 +194,7 @@ function DriverRow({
           <select
             value={draft.active ? 'true' : 'false'}
             onChange={(e) => setDraft((v) => ({ ...v, active: e.target.value === 'true' }))}
-            className={inputClass}
+            className={selectClass}
           >
             <option value="true">Active</option>
             <option value="false">Inactive</option>

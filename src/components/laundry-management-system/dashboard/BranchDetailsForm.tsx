@@ -37,7 +37,7 @@ export default function BranchDetailsForm({ branch }: { branch: Branch }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+          className="rounded-full bg-gradient-to-r from-[#0D9488] to-[#22D3EE] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {pending ? 'Saving…' : 'Save branch'}
         </button>
