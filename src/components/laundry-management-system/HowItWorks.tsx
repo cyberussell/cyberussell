@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CalendarCheck2, QrCode, ScanLine, PackageCheck, type LucideIcon } from "lucide-react";
+import { ClipboardList, QrCode, ScanLine, PackageCheck, type LucideIcon } from "lucide-react";
 import { FoamDivider } from "./Atmosphere";
 
 const fadeUp = {
@@ -10,7 +10,7 @@ const fadeUp = {
 };
 
 const STEPS: { icon: LucideIcon; title: string }[] = [
-  { icon: CalendarCheck2, title: "Customer books online" },
+  { icon: ClipboardList, title: "Staff creates a walk-in order" },
   { icon: QrCode, title: "Customer receives a QR Code" },
   { icon: ScanLine, title: "Staff scans the QR Code and updates the order" },
   { icon: PackageCheck, title: "Customer picks up completed laundry" },
@@ -21,7 +21,7 @@ export default function HowItWorks() {
     <section id="how-it-works" className="px-6 md:px-10 py-20 max-w-5xl mx-auto scroll-mt-24">
       <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-14">
         <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#0F766E] uppercase tracking-[3px]">How It Works</span>
-        <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-[#0B1B33] mt-2">From Booking to Pickup, Fully Tracked</h2>
+        <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-[#0B1B33] mt-2">From Drop-off to Pickup, Fully Tracked</h2>
       </motion.div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-4">

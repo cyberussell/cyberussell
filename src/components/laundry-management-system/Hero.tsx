@@ -41,7 +41,7 @@ export default function Hero() {
           custom={2}
           className="font-[family-name:var(--font-inter)] text-[15px] md:text-[19px] text-[#0B1B33]/60 max-w-2xl mx-auto leading-[1.8] mb-4"
         >
-          Everything your laundry business needs in one place — from online bookings and QR check-ins to order tracking and monthly sales reports.
+          Everything your laundry business needs in one place — from walk-in order intake and QR check-ins to real-time order tracking and monthly sales reports.
         </motion.p>
 
         <motion.p

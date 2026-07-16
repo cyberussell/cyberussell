@@ -12,7 +12,7 @@ const fadeUp = {
 const FAQS = [
   { q: "Is the subscription per branch?", a: "Yes. Each physical laundry branch requires its own subscription." },
   { q: "Is hosting included?", a: "Yes. Hosting, SSL, maintenance, and system updates are included." },
-  { q: "Do customers need to install an app?", a: "No. Customers simply book online and receive a QR Code." },
+  { q: "Do customers need to install an app?", a: "No. Every order gets a QR Code customers can scan to check its status — no app required." },
   { q: "Can staff use mobile phones?", a: "Yes. The system is fully responsive and works on phones, tablets, and desktops." },
   { q: "How are monthly change requests handled?", a: "Change requests cover minor website and system updates. Larger feature requests are quoted separately." },
   { q: "Why isn't this a free app?", a: "Free laundry apps are usually generic templates with no dedicated support. Your subscription includes a professional website, hosting, ongoing maintenance, and monthly change requests — a real system built and supported for your business, not a shared app." },

@@ -24,7 +24,7 @@ export default function FinalCTA() {
           Ready to Modernize Your Laundry Business?
         </h2>
         <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 max-w-xl mx-auto leading-[1.8] mb-9">
-          Give your customers a better booking experience while making your daily operations simpler with a professional website and an easy-to-use Laundry Management System.
+          Give your customers a more professional experience while making your daily operations simpler with a professional website and an easy-to-use Laundry Management System.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <a

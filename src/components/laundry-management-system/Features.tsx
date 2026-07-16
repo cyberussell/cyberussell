@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import {
   Globe,
-  CalendarCheck2,
+  UserCheck,
   QrCode,
   PackageSearch,
   Users,
@@ -24,8 +24,8 @@ const fadeUp = {
 
 const FEATURES: { icon: LucideIcon; title: string; desc: string }[] = [
   { icon: Globe, title: "Professional Website", desc: "A modern, branded website customers trust the moment they land on it." },
-  { icon: CalendarCheck2, title: "Online Booking", desc: "Customers schedule pickups and drop-offs without a phone call." },
-  { icon: QrCode, title: "QR Booking & Check-in", desc: "Every order gets a QR code for instant, error-free check-in." },
+  { icon: UserCheck, title: "Customer Order Portal", desc: "Customers create a free account to check their order status anytime, no phone call needed." },
+  { icon: QrCode, title: "QR Check-in & Tracking", desc: "Every order gets a QR code for instant, error-free check-in and status lookup." },
   { icon: PackageSearch, title: "Laundry Order Tracking", desc: "Know exactly where every order is, from drop-off to pickup." },
   { icon: Users, title: "Customer Database", desc: "Every customer and order history saved and searchable in one place." },
   { icon: BarChart3, title: "Monthly Sales Dashboard", desc: "Clear reports on revenue and order volume, updated automatically." },

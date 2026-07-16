@@ -1,5 +1,21 @@
 # Current Work
 
+**Laundry Management System — Plan/feature-gating audit + removed false "online booking" marketing claims (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser, not committed:**
+
+Current Product: Laundry Management System (LMS).
+
+Current Feature: Russell asked for an audit of whether the code actually enforces the two-tier pricing (screenshot: Essential ₱399/mo vs Professional ₱699/mo) with real guardrails between them.
+
+Current Status: Audit complete, one real gap found and fixed (with Russell's confirmation via `AskUserQuestion`).
+- **Audit result — mostly solid**: `entitlements.ts`'s `PLANS.essential/professional` pricing (₱399/₱699) matches the pricing page exactly; the 3-staff-account limit is really enforced in `inviteStaff`; Pickup & Delivery Management, Priority Queue, and Advanced Reports are all real `hasFeature()` gates checked in 6+ places server-side, not just hidden UI — an Essential business genuinely cannot reach these. Minor note: Priority Queue and Advanced Reports are real Professional-only gates but aren't mentioned in the Pricing page's Professional bullet list — undocumented bonus, not a shortchange, left as-is.
+- **Real gap found**: "Online Booking" was advertised in four separate places (Hero, HowItWorks step 1, Features, Pricing) plus one FAQ answer — but grepping the entire customer-facing route tree and every server action confirmed zero booking/scheduling flow exists anywhere. Customers can only view read-only order status; all orders are created by staff at the counter.
+- **Fixed** (Russell chose "remove the false claims" over "leave it"/"build it later"): reworded all 5 spots to describe the real flow (walk-in order intake + QR check-in/tracking + customer read-only portal) instead of a booking capability that doesn't exist. Also renamed "QR Booking" → "QR Check-in & Tracking" in Features/Pricing and the matching FAQ answer, since "booking" there was the same imprecise word even though the underlying QR check-in feature is real.
+- `npx tsc --noEmit`, `npx next build`, `npx vitest run` (52/52) all clean. Live-verified the updated `/lms` marketing page in the browser (full page text pulled and read end-to-end) — no remaining "book"/"booking" language anywhere, zero console errors. (Hit and resolved an unrelated Turbopack cache-corruption dev-server error mid-session — stale `.next` cache from an earlier `rm -rf` while the dev server was still running; fixed by stopping the server, clearing the cache, and restarting clean.)
+
+**Next recommended task:** Not committed or deployed. Russell reviews the reworded marketing copy, then commit + deploy at his request.
+
+----------------------------------------
+
 **Laundry Management System — Multi-item price catalog + POS-style order cart (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch routes, migration 018 applied by Russell (RLS/RPC security properties not yet functionally verified), committed and pushed (`5200585`, bundled with the earlier system-wide redesign in the same commit), Vercel auto-deploy triggered — see checkpoint `laundry-management-system-pos-cart-catalog-v1.md` for full detail:**
 
 Current Product: Laundry Management System (LMS).
