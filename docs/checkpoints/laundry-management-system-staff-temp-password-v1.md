@@ -1,0 +1,36 @@
+# LMS — Staff invite switched to temp-password pattern (mirrors TMS Group Leader) — v1
+
+**Date:** 2026-07-16
+**Product:** Laundry Management System (LMS)
+**Feature:** Russell asked for three things in one message: (1) deploy last turn's marketing-copy fix, (2) demonstrate the existing QR order-lookup flow, (3) apply the same temp-password invite pattern already proven in Territory Management System's "Group Leader" invites to LMS's staff invite flow. Confirmed via `AskUserQuestion` on all three, since each had a real ambiguity (deploy vs. further plan changes; demo vs. build a new QR-booking feature; and confirming the pattern lives in TMS, not the unrelated Appointment System, before touching anything).
+
+## Part 1 — Deployed marketing copy fix
+Committed and pushed (`afcae82`) the "online booking" copy fix from the previous turn (Hero, HowItWorks, Features, Pricing, FAQ).
+
+## Part 2 — QR demo revealed a real bug (not fixed, flagged as background task)
+Navigating directly to `/lms/orders/lookup/[orderNumber]` (the URL every QR code encodes) proved the lookup route requires an owner/staff session (`requirePagePermission('view_dashboard')` → `requireBusinessSession()`, which only resolves an owner or `staff_members` row) — any other session, including a real customer's own account, or an anonymous scan, gets redirected to the owner/staff login page. From there, "Create your account" leads to `/lms/signup` (new-business signup), not customer signup. **A customer scanning the QR code on their own receipt cannot see their order status.** This means the copy shipped in Part 1 ("Every order gets a QR code customers can scan to check its status") is still not fully accurate. Spawned as background task `task_be93814b` rather than fixed inline — out of scope for "show me," and a real fix means deciding how the lookup route should branch for a customer session vs. anonymous vs. owner/staff, which deserves its own pass.
+
+## Part 3 — Staff invite: temp-password pattern (main work this turn)
+
+Read TMS's full reference implementation first (`groupLeaders/queries.ts`, `schema.ts`, `actions/group-leaders.ts`, `actions/auth.ts`, `GroupLeadersManager.tsx`, `ChangePasswordForm.tsx`) before writing anything, then mirrored it into LMS's equivalent surface area.
+
+### Files
+- **New migration** `laundry-management-system/migrations/019_staff_temp_password.sql` (**written, not yet applied — Russell needs to run this**): adds `profiles.must_change_password boolean not null default false`; updates `handle_new_user()` to set it from `user_metadata` in the same trigger-driven insert that already creates `staff_members` from metadata. This is actually simpler than TMS's version: TMS's trigger doesn't handle Group-Leader-specific fields, so their invite code needs a follow-up `.upsert()` after `admin.createUser()` (and worries about a race if the trigger hasn't landed yet); LMS's trigger already fully handles `staff_members` creation from metadata, so setting `must_change_password` via the same metadata means the invite path needs **no follow-up call at all** — one atomic insert, no race window possible.
+- `src/lib/laundry-management-system/hooks/useServerAction.ts` — made generic (`useServerAction<T extends ActionResult>`), byte-for-byte the same change TMS made to its own hook, so an action can return extra data (the temp password) alongside the usual `{error}` shape, and exposes `state` so a `useEffect` can react to every successful submission.
+- `modules/staff/schema.ts` — `inviteStaffSchema` gained an optional `tempPassword` field (blank auto-generates, 8-char minimum enforced either way).
+- `modules/staff/queries.ts` — new `generateTempPassword()` (same excludes-ambiguous-characters alphabet as TMS's), `inviteStaffWithPassword()`, `resetStaffPassword()`.
+- `actions/staff.ts` — `inviteStaff` now calls `inviteStaffWithPassword()` instead of `admin.inviteUserByEmail()`; new `resetStaffPasswordAction()` (re-resolves the staff row scoped to the calling owner's own business before acting, never trusts a client-supplied id alone).
+- `actions/auth.ts` — `signIn` now checks `profile.must_change_password` and redirects to `/lms/change-password` before the normal role redirect; new `changePasswordAction()`.
+- New `src/components/laundry-management-system/ChangePasswordForm.tsx` + `src/app/lms/change-password/page.tsx` — adapted to LMS's existing dark `AuthChrome` theme (TMS's equivalent uses TMS's own light theme; kept each product's established look rather than copying pixels).
+- New `src/components/laundry-management-system/dashboard/StaffManager.tsx` — merges the old `StaffTable.tsx` + `StaffInviteForm.tsx` into one component (both files deleted), mirroring `GroupLeadersManager.tsx`'s structure: an invite form with the temp-password field, a revealed-password `Card` that stays visible until dismissed (shown after either an invite or a reset — this is *why* they needed to merge into one component, so both actions can share that panel's state), and a `DataTable` with a new "Reset Password" row action (`window.prompt()` for an optional custom password, same UX as TMS's row action). `staff/page.tsx` updated to use it, passing through the existing staff-limit/upgrade-prompt logic as new `atLimit`/`limitMessage` props.
+
+### Verified
+`npx tsc --noEmit`, `npx next build`, `npx vitest run` (52/52) all clean. Live-verified in the browser via scratch routes (removed before finishing): the merged Staff page (invite form with temp-password field, staff table with Reset Password action, email-fallback for a staff member with no profile name yet — matches the pre-existing display logic), and `ChangePasswordForm` rendering correctly in LMS's dark theme. Could not verify the actual invite/reset/login round-trip against a live database — no Supabase credentials in this environment, same standing limitation as every migration this session.
+
+## Known issues / deliberately out of scope
+- **Migration 019 not yet applied.** Needs to run before any of this works — until then, `inviteStaff` will fail (the `profiles.must_change_password` column doesn't exist).
+- **`src/app/lms/staff/accept-invite/page.tsx` (the old email-invite-link acceptance page) is now dead code** — nothing links to it anymore (confirmed via grep: zero remaining references to the old `'INVITED'` sentinel or an `acceptStaffInvite` action). Deliberately left in place rather than deleted — same caution applied to the other stray/dead files flagged this session (`page 2.tsx`, `DriverManager 2.tsx`); deleting a real, previously-working, recently-bug-fixed route deserves its own explicit confirmation rather than being swept up in this refactor.
+- **QR-for-customers bug** (Part 2) — flagged as background task `task_be93814b`, not fixed.
+
+## Next Recommended Task
+Not committed or deployed. Russell (1) runs migration `019_staff_temp_password.sql`, (2) live-verifies the full loop — invite a real staff member, confirm the temp password actually logs them in, confirm they land on `/lms/change-password` and not the dashboard, confirm setting a real password then lands them on the staff dashboard — (3) decides whether to also spin off the QR-for-customers fix (`task_be93814b`) and/or clean up the now-dead `accept-invite` route, (4) commit + deploy at his request.

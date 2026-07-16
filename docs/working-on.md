@@ -1,5 +1,23 @@
 # Current Work
 
+**Laundry Management System — Staff invite switched to temp-password pattern, marketing fix deployed, QR bug found (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch routes, migration 019 written but NOT applied, not committed — see checkpoint `laundry-management-system-staff-temp-password-v1.md` for full detail:**
+
+Current Product: Laundry Management System (LMS).
+
+Current Feature: Three asks in one message, each confirmed via `AskUserQuestion` first since all three had a real ambiguity: (1) deploy the marketing-copy fix from the prior turn, (2) demonstrate the existing QR order-lookup flow, (3) apply Territory Management System's Group Leader temp-password invite pattern to LMS staff invites (Russell had said "Appointment System" but that product has no "group leader" concept at all — confirmed he meant TMS before touching anything, per the standing rule against crossing into another product's isolated code without being sure).
+
+Current Status: All three done; the temp-password rework is the substantial piece.
+- **Deployed** (`afcae82`): the previous turn's "online booking" marketing copy fix is now live.
+- **QR demo surfaced a real bug, not fixed**: navigating directly to the QR-encoded lookup URL proved it requires an owner/staff session — a real customer scanning their own receipt gets sent to the owner/staff login page, and "Create your account" from there leads to new-*business* signup, not customer signup. Spawned as background task `task_be93814b`.
+- **Staff invite reworked to match TMS's Group Leader pattern**: read TMS's full reference implementation first, then mirrored it — new migration `019_staff_temp_password.sql` (**not yet run**) adds `profiles.must_change_password`; `useServerAction` hook made generic (same change TMS made) so an action can return the generated password alongside the usual result; new `StaffManager.tsx` merges the old `StaffTable`/`StaffInviteForm` into one component (both deleted) so the invite form and the new "Reset Password" row action can share one revealed-password panel; new `/lms/change-password` page + `ChangePasswordForm.tsx` (adapted to LMS's own dark theme, not copied pixel-for-pixel from TMS's light one); `signIn` now redirects there whenever `must_change_password` is set.
+- LMS's version turned out simpler than TMS's own: LMS's `handle_new_user()` trigger already fully creates the `staff_members` row from metadata, so `must_change_password` rides the same metadata with **no follow-up update call** needed for the invite path (TMS's trigger doesn't handle their equivalent fields, so they need a follow-up `.upsert()` with an explicit race-condition comment) — the invite path here has one atomic insert, no race window at all.
+- `npx tsc --noEmit`, `npx next build`, `npx vitest run` (52/52) all clean. Live-verified via scratch routes: the merged Staff page (invite form with temp-password field, table with Reset Password action), and `ChangePasswordForm` rendering correctly in LMS's dark theme.
+- **Found, not deleted**: `src/app/lms/staff/accept-invite/page.tsx` (the old email-invite-link page) is now dead code — confirmed zero remaining references anywhere. Left in place rather than deleted, same caution as the other stray/dead files flagged this session.
+
+**Next recommended task:** Not committed or deployed. Russell (1) runs migration `019`, (2) live-verifies the full loop (invite → temp password → forced change-password → real dashboard access), (3) decides on the QR-for-customers fix (`task_be93814b`) and the now-dead accept-invite route, (4) commit + deploy at his request.
+
+----------------------------------------
+
 **Laundry Management System — Plan/feature-gating audit + removed false "online booking" marketing claims (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser, not committed:**
 
 Current Product: Laundry Management System (LMS).

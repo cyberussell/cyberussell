@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { z } from 'zod'
-import { createServerSupabase } from '@/lib/laundry-management-system/supabase-server'
+import { createServerSupabase, createAdminSupabase } from '@/lib/laundry-management-system/supabase-server'
 import { checkRateLimit, clientIp } from '@/lib/laundry-management-system/rateLimit'
 import type { UserRole } from '@/lib/laundry-management-system/modules/auth/types'
 import { type ActionResult } from './shared'
@@ -72,9 +72,15 @@ export async function signIn(_prev: ActionResult, formData: FormData): Promise<A
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, must_change_password')
     .eq('id', data.user.id)
     .single()
+
+  // Set on staff invite and on an owner-triggered password reset (temp-password flow,
+  // replacing the emailed invite-link flow) — blocks reaching the dashboard until a real
+  // password is chosen.
+  if (profile?.must_change_password) redirect('/lms/change-password')
+
   const role = (profile?.role as UserRole | undefined) ?? 'owner'
   redirect(ROLE_REDIRECT[role])
 }
@@ -111,4 +117,38 @@ export async function signOut(): Promise<void> {
   const supabase = await createServerSupabase()
   await supabase.auth.signOut()
   redirect('/lms/login')
+}
+
+// Reached only via a forced redirect (must_change_password) — the account was just invited or
+// reset with a temp password the owner relayed directly. No token/link to verify here — the
+// user already has a real session by the time they land on this page, just one flagged as
+// needing a real password before it can be used anywhere else. Deliberately doesn't go through
+// requireOwnerBusiness()/requireStaffAccess() — those would redirect back here in a loop while
+// the flag is still set.
+export async function changePasswordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const password = String(formData.get('password') ?? '')
+  const confirm = String(formData.get('confirm') ?? '')
+  if (password.length < 8) return { error: 'Password must be at least 8 characters.' }
+  if (password !== confirm) return { error: 'Passwords do not match.' }
+
+  const supabase = await createServerSupabase()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { error: 'Your session expired — please log in again.' }
+
+  const { error: updateError } = await supabase.auth.updateUser({ password })
+  if (updateError) return { error: updateError.message }
+
+  const admin = createAdminSupabase()
+  const { data: profile, error: profileError } = await admin
+    .from('profiles')
+    .update({ must_change_password: false })
+    .eq('id', user.id)
+    .select('role')
+    .maybeSingle()
+  if (profileError) return { error: 'Password updated, but could not finish setup — please contact your business owner.' }
+
+  const role = profile?.role as UserRole | undefined
+  redirect(role ? ROLE_REDIRECT[role] : '/lms/login')
 }

@@ -3,9 +3,7 @@ import { listStaff } from '@/lib/laundry-management-system/modules/staff/queries
 import { listBranches } from '@/lib/laundry-management-system/modules/tenant/queries'
 import { getLimit } from '@/lib/laundry-management-system/modules/billing/entitlements'
 import PageHeader from '@/components/laundry-management-system/dashboard/PageHeader'
-import StaffTable from '@/components/laundry-management-system/dashboard/StaffTable'
-import Card from '@/components/laundry-management-system/dashboard/Card'
-import StaffInviteForm from '@/components/laundry-management-system/StaffInviteForm'
+import StaffManager from '@/components/laundry-management-system/dashboard/StaffManager'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,15 +25,12 @@ export default async function StaffPage() {
             : `${activeCount} of ${staffLimit} staff accounts used on the Essential plan.`
         }
       />
-      <StaffTable staff={staff} />
-      {atLimit ? (
-        <Card className="p-6 text-sm text-slate-500">
-          You&apos;ve reached the Essential plan&apos;s limit of {staffLimit} staff accounts. Deactivate a staff
-          member to free up a slot, or upgrade to the Professional plan for unlimited staff.
-        </Card>
-      ) : (
-        <StaffInviteForm branches={branches} />
-      )}
+      <StaffManager
+        staff={staff}
+        branches={branches}
+        atLimit={atLimit}
+        limitMessage={`You've reached the Essential plan's limit of ${staffLimit} staff accounts. Deactivate a staff member to free up a slot, or upgrade to the Professional plan for unlimited staff.`}
+      />
     </div>
   )
 }

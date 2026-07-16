@@ -20,12 +20,19 @@ import type { ActionResult } from '@/app/lms/actions/shared'
 // `pending` out of sync — wrapping it in startTransition here means every
 // caller gets a working pending state for free instead of hitting this the
 // same way once per form.
-export function useServerAction(
-  action: (prev: ActionResult, formData: FormData) => Promise<ActionResult>,
+export function useServerAction<T extends ActionResult = ActionResult>(
+  action: (prev: T, formData: FormData) => Promise<T>,
   successSentinels: string[] = [],
   toastSuccessMessage?: string
 ) {
-  const [state, dispatch] = useActionState<ActionResult, FormData>(action, {})
+  // TypeScript can't reduce Awaited<T> for an still-abstract generic T bound only by `extends
+  // ActionResult`, even though every real T here is a plain (non-Promise) object type where
+  // Awaited<T> and T are identical — cast through the exact shape useActionState expects rather
+  // than fighting the inference.
+  const [state, dispatch] = useActionState(
+    action as unknown as (prev: Awaited<T>, formData: FormData) => T | Promise<T>,
+    {} as Awaited<T>
+  )
   const [isPending, startTransition] = useTransition()
   const isSentinel = state.error ? successSentinels.includes(state.error) : false
   const error = state.error && !isSentinel ? state.error : null
@@ -51,5 +58,10 @@ export function useServerAction(
     pending: isPending,
     error,
     successMessage,
+    // Exposed for callers that need to react to *every* successful submission, including two
+    // in a row with the same sentinel value (e.g. 'SAVED' twice) — successMessage/state.error
+    // don't change identity between two such submissions, but state itself is a fresh object
+    // reference on every action resolution, so a useEffect keyed on it fires reliably each time.
+    state,
   }
 }
