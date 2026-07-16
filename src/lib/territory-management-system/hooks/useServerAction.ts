@@ -44,5 +44,10 @@ export function useServerAction(
     pending: isPending,
     error,
     successMessage,
+    // Exposed for callers that need to react to *every* successful submission, including two
+    // in a row with the same sentinel value (e.g. 'SAVED' twice) — successMessage/state.error
+    // don't change identity between two such submissions, but state itself is a fresh object
+    // reference on every action resolution, so a useEffect keyed on it fires reliably each time.
+    state,
   }
 }

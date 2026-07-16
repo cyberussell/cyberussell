@@ -32,7 +32,7 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
     initialConductorName: formData.get('initialConductorName'),
     initialNotes: formData.get('initialNotes'),
   })
-  if (!parsed.success) return { error: 'Please fill in the required fields.' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in the required fields.' }
 
   const { supabase, congregation, userId } = await requireAdmin()
 

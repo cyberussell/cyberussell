@@ -1,6 +1,23 @@
 # Current Work
 
-**Territory Management System — "Use My Location" button on Moved/Correction panels (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, not yet committed/pushed — see checkpoint `territory-management-plus-code-location-button-v1.md` for full detail:**
+**Territory Management System — Add Record validation bug fix + Territory page tabs (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, not yet committed/pushed — see checkpoint `territory-management-add-record-bugfix-tabs-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell reported the admin "Add a Contact Record" form always failed with a generic error that wiped every field, and asked for a scalable redesign of the Territory detail page (currently one long stacked page whose Sections & Blocks section renders every section/block flat, unworkable at e.g. 100 sections x 50 blocks).
+
+Current Status: Code complete.
+- **Root cause found**: `initialConductorName`/`initialNotes` (and `logVisitSchema`'s `conductorName`) are conditionally rendered — hidden fields submit as `null` via FormData, which `z.string().optional()` rejects (only accepts `undefined`). This made the admin's default path (Initial status left blank) always fail validation. New `optionalString()` helper in `records/schema.ts` fixes it.
+- Confirmed via `AskUserQuestion`: Plus Code is now required and Household members defaults to 1 on the create flow only (matching the publisher form's already-established rule); `createRecordAction` now returns the specific Zod issue instead of a generic string; `RecordForm.tsx` converted to controlled state so a failed submit no longer wipes typed fields (only clears on confirmed success, via a `useServerAction` change that now also exposes the raw action `state` for reliable re-run detection).
+- Territory detail page: Details/Map/header stay above the fold, Sections & Blocks / Add a Contact Record / Contact Records became three tabs (new `TerritoryTabs.tsx`, same pattern as `GroupLeaderTabs.tsx`). `SectionBlockTree.tsx` sections are now collapsed-by-default accordions — this is what actually solves the scaling problem, not the tabbing alone.
+- **Live-verified in the browser** (rare for TMS) via a scratch route with real-UUID mock data: confirmed Plus Code's `required` attribute blocks submission client-side; forced a server round-trip anyway and confirmed the exact "Plus Code is required." message plus preserved Address field; confirmed the 8-section/6-block-each accordion collapses to 8 rows and expands correctly.
+- `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean.
+
+**Next recommended task:** Ready to deploy at Russell's request. Live-verify on the real dashboard afterward: blank Plus Code blocks immediately and keeps other fields; leaving Initial status blank no longer spuriously fails; the three new tabs behave like the mock preview.
+
+----------------------------------------
+
+**Territory Management System — "Use My Location" button on Moved/Correction panels (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, committed and pushed (`35f0504`), deployed — see checkpoint `territory-management-plus-code-location-button-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
@@ -11,6 +28,8 @@ Current Status: Code complete.
 - Both target forms got the identical button pattern already used in `PublisherRecordForm.tsx`: same icons, same disabled/spinner behavior, same `locatePlusCode()` call, same `toast.error` on failure.
 - `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. Live-verified in the browser via a temporary scratch route (removed before commit) — first panel pixel-matches Russell's screenshot, second panel's button confirmed correct via the accessibility tree, click behavior confirmed correct (denied-permission error path, same as the existing button).
 - **Found and flagged separately (not fixed here)**: no `<Toaster />` is mounted anywhere in the publisher route tree, so every `toast.success`/`toast.error` across the whole publisher workflow has never actually rendered. Spawned as background task `task_d3775285` rather than fixed inline (out of scope for this request, different part of the route tree).
+
+**Next recommended task:** Deployed (`35f0504`). Russell live-verifies the two location buttons on the real deployed site. Separately, the spawned Toaster-mounting task whenever convenient.
 
 **Next recommended task:** Ready to deploy at Russell's request. Separately, the spawned Toaster-mounting task whenever convenient.
 

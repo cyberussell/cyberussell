@@ -109,11 +109,30 @@ export function mergeConductorIntoNotes(conductorName: string, notes: string): s
 
 // A blank form field arrives as '' — coerce that to undefined so householdMembers stays
 // optional instead of coercing to 0 (a real headcount of "0" is different from "not recorded").
-// Exported for assignment/schema.ts's addPublisherRecordSchema, which needs the same coercion.
 export const householdMembersField = z.preprocess(
   (v) => (v === '' || v === null || v === undefined ? undefined : v),
   z.coerce.number().int().min(0).optional()
 )
+
+// Same idea as assignment/schema.ts's publisherHouseholdMembersField — a blank Household
+// members field on the admin's Add Contact Record form defaults to 1 instead of staying unset,
+// matching the publisher-facing rule (confirmed with Russell to bring Admin's Add form to
+// parity). Only used by createRecordSchema below, not updateRecordSchema — editing an existing
+// (possibly legacy/CSV-imported) record still leaves a blank value unset.
+const householdMembersDefaultOneField = z.preprocess(
+  (v) => (v === '' || v === null || v === undefined ? 1 : v),
+  z.coerce.number().int().min(0)
+)
+
+// A conditionally-rendered <input>/<textarea> (e.g. initialConductorName/initialNotes below,
+// only shown once an initial status that needs one is picked) is simply absent from the DOM
+// when its condition is false — a native <form action> then submits FormData with no such key
+// at all, so formData.get() returns null for it. z.string().optional() only accepts undefined,
+// not null, so passing that straight through fails validation even though the field was
+// correctly left blank/hidden on purpose. This normalizes null the same as a blank string.
+function optionalString(max: number) {
+  return z.preprocess((v) => (v === null ? '' : v), z.string().max(max).optional().default(''))
+}
 
 // initialResult/initialConductorName/initialNotes let whoever's adding a brand-new record
 // (admin or publisher) optionally seed its very first visit at creation time, instead of every
@@ -131,13 +150,13 @@ export const createRecordSchema = z
     address: z.string().max(200).optional().default(''),
     unit: z.string().max(40).optional().default(''),
     residentName: z.string().max(120).optional().default(''),
-    plusCode: z.string().max(20).optional().default(''),
-    householdMembers: householdMembersField,
+    plusCode: z.string().min(1, 'Plus Code is required.').max(20),
+    householdMembers: householdMembersDefaultOneField,
     notes: z.string().max(500).optional().default(''),
     doNotCall: z.coerce.boolean().optional().default(false),
     initialResult: z.string().optional().default(''),
-    initialConductorName: z.string().max(CONDUCTOR_NAME_MAX).optional().default(''),
-    initialNotes: z.string().max(500).optional().default(''),
+    initialConductorName: optionalString(CONDUCTOR_NAME_MAX),
+    initialNotes: optionalString(500),
   })
   .refine((data) => !data.initialResult || data.initialResult !== 'other' || data.initialNotes.trim().length > 0, {
     message: 'Notes are required when the initial status is "Other".',
@@ -169,7 +188,9 @@ export const logVisitSchema = z
     recordId: z.string().uuid(),
     visitedAt: z.string().min(1),
     result: z.enum(VISIT_RESULTS),
-    conductorName: z.string().max(CONDUCTOR_NAME_MAX).optional().default(''),
+    // conductorName is conditionally rendered in VisitLogForm (only shown when the picked
+    // result needs one) — same null-vs-undefined gap optionalString() guards against above.
+    conductorName: optionalString(CONDUCTOR_NAME_MAX),
     notes: z.string().max(500).optional().default(''),
   })
   .refine((data) => data.result !== 'other' || data.notes.trim().length > 0, {
