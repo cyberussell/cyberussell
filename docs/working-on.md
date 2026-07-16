@@ -1,5 +1,21 @@
 # Current Work
 
+**Territory Management System — Admin-overridable temporary password (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch route, not yet committed/pushed — see checkpoint `territory-management-custom-temp-password-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell reported the auto-generated temp password (e.g. "gJTav9BQVsGh") was hard for less tech-savvy Group Leaders to type/relay. Admin can now optionally set their own instead, both when inviting and when resetting.
+
+Current Status: Code complete.
+- `inviteGroupLeaderSchema` gained an optional `tempPassword` field (blank auto-generates, same 8-char minimum as every other password in the product). `inviteGroupLeader`/`resetGroupLeaderPassword` both accept an optional custom password now.
+- Invite form gained a real "Temporary password (optional)" input; Reset Password (a single-click row action, no form of its own) uses `window.prompt()` for the same override.
+- Server-side re-validates the 8-character minimum on the reset path even though the client already checks it.
+- `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. Live-verified the new field renders correctly via a scratch route.
+
+**Next recommended task:** Ready to deploy at Russell's request.
+
+----------------------------------------
+
 **Laundry Management System — Staff invite link PKCE/implicit flow fix (2026-07-16) — code done, tsc + vitest (52/52) + build clean, not live-verified (same standing no-live-credentials limitation as TMS), committed and pushed (`7ff424d`), deployed — see checkpoint `laundry-management-system-staff-invite-flow-fix-v1.md` for full detail. Note: a separate spawned session was also started on this same task — worth checking for a duplicate fix before merging/deploying anything from there.**
 
 Current Product: Laundry Management System (LMS).

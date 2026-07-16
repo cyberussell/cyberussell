@@ -29,8 +29,9 @@ export async function inviteGroupLeaderAction(_prev: InviteGroupLeaderResult, fo
     firstName: formData.get('firstName'),
     lastName: formData.get('lastName'),
     email: formData.get('email'),
+    tempPassword: formData.get('tempPassword'),
   })
-  if (!parsed.success) return { error: 'Please fill in first name, last name, and a valid email.' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in first name, last name, and a valid email.' }
 
   const admin = createAdminSupabase()
   const result = await inviteGroupLeader(admin, congregation.id, parsed.data)
@@ -40,13 +41,16 @@ export async function inviteGroupLeaderAction(_prev: InviteGroupLeaderResult, fo
   return { error: 'SAVED', tempPassword: result.tempPassword }
 }
 
-export async function resetGroupLeaderPasswordAction(profileId: string): Promise<{ error?: string; tempPassword?: string }> {
+export async function resetGroupLeaderPasswordAction(profileId: string, customPassword?: string): Promise<{ error?: string; tempPassword?: string }> {
   const { congregation } = await requireAdmin()
+  // Re-validated server-side even though GroupLeadersManager's window.prompt already checks
+  // this client-side — never trust a client-supplied value alone.
+  if (customPassword && customPassword.length < 8) return { error: 'Temporary password must be at least 8 characters.' }
   const admin = createAdminSupabase()
   const groupLeader = await getGroupLeader(admin, congregation.id, profileId)
   if (!groupLeader) return { error: 'Group Leader not found.' }
 
-  const result = await resetGroupLeaderPassword(admin, profileId)
+  const result = await resetGroupLeaderPassword(admin, profileId, customPassword || undefined)
   if (result.error) return { error: result.error }
   return { tempPassword: result.tempPassword }
 }

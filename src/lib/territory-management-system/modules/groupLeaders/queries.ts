@@ -62,10 +62,10 @@ export async function getGroupLeader(supabase: SupabaseClient, congregationId: s
 export async function inviteGroupLeader(
   supabase: SupabaseClient,
   congregationId: string,
-  input: { firstName: string; lastName: string; email: string }
+  input: { firstName: string; lastName: string; email: string; tempPassword?: string }
 ): Promise<{ error?: string; tempPassword?: string }> {
   const fullName = `${input.firstName} ${input.lastName}`.trim()
-  const tempPassword = generateTempPassword()
+  const tempPassword = input.tempPassword || generateTempPassword()
   const { data, error } = await supabase.auth.admin.createUser({
     email: input.email,
     password: tempPassword,
@@ -99,8 +99,12 @@ export async function inviteGroupLeader(
 // Leader who's forgotten their password or needs a fresh one for any other reason. Replaces
 // self-service resetPasswordForEmail() for Group Leader accounts (confirmed with Russell),
 // unifying both onboarding and recovery under the same link-free flow.
-export async function resetGroupLeaderPassword(supabase: SupabaseClient, profileId: string): Promise<{ error?: string; tempPassword?: string }> {
-  const tempPassword = generateTempPassword()
+export async function resetGroupLeaderPassword(
+  supabase: SupabaseClient,
+  profileId: string,
+  customPassword?: string
+): Promise<{ error?: string; tempPassword?: string }> {
+  const tempPassword = customPassword || generateTempPassword()
   const { error: passwordError } = await supabase.auth.admin.updateUserById(profileId, { password: tempPassword })
   if (passwordError) return { error: passwordError.message }
   const { error: profileError } = await supabase.from('profiles').update({ must_change_password: true }).eq('id', profileId)

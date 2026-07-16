@@ -57,10 +57,20 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
   }
 
   function runResetPassword(id: string, name: string) {
-    if (!window.confirm(`Reset the password for ${name}? Their current password stops working immediately.`)) return
+    // Same override as the invite form (a text field there, a prompt here since this is a
+    // single-click row action with no form of its own) — leave blank to auto-generate.
+    const custom = window.prompt(
+      `Reset the password for ${name}?\n\nOptionally set a custom temporary password (at least 8 characters) — leave blank to auto-generate one.`,
+      ''
+    )
+    if (custom === null) return // cancelled
+    if (custom && custom.length < 8) {
+      toast.error('Temporary password must be at least 8 characters.')
+      return
+    }
     setPendingId(id)
     startTransition(async () => {
-      const result = await resetGroupLeaderPasswordAction(id)
+      const result = await resetGroupLeaderPasswordAction(id, custom || undefined)
       setPendingId(null)
       if (result.error) toast.error(result.error)
       else if (result.tempPassword) {
@@ -104,6 +114,20 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
           <FormField label="Email">
             <input name="email" type="email" required className={inputClass} />
           </FormField>
+          <FormField label="Temporary password" optional>
+            <input
+              name="tempPassword"
+              type="text"
+              minLength={8}
+              maxLength={72}
+              placeholder="Leave blank to auto-generate"
+              className={inputClass}
+            />
+          </FormField>
+          <p className="text-xs text-slate-500 sm:col-span-2 sm:self-center">
+            Auto-generated passwords can be hard to relay — set something easier to type if you&apos;d like. At least 8
+            characters either way.
+          </p>
           {error && <p className="text-sm text-red-500 sm:col-span-3">{error}</p>}
           <button
             type="submit"
