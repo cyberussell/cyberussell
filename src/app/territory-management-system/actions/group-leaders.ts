@@ -8,15 +8,22 @@ import {
   deleteGroupLeader,
   getGroupLeader,
   inviteGroupLeader,
+  resetGroupLeaderPassword,
   restoreGroupLeaderAccess,
   revokeGroupLeaderAccess,
 } from '@/lib/territory-management-system/modules/groupLeaders/queries'
 import { type ActionResult } from './shared'
 
 const GROUP_LEADERS_PATH = '/territory-management-system/dashboard/group-leaders'
-const SIX_MONTHS_MS = 1000 * 60 * 60 * 24 * 30 * 6
 
-export async function inviteGroupLeaderAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+// tempPassword rides alongside the usual error/'SAVED' sentinel shape — useServerAction is
+// generic now specifically to support this, since the Admin needs to actually see the
+// generated password once, not just a toast confirming success.
+export interface InviteGroupLeaderResult extends ActionResult {
+  tempPassword?: string
+}
+
+export async function inviteGroupLeaderAction(_prev: InviteGroupLeaderResult, formData: FormData): Promise<InviteGroupLeaderResult> {
   const { congregation } = await requireAdmin()
   const parsed = inviteGroupLeaderSchema.safeParse({
     firstName: formData.get('firstName'),
@@ -30,7 +37,18 @@ export async function inviteGroupLeaderAction(_prev: ActionResult, formData: For
   if (result.error) return { error: result.error }
 
   revalidatePath(GROUP_LEADERS_PATH)
-  return { error: 'SAVED' }
+  return { error: 'SAVED', tempPassword: result.tempPassword }
+}
+
+export async function resetGroupLeaderPasswordAction(profileId: string): Promise<{ error?: string; tempPassword?: string }> {
+  const { congregation } = await requireAdmin()
+  const admin = createAdminSupabase()
+  const groupLeader = await getGroupLeader(admin, congregation.id, profileId)
+  if (!groupLeader) return { error: 'Group Leader not found.' }
+
+  const result = await resetGroupLeaderPassword(admin, profileId)
+  if (result.error) return { error: result.error }
+  return { tempPassword: result.tempPassword }
 }
 
 export async function revokeGroupLeaderAccessAction(profileId: string): Promise<{ error?: string }> {
@@ -62,9 +80,6 @@ export async function deleteGroupLeaderAction(profileId: string): Promise<{ erro
   const admin = createAdminSupabase()
   const groupLeader = await getGroupLeader(admin, congregation.id, profileId)
   if (!groupLeader) return { error: 'Group Leader not found.' }
-
-  const ageMs = Date.now() - new Date(groupLeader.created_at).getTime()
-  if (ageMs < SIX_MONTHS_MS) return { error: 'This entry is not yet 6 months old and cannot be deleted.' }
 
   const result = await deleteGroupLeader(admin, profileId)
   if (result.error) return result

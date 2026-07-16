@@ -23,7 +23,7 @@ export default async function GroupLeaderDashboardPage() {
   ])
   const activeTerritories = territories
     .filter((t) => t.status === 'active')
-    .map((t) => ({ id: t.id, name: t.name, approvedCount: approvedCounts[t.id] ?? 0 }))
+    .map((t) => ({ id: t.id, name: t.name, barangayName: t.description, approvedCount: approvedCounts[t.id] ?? 0 }))
 
   // Campaign-day scenario: no assignment yet today — lead with the generation form itself
   // rather than a passive "nothing here" message, since this is the Group Leader's very first
@@ -48,6 +48,7 @@ export default async function GroupLeaderDashboardPage() {
       qrDataUrl={qrDataUrl}
       publicUrl={publicUrl}
       activeTerritories={activeTerritories}
+      requestedPartnershipCount={batch.requested_partnership_count}
       stats={stats}
     />
   )

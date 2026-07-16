@@ -72,7 +72,7 @@ export default function AssignmentForm({
   territories,
   hasExistingBatch,
 }: {
-  territories: { id: string; name: string; approvedCount: number }[]
+  territories: { id: string; name: string; barangayName: string; approvedCount: number }[]
   hasExistingBatch: boolean
 }) {
   const { dispatch, pending, error } = useServerAction(createGroupLeaderAssignmentAction)
@@ -87,9 +87,15 @@ export default function AssignmentForm({
   )
   // Mirrors engine.ts's calculateAssignment: records fill sequentially up to
   // DEFAULT_MAX_PER_PARTNERSHIP per partnership, so at most ceil(eligibleTotal / max) partnerships
-  // can end up with any records at all — requesting more than that leaves some with none.
+  // can end up with any records at all. Requesting more than that is no longer blocked — the
+  // engine caps the actual partnership count at what the records support and leaves the rest
+  // uncreated, since a territory legitimately having fewer approved records than publishers who
+  // showed up is a normal day, not a mistake to correct before generating.
   const recordsMaxPartnerships = eligibleTotal > 0 ? Math.ceil(eligibleTotal / DEFAULT_MAX_PER_PARTNERSHIP) : 0
   const insufficientForHeadcount = eligibleTotal > 0 && partnershipCount > recordsMaxPartnerships
+  const shortfallPublishers = insufficientForHeadcount
+    ? Math.max(0, publisherCount - recordsMaxPartnerships * groupSize)
+    : 0
   const fullPartnerships = Math.floor(eligibleTotal / DEFAULT_MAX_PER_PARTNERSHIP)
   const remainder = eligibleTotal % DEFAULT_MAX_PER_PARTNERSHIP
   const breakdownText =
@@ -139,6 +145,7 @@ export default function AssignmentForm({
                       className="h-4 w-4 rounded border-blue-200"
                     />
                     {t.name}
+                    {t.barangayName ? ` — ${t.barangayName}` : ''}
                   </span>
                   <span className="text-slate-600">{t.approvedCount} approved</span>
                 </label>
@@ -165,17 +172,17 @@ export default function AssignmentForm({
             </li>
           </ul>
           {insufficientForHeadcount && (
-            <p className="mt-2 font-medium text-red-500">
-              Not enough approved records for {partnershipCount} partnerships — only {recordsMaxPartnerships} of them can get
-              records from the {eligibleTotal} available. Reduce publishers going out, increase group size, or have another
-              Group Leader generate a separate assignment to cover the remaining publishers.
+            <p className="mt-2 font-medium text-amber-600">
+              Only {recordsMaxPartnerships} of {partnershipCount} partnership{partnershipCount === 1 ? '' : 's'} will have
+              territory work today — {shortfallPublishers} publisher{shortfallPublishers === 1 ? '' : 's'} should do another
+              form of ministry instead (Street Witnessing, Return Visits, Business Witnessing, or other).
             </p>
           )}
         </div>
         {error && <p className="text-sm text-red-500">{error}</p>}
         <button
           type="submit"
-          disabled={pending || selected.length === 0 || insufficientForHeadcount}
+          disabled={pending || selected.length === 0}
           className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {pending ? 'Generating…' : 'Generate Assignment'}

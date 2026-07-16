@@ -47,14 +47,21 @@ export default function GroupLeaderTabs({
   qrDataUrl,
   publicUrl,
   activeTerritories,
+  requestedPartnershipCount,
   stats,
 }: {
   batchId: string
   qrDataUrl: string
   publicUrl: string
-  activeTerritories: { id: string; name: string; approvedCount: number }[]
+  activeTerritories: { id: string; name: string; barangayName: string; approvedCount: number }[]
+  requestedPartnershipCount: number
   stats: BatchStats
 }) {
+  // Records fill sequentially, so a shortfall of approved records caps the actual partnership
+  // count below what was requested (see engine.ts's calculateAssignment) instead of blocking
+  // generation outright — this surfaces that gap after the fact too, in case it wasn't noticed
+  // on the form before generating.
+  const shortfallPartnerships = Math.max(0, requestedPartnershipCount - stats.partnerships.length)
   const [tab, setTab] = useState<Tab>('home')
   const base = 'flex-1 rounded-xl px-2 py-3 text-center text-sm font-semibold leading-tight transition'
   const active = 'bg-[#2563EB] text-white'
@@ -173,6 +180,14 @@ export default function GroupLeaderTabs({
               </a>
               <p className="text-xs text-slate-600">Valid for today only — a new one is needed tomorrow.</p>
             </Card>
+          )}
+
+          {shortfallPartnerships > 0 && (
+            <div className="mx-auto max-w-md rounded-lg border border-amber-200 bg-amber-50 p-4 text-center text-sm text-amber-700">
+              {shortfallPartnerships} fewer partnership{shortfallPartnerships === 1 ? '' : 's'} were created than requested —
+              there weren&apos;t enough approved records in the selected territories. The extra publishers should do another
+              form of ministry today (Street Witnessing, Return Visits, Business Witnessing, or other).
+            </div>
           )}
 
           <div className="mx-auto max-w-md text-center">

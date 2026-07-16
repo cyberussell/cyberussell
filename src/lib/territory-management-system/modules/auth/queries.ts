@@ -22,7 +22,7 @@ async function requireRole(role: UserRole): Promise<RoleSession> {
   // adding a full extra Supabase round-trip to every single authenticated TMS page load.
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role, congregation_id, revoked_at, congregation:congregations(*)')
+    .select('role, congregation_id, revoked_at, must_change_password, congregation:congregations(*)')
     .eq('id', user.id)
     .maybeSingle()
   if (!profile || profile.role !== role) redirect('/territory-management-system/login')
@@ -30,6 +30,10 @@ async function requireRole(role: UserRole): Promise<RoleSession> {
   // revoked (see revokeGroupLeaderAccess), but a session token issued just before that could
   // otherwise still pass auth.getUser() until it naturally expires.
   if (profile.revoked_at) redirect('/territory-management-system/login?error=revoked')
+  // Enforced here (not just at the login redirect) so a session that already existed when an
+  // Admin reset this account's password — or a tab left open from before — can't reach any
+  // dashboard page without first setting a real password.
+  if (profile.must_change_password) redirect('/territory-management-system/change-password')
   if (!profile.congregation_id || !profile.congregation) redirect('/territory-management-system/login?error=not_provisioned')
 
   return { supabase, userId: user.id, congregation: profile.congregation as unknown as Congregation }

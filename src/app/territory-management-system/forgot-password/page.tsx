@@ -62,6 +62,11 @@ export default function ForgotPasswordPage() {
                 Back to login
               </Link>
             </p>
+            {/* Shown to everyone regardless of what was typed — doesn't reveal whether a given
+                email belongs to a Group Leader account. */}
+            <p className="text-center text-xs text-slate-400">
+              Group Leaders: ask your Administrator to reset your password from the Group Leaders page instead.
+            </p>
           </form>
         )}
       </div>

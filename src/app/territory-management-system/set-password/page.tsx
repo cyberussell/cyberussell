@@ -6,23 +6,19 @@ import { useRouter } from 'next/navigation'
 import { CircleCheck } from 'lucide-react'
 import { createBrowserSupabase } from '@/lib/territory-management-system/supabase'
 
-// Shared by both entry points that land here with a Supabase-established session from an
-// emailed link — accepting a Group Leader invite, and finishing a password reset. The two
-// arrive as genuinely different URL shapes and need different handling:
+// Reached from the Admin's own "forgot password" email link (Group Leader accounts no longer
+// route through here at all — invites and Admin-triggered resets both use a temp password the
+// Admin relays directly instead, see GroupLeadersManager.tsx and the invite-flow checkpoint).
+// The reset link is `?code=...` (real PKCE, generated server-side by resetPasswordForEmail).
+// @supabase/ssr's browser client auto-detects and exchanges this on its own in the common case,
+// but that auto-detection depends on a code_verifier cookie set at request time actually
+// surviving to when the link is opened (same browser, matching cookie domain) — if it doesn't,
+// the exchange fails silently inside the client's own init path with no event ever firing. The
+// manual exchangeCodeForSession() call below is a direct fallback that doesn't depend on that
+// same fragile auto-detection succeeding.
 //
-// - Password reset (resetPasswordForEmail, server-side, PKCE) lands as `?code=...` — the
-//   @supabase/ssr browser client below auto-detects and exchanges this on its own, firing a
-//   real PASSWORD_RECOVERY event.
-// - A Group Leader invite (admin.inviteUserByEmail) is *always* an implicit-flow link —
-//   `#access_token=...&refresh_token=...&type=invite` in the hash — because Supabase's own SDK
-//   documents PKCE as unsupported for invites (the browser that requests an invite and the one
-//   that accepts it are different, breaking PKCE's security model). @supabase/ssr hardcodes
-//   `flowType: 'pkce'` on every client it creates with no way to override it, so its own
-//   internal URL auto-detection throws on an implicit-flow URL and silently swallows the
-//   session — neither PASSWORD_RECOVERY nor SIGNED_IN ever fires, no matter how long you wait.
-//   Confirmed by reading @supabase/ssr and @supabase/auth-js's own source, not guessed.
-//   Worked around by parsing the hash ourselves and calling setSession() directly, which
-//   doesn't go through that broken auto-detection path at all.
+// (This page also still handles the old hash-based `#access_token=...` shape defensively, in
+// case any stale invite link is still floating around from before the temp-password switch.)
 export default function SetPasswordPage() {
   const router = useRouter()
   const [ready, setReady] = useState(false)
@@ -35,11 +31,12 @@ export default function SetPasswordPage() {
   const readyRef = useRef(false)
 
   useEffect(() => {
-    // Read the raw hash before creating the Supabase client — the client's own (failed) attempt
-    // to auto-process this same URL shouldn't be relied on to leave it untouched.
+    // Read the raw URL before creating the Supabase client — the client's own (possibly failed)
+    // attempt to auto-process this same URL shouldn't be relied on to leave it untouched.
     const hashParams = new URLSearchParams(window.location.hash.slice(1))
     const accessToken = hashParams.get('access_token')
     const refreshToken = hashParams.get('refresh_token')
+    const code = new URLSearchParams(window.location.search).get('code')
 
     const supabase = createBrowserSupabase()
 
@@ -49,6 +46,14 @@ export default function SetPasswordPage() {
           readyRef.current = true
           setReady(true)
           // Drop the tokens from the visible URL/browser history now that they're consumed.
+          window.history.replaceState(null, '', window.location.pathname)
+        }
+      })
+    } else if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ error: sessionError }) => {
+        if (!sessionError) {
+          readyRef.current = true
+          setReady(true)
           window.history.replaceState(null, '', window.location.pathname)
         }
       })

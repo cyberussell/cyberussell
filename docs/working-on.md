@@ -1,5 +1,24 @@
 # Current Work
 
+**Territory Management System — Sticky sidebar, temp-password accounts, partial assignment generation, territory label append (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch route, not yet committed/pushed — see checkpoint `territory-management-sticky-sidebar-temp-password-partial-assignment-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell gave 6 items in one batch: (1) Admin sidebar should stay pinned while scrolling; (2) Group Leader's territory checklist should show Territory Number + Barangay Name; (3) too-few-approved-records should cap partnerships + note the shortfall instead of blocking generation; (4) Group Leaders deletable with no age restriction; (5) invited TGLs get a temp password, forced to change it on first login; (6) Admin's own forgot-password still hit the expiring-link bug.
+
+Current Status: Code complete.
+- **Sidebar** (`DashboardSidebar.tsx`): `lg:static` → `lg:sticky lg:top-0` — one-line fix, live-verified (scrolled 1400px of filler, sidebar stayed pinned).
+- **Territory checklist labels**: `AssignmentForm.tsx` now shows "M-11 — Sample Barangay" style labels; `group-leader/dashboard/page.tsx` threads `t.description` through as `barangayName`.
+- **Partial assignment generation**: `engine.ts`'s `calculateAssignment` no longer errors when requested partnerships exceed record capacity — caps at `ceil(records/6)` instead. `AssignmentForm.tsx`'s warning is now non-blocking (amber note, button no longer disabled); `GroupLeaderTabs.tsx` shows a matching post-generation note by comparing `assignment_batches.requested_partnership_count` (already stored) against actual partnership rows — no new schema needed. Rewrote `engine.test.ts`'s tests that had encoded the old blocking behavior.
+- **No more 6-month deletion gate**: removed from both `actions/group-leaders.ts` and `GroupLeadersManager.tsx`.
+- **Temp-password account flow** (confirmed via `AskUserQuestion`: shown to Admin to relay directly, no email infra; unify invite + forgot-password under this for Group Leaders): `inviteGroupLeader` now uses `admin.createUser()` with a generated password instead of `admin.inviteUserByEmail()`; new `resetGroupLeaderPassword` + "Reset Password" button; new `must_change_password` column (migration 021, **not yet applied to live DB**) gates login (`signIn` + `requireRole`, so it's enforced on every page load not just at login) to a new forced `/change-password` page. `useServerAction` made generic to let an action return extra data (the temp password) alongside the usual shape.
+- **Admin forgot-password**: added a manual `exchangeCodeForSession()` fallback in `set-password/page.tsx` for the `?code=` PKCE case (parallel to the hash-based invite fallback from the prior pass) — doesn't fix genuinely cross-device PKCE use (inherent limitation), but does fix the previously-nonexistent fallback path. `requestPasswordResetAction` now skips emailing Group Leader accounts entirely (same generic response either way, no enumeration leak), pointing them at the Admin's Reset Password button instead.
+- `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. Live-verified via scratch route: sidebar stays pinned, territory labels correct, a same-day-created Group Leader now has an enabled Delete button (old gate would have blocked it), Reset Password button and ChangePasswordForm render correctly.
+
+**Next recommended task:** Not committed/pushed — this is a large batch (auth, assignment generation, account management) worth a closer look before shipping. Once pushed/deployed, Russell must: (1) apply migration 021 to the live DB first (nothing in items 4-6 works without it); (2) test the full invite → temp password → forced change-password → dashboard flow end to end; (3) test Reset Password on an existing GL; (4) test Admin's own forgot-password link; (5) generate an assignment for a <6-approved-record territory and confirm the 1-partnership-plus-note behavior.
+
+----------------------------------------
+
 **Territory Management System — Real invite-flow fix + map short-code recovery + Territory/Barangay field rename (2026-07-16) — code done, tsc + vitest (52/52) + build clean, NOT live-verified (Browser pane's safety classifier was down the whole verification window), committed and pushed (`eb61e23`), deployed at Russell's request — see checkpoint `territory-management-invite-flow-map-recovery-field-rename-v1.md` for full detail (supersedes the password-token portion of the prior checkpoint below):**
 
 Current Product: Territory Management System (TMS).

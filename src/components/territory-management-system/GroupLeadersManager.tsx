@@ -3,20 +3,20 @@
 import { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { UserPlus } from 'lucide-react'
+import { KeyRound, UserPlus } from 'lucide-react'
 import type { GroupLeaderProfile } from '@/lib/territory-management-system/modules/groupLeaders/queries'
 import {
   deleteGroupLeaderAction,
   inviteGroupLeaderAction,
+  resetGroupLeaderPasswordAction,
   restoreGroupLeaderAccessAction,
   revokeGroupLeaderAccessAction,
+  type InviteGroupLeaderResult,
 } from '@/app/territory-management-system/actions/group-leaders'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import DataTable from '@/components/territory-management-system/dashboard/DataTable'
-
-const SIX_MONTHS_MS = 1000 * 60 * 60 * 24 * 30 * 6
 
 // Rendered straight from the initialGroupLeaders prop (no local copy) — every mutation below
 // calls router.refresh() on success, which re-runs the parent Server Component and passes a
@@ -26,10 +26,19 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
   const router = useRouter()
   const [pendingId, setPendingId] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
-  const { dispatch, pending: invitePending, error, successMessage } = useServerAction(inviteGroupLeaderAction, ['SAVED'], 'Invite sent.')
+  const { dispatch, pending: invitePending, error, successMessage, state } = useServerAction<InviteGroupLeaderResult>(
+    inviteGroupLeaderAction,
+    ['SAVED']
+  )
+  // Holds whichever temp password (invite or reset) needs to stay visible until the Admin
+  // dismisses it — a toast would vanish before there's time to copy/relay it.
+  const [revealedPassword, setRevealedPassword] = useState<{ name: string; password: string } | null>(null)
 
   useEffect(() => {
-    if (successMessage) router.refresh()
+    if (successMessage) {
+      router.refresh()
+      if (state.tempPassword) setRevealedPassword({ name: 'the new Group Leader', password: state.tempPassword })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [successMessage])
 
@@ -47,8 +56,42 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
     })
   }
 
+  function runResetPassword(id: string, name: string) {
+    if (!window.confirm(`Reset the password for ${name}? Their current password stops working immediately.`)) return
+    setPendingId(id)
+    startTransition(async () => {
+      const result = await resetGroupLeaderPasswordAction(id)
+      setPendingId(null)
+      if (result.error) toast.error(result.error)
+      else if (result.tempPassword) {
+        setRevealedPassword({ name, password: result.tempPassword })
+        router.refresh()
+      }
+    })
+  }
+
   return (
     <div className="space-y-6">
+      {revealedPassword && (
+        <Card className="border-2 border-[#2563EB] p-6">
+          <h2 className="font-semibold text-[#0B1B33]">Temporary password for {revealedPassword.name}</h2>
+          <p className="mt-1 text-sm text-slate-600">
+            Share this with them directly — it won&apos;t be shown again. They&apos;ll be asked to set their own password the
+            first time they log in.
+          </p>
+          <p className="mt-3 select-all rounded-lg border border-blue-100 bg-[#F8FBFF] px-4 py-3 text-center font-mono text-lg font-semibold tracking-wide text-[#0B1B33]">
+            {revealedPassword.password}
+          </p>
+          <button
+            type="button"
+            onClick={() => setRevealedPassword(null)}
+            className="mt-3 w-full rounded-lg border border-blue-100 bg-white py-2 text-sm font-medium text-slate-500 hover:border-[#38BDF8]/40"
+          >
+            Done — I&apos;ve shared it
+          </button>
+        </Card>
+      )}
+
       <Card className="p-6">
         <h2 className="mb-4 font-semibold text-[#0B1B33]">Invite Group Leader</h2>
         <form action={dispatch} key={successMessage ?? 'invite-form'} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -93,16 +136,12 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
                 >
                   {g.revoked_at ? 'Revoked' : 'Active'}
                 </span>
-                {Date.now() - new Date(g.created_at).getTime() >= SIX_MONTHS_MS && (
-                  <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-600">6+ months</span>
-                )}
               </div>
             ),
           },
           {
             header: 'Actions',
             cell: (g) => {
-              const isOld = Date.now() - new Date(g.created_at).getTime() >= SIX_MONTHS_MS
               const rowPending = isPending && pendingId === g.id
               return (
                 <div className="flex flex-wrap items-center gap-3">
@@ -134,8 +173,16 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
                   )}
                   <button
                     type="button"
-                    disabled={!isOld || rowPending}
-                    title={isOld ? undefined : 'Only entries at least 6 months old can be deleted.'}
+                    disabled={rowPending}
+                    onClick={() => runResetPassword(g.id, g.full_name)}
+                    className="inline-flex items-center gap-1 text-sm font-medium text-[#2563EB] hover:underline disabled:opacity-50"
+                  >
+                    <KeyRound className="h-3.5 w-3.5" />
+                    Reset Password
+                  </button>
+                  <button
+                    type="button"
+                    disabled={rowPending}
                     onClick={() =>
                       runAction(
                         g.id,

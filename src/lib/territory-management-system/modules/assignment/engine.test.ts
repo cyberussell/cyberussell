@@ -8,9 +8,12 @@ describe('calculateAssignment', () => {
     expect(isAssignmentError(calculateAssignment(['a', 'b'], -1))).toBe(true)
   })
 
-  it('rejects fewer records than partnerships', () => {
+  it('caps at 1 partnership when far fewer records exist than requested partnerships', () => {
     const result = calculateAssignment(['a', 'b'], 3)
-    expect(isAssignmentError(result)).toBe(true)
+    expect(isAssignmentError(result)).toBe(false)
+    if (isAssignmentError(result)) return
+    expect(result.partnerships).toEqual([{ sequence: 1, recordIds: ['a', 'b'] }])
+    expect(result.unassignedCount).toBe(0)
   })
 
   it('fills partnerships sequentially, in input order, up to the max per partnership, leaving excess records unassigned for another day', () => {
@@ -25,14 +28,18 @@ describe('calculateAssignment', () => {
     expect(result.unassignedCount).toBe(2)
   })
 
-  it('rejects a partnership count that would leave some partnerships with zero records', () => {
+  it('caps the partnership count instead of leaving some with zero records', () => {
     // 9 records can fully cover at most ceil(9/6)=2 partnerships at the default 6-record cap —
-    // requesting 3 would leave the 3rd partnership empty, so it's rejected up front instead.
+    // requesting 3 no longer errors; it's capped at 2 instead, with the caller (queries.ts)
+    // surfacing the requested-vs-actual gap as a note rather than blocking generation.
     const records = Array.from({ length: 9 }, (_, i) => `r${i}`)
     const result = calculateAssignment(records, 3)
-    expect(isAssignmentError(result)).toBe(true)
-    if (!isAssignmentError(result)) return
-    expect(result.error).toContain('Not enough approved records')
+    expect(isAssignmentError(result)).toBe(false)
+    if (isAssignmentError(result)) return
+    expect(result.partnerships).toHaveLength(2)
+    expect(result.partnerships[0].recordIds).toHaveLength(6)
+    expect(result.partnerships[1].recordIds).toHaveLength(3)
+    expect(result.unassignedCount).toBe(0)
   })
 
   it('allows a partnership count exactly at the record-supported ceiling', () => {
@@ -45,10 +52,14 @@ describe('calculateAssignment', () => {
     expect(result.unassignedCount).toBe(0)
   })
 
-  // Regression coverage for the two worked examples given when this rule was designed.
-  it('matches the 50-records/20-publishers/group-of-2 example: 10 partnerships requested, only 9 are supportable', () => {
+  // Regression coverage for the two worked examples given when this rule was originally designed.
+  it('matches the 50-records/20-publishers/group-of-2 example: 10 partnerships requested, capped at the 9 supportable', () => {
     const records = Array.from({ length: 50 }, (_, i) => `r${i}`)
-    expect(isAssignmentError(calculateAssignment(records, 10))).toBe(true)
+    const result = calculateAssignment(records, 10)
+    expect(isAssignmentError(result)).toBe(false)
+    if (isAssignmentError(result)) return
+    expect(result.partnerships).toHaveLength(9)
+    expect(result.unassignedCount).toBe(0) // 9 partnerships x 6 = 54 capacity, all 50 records fit
   })
 
   it('matches the 50-records/10-publishers/group-of-2 example: 5 partnerships requested, well within the 9 supportable', () => {
@@ -56,6 +67,7 @@ describe('calculateAssignment', () => {
     const result = calculateAssignment(records, 5)
     expect(isAssignmentError(result)).toBe(false)
     if (isAssignmentError(result)) return
+    expect(result.partnerships).toHaveLength(5)
     expect(result.unassignedCount).toBe(20) // 5 partnerships x 6 = 30 assigned, 20 left for another day
   })
 

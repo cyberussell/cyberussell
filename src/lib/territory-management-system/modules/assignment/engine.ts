@@ -43,18 +43,19 @@ export function calculateAssignment(
   }
   // Records fill sequentially, partnership-by-partnership, up to maxPerPartnership each — so the
   // number of partnerships that can end up with at least one record is capped at
-  // ceil(records / maxPerPartnership), regardless of how many more records exist beyond that.
-  // Requesting more partnerships than that would leave the excess ones with nothing to do.
+  // ceil(records / maxPerPartnership), regardless of how many more were requested. Requesting
+  // more than that used to be a hard error; now it's capped instead — a territory legitimately
+  // having fewer approved records than publishers who showed up is a normal day, not a mistake
+  // to correct before generating. The caller (createAssignment/queries.ts) already stores the
+  // originally-requested count separately from the actual partnership rows created here, so the
+  // UI can surface the gap as a note ("N publishers should do another form of ministry today")
+  // instead of blocking.
   const maxPossiblePartnerships = Math.ceil(eligibleRecordIds.length / maxPerPartnership)
-  if (partnershipCount > maxPossiblePartnerships) {
-    return {
-      error: `Not enough approved records for ${partnershipCount} partnership(s): ${eligibleRecordIds.length} approved record(s) can fully cover at most ${maxPossiblePartnerships} partnership(s) at ${maxPerPartnership} records each — the rest would get none. Reduce publishers going out, increase group size, or have another Group Leader generate a separate assignment to cover the remaining publishers.`,
-    }
-  }
+  const actualPartnershipCount = Math.min(partnershipCount, maxPossiblePartnerships)
 
   const partnerships: AssignmentPartnershipPlan[] = []
   let cursor = 0
-  for (let sequence = 1; sequence <= partnershipCount; sequence += 1) {
+  for (let sequence = 1; sequence <= actualPartnershipCount; sequence += 1) {
     const recordIds = eligibleRecordIds.slice(cursor, cursor + maxPerPartnership)
     partnerships.push({ sequence, recordIds })
     cursor += recordIds.length
