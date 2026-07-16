@@ -1,6 +1,6 @@
 # Current Work
 
-**Laundry Management System — Staff invite link PKCE/implicit flow fix (2026-07-16) — code done, tsc + vitest (52/52) + build clean, not live-verified (same standing no-live-credentials limitation as TMS), not yet committed/pushed — see checkpoint `laundry-management-system-staff-invite-flow-fix-v1.md` for full detail:**
+**Laundry Management System — Staff invite link PKCE/implicit flow fix (2026-07-16) — code done, tsc + vitest (52/52) + build clean, not live-verified (same standing no-live-credentials limitation as TMS), committed and pushed (`7ff424d`), deployed — see checkpoint `laundry-management-system-staff-invite-flow-fix-v1.md` for full detail. Note: a separate spawned session was also started on this same task — worth checking for a duplicate fix before merging/deploying anything from there.**
 
 Current Product: Laundry Management System (LMS).
 
@@ -11,11 +11,11 @@ Current Status: Code complete.
 - `accept-invite/page.tsx` now parses the URL hash manually and calls `setSession()` directly before the client's own auto-detection can fail on it — same fix pattern as TMS, minus the `?code=` PKCE fallback TMS also needed (this page is invite-only, no shared password-reset use).
 - `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. Not live-tested (no LMS Supabase env vars in this environment).
 
-**Next recommended task:** Ready to deploy at Russell's request. Send a real staff invite afterward and confirm the link now works. Separately, worth deciding whether LMS should also adopt TMS's temp-password model instead of email-link invites entirely.
+**Next recommended task:** Deployed (`7ff424d`). Send a real staff invite and confirm the link now works. Separately, worth deciding whether LMS should also adopt TMS's temp-password model instead of email-link invites entirely.
 
 ----------------------------------------
 
-**Territory Management System — Sticky sidebar, temp-password accounts, partial assignment generation, territory label append (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch route, committed locally (`7209072`), NOT pushed yet — waiting on Russell to apply migration 021 to the live DB first (deploying before that breaks all logins) — see checkpoint `territory-management-sticky-sidebar-temp-password-partial-assignment-v1.md` for full detail:**
+**Territory Management System — Sticky sidebar, temp-password accounts, partial assignment generation, territory label append (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch route, committed and pushed (`7209072`), migration 021 applied by Russell to the live DB, deployed — see checkpoint `territory-management-sticky-sidebar-temp-password-partial-assignment-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
@@ -30,7 +30,7 @@ Current Status: Code complete.
 - **Admin forgot-password**: added a manual `exchangeCodeForSession()` fallback in `set-password/page.tsx` for the `?code=` PKCE case (parallel to the hash-based invite fallback from the prior pass) — doesn't fix genuinely cross-device PKCE use (inherent limitation), but does fix the previously-nonexistent fallback path. `requestPasswordResetAction` now skips emailing Group Leader accounts entirely (same generic response either way, no enumeration leak), pointing them at the Admin's Reset Password button instead.
 - `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. Live-verified via scratch route: sidebar stays pinned, territory labels correct, a same-day-created Group Leader now has an enabled Delete button (old gate would have blocked it), Reset Password button and ChangePasswordForm render correctly.
 
-**Next recommended task:** Not committed/pushed — this is a large batch (auth, assignment generation, account management) worth a closer look before shipping. Once pushed/deployed, Russell must: (1) apply migration 021 to the live DB first (nothing in items 4-6 works without it); (2) test the full invite → temp password → forced change-password → dashboard flow end to end; (3) test Reset Password on an existing GL; (4) test Admin's own forgot-password link; (5) generate an assignment for a <6-approved-record territory and confirm the 1-partnership-plus-note behavior.
+**Next recommended task:** Deployed (`7209072`), migration 021 applied. Russell should test: (1) the full invite → temp password → forced change-password → dashboard flow end to end; (2) Reset Password on an existing GL; (3) Admin's own forgot-password link; (4) generating an assignment for a <6-approved-record territory and confirming the 1-partnership-plus-note behavior; (5) the sidebar staying pinned and territory checklist labels on the real dashboard.
 
 ----------------------------------------
 
