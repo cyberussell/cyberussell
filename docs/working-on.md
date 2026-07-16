@@ -1,6 +1,6 @@
 # Current Work
 
-**Laundry Management System — Upsell link opens new tab, Staff table shows email, brand color changed off TMS's blue, sticky sidebar (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified public pages + sidebar via scratch route, migration 017 written but NOT yet run by Russell, not committed — see checkpoint `laundry-management-system-upsell-tab-staff-email-brand-color-v1.md` for full detail:**
+**Laundry Management System — Upsell link opens new tab, Staff table shows email, brand color changed off TMS's blue, sticky sidebar (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified public pages + sidebar via scratch route, migration 017 written but NOT yet run by Russell, committed and pushed (`4bfe7ed`), not yet deployed — see checkpoint `laundry-management-system-upsell-tab-staff-email-brand-color-v1.md` for full detail:**
 
 Current Product: Laundry Management System (LMS).
 
