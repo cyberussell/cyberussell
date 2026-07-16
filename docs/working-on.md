@@ -1,6 +1,6 @@
 # Current Work
 
-**Territory Management System — Per-territory Reports table + Household Distribution map (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, not yet committed/pushed — see checkpoint `territory-management-reports-per-territory-map-v1.md` for full detail:**
+**Territory Management System — Per-territory Reports table + Household Distribution map (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, committed and pushed (`f487ca0`), deployed — see checkpoint `territory-management-reports-per-territory-map-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
@@ -12,7 +12,7 @@ Current Status: Code complete.
 - New `TerritoryReportTable.tsx` (plain table, actual `border-gray-200` per the explicit "light gray border" ask, not the app's usual blue-tinted `DataTable`) and `HouseholdDistributionMap.tsx` (client-only Leaflet map, `open-location-code`'s already-installed `.decode()` turns Plus Codes into lat/lng with zero geocoding API calls). New deps: `leaflet`, `react-leaflet`, `@types/leaflet`.
 - `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. **Live-verified in the browser** via a scratch route with 12 mock records (real full Plus Codes generated around real Manila coordinates) — table sorts correctly, map renders real OSM tiles with all pins plotted, marker popups show correct address/territory.
 
-**Next recommended task:** Ready to deploy at Russell's request. Live-verify on the real dashboard afterward: table numbers against known territory data, and that approved records with full Plus Codes actually produce pins (short-form legacy Plus Codes won't).
+**Next recommended task:** Deployed (`f487ca0`). Russell live-verifies on the real dashboard: table numbers against known territory data, and that approved records with full Plus Codes actually produce pins (short-form legacy Plus Codes won't).
 
 ----------------------------------------
 
