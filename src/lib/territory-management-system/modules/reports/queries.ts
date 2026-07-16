@@ -154,6 +154,109 @@ export async function getBatchStats(
   }
 }
 
+export interface TerritoryReportRow {
+  id: string
+  name: string
+  startedBibleStudy: number
+  bibleStudy: number
+  totalHouseholds: number
+  totalRecords: number
+}
+
+// Per-territory snapshot for the admin Reports table (confirmed with Russell via 3 scope
+// questions before building): Started Bible Study / Bible Study reflect each record's current
+// (most-recent-ever) visit result — no date range — same "active" definition
+// countActiveBibleStudies already uses for the Group Leader Dashboard's single stat, just broken
+// out per-territory and split into the two distinct results instead of one. Total Households
+// sums household_members only for approved records; Total Records counts every record
+// regardless of status, matching territory/queries.ts's existing record_count meaning. Sorted by
+// Total Households descending, per Russell's request.
+export async function getTerritoryReportRows(supabase: SupabaseClient, congregationId: string): Promise<TerritoryReportRow[]> {
+  const { data: territories } = await supabase.from('territories').select('id, name').eq('congregation_id', congregationId)
+  if (!territories || territories.length === 0) return []
+
+  const { data: records } = await supabase
+    .from('territory_records')
+    .select('id, territory_id, status, household_members')
+    .eq('congregation_id', congregationId)
+
+  const recordTerritoryById = new Map<string, string>()
+  const totals = new Map<string, { totalHouseholds: number; totalRecords: number }>()
+  for (const t of territories) totals.set(t.id, { totalHouseholds: 0, totalRecords: 0 })
+  for (const r of (records ?? []) as { id: string; territory_id: string; status: string; household_members: number | null }[]) {
+    recordTerritoryById.set(r.id, r.territory_id)
+    const bucket = totals.get(r.territory_id)
+    if (!bucket) continue
+    bucket.totalRecords += 1
+    if (r.status === 'approved') bucket.totalHouseholds += r.household_members ?? 0
+  }
+
+  const bibleStudyCounts = new Map<string, { startedBibleStudy: number; bibleStudy: number }>()
+  for (const t of territories) bibleStudyCounts.set(t.id, { startedBibleStudy: 0, bibleStudy: 0 })
+
+  const recordIds = [...recordTerritoryById.keys()]
+  if (recordIds.length > 0) {
+    const { data: visits } = await supabase
+      .from('territory_record_visits')
+      .select('record_id, result, visited_at')
+      .eq('congregation_id', congregationId)
+      .in('record_id', recordIds)
+      .order('visited_at', { ascending: false })
+
+    // Same "rows ordered newest-first, first time we see a record_id is its latest result"
+    // de-dup pattern as getVisitResultCounts/countActiveBibleStudies.
+    const seenRecordIds = new Set<string>()
+    for (const row of (visits ?? []) as { record_id: string; result: VisitResult }[]) {
+      if (seenRecordIds.has(row.record_id)) continue
+      seenRecordIds.add(row.record_id)
+      if (row.result !== 'started_bible_study' && row.result !== 'bible_study') continue
+      const territoryId = recordTerritoryById.get(row.record_id)
+      const bucket = territoryId ? bibleStudyCounts.get(territoryId) : undefined
+      if (!bucket) continue
+      if (row.result === 'started_bible_study') bucket.startedBibleStudy += 1
+      else bucket.bibleStudy += 1
+    }
+  }
+
+  return territories
+    .map((t) => ({
+      id: t.id as string,
+      name: t.name as string,
+      startedBibleStudy: bibleStudyCounts.get(t.id)?.startedBibleStudy ?? 0,
+      bibleStudy: bibleStudyCounts.get(t.id)?.bibleStudy ?? 0,
+      totalHouseholds: totals.get(t.id)?.totalHouseholds ?? 0,
+      totalRecords: totals.get(t.id)?.totalRecords ?? 0,
+    }))
+    .sort((a, b) => b.totalHouseholds - a.totalHouseholds)
+}
+
+export interface RecordLocation {
+  id: string
+  address: string
+  plusCode: string
+  territoryName: string
+}
+
+// Pin data for the Reports page's household distribution map — only approved records (same
+// population as getTerritoryReportRows' Total Households) with a real Plus Code set (legacy/
+// CSV-imported records can have a null one, see plus_code's nullable column). Decoding each
+// Plus Code into a lat/lng happens client-side in HouseholdDistributionMap via the
+// open-location-code package already used by lib/plusCode.ts — no geocoding API call needed.
+export async function getApprovedRecordLocations(supabase: SupabaseClient, congregationId: string): Promise<RecordLocation[]> {
+  const { data } = await supabase
+    .from('territory_records')
+    .select('id, address, plus_code, territory:territories(name)')
+    .eq('congregation_id', congregationId)
+    .eq('status', 'approved')
+    .not('plus_code', 'is', null)
+
+  return (
+    (data ?? []) as unknown as { id: string; address: string; plus_code: string | null; territory: { name: string }[] | null }[]
+  )
+    .filter((r): r is typeof r & { plus_code: string } => Boolean(r.plus_code))
+    .map((r) => ({ id: r.id, address: r.address, plusCode: r.plus_code, territoryName: r.territory?.[0]?.name ?? '' }))
+}
+
 // Congregation-wide rollup across every batch whose assignment_date falls in the range —
 // the Daily/Weekly/Monthly Reports view.
 export async function getReportStats(

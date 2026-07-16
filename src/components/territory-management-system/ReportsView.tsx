@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import {
   BookMarked,
   BookOpen,
@@ -16,10 +17,23 @@ import {
   Truck,
   XCircle,
 } from 'lucide-react'
-import type { ReportStats } from '@/lib/territory-management-system/modules/reports/queries'
+import type { RecordLocation, ReportStats, TerritoryReportRow } from '@/lib/territory-management-system/modules/reports/queries'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import FilterPills from '@/components/territory-management-system/dashboard/FilterPills'
 import StatCard from '@/components/territory-management-system/dashboard/StatCard'
+import TerritoryReportTable from '@/components/territory-management-system/TerritoryReportTable'
+import Card from '@/components/territory-management-system/dashboard/Card'
+
+// Leaflet touches `window`/`document` on import — it can't run during server rendering, so this
+// is loaded client-only, same pattern Next.js recommends for any browser-only map library.
+const HouseholdDistributionMap = dynamic(() => import('@/components/territory-management-system/HouseholdDistributionMap'), {
+  ssr: false,
+  loading: () => (
+    <Card className="p-10 text-center">
+      <p className="text-sm text-slate-600">Loading map…</p>
+    </Card>
+  ),
+})
 
 type Period = 'daily' | 'weekly' | 'monthly'
 
@@ -29,7 +43,19 @@ const PERIODS: { label: string; value: Period }[] = [
   { label: 'Monthly', value: 'monthly' },
 ]
 
-export default function ReportsView({ daily, weekly, monthly }: { daily: ReportStats; weekly: ReportStats; monthly: ReportStats }) {
+export default function ReportsView({
+  daily,
+  weekly,
+  monthly,
+  territoryRows,
+  recordLocations,
+}: {
+  daily: ReportStats
+  weekly: ReportStats
+  monthly: ReportStats
+  territoryRows: TerritoryReportRow[]
+  recordLocations: RecordLocation[]
+}) {
   const [period, setPeriod] = useState<Period>('daily')
   const stats = { daily, weekly, monthly }[period]
 
@@ -58,6 +84,16 @@ export default function ReportsView({ daily, weekly, monthly }: { daily: ReportS
           <StatCard icon={PhoneOff} label={VISIT_RESULT_LABELS.do_not_call} value={stats.resultCounts.do_not_call} />
           <StatCard icon={Truck} label={VISIT_RESULT_LABELS.moved} value={stats.resultCounts.moved} />
         </div>
+      </div>
+
+      <div>
+        <h2 className="mb-4 font-semibold text-[#0B1B33]">Per-Territory Breakdown</h2>
+        <TerritoryReportTable rows={territoryRows} />
+      </div>
+
+      <div>
+        <h2 className="mb-4 font-semibold text-[#0B1B33]">Household Distribution</h2>
+        <HouseholdDistributionMap records={recordLocations} />
       </div>
     </div>
   )

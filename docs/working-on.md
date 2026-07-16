@@ -1,6 +1,22 @@
 # Current Work
 
-**Territory Management System — Add Record validation bug fix + Territory page tabs (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, not yet committed/pushed — see checkpoint `territory-management-add-record-bugfix-tabs-v1.md` for full detail:**
+**Territory Management System — Per-territory Reports table + Household Distribution map (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, not yet committed/pushed — see checkpoint `territory-management-reports-per-territory-map-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked the admin Reports page to add a per-territory table (Started Bible Study, Bible Study, Total Households, Total Records — light gray border, sorted by highest Total Households first), asked whether Plus Codes could be plotted on a map to visualize household distribution, and asked whether deleting a section deletes its contact records.
+
+Current Status: Code complete.
+- **Answered directly**: deleting a section does delete all its contact records — confirmed via DB `ON DELETE CASCADE` chain (`territory_sections` → `territory_blocks` → `territory_records` → `territory_record_visits`), not app code. Map provider question resolved via `AskUserQuestion`: free OpenStreetMap/Leaflet chosen over real Google Maps (which would've needed Russell to set up a Google Cloud project + billing + API key first).
+- New `getTerritoryReportRows()`/`getApprovedRecordLocations()` in `reports/queries.ts`. Two more scope decisions confirmed via `AskUserQuestion`: Started/Bible Study counts reflect current record status (no date range, matching the existing "Bible Studies in the Area" stat's logic) not the daily/weekly/monthly toggle; Total Households sums `household_members` for approved records only (Total Records stays all-records, matching the existing `record_count` precedent).
+- New `TerritoryReportTable.tsx` (plain table, actual `border-gray-200` per the explicit "light gray border" ask, not the app's usual blue-tinted `DataTable`) and `HouseholdDistributionMap.tsx` (client-only Leaflet map, `open-location-code`'s already-installed `.decode()` turns Plus Codes into lat/lng with zero geocoding API calls). New deps: `leaflet`, `react-leaflet`, `@types/leaflet`.
+- `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean. **Live-verified in the browser** via a scratch route with 12 mock records (real full Plus Codes generated around real Manila coordinates) — table sorts correctly, map renders real OSM tiles with all pins plotted, marker popups show correct address/territory.
+
+**Next recommended task:** Ready to deploy at Russell's request. Live-verify on the real dashboard afterward: table numbers against known territory data, and that approved records with full Plus Codes actually produce pins (short-form legacy Plus Codes won't).
+
+----------------------------------------
+
+**Territory Management System — Add Record validation bug fix + Territory page tabs (2026-07-16) — code done, tsc + vitest (52/52) + build clean, live-verified in browser via scratch route, committed and pushed (`86f774c`), deployed — see checkpoint `territory-management-add-record-bugfix-tabs-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
@@ -13,7 +29,7 @@ Current Status: Code complete.
 - **Live-verified in the browser** (rare for TMS) via a scratch route with real-UUID mock data: confirmed Plus Code's `required` attribute blocks submission client-side; forced a server round-trip anyway and confirmed the exact "Plus Code is required." message plus preserved Address field; confirmed the 8-section/6-block-each accordion collapses to 8 rows and expands correctly.
 - `npx tsc --noEmit` clean, `npx vitest run` 52/52 passing, `npx next build` clean.
 
-**Next recommended task:** Ready to deploy at Russell's request. Live-verify on the real dashboard afterward: blank Plus Code blocks immediately and keeps other fields; leaving Initial status blank no longer spuriously fails; the three new tabs behave like the mock preview.
+**Next recommended task:** Deployed (`86f774c`). Russell live-verifies on the real dashboard: blank Plus Code blocks immediately and keeps other fields; leaving Initial status blank no longer spuriously fails; the three new tabs behave like the mock preview.
 
 ----------------------------------------
 
