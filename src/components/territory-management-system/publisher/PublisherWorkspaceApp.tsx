@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { toast } from 'sonner'
 import { PartyPopper, Plus, RefreshCw } from 'lucide-react'
-import type { PartnershipRecordDetail, PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
+import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
@@ -17,6 +17,7 @@ import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/te
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
+import ConfirmModal from './ConfirmModal'
 import PartnershipRenameForm from './PartnershipRenameForm'
 import AssignedRecordsList from './AssignedRecordsList'
 import AddedRecordsList from './AddedRecordsList'
@@ -74,6 +75,16 @@ export default function PublisherWorkspaceApp({
   const [queue, setQueue] = useState<SyncQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
   const [mapUrls, setMapUrls] = useState<Record<string, string>>({})
+  // Which map the list view shows when both are available — a toggle instead of stacking both
+  // maps, for a cleaner one-screen-at-a-time look. Defaults to Territory Map (the prior default
+  // visual order).
+  const [mapView, setMapView] = useState<'territory' | 'records'>('territory')
+  // Which branded confirm dialog (see ConfirmModal) is currently open, replacing
+  // window.confirm() — its "www.cyberussell.com says" chrome reads as an unfamiliar browser
+  // warning to a publisher in the field, not a TMS-branded prompt.
+  const [confirmDialog, setConfirmDialog] = useState<{ type: 'terminate' } | { type: 'deleteAddedRecord'; recordId: string } | null>(
+    null
+  )
   const online = useOnlineStatus()
   // Several call sites can each decide "we're online, sync now" in quick succession (a form
   // submit's own trigger, plus the reconnect effect) — without this, two overlapping
@@ -207,7 +218,7 @@ export default function PublisherWorkspaceApp({
       await enqueue(partnershipToken, 'visit', { partnershipToken, recordId, visitedAt, result, notes })
       await refreshQueue()
       if (online) await handleSync()
-      goToNextRecord(recordId, updatedRecords)
+      returnToList()
     } finally {
       setSavingVisit(false)
     }
@@ -247,7 +258,7 @@ export default function PublisherWorkspaceApp({
       await refreshQueue()
       if (online) await handleSync()
       toast.success('Contact record updated.')
-      goToNextRecord(recordId, updatedRecords)
+      returnToList()
     } finally {
       setMarkingMoved(false)
     }
@@ -264,7 +275,7 @@ export default function PublisherWorkspaceApp({
       await refreshQueue()
       if (online) await handleSync()
       toast.success('Recommendation sent to the Admin.')
-      goToNextRecord(recordId, updatedRecords)
+      returnToList()
     } finally {
       setMarkingMoved(false)
     }
@@ -285,17 +296,11 @@ export default function PublisherWorkspaceApp({
     }
   }
 
-  // After logging a visit, jump straight to the next record still needing one instead of
-  // making the publisher go back to the list and pick it themselves. "Next" means the next
-  // incomplete record after this one in assigned sequence order, wrapping to check earlier
-  // records too (in case one was left incomplete out of order). Falls back to the list — which
-  // already shows the "All assigned records are done!" banner — once nothing is left.
-  function goToNextRecord(fromRecordId: string, records: PartnershipRecordDetail[]) {
-    const sorted = [...records].sort((a, b) => a.sequence - b.sequence)
-    const currentIndex = sorted.findIndex((r) => r.record.id === fromRecordId)
-    const next =
-      sorted.slice(currentIndex + 1).find((r) => !r.completed_at) ?? sorted.slice(0, currentIndex).find((r) => !r.completed_at)
-    setView(next ? { name: 'detail', recordId: next.record.id } : { name: 'list' })
+  // After logging a visit, marking a record moved, or recommending removal, return to the card
+  // list instead of auto-advancing to the next incomplete record — the publisher picks what to
+  // do next themselves rather than being taken somewhere automatically.
+  function returnToList() {
+    setView({ name: 'list' })
     window.scrollTo({ top: 0, behavior: 'auto' })
   }
 
@@ -522,27 +527,63 @@ export default function PublisherWorkspaceApp({
 
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
+              const hasTerritoryMap = mappableTerritories.length > 0
+              const hasRecordsMap = assignedRecordLocations.length > 0
+              if (!hasTerritoryMap && !hasRecordsMap) return null
+
+              // A toggle only makes sense once there are genuinely two maps to switch between —
+              // with just one available, show it directly instead of a one-option pill row.
+              const showToggle = hasTerritoryMap && hasRecordsMap
+              const activeView = showToggle ? mapView : hasTerritoryMap ? 'territory' : 'records'
+
               return (
-                mappableTerritories.length > 0 && (
-                  <div className="space-y-3">
-                    <h2 className="font-semibold text-[#0B1B33]">Territory Map{mappableTerritories.length > 1 ? 's' : ''}</h2>
-                    {mappableTerritories.map((t) => (
-                      <div key={t.id}>
-                        <p className="mb-1 text-xs text-slate-700">{t.name}</p>
-                        <TerritoryMapViewer mapImageUrl={mapUrls[t.id]} territoryName={t.name} />
-                      </div>
-                    ))}
-                  </div>
-                )
+                <div className="space-y-3">
+                  {showToggle && (
+                    <div className="inline-flex rounded-full bg-blue-50 p-1">
+                      <button
+                        type="button"
+                        onClick={() => setMapView('territory')}
+                        className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                          activeView === 'territory' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
+                        }`}
+                      >
+                        Territory Map
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMapView('records')}
+                        className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                          activeView === 'records' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
+                        }`}
+                      >
+                        Assigned Records
+                      </button>
+                    </div>
+                  )}
+
+                  {activeView === 'territory' && hasTerritoryMap && (
+                    <div className="space-y-3">
+                      {!showToggle && (
+                        <h2 className="font-semibold text-[#0B1B33]">Territory Map{mappableTerritories.length > 1 ? 's' : ''}</h2>
+                      )}
+                      {mappableTerritories.map((t) => (
+                        <div key={t.id}>
+                          <p className="mb-1 text-xs text-slate-700">{t.name}</p>
+                          <TerritoryMapViewer mapImageUrl={mapUrls[t.id]} territoryName={t.name} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {activeView === 'records' && hasRecordsMap && (
+                    <div className="space-y-3">
+                      {!showToggle && <h2 className="font-semibold text-[#0B1B33]">My Assigned Records Map</h2>}
+                      <HouseholdDistributionMap records={assignedRecordLocations} />
+                    </div>
+                  )}
+                </div>
               )
             })()}
-
-            {assignedRecordLocations.length > 0 && (
-              <div className="space-y-3">
-                <h2 className="font-semibold text-[#0B1B33]">My Assigned Records Map</h2>
-                <HouseholdDistributionMap records={assignedRecordLocations} />
-              </div>
-            )}
 
             {!readOnly && allDone && (
               <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center shadow-sm">
@@ -589,10 +630,7 @@ export default function PublisherWorkspaceApp({
             {!readOnly && (
               <button
                 type="button"
-                onClick={() => {
-                  if (window.confirm("End your ministry early? All unfinished records will be marked as undone."))
-                    handleTerminate()
-                }}
+                onClick={() => setConfirmDialog({ type: 'terminate' })}
                 className="w-full rounded-lg border border-red-200 bg-white py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50"
               >
                 End My Ministry Early
@@ -655,9 +693,7 @@ export default function PublisherWorkspaceApp({
                 editable={editable}
                 deleting={deletingAddedRecord}
                 onEdit={() => setView({ name: 'editAddedRecord', recordId: addedRecord.id })}
-                onDelete={() => {
-                  if (window.confirm('Delete this contact record? This cannot be undone.')) handleDeleteAddedRecord(addedRecord.id)
-                }}
+                onDelete={() => setConfirmDialog({ type: 'deleteAddedRecord', recordId: addedRecord.id })}
               />
             )
           })()}
@@ -746,6 +782,29 @@ export default function PublisherWorkspaceApp({
         failedCount={failedCount}
         syncing={syncing}
         onSync={handleSync}
+      />
+
+      <ConfirmModal
+        open={confirmDialog?.type === 'terminate'}
+        title="End your ministry early?"
+        message="Your progress so far is already saved. Any records you haven't gotten to yet will simply stay assigned as-is for next time — nothing is marked or changed."
+        confirmLabel="End Ministry"
+        onConfirm={() => {
+          setConfirmDialog(null)
+          handleTerminate()
+        }}
+        onCancel={() => setConfirmDialog(null)}
+      />
+      <ConfirmModal
+        open={confirmDialog?.type === 'deleteAddedRecord'}
+        title="Delete this contact record?"
+        message="This cannot be undone."
+        confirmLabel="Delete"
+        onConfirm={() => {
+          if (confirmDialog?.type === 'deleteAddedRecord') handleDeleteAddedRecord(confirmDialog.recordId)
+          setConfirmDialog(null)
+        }}
+        onCancel={() => setConfirmDialog(null)}
       />
     </div>
   )

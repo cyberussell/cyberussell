@@ -50,6 +50,7 @@ export default async function GroupLeaderDashboardPage() {
           qrDataUrl,
           publicUrl: getAssignmentBatchUrl(batch.access_token),
           requestedPartnershipCount: batch.requested_partnership_count,
+          isOverflow: batch.is_overflow,
           stats,
         }
       })

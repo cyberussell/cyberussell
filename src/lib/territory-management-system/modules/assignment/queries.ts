@@ -196,6 +196,7 @@ export async function createAssignment(
       assignment_date: input.assignmentDate,
       requested_partnership_count: input.partnershipCount,
       created_by: input.createdBy,
+      is_overflow: Boolean(input.forceZeroRecords),
     })
     .select('id')
     .single()

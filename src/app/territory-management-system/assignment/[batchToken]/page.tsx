@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { createAdminSupabase } from '@/lib/territory-management-system/supabase-server'
 import { getBatchByToken } from '@/lib/territory-management-system/modules/assignment/queries'
 import PartnershipCard from '@/components/territory-management-system/publisher/PartnershipCard'
@@ -27,14 +26,6 @@ export default async function BatchLandingPage({ params }: { params: Promise<{ b
           {batch.partnerships.map((p) => (
             <PartnershipCard key={p.id} partnership={p} batchToken={batchToken} />
           ))}
-        </div>
-        <div className="mt-6 text-center">
-          <Link
-            href={`/territory-management-system/assignment/${batchToken}/progress`}
-            className="text-sm font-medium text-[#2563EB] hover:underline"
-          >
-            View Today&apos;s Assignment Progress
-          </Link>
         </div>
       </div>
 

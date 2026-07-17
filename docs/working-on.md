@@ -1,5 +1,23 @@
 # Current Work
 
+**Territory Management System — Live-testing UX fixes: overflow QR labels, branded modal, map toggle, link removal, no auto-advance (2026-07-17) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch routes, migration 024 NOT yet run by Russell, not committed — see checkpoint `territory-management-live-testing-ux-fixes-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell live-tested the just-deployed overflow-assignment/publisher-workspace features on his own phone and sent screenshots with 6 fixes: (1) label the overflow batch's QR "Overflow QR Code" and the switcher pills "Assignment"/"Overflow" instead of numbered territory names; (2) replace the native `window.confirm()` "www.cyberussell.com says" popup with a TMS-branded modal; (3) a toggle switch instead of always stacking the Territory Map and Assigned Records Map; (4) remove the "View Today's Assignment Progress" link from the batch landing page; (5) after logging a visit, return to the card list instead of auto-advancing to the next record.
+
+Current Status: Code complete, migration not yet run.
+- **Overflow labeling**: new migration `024_batch_is_overflow.sql` adds `assignment_batches.is_overflow boolean`, set by `createAssignment` whenever `forceZeroRecords` is used (existing rows default to `false`, i.e. "Assignment"). `GroupLeaderTabs.tsx`'s switcher now reads "Assignment"/"Overflow"/"Overflow 2"... and the QR card heading switches to "Overflow QR Code" for an overflow batch.
+- **Branded confirm modal**: new `ConfirmModal.tsx` (centered card, amber warning icon) replaces `window.confirm()` for "End My Ministry Early" and "Delete this contact record?" in `PublisherWorkspaceApp.tsx`. Also fixed stale copy on the End-Ministry-Early dialog ("will be marked as undone") left over from the prior session's early-termination data fix, which no longer touches those records at all.
+- **Map toggle**: `PublisherWorkspaceApp.tsx` list view now shows a "Territory Map" / "Assigned Records" pill toggle instead of always stacking both (only when both are actually available).
+- **Removed** the "View Today's Assignment Progress" link from the batch landing page (left the `/progress` route itself reachable, just unlinked).
+- **Removed auto-advance**: logging a visit, marking a record moved, or recommending removal now returns to the card list instead of jumping to the next incomplete record — applied to all three completion paths for consistency. "Pass to Another Partner" keeps its own separate next-record behavior, untouched.
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via two temporary scratch routes (mock data, removed before finishing): map toggle switches correctly, logging a visit returns to the list with the record checkmarked (no auto-jump), branded modal renders centered with corrected copy and Cancel/End Ministry buttons, batch switcher and QR heading correctly read Assignment/Overflow/Overflow 2.
+
+**Next recommended task:** Not committed. Russell (1) applies migration 024 in the TMS Supabase SQL editor, (2) confirms today's already-generated overflow batch now labels correctly after reload, (3) re-tests the branded confirmations and map toggle live, (4) confirms the no-auto-advance change feels right in real field use. Then commit + deploy at Russell's request.
+
+----------------------------------------
+
 **Territory Management System — Overflow assignment batches, early-end data fix, nav icon highlighting (2026-07-17) — code done, tsc + vitest (52/52) + build clean, live-verified via scratch routes, migration 023 NOT yet run by Russell, not committed — see checkpoint `territory-management-overflow-assignment-early-end-fix-nav-icons-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

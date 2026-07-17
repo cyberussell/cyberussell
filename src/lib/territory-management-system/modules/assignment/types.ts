@@ -10,6 +10,11 @@ export interface AssignmentBatch {
   // creator on record. Every batch created going forward always sets this.
   created_by: string | null
   created_at: string
+  // True for a batch created via createOverflowAssignmentAction (see
+  // 024_batch_is_overflow.sql) — every partnership always starts with zero records. Lets the
+  // Group Leader dashboard's batch switcher label it "Overflow" rather than "Assignment"
+  // without guessing from array position, which breaks once the original batch is deleted.
+  is_overflow: boolean
 }
 
 export interface Partnership {

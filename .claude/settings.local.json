@@ -448,7 +448,8 @@
       "Bash(git -C .claude/worktrees/territory-management-foundation-6a5bc9 branch --show-current)",
       "Bash(xargs -0 perl -pi -e ' *)",
       "Bash(rm -rf /Users/russellparayno/Documents/Business/cyberussell.com/src/app/scratch-email-preview)",
-      "Bash(rm -rf .next)"
+      "Bash(rm -rf .next)",
+      "Bash(grep -n \"assignment_batches'\\)\\\\s*$\\\\|.insert\\({\" /Users/russellparayno/Documents/Business/cyberussell.com/src/lib/territory-management-system/modules/assignment/queries.ts)"
     ]
   }
 }

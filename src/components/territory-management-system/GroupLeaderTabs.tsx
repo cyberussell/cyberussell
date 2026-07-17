@@ -50,6 +50,9 @@ export interface BatchView {
   qrDataUrl: string
   publicUrl: string
   requestedPartnershipCount: number
+  // True for a batch generated via "Generate Overflow Assignment" (see
+  // 024_batch_is_overflow.sql) — drives both the switcher label and the QR card's own heading.
+  isOverflow: boolean
   stats: BatchStats
 }
 
@@ -65,7 +68,7 @@ export default function GroupLeaderTabs({
   const [tab, setTab] = useState<Tab>('home')
   const [selectedBatchId, setSelectedBatchId] = useState(batches[0]?.batchId)
   const selected = batches.find((b) => b.batchId === selectedBatchId) ?? batches[0]
-  const { batchId, qrDataUrl, publicUrl, requestedPartnershipCount, stats } = selected
+  const { batchId, qrDataUrl, publicUrl, requestedPartnershipCount, isOverflow, stats } = selected
 
   // Records fill sequentially, so a shortfall of approved records caps the actual partnership
   // count below what was requested (see engine.ts's calculateAssignment) instead of blocking
@@ -93,13 +96,14 @@ export default function GroupLeaderTabs({
       (p) => Boolean(p.finished_at) || Boolean(p.ended_early_at) || (p.recordCount > 0 && p.completedCount >= p.recordCount)
     )
 
-  // Label for the batch switcher — territory names read better to a Group Leader than an
-  // arbitrary batch number, since that's what actually distinguishes one batch from another day
-  // to day (an overflow batch always shares its territory with the batch it extends, so the
-  // index still disambiguates two batches on the exact same territory).
-  const batchLabel = (b: BatchView, index: number) => {
-    const names = b.stats.territories.map((t) => t.name).join(', ')
-    return names ? `${index + 1}. ${names}` : `Batch ${index + 1}`
+  // Label for the batch switcher — "Assignment" for the original, "Overflow" for an overflow
+  // batch (numbered "Overflow 2", "Overflow 3"... only once there's more than one, since a
+  // Group Leader can generate more than one overflow batch the same day).
+  let overflowSeen = 0
+  const batchLabel = (b: BatchView) => {
+    if (!b.isOverflow) return 'Assignment'
+    overflowSeen += 1
+    return overflowSeen === 1 ? 'Overflow' : `Overflow ${overflowSeen}`
   }
 
   const router = useRouter()
@@ -126,7 +130,7 @@ export default function GroupLeaderTabs({
     <div className="pb-24 sm:pb-0">
       {batches.length > 1 && (
         <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Today's assignment batches">
-          {batches.map((b, index) => (
+          {batches.map((b) => (
             <button
               key={b.batchId}
               type="button"
@@ -135,7 +139,7 @@ export default function GroupLeaderTabs({
                 b.batchId === batchId ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
               }`}
             >
-              {batchLabel(b, index)}
+              {batchLabel(b)}
             </button>
           ))}
         </div>
@@ -210,7 +214,7 @@ export default function GroupLeaderTabs({
                 ariaLabel="Delete Assignment"
                 className="absolute right-4 top-4 text-red-400 hover:text-red-600"
               />
-              <h2 className="font-semibold text-[#0B1B33]">Assignment QR Code</h2>
+              <h2 className="font-semibold text-[#0B1B33]">{isOverflow ? 'Overflow QR Code' : 'Assignment QR Code'}</h2>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={qrDataUrl} alt="Assignment QR code" className="h-80 w-80 sm:h-40 sm:w-40" />
               <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
