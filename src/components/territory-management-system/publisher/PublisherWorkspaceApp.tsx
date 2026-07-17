@@ -543,10 +543,6 @@ export default function PublisherWorkspaceApp({
     goToNote()
   }
 
-  function scrollToVisitForm() {
-    document.getElementById('record-a-visit-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
   const selected = view.name === 'detail' ? (workspace.records.find((r) => r.record.id === view.recordId) ?? null) : null
   const pendingVisitsForSelected =
     view.name === 'detail' ? queue.filter((q) => q.type === 'visit' && q.payload.recordId === view.recordId) : []
@@ -1022,7 +1018,11 @@ export default function PublisherWorkspaceApp({
       <PublisherBottomMenu
         batchToken={batchToken}
         view={
-          view.name === 'note' || view.name === 'sync' || view.name === 'done' || view.name === 'searchScopeDetail'
+          view.name === 'note' ||
+          view.name === 'sync' ||
+          view.name === 'done' ||
+          view.name === 'searchScopeDetail' ||
+          view.name === 'detail'
             ? 'list'
             : view.name
         }
@@ -1030,7 +1030,6 @@ export default function PublisherWorkspaceApp({
         onGoToRecords={() => setView({ name: 'list' })}
         onGoToAddedRecords={() => setView({ name: 'addedRecords' })}
         showAddedRecords={!readOnly}
-        onGoToVisitForm={scrollToVisitForm}
       />
 
       <ConfirmModal

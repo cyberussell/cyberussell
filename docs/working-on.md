@@ -1,5 +1,21 @@
 # Current Work
 
+**Territory Management System — GL dashboard StatCard redesign + delta badges, redundant nav icon removed (2026-07-18) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, no migration needed, not committed — see checkpoint `territory-management-gl-dashboard-statcard-delta-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 3 asks from screenshots: (1) each StatCard on the Group Leader's "Visits" tab should show a pinned baseline count plus a live green/red delta badge for what's changed since the page opened; (2) StatCard should drop its icon's colored background, wrap/shrink its label text to avoid overflow on any screen size, icon color contrasting the plain card background; (3) the publisher record-detail bottom nav's "Record a Visit" icon was redundant (the form it jumps to is already directly on the page).
+
+Current Status: Code complete, no migration needed.
+- `StatCard.tsx`: one unified layout at every screen size (was two divergent mobile/desktop variants), no icon chip (plain `text-[#2563EB]` icon), wrapped `text-xs` label, new optional `delta` prop (green ↑ / red ↓ badge). Shared by `GroupLeaderTabs.tsx`, `ReportsView.tsx`, and the Admin dashboard — all three get the visual redesign, only the Visits tab uses `delta`.
+- `GroupLeaderTabs.tsx`: new `resultBaseline` state snapshots `stats.resultCounts` once per selected batch (reset only on batch switch, not the existing 30s poll); Visits tab shows the pinned baseline as `value` and `stats.resultCounts[key] - resultBaseline[key]` as `delta`.
+- `PublisherBottomMenu.tsx`: removed the `view === 'detail'` "Record a Visit" item and its `onGoToVisitForm` prop (plus `PublisherWorkspaceApp.tsx`'s now-unused `scrollToVisitForm`); `'detail'` now maps to `'list'` for active-icon purposes so Assigned Records stays highlighted instead of nothing.
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via a temporary scratch route (removed before finishing) at mobile width: long labels wrap cleanly with no overflow, delta badges render both directions correctly, bottom nav on a detail-mapped view shows exactly 4 icons with Assigned Records active.
+
+**Next recommended task:** Not committed. Russell confirms and requests commit/deploy — then spot-check the Visits tab live: baseline stays put while a delta badge appears as publishers log visits, resets correctly on batch switch.
+
+----------------------------------------
+
 **Territory Management System — Batch-landing nav fix, locked-DNC completion, Bible Study copy (2026-07-18) — code done, tsc + vitest (52/52) + build clean, live-verified via temporary scratch routes, no migration needed, committed and pushed + deployed at Russell's request — see checkpoint `territory-management-batch-graph-dnc-nav-fix-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

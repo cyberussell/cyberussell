@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react'
+import { ArrowDown, ArrowUp, type LucideIcon } from 'lucide-react'
 import Card from './Card'
 
 export default function StatCard({
@@ -6,26 +6,39 @@ export default function StatCard({
   label,
   value,
   hint,
+  delta,
 }: {
   icon: LucideIcon
   label: string
   value: string | number
   hint?: string
+  // Signed change since this page (or the selected batch) was first opened — e.g. +3 renders a
+  // green up arrow, -2 a red down arrow. A result's count can go down, not just up: only the
+  // most recent visit per record counts (see getBatchVisitResultCounts), so a revisit that
+  // changes a record's result moves it out of its old bucket into a new one. Omitted or exactly
+  // 0 renders nothing.
+  delta?: number
 }) {
+  const deltaBadge =
+    delta ? (
+      <span className={`inline-flex shrink-0 items-center gap-0.5 text-xs font-bold ${delta > 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+        {delta > 0 ? <ArrowUp className="h-3 w-3" aria-hidden /> : <ArrowDown className="h-3 w-3" aria-hidden />}
+        {Math.abs(delta)}
+      </span>
+    ) : null
+
   return (
-    <Card className="p-5">
-      {/* Mobile: icon + label as a top row, value centered on its own row below. Desktop
-          (sm and up) keeps the original icon-left / label-and-value-stacked layout. */}
-      <div className="flex items-center gap-3 sm:items-start">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#38BDF8] text-white shadow-[0_4px_12px_-2px_rgba(37,99,235,0.4)]">
-          <Icon className="h-5 w-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-xl leading-tight text-slate-500 sm:text-sm">{label}</p>
-          <p className="hidden text-xl font-bold text-[#0B1B33] sm:block">{value}</p>
-        </div>
+    <Card className="p-4">
+      {/* One layout at every screen size (no divergent mobile/desktop variants) — the simplest
+          way to guarantee the label never overflows its card no matter how narrow it gets. */}
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4 shrink-0 text-[#2563EB]" aria-hidden />
+        <p className="min-w-0 flex-1 break-words text-xs font-medium leading-snug text-slate-500">{label}</p>
       </div>
-      <p className="mt-3 text-center text-2xl font-bold text-[#0B1B33] sm:hidden">{value}</p>
+      <div className="mt-2 flex flex-wrap items-baseline gap-2">
+        <p className="text-2xl font-bold text-[#0B1B33]">{value}</p>
+        {deltaBadge}
+      </div>
       {hint && <p className="mt-2 text-xs text-slate-600">{hint}</p>}
     </Card>
   )

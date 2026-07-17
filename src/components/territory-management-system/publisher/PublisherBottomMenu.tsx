@@ -1,13 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { ClipboardCheck, ClipboardList, ClipboardPlus, Home, Users, type LucideIcon } from 'lucide-react'
+import { ClipboardList, ClipboardPlus, Home, Users, type LucideIcon } from 'lucide-react'
 
 // Fixed bottom navigation for the publisher workspace, like a native app tab bar — easier to
 // reach one-handed than a top bar while out in ministry. Download/Sync live in a top bar
-// instead (see PublisherWorkspaceApp) — every other action lives here. "Record a Visit" only
-// appears once a record is actually open, since there's nothing to record a visit against
-// otherwise.
+// instead (see PublisherWorkspaceApp) — every other action lives here. No contextual "Record a
+// Visit" item on a record's detail view — that form is already directly on the page, a
+// dedicated nav icon just for jumping to it was redundant.
 export default function PublisherBottomMenu({
   batchToken,
   view,
@@ -15,7 +15,6 @@ export default function PublisherBottomMenu({
   onGoToRecords,
   onGoToAddedRecords,
   showAddedRecords,
-  onGoToVisitForm,
 }: {
   batchToken: string
   view: 'home' | 'list' | 'detail' | 'addRecord' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord'
@@ -26,7 +25,6 @@ export default function PublisherBottomMenu({
   // Record" itself, which is also readOnly-gated.
   onGoToAddedRecords: () => void
   showAddedRecords: boolean
-  onGoToVisitForm: () => void
 }) {
   const items: {
     key: string
@@ -54,10 +52,6 @@ export default function PublisherBottomMenu({
       onClick: onGoToAddedRecords,
     })
   }
-  if (view === 'detail') {
-    items.push({ key: 'visit', label: 'Record a Visit', icon: ClipboardCheck, active: true, onClick: onGoToVisitForm })
-  }
-
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-20 flex border-t border-blue-100/60 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-1px_8px_rgba(15,23,42,0.06)] backdrop-blur"

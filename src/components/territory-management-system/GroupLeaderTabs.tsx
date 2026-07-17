@@ -73,6 +73,17 @@ export default function GroupLeaderTabs({
   const selected = batches.find((b) => b.batchId === selectedBatchId) ?? batches[0]
   const { batchId, qrDataUrl, publicUrl, requestedPartnershipCount, isOverflow, stats } = selected
 
+  // The "Visits" tab shows each result's count as of when this device first opened this batch's
+  // dashboard, plus a live delta badge (see StatCard) for whatever's changed since then — a
+  // pinned snapshot instead of the number silently jumping on every periodic router.refresh()
+  // below, so a Group Leader glancing back at the tab can tell what's new since they started
+  // watching. Reset only when switching to a different batch, never on a stats refresh.
+  const [resultBaseline, setResultBaseline] = useState(stats.resultCounts)
+  useEffect(() => {
+    setResultBaseline(stats.resultCounts)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [batchId])
+
   // Records fill sequentially, so a shortfall of approved records caps the actual partnership
   // count below what was requested (see engine.ts's calculateAssignment) instead of blocking
   // generation outright — this surfaces that gap after the fact too, in case it wasn't noticed
@@ -299,16 +310,28 @@ export default function GroupLeaderTabs({
 
       {tab === 'results' && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          <StatCard icon={ClipboardList} label={VISIT_RESULT_LABELS.initial_visit} value={stats.resultCounts.initial_visit} />
-          <StatCard icon={Repeat} label={VISIT_RESULT_LABELS.return_visit} value={stats.resultCounts.return_visit} />
-          <StatCard icon={BookMarked} label={VISIT_RESULT_LABELS.started_bible_study} value={stats.resultCounts.started_bible_study} />
-          <StatCard icon={BookOpen} label={VISIT_RESULT_LABELS.bible_study} value={stats.resultCounts.bible_study} />
-          <StatCard icon={TrendingUp} label={VISIT_RESULT_LABELS.progressing} value={stats.resultCounts.progressing} />
-          <StatCard icon={XCircle} label={VISIT_RESULT_LABELS.discontinued} value={stats.resultCounts.discontinued} />
-          <StatCard icon={DoorClosed} label={VISIT_RESULT_LABELS.not_home} value={stats.resultCounts.not_home} />
-          <StatCard icon={PhoneOff} label={VISIT_RESULT_LABELS.do_not_call} value={stats.resultCounts.do_not_call} />
-          <StatCard icon={Truck} label={VISIT_RESULT_LABELS.moved} value={stats.resultCounts.moved} />
-          <StatCard icon={HelpCircle} label={VISIT_RESULT_LABELS.other} value={stats.resultCounts.other} />
+          {(
+            [
+              ['initial_visit', ClipboardList],
+              ['return_visit', Repeat],
+              ['started_bible_study', BookMarked],
+              ['bible_study', BookOpen],
+              ['progressing', TrendingUp],
+              ['discontinued', XCircle],
+              ['not_home', DoorClosed],
+              ['do_not_call', PhoneOff],
+              ['moved', Truck],
+              ['other', HelpCircle],
+            ] as const
+          ).map(([key, Icon]) => (
+            <StatCard
+              key={key}
+              icon={Icon}
+              label={VISIT_RESULT_LABELS[key]}
+              value={resultBaseline[key]}
+              delta={stats.resultCounts[key] - resultBaseline[key]}
+            />
+          ))}
         </div>
       )}
 
