@@ -25,6 +25,7 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
 import ConfirmModal from './ConfirmModal'
 import PartnershipRenameForm from './PartnershipRenameForm'
+import SharePartnershipCard from './SharePartnershipCard'
 import ChooseSearchScopeForm from './ChooseSearchScopeForm'
 import AssignedRecordsList from './AssignedRecordsList'
 import AddedRecordsList from './AddedRecordsList'
@@ -681,6 +682,7 @@ export default function PublisherWorkspaceApp({
         {view.name === 'list' && (readOnly || workspace.claimed_at) && (
           <>
             {!readOnly && <PartnershipRenameForm currentName={workspace.name} onRename={handleRename} />}
+            {!readOnly && <SharePartnershipCard batchToken={batchToken} partnershipToken={partnershipToken} />}
 
             {needsSearchScope && (
               <ChooseSearchScopeForm
