@@ -26,6 +26,13 @@ export default function LoginForm({ notice }: { notice?: string }) {
           action={formAction}
           className="space-y-4 rounded-2xl border border-gray-300 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)]"
         >
+          {/* Honeypot: invisible to real users (off-screen, unreachable by Tab, no autofill
+              hook), but a basic credential-stuffing bot that blindly fills every input on the
+              form usually fills this too — see signIn()'s check in actions/auth.ts. */}
+          <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', top: 0, width: 1, height: 1, overflow: 'hidden' }}>
+            <label htmlFor="tms-website">Website</label>
+            <input id="tms-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+          </div>
           <label className="block">
             <span className="text-sm font-medium text-slate-600">Email</span>
             <input

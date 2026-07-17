@@ -662,10 +662,17 @@ export default function PublisherWorkspaceApp({
                 />
               </div>
             ) : (
+              // Deliberately doesn't claim anything about how many records exist in the
+              // territory/blocks overall (that's often false — an overflow batch just means
+              // THIS partnership has zero assigned records, not that the area is empty; see
+              // workspace.searchScope for whatever already exists there) — generic wording that
+              // holds whether the real count is zero or nonzero.
               <div className="rounded-2xl border border-gray-300 bg-white p-4 text-center shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)]">
-                <p className="text-sm font-semibold text-[#0B1B33]">This territory has no records yet.</p>
+                <p className="text-sm font-semibold text-[#0B1B33]">No contact records assigned to you.</p>
                 <p className="mt-1 text-sm text-slate-500">
-                  Searching the area and adding new contact records is today&apos;s activity.
+                  {workspace.searchScope
+                    ? 'This is a search assignment — check the Search Area tab for records already logged nearby, then add any new contact records you find.'
+                    : "This is a search assignment — search the area and add new contact records as you find them."}
                 </p>
               </div>
             )}

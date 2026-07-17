@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-17
 **Product:** Territory Management System (TMS)
-**Feature:** Five follow-ups from Russell's live phone testing of the overflow-assignment feature: (1) navy QR for overflow batches, (2) cross-batch record passing to any of the same Group Leader's batches today, (3) an overflow batch can narrow to a specific section + blocks to search, with a read-only view of whatever records already exist there, (4) that search area gets its own pin map, (5) map pin popups fall back through resident name and Plus Code before "No address on file".
+**Feature:** Five follow-ups from Russell's live phone testing of the overflow-assignment feature: (1) navy QR for overflow batches, (2) cross-batch record passing to any of the same Group Leader's batches today, (3) an overflow batch can narrow to a specific section + blocks to search, with a read-only view of whatever records already exist there, (4) that search area gets its own pin map, (5) map pin popups fall back through resident name and Plus Code before "No address on file". Plus a same-session follow-up round: (6) generic empty-state copy for a zero-assigned-records partnership (no longer falsely claims the whole territory has no records), (7) a login honeypot for basic brute-force/credential-stuffing bots on the shared Admin/Group Leader login, (8) confirmed the overflow search-scope feature already allows two different overflow batches to independently pick the same section/blocks (no code change needed — see Remaining Work/Known Issues).
 
 ## Files Modified
 - `territory-management-system/migrations/025_overflow_search_scope.sql` (new)
@@ -27,6 +27,8 @@
 - `src/components/territory-management-system/publisher/PublisherBottomMenu.tsx`
 - `src/components/territory-management-system/publisher/SearchScopeRecordsList.tsx` (new)
 - `src/components/territory-management-system/publisher/SearchScopeRecordDetailView.tsx` (new)
+- `src/components/territory-management-system/LoginForm.tsx`
+- `src/app/territory-management-system/actions/auth.ts`
 
 ## Summary of Changes
 
@@ -40,12 +42,18 @@
 
 **5. Pin popup fallback:** `RecordLocation` type gained `residentName`; `getApprovedRecordLocations` (admin) and both publisher-side `RecordLocation` builders (assigned + search-scope) now populate it. `HouseholdDistributionMap`'s `Pin` interface now carries `residentName`/`plusCode` through (previously decoded for positioning then discarded) and the popup's primary line falls back `address || residentName || plusCode || 'No address on file'`.
 
+**6. Generic empty-state copy:** The "This territory has no records yet." message on a zero-assigned-records partnership was factually wrong in general (an overflow batch just means THIS partnership has zero assigned records — the territory/search-scope blocks often already have some, shown separately via feature 3's read-only list). Reworded to "No contact records assigned to you." plus a `workspace.searchScope`-conditional second line pointing to the Search Area tab when one exists, generic regardless of whether the real underlying count is zero or nonzero (`PublisherWorkspaceApp.tsx`).
+
+**7. Login honeypot:** `LoginForm.tsx` (shared by both TMS Admin and Group Leader — one login page/action for both roles, confirmed by reading `actions/auth.ts`'s `ROLE_REDIRECT`) gained a hidden `website` field (off-screen, `aria-hidden`, `tabIndex={-1}`, `autoComplete="off"` — invisible/unreachable for a real user or screen reader, but a basic bot that blindly fills every input usually fills it). `signIn()` in `actions/auth.ts` checks it first: if non-empty, applies a strict separate rate-limit key (`tms-login-honeypot:${ip}`, limit 1) and returns the exact same "Invalid email or password." error as a real failed login — never touching Supabase auth or the profile lookup — so a bot can't distinguish "caught by the honeypot" from "wrong password" and adapt. This is in addition to, not instead of, the pre-existing `tms-login:${ip}` rate limit (10/min) already on this action.
+
+**8. Overflow search-scope reuse — confirmed already possible, no code change:** Russell asked whether a different set of overflow Ministry Partners can choose the same section/blocks as an already-generated overflow batch. Traced the code: `assignment_batch_search_blocks` (migration 025) only has a `unique (batch_id, block_id)` constraint (prevents the same batch listing a block twice, nothing more) and `createOverflowAssignmentAction`/`createAssignment` never check a submitted block against any OTHER batch's search-scope selection. The only exclusivity check anywhere (`getTerritoryIdsInUseToday`) is at the territory level and is explicitly relaxed for this same Group Leader's own repeat batches (that's the whole point of the overflow feature) — it only blocks a *different* Group Leader from covering a territory already claimed today. So yes: this already works as asked, with no change needed.
+
 ## Remaining Work
-- Migration `025_overflow_search_scope.sql` has not been run against the live Supabase project — needed before any of features 3/4 work in production (feature 1/2/5 don't depend on it).
+- Migration `025_overflow_search_scope.sql` has not been run against the live Supabase project — needed before any of features 3/4 work in production (features 1/2/5/6/7 don't depend on it).
 - Not committed to git yet.
 
 ## Known Issues
-None identified — `npx tsc --noEmit`, `npx vitest run` (52/52), and `npx next build` all clean; live-verified via a temporary scratch route (mock data, removed before finishing) covering all five features, including all three popup-fallback branches (address-wins, name-only, Plus-Code-only) and the read-only search-scope detail view's correction form.
+None identified — `npx tsc --noEmit`, `npx vitest run` (52/52), and `npx next build` all clean; live-verified via a temporary scratch route (mock data, removed before finishing) covering all five original features, including all three popup-fallback branches (address-wins, name-only, Plus-Code-only) and the read-only search-scope detail view's correction form. The honeypot was live-verified directly against the real login page in this sandbox: a normal submission (empty honeypot) reached the real Supabase auth call (confirmed by it failing on this sandbox's missing TMS env vars, an unrelated pre-existing limitation, not a honeypot bug); a simulated bot submission (honeypot field set via JS, mimicking an automated filler) returned the generic error instantly with no server error, confirming it short-circuits before ever reaching Supabase.
 
 ## Next Recommended Task
-Russell: (1) run migration 025 in the TMS Supabase SQL editor, (2) as a real Group Leader, generate an overflow assignment with a search area narrowed to specific blocks and confirm the QR is navy, (3) pass a record from the original assignment to an overflow Ministry Partner and confirm the batch label shows correctly, (4) as that overflow partner, confirm the "Search Area" tab shows existing records read-only, the map renders, and a location-correction recommendation lands in the Admin's Flagged for Correction list. Then commit + deploy at Russell's request.
+Russell: (1) run migration 025 in the TMS Supabase SQL editor, (2) as a real Group Leader, generate an overflow assignment with a search area narrowed to specific blocks and confirm the QR is navy, (3) pass a record from the original assignment to an overflow Ministry Partner and confirm the batch label shows correctly, (4) as that overflow partner, confirm the "Search Area" tab shows existing records read-only, the map renders, and a location-correction recommendation lands in the Admin's Flagged for Correction list, (5) confirm the empty-state copy on a zero-assigned-records partnership, (6) try a few real login attempts to confirm the honeypot doesn't interfere with normal logins. Then commit + deploy at Russell's request.

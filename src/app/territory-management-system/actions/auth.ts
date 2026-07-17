@@ -17,6 +17,18 @@ const ROLE_REDIRECT: Record<UserRole, string> = {
 
 export async function signIn(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const ip = clientIp(await headers())
+
+  // Honeypot (see LoginForm.tsx's hidden "website" field) — a real browser never fills this
+  // in, but a basic bot that blindly fills every input on the form usually does. Short-circuits
+  // before ever touching Supabase auth (cheaper per attempt, and skips the profile lookup
+  // entirely) and applies a much stricter per-IP limit than the real login counter below, so a
+  // repeat offender gets blocked fast. The error message is identical to a real failed login —
+  // a bot can't tell "caught by the honeypot" from "wrong password" and adjust.
+  if (String(formData.get('website') ?? '').trim() !== '') {
+    await checkRateLimit(`tms-login-honeypot:${ip}`, 1)
+    return { error: 'Invalid email or password.' }
+  }
+
   if (!(await checkRateLimit(`tms-login:${ip}`, 10))) {
     return { error: 'Too many login attempts. Please wait a minute and try again.' }
   }
