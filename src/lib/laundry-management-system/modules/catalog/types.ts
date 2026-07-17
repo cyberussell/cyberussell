@@ -1,4 +1,4 @@
-export type CatalogCategory = 'wash' | 'dry' | 'wash_dry' | 'fold' | 'dry_clean' | 'addon'
+export type CatalogCategory = 'wash' | 'dry' | 'iron' | 'wash_dry' | 'wash_dry_fold' | 'fold' | 'dry_clean' | 'addon'
 export type CatalogUnit = 'load' | 'piece'
 export type PromoType = 'percent' | 'fixed'
 
@@ -27,13 +27,21 @@ export interface ServiceCatalogItem {
 export const CATEGORY_META: Record<CatalogCategory, { label: string; unit: CatalogUnit; defaultIcon: string }> = {
   wash: { label: 'Washing', unit: 'load', defaultIcon: 'WashingMachine' },
   dry: { label: 'Drying', unit: 'load', defaultIcon: 'Wind' },
-  wash_dry: { label: 'Wash & Dry', unit: 'load', defaultIcon: 'Waves' },
+  iron: { label: 'Ironing', unit: 'load', defaultIcon: 'Flame' },
   fold: { label: 'Fold', unit: 'load', defaultIcon: 'Shirt' },
+  wash_dry: { label: 'Wash & Dry', unit: 'load', defaultIcon: 'Waves' },
+  wash_dry_fold: { label: 'Wash & Dry & Fold', unit: 'load', defaultIcon: 'Combine' },
   dry_clean: { label: 'Dry Cleaning', unit: 'piece', defaultIcon: 'Shirt' },
   addon: { label: 'Add-on', unit: 'piece', defaultIcon: 'Package' },
 }
 
-export const CATEGORY_ORDER: CatalogCategory[] = ['wash', 'dry', 'wash_dry', 'fold', 'dry_clean', 'addon']
+export const CATEGORY_ORDER: CatalogCategory[] = ['wash', 'dry', 'iron', 'fold', 'wash_dry', 'wash_dry_fold', 'dry_clean', 'addon']
+
+// The one category that isn't a laundry service — everywhere the POS grid
+// and receipts split Services vs. Add-ons keys off this single check.
+export function isAddonCategory(category: CatalogCategory): boolean {
+  return category === 'addon'
+}
 
 // Active-right-now check for a promo window — a null bound means
 // "always started" / "never ends" respectively, matching the SQL side

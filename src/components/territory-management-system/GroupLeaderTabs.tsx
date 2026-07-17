@@ -6,7 +6,6 @@ import {
   BookMarked,
   BookOpen,
   CheckCircle2,
-  CircleSlash,
   ClipboardList,
   Clock,
   DoorClosed,
@@ -32,6 +31,7 @@ import ConfirmDeleteButton from '@/components/territory-management-system/dashbo
 import PartnershipList from '@/components/territory-management-system/PartnershipList'
 import VisitResultBarChart from '@/components/territory-management-system/VisitResultBarChart'
 import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
+import OverflowAssignmentForm from '@/components/territory-management-system/OverflowAssignmentForm'
 
 type Tab = 'home' | 'dashboard' | 'results' | 'progress'
 
@@ -42,27 +42,36 @@ const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
   { id: 'progress', label: 'Partners', icon: Users },
 ]
 
-export default function GroupLeaderTabs({
-  batchId,
-  qrDataUrl,
-  publicUrl,
-  activeTerritories,
-  requestedPartnershipCount,
-  stats,
-}: {
+// One entry per batch this Group Leader owns today — a Group Leader can now have more than one
+// (see 023_multiple_batches_per_group_leader.sql), e.g. an original batch plus one or more
+// overflow batches generated for extra publishers later the same day.
+export interface BatchView {
   batchId: string
   qrDataUrl: string
   publicUrl: string
-  activeTerritories: { id: string; name: string; barangayName: string; approvedCount: number }[]
   requestedPartnershipCount: number
   stats: BatchStats
+}
+
+export default function GroupLeaderTabs({
+  batches,
+  activeTerritories,
+  todaysTerritories,
+}: {
+  batches: BatchView[]
+  activeTerritories: { id: string; name: string; barangayName: string; approvedCount: number }[]
+  todaysTerritories: { id: string; name: string; barangayName: string }[]
 }) {
+  const [tab, setTab] = useState<Tab>('home')
+  const [selectedBatchId, setSelectedBatchId] = useState(batches[0]?.batchId)
+  const selected = batches.find((b) => b.batchId === selectedBatchId) ?? batches[0]
+  const { batchId, qrDataUrl, publicUrl, requestedPartnershipCount, stats } = selected
+
   // Records fill sequentially, so a shortfall of approved records caps the actual partnership
   // count below what was requested (see engine.ts's calculateAssignment) instead of blocking
   // generation outright — this surfaces that gap after the fact too, in case it wasn't noticed
   // on the form before generating.
   const shortfallPartnerships = Math.max(0, requestedPartnershipCount - stats.partnerships.length)
-  const [tab, setTab] = useState<Tab>('home')
   const base = 'flex-1 rounded-xl px-2 py-3 text-center text-sm font-semibold leading-tight transition'
   const active = 'bg-[#2563EB] text-white'
   const inactive = 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
@@ -84,13 +93,23 @@ export default function GroupLeaderTabs({
       (p) => Boolean(p.finished_at) || Boolean(p.ended_early_at) || (p.recordCount > 0 && p.completedCount >= p.recordCount)
     )
 
+  // Label for the batch switcher — territory names read better to a Group Leader than an
+  // arbitrary batch number, since that's what actually distinguishes one batch from another day
+  // to day (an overflow batch always shares its territory with the batch it extends, so the
+  // index still disambiguates two batches on the exact same territory).
+  const batchLabel = (b: BatchView, index: number) => {
+    const names = b.stats.territories.map((t) => t.name).join(', ')
+    return names ? `${index + 1}. ${names}` : `Batch ${index + 1}`
+  }
+
   const router = useRouter()
   // `stats` (and everything else here) is fetched once per Server Component render and passed
-  // down as a prop — switching between Home/Dashboard/Visit Results/Ministry Partner is pure
-  // client-side tab state, nothing here ever refetches on its own. Without this, a publisher
-  // syncing a visit while the Group Leader already has this page open would never show up until
-  // a manual browser reload. router.refresh() re-runs the page's Server Component and pushes
-  // fresh props down without losing the selected tab (that's local state, untouched by this).
+  // down as a prop — switching between Home/Dashboard/Visit Results/Ministry Partner (and now
+  // between batches) is pure client-side state, nothing here ever refetches on its own. Without
+  // this, a publisher syncing a visit while the Group Leader already has this page open would
+  // never show up until a manual browser reload. router.refresh() re-runs the page's Server
+  // Component and pushes fresh props down without losing the selected tab/batch (that's local
+  // state, untouched by this).
   useEffect(() => {
     const interval = setInterval(() => router.refresh(), 30000)
     function handleVisibility() {
@@ -105,6 +124,23 @@ export default function GroupLeaderTabs({
 
   return (
     <div className="pb-24 sm:pb-0">
+      {batches.length > 1 && (
+        <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Today's assignment batches">
+          {batches.map((b, index) => (
+            <button
+              key={b.batchId}
+              type="button"
+              onClick={() => setSelectedBatchId(b.batchId)}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                b.batchId === batchId ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
+              }`}
+            >
+              {batchLabel(b, index)}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Desktop/tablet: sticky top tab bar. Hidden below `sm` in favor of the fixed bottom bar. */}
       <nav
         className="sticky top-0 z-10 mb-6 hidden gap-2 rounded-2xl border border-blue-100/60 bg-white/95 p-2 shadow-sm backdrop-blur sm:flex"
@@ -135,7 +171,9 @@ export default function GroupLeaderTabs({
               }`}
               aria-current={isActive ? 'page' : undefined}
             >
-              <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} aria-hidden />
+              <span className={`flex items-center justify-center rounded-full p-1.5 transition ${isActive ? 'bg-blue-50' : ''}`}>
+                <Icon className={isActive ? 'h-6 w-6' : 'h-5 w-5'} strokeWidth={isActive ? 2.75 : 2} aria-hidden />
+              </span>
               {t.label}
             </button>
           )
@@ -148,7 +186,7 @@ export default function GroupLeaderTabs({
             <Card className="relative p-6">
               <ConfirmDeleteButton
                 action={deleteGroupLeaderAssignmentAction.bind(null, batchId)}
-                confirmMessage="Delete today's assignment? Publishers who scanned the QR code will lose access."
+                confirmMessage="Delete this assignment? Publishers who scanned the QR code will lose access."
                 ariaLabel="Delete Assignment"
                 className="absolute right-4 top-4 text-red-400 hover:text-red-600"
               />
@@ -168,7 +206,7 @@ export default function GroupLeaderTabs({
             <Card className="relative flex flex-col items-center gap-3 p-6 text-center">
               <ConfirmDeleteButton
                 action={deleteGroupLeaderAssignmentAction.bind(null, batchId)}
-                confirmMessage="Delete today's assignment? Publishers who scanned the QR code will lose access."
+                confirmMessage="Delete this assignment? Publishers who scanned the QR code will lose access."
                 ariaLabel="Delete Assignment"
                 className="absolute right-4 top-4 text-red-400 hover:text-red-600"
               />
@@ -185,13 +223,27 @@ export default function GroupLeaderTabs({
           {shortfallPartnerships > 0 && (
             <div className="mx-auto max-w-md rounded-lg border border-amber-200 bg-amber-50 p-4 text-center text-sm text-amber-700">
               {shortfallPartnerships} fewer partnership{shortfallPartnerships === 1 ? '' : 's'} were created than requested —
-              there weren&apos;t enough approved records in the selected territories. The extra publishers should do another
-              form of ministry today (Street Witnessing, Return Visits, Business Witnessing, or other).
+              there weren&apos;t enough approved records in the selected territories. Generate an overflow assignment below if
+              more publishers than expected showed up.
+            </div>
+          )}
+
+          {todaysTerritories.length > 0 && (
+            <div className="mx-auto max-w-md text-center">
+              <h2 className="mb-1 font-semibold text-[#0B1B33]">Generate Overflow Assignment</h2>
+              <p className="mb-4 text-xs text-slate-500">
+                For extra publishers when a territory has more people than the original assignment had room for. Adds a new,
+                separate QR code — today&apos;s existing assignment(s) are untouched.
+              </p>
+              <OverflowAssignmentForm territories={todaysTerritories} />
             </div>
           )}
 
           <div className="mx-auto max-w-md text-center">
             <h2 className="mb-4 font-semibold text-[#0B1B33]">Regenerate Assignment</h2>
+            <p className="mb-4 text-xs text-slate-500">
+              Replaces every one of today&apos;s assignments (all batches) with a brand new one.
+            </p>
             <AssignmentForm territories={activeTerritories} hasExistingBatch={true} />
           </div>
         </div>
@@ -220,7 +272,6 @@ export default function GroupLeaderTabs({
           <StatCard icon={PhoneOff} label={VISIT_RESULT_LABELS.do_not_call} value={stats.resultCounts.do_not_call} />
           <StatCard icon={Truck} label={VISIT_RESULT_LABELS.moved} value={stats.resultCounts.moved} />
           <StatCard icon={HelpCircle} label={VISIT_RESULT_LABELS.other} value={stats.resultCounts.other} />
-          <StatCard icon={CircleSlash} label={VISIT_RESULT_LABELS.undone} value={stats.resultCounts.undone} />
         </div>
       )}
 

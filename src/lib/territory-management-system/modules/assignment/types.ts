@@ -47,8 +47,14 @@ export interface PartnershipRecordDetail {
   id: string
   sequence: number
   completed_at: string | null
+  // Set when this record was handed to the current partnership via "Pass to Another Partner"
+  // (see movePartnershipRecord/022_partnership_pass_tracking.sql) — the source partnership's
+  // name at the moment of the move, not a live reference (so it still reads correctly even if
+  // that partnership is later renamed). Null for a record that's never been passed.
+  passed_from_name: string | null
+  passed_from_at: string | null
   record: TerritoryRecord & {
-    territory: { id: string; name: string; map_image_url: string | null } | null
+    territory: { id: string; name: string; description: string; map_image_url: string | null } | null
     section: { id: string; label: string } | null
     block: { id: string; label: string } | null
   }

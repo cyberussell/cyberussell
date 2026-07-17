@@ -235,10 +235,10 @@ export async function movePartnershipRecordAction(_prev: ActionResult, formData:
 
   const destination = await getPartnershipById(supabase, parsed.data.destinationPartnershipId)
   if (!destination || destination.batch_id !== partnership.batch_id) return { error: 'Invalid destination Ministry Partner.' }
-  if (destination.ended_early_at) return { error: 'That Ministry Partner has already ended their ministry for today.' }
+  if (destination.ended_early_at || destination.finished_at) return { error: 'That Ministry Partner has already ended their ministry for today.' }
 
   try {
-    await movePartnershipRecord(supabase, partnership.id, destination.id, parsed.data.recordId)
+    await movePartnershipRecord(supabase, partnership.id, destination.id, parsed.data.recordId, partnership.name)
   } catch (e) {
     await logError(partnership.congregation_id, 'movePartnershipRecordAction', e)
     return { error: e instanceof Error ? e.message : 'Could not move the contact record.' }
@@ -259,7 +259,7 @@ export async function terminatePartnershipEarlyAction(_prev: ActionResult, formD
   if (partnership.expired) return { error: 'This assignment has ended for the day.' }
 
   try {
-    await terminatePartnershipEarly(supabase, partnership.congregation_id, partnership.id, partnership.name)
+    await terminatePartnershipEarly(supabase, partnership.id)
   } catch (e) {
     await logError(partnership.congregation_id, 'terminatePartnershipEarlyAction', e)
     return { error: e instanceof Error ? e.message : 'Could not end the ministry session.' }

@@ -139,6 +139,12 @@ export default function PublisherRecordDetailView({
         )}
         {assigned.record.notes && <p className="mt-2 text-sm text-slate-500">{assigned.record.notes}</p>}
         {assigned.record.do_not_call && <p className="mt-2 text-sm font-medium text-red-500">Do Not Call</p>}
+        {assigned.passed_from_name && (
+          <p className="mt-2 text-sm font-medium text-amber-600">
+            Passed by {assigned.passed_from_name}
+            {assigned.passed_from_at ? ` on ${new Date(assigned.passed_from_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}
+          </p>
+        )}
         {(mapsUrl || mapUrl) && (
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {mapsUrl && (

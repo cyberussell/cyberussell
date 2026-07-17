@@ -19,6 +19,9 @@ export interface StatusHistoryEntry {
 export interface Order {
   id: string
   order_number: string
+  // Opaque, unguessable token for the public (no-login) tracking page —
+  // order_number itself is a sequential bigserial, unsuitable for public use.
+  public_token: string
   business_id: string
   branch_id: string
   customer_id: string | null
@@ -90,6 +93,10 @@ export interface OrderItem {
   unit_price: number
   quantity: number
   line_total: number
+  // Snapshot of the catalog item's category at order-creation time (false
+  // for orders placed before this column existed) — the Services/Add-ons
+  // split on the POS grid and every receipt surface keys off this.
+  is_addon: boolean
   created_at: string
 }
 

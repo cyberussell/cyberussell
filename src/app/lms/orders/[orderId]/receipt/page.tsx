@@ -2,8 +2,8 @@ import { Download } from 'lucide-react'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { requirePagePermission } from '@/lib/laundry-management-system/modules/auth/queries'
-import { getOrderById } from '@/lib/laundry-management-system/modules/orders/queries'
-import { getOrderQrDataUrl } from '@/lib/laundry-management-system/modules/orders/qr'
+import { getOrderById, groupOrderItems } from '@/lib/laundry-management-system/modules/orders/queries'
+import { getOrderTrackingQrDataUrl } from '@/lib/laundry-management-system/modules/orders/qr'
 import { formatCurrency } from '@/lib/laundry-management-system/format'
 import PrintReceiptButton from '@/components/laundry-management-system/dashboard/PrintReceiptButton'
 
@@ -14,7 +14,8 @@ export default async function ReceiptPage({ params }: { params: Promise<{ orderI
   const { supabase, business } = await requirePagePermission('print_receipts')
   const order = await getOrderById(supabase, business.id, orderId)
   if (!order) notFound()
-  const qrDataUrl = await getOrderQrDataUrl(order.order_number)
+  const qrDataUrl = await getOrderTrackingQrDataUrl(order.public_token)
+  const { services, addons } = groupOrderItems(order.items)
 
   return (
     <div className="min-h-screen bg-[#F0FDFA] px-4 py-10 print:bg-white print:p-0">
@@ -62,14 +63,34 @@ export default async function ReceiptPage({ params }: { params: Promise<{ orderI
             <span className="text-[#0B1B33]">{order.customer?.full_name || order.walk_in_name || 'Walk-in customer'}</span>
           </div>
           {order.items.length > 0 ? (
-            order.items.map((item) => (
-              <div key={item.id} className="flex justify-between">
-                <span className="text-slate-500">
-                  {item.name} × {item.quantity}
-                </span>
-                <span className="text-[#0B1B33]">{formatCurrency(item.line_total, business.currency)}</span>
-              </div>
-            ))
+            <>
+              {services.length > 0 && (
+                <>
+                  <div className="pt-1 text-xs font-medium uppercase tracking-wide text-slate-400">Services</div>
+                  {services.map((item) => (
+                    <div key={item.id} className="flex justify-between">
+                      <span className="text-slate-500">
+                        {item.name} × {item.quantity}
+                      </span>
+                      <span className="text-[#0B1B33]">{formatCurrency(item.line_total, business.currency)}</span>
+                    </div>
+                  ))}
+                </>
+              )}
+              {addons.length > 0 && (
+                <>
+                  <div className="pt-1 text-xs font-medium uppercase tracking-wide text-slate-400">Add-ons</div>
+                  {addons.map((item) => (
+                    <div key={item.id} className="flex justify-between">
+                      <span className="text-slate-500">
+                        {item.name} × {item.quantity}
+                      </span>
+                      <span className="text-[#0B1B33]">{formatCurrency(item.line_total, business.currency)}</span>
+                    </div>
+                  ))}
+                </>
+              )}
+            </>
           ) : (
             <div className="flex justify-between">
               <span className="text-slate-500">Service</span>

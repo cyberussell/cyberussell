@@ -1,10 +1,10 @@
 import Image from 'next/image'
-import { WashingMachine, Wind, Waves, Shirt, Package, Tag, type LucideIcon } from 'lucide-react'
+import { WashingMachine, Wind, Waves, Shirt, Package, Flame, Combine, Tag, type LucideIcon } from 'lucide-react'
 import { CATEGORY_META, type ServiceCatalogItem } from '@/lib/laundry-management-system/modules/catalog/types'
 
 // Every default icon referenced by CATEGORY_META must be registered here —
 // falls back to Tag for anything unrecognized (defensive, not expected).
-const ICONS: Record<string, LucideIcon> = { WashingMachine, Wind, Waves, Shirt, Package, Tag }
+const ICONS: Record<string, LucideIcon> = { WashingMachine, Wind, Waves, Shirt, Package, Flame, Combine, Tag }
 
 const SIZE_CLASSES = { sm: 'h-8 w-8', md: 'h-10 w-10', lg: 'h-14 w-14' }
 const ICON_PX = { sm: 16, md: 20, lg: 28 }

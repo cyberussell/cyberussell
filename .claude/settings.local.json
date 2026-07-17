@@ -433,7 +433,22 @@
       "Bash(curl -s -o /dev/null -w \"http_status=%{http_code}\\\\n\" http://localhost:3001/lms/subscription-required --max-time 5 -L)",
       "Bash(env)",
       "Bash(grep -rl \"SUPABASE_PAT\" /Users/russellparayno/Documents/Business/cyberussell.com --include=\"*.env*\" 2>/dev/null; ls -la /Users/russellparayno/Documents/Business/cyberussell.com/.env* 2>/dev/null; grep -rn \"SUPABASE_PAT\" ~/.zshrc ~/.zprofile ~/.bash_profile ~/.bashrc 2>/dev/null)",
-      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d[0]['text']\\)\")"
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d[0]['text']\\)\")",
+      "Bash(grep -rn \"from\\('profiles'\\)\\\\s*$\\\\|from\\('profiles'\\)\" src/lib/territory-management-system src/app/territory-management-system)",
+      "Bash(grep -v \"^$\")",
+      "Bash(git rev-list --objects main 2>&1 | grep 43b454bd *)",
+      "Bash(grep -rniE \"\\(record|partnership|cap|max\\)[^0-9]{0,40}\\\\b6\\\\b|\\\\b6\\\\b[^0-9]{0,40}\\(record|partnership|cap|max\\)\" src --include=\"*.ts\" --include=\"*.tsx\" -l)",
+      "Bash(grep -niE \"\\(record|partnership|cap|max\\)[^0-9]{0,40}\\\\b6\\\\b|\\\\b6\\\\b[^0-9]{0,40}\\(record|partnership|cap|max\\)\" src/components/territory-management-system/CongregationSettingsForm.tsx src/components/territory-management-system/publisher/PublisherWorkspaceApp.tsx)",
+      "mcp__256e87de-18e2-4345-a86a-06aa5137abd5__list_teams",
+      "mcp__256e87de-18e2-4345-a86a-06aa5137abd5__list_projects",
+      "Bash(xargs -I{} echo {})",
+      "mcp__supabase-cyberussell__list_tables",
+      "Bash(xargs -I{} sh -c 'echo ==={}===; cat {}')",
+      "Bash(git -C .claude/worktrees/territory-management-foundation-6a5bc9 status)",
+      "Bash(git -C .claude/worktrees/territory-management-foundation-6a5bc9 branch --show-current)",
+      "Bash(xargs -0 perl -pi -e ' *)",
+      "Bash(rm -rf /Users/russellparayno/Documents/Business/cyberussell.com/src/app/scratch-email-preview)",
+      "Bash(rm -rf .next)"
     ]
   }
 }

@@ -107,11 +107,18 @@ export default function PublisherBottomMenu({
     >
       {items.map((item) => {
         const Icon = item.icon
+        // Active item gets a filled pill behind a visibly larger, bolder icon — on top of the
+        // color change below — so the current section reads at a glance on a one-handed,
+        // out-in-ministry tap target, not just a subtle color shift.
         const content = (
-          <span className="relative">
-            <Icon className={`h-5 w-5 ${item.spin ? 'animate-spin' : ''}`} strokeWidth={item.active ? 2.5 : 2} aria-hidden />
+          <span className={`relative flex items-center justify-center rounded-full p-1.5 transition ${item.active ? 'bg-blue-50' : ''}`}>
+            <Icon
+              className={`${item.active ? 'h-6 w-6' : 'h-5 w-5'} ${item.spin ? 'animate-spin' : ''}`}
+              strokeWidth={item.active ? 2.75 : 2}
+              aria-hidden
+            />
             {!!item.badge && (
-              <span className="absolute -right-1.5 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white">
+              <span className="absolute -right-1 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white">
                 {item.badge}
               </span>
             )}

@@ -1,14 +1,17 @@
 'use client'
 
 import { Minus, Plus } from 'lucide-react'
-import { effectivePrice, isPromoActive, type ServiceCatalogItem } from '@/lib/laundry-management-system/modules/catalog/types'
+import { effectivePrice, isAddonCategory, isPromoActive, type ServiceCatalogItem } from '@/lib/laundry-management-system/modules/catalog/types'
 import { formatCurrency } from '@/lib/laundry-management-system/format'
 import CatalogItemIcon from './CatalogItemIcon'
 
 // Tap-to-add POS-style item grid — controlled by the parent (WalkInOrderForm)
 // rather than react-hook-form, since a tap grid with running quantities
 // doesn't map cleanly onto a single registered field the way text/select
-// inputs do.
+// inputs do. Split into a "Services" section (Wash, Dry, Ironing, Fold,
+// combos, Dry Cleaning) and an "Add-ons" section (soap, dry sheets,
+// softener, etc.) so staff aren't hunting for consumables mixed in among
+// the actual services.
 export default function ServiceItemTileGrid({
   items,
   cart,
@@ -28,6 +31,38 @@ export default function ServiceItemTileGrid({
     )
   }
 
+  const services = items.filter((item) => !isAddonCategory(item.category))
+  const addons = items.filter((item) => isAddonCategory(item.category))
+
+  return (
+    <div className="space-y-4">
+      {services.length > 0 && (
+        <div>
+          <p className="mb-2 text-xs font-medium text-slate-400">Services</p>
+          <Tiles items={services} cart={cart} onChange={onChange} currency={currency} />
+        </div>
+      )}
+      {addons.length > 0 && (
+        <div>
+          <p className="mb-2 text-xs font-medium text-slate-400">Add-ons</p>
+          <Tiles items={addons} cart={cart} onChange={onChange} currency={currency} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Tiles({
+  items,
+  cart,
+  onChange,
+  currency,
+}: {
+  items: ServiceCatalogItem[]
+  cart: Record<string, number>
+  onChange: (itemId: string, quantity: number) => void
+  currency: string
+}) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       {items.map((item) => {

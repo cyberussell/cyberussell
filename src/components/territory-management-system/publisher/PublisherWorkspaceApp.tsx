@@ -1,18 +1,21 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { toast } from 'sonner'
 import { PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipRecordDetail, PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
+import type { RecordLocation } from '@/lib/territory-management-system/modules/reports/queries'
 import { downloadAssignment, getLocalMapImageUrl, isDownloaded } from '@/lib/territory-management-system/modules/offline/download'
 import { enqueue, listQueue } from '@/lib/territory-management-system/modules/offline/queue'
 import { flushQueue } from '@/lib/territory-management-system/modules/offline/sync'
 import { useOnlineStatus } from '@/lib/territory-management-system/modules/offline/useOnlineStatus'
 import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
+import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
 import PartnershipRenameForm from './PartnershipRenameForm'
 import AssignedRecordsList from './AssignedRecordsList'
@@ -22,6 +25,17 @@ import type { CorrectionFields } from './RecommendCorrectionForm'
 import PublisherAddedRecordDetailView from './PublisherAddedRecordDetailView'
 import PublisherRecordForm, { type NewPublisherRecordPayload } from './PublisherRecordForm'
 import PublisherNoteForm from './PublisherNoteForm'
+
+// Leaflet touches `window`/`document` on import — client-only, same pattern as the Admin
+// Reports page's own use of this same component.
+const HouseholdDistributionMap = dynamic(() => import('@/components/territory-management-system/HouseholdDistributionMap'), {
+  ssr: false,
+  loading: () => (
+    <Card className="p-10 text-center">
+      <p className="text-sm text-slate-600">Loading map…</p>
+    </Card>
+  ),
+})
 
 type View =
   | { name: 'list' }
@@ -463,6 +477,15 @@ export default function PublisherWorkspaceApp({
     territoryStructures.filter((s) => s.sections.length > 0).map((s) => s.id)
   )
   const showSessionChrome = view.name !== 'note' && view.name !== 'sync' && view.name !== 'done'
+  // Pins for this partnership's own currently-assigned records only — not every approved record
+  // in the territory (that's the Admin's Household Distribution map on Reports) — so a publisher
+  // only ever sees where their own work is, not the whole congregation's.
+  const assignedRecordLocations: RecordLocation[] = workspace.records.map((r) => ({
+    id: r.record.id,
+    address: r.record.address,
+    plusCode: r.record.plus_code ?? '',
+    territoryName: r.record.territory?.name ?? '',
+  }))
 
   return (
     <div className="min-h-screen bg-[#C9D8EE] px-4 pb-24 pt-8">
@@ -513,6 +536,13 @@ export default function PublisherWorkspaceApp({
                 )
               )
             })()}
+
+            {assignedRecordLocations.length > 0 && (
+              <div className="space-y-3">
+                <h2 className="font-semibold text-[#0B1B33]">My Assigned Records Map</h2>
+                <HouseholdDistributionMap records={assignedRecordLocations} />
+              </div>
+            )}
 
             {!readOnly && allDone && (
               <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center shadow-sm">

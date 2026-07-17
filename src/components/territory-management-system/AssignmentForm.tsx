@@ -13,7 +13,9 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 // small bounded range, so tap +/- buttons are the clearer mobile pattern. Typing is still
 // supported (useful for a bigger jump, e.g. 2 → 8) via the same not-clamped-until-blur pattern
 // as before, so clearing the field to type a fresh value still works.
-function NumberStepper({
+// Exported for reuse by OverflowAssignmentForm, which needs the exact same tap +/- stepper for
+// its own publisher-count/group-size fields.
+export function NumberStepper({
   label,
   value,
   onChange,

@@ -2,6 +2,7 @@ import 'server-only'
 import { Document, Page, View, Text, Image, StyleSheet } from '@react-pdf/renderer'
 import type { Business } from './modules/tenant/types'
 import type { OrderWithRelations } from './modules/orders/types'
+import { groupOrderItems } from './modules/orders/queries'
 import { formatCurrency } from './format'
 
 const styles = StyleSheet.create({
@@ -11,6 +12,7 @@ const styles = StyleSheet.create({
   muted: { fontSize: 9, color: '#64748B', textAlign: 'center' },
   divider: { borderTopWidth: 1, borderTopColor: '#CBD5E1', borderTopStyle: 'dashed', marginVertical: 16 },
   row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
+  sectionLabel: { fontSize: 9, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', marginBottom: 4, marginTop: 4 },
   label: { color: '#64748B' },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', paddingTop: 12, borderTopWidth: 1, borderTopColor: '#CBD5E1', borderTopStyle: 'dashed' },
   totalLabel: { fontSize: 13, fontWeight: 700 },
@@ -27,6 +29,7 @@ export function ReceiptDocument({
   order: OrderWithRelations
   qrDataUrl: string
 }) {
+  const { services, addons } = groupOrderItems(order.items)
   return (
     <Document>
       <Page size="A6" style={styles.page}>
@@ -50,14 +53,34 @@ export function ReceiptDocument({
           <Text>{order.customer?.full_name || order.walk_in_name || 'Walk-in customer'}</Text>
         </View>
         {order.items.length > 0 ? (
-          order.items.map((item) => (
-            <View style={styles.row} key={item.id}>
-              <Text style={styles.label}>
-                {item.name} × {item.quantity}
-              </Text>
-              <Text>{formatCurrency(item.line_total, business.currency)}</Text>
-            </View>
-          ))
+          <>
+            {services.length > 0 && (
+              <>
+                <Text style={styles.sectionLabel}>Services</Text>
+                {services.map((item) => (
+                  <View style={styles.row} key={item.id}>
+                    <Text style={styles.label}>
+                      {item.name} × {item.quantity}
+                    </Text>
+                    <Text>{formatCurrency(item.line_total, business.currency)}</Text>
+                  </View>
+                ))}
+              </>
+            )}
+            {addons.length > 0 && (
+              <>
+                <Text style={styles.sectionLabel}>Add-ons</Text>
+                {addons.map((item) => (
+                  <View style={styles.row} key={item.id}>
+                    <Text style={styles.label}>
+                      {item.name} × {item.quantity}
+                    </Text>
+                    <Text>{formatCurrency(item.line_total, business.currency)}</Text>
+                  </View>
+                ))}
+              </>
+            )}
+          </>
         ) : (
           <View style={styles.row}>
             <Text style={styles.label}>Service</Text>

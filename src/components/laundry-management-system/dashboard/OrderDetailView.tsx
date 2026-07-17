@@ -3,6 +3,7 @@ import { Printer } from 'lucide-react'
 import type { OrderWithRelations } from '@/lib/laundry-management-system/modules/orders/types'
 import type { StaffMember } from '@/lib/laundry-management-system/modules/staff/types'
 import { getOrderQrDataUrl } from '@/lib/laundry-management-system/modules/orders/qr'
+import { groupOrderItems } from '@/lib/laundry-management-system/modules/orders/queries'
 import { formatCurrency } from '@/lib/laundry-management-system/format'
 import Card from './Card'
 import PageHeader from './PageHeader'
@@ -31,6 +32,7 @@ export default async function OrderDetailView({
   showPriorityToggle?: boolean
 }) {
   const qrDataUrl = await getOrderQrDataUrl(order.order_number)
+  const { services, addons } = groupOrderItems(order.items)
 
   return (
     <div>
@@ -80,17 +82,36 @@ export default async function OrderDetailView({
         </div>
         {order.items.length > 0 && (
           <div className="mt-4 border-t border-teal-50 pt-4">
-            <p className="mb-2 text-xs font-medium text-slate-400">Items</p>
-            <ul className="space-y-1.5">
-              {order.items.map((item) => (
-                <li key={item.id} className="flex items-center justify-between text-sm">
-                  <span className="text-[#0B1B33]">
-                    {item.name} <span className="text-slate-400">× {item.quantity}</span>
-                  </span>
-                  <span className="font-medium text-[#0B1B33]">{formatCurrency(item.line_total, currency)}</span>
-                </li>
-              ))}
-            </ul>
+            {services.length > 0 && (
+              <div className="mb-3">
+                <p className="mb-2 text-xs font-medium text-slate-400">Services</p>
+                <ul className="space-y-1.5">
+                  {services.map((item) => (
+                    <li key={item.id} className="flex items-center justify-between text-sm">
+                      <span className="text-[#0B1B33]">
+                        {item.name} <span className="text-slate-400">× {item.quantity}</span>
+                      </span>
+                      <span className="font-medium text-[#0B1B33]">{formatCurrency(item.line_total, currency)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {addons.length > 0 && (
+              <div>
+                <p className="mb-2 text-xs font-medium text-slate-400">Add-ons</p>
+                <ul className="space-y-1.5">
+                  {addons.map((item) => (
+                    <li key={item.id} className="flex items-center justify-between text-sm">
+                      <span className="text-[#0B1B33]">
+                        {item.name} <span className="text-slate-400">× {item.quantity}</span>
+                      </span>
+                      <span className="font-medium text-[#0B1B33]">{formatCurrency(item.line_total, currency)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
         {order.notes && (

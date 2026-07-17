@@ -1,6 +1,17 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { DashboardStats, Order, OrderStatus, OrderWithDriver, OrderWithRelations, StaffDashboardStats } from './types'
+import { createAdminSupabase } from '../../supabase-server'
+import type { DashboardStats, Order, OrderItem, OrderStatus, OrderWithDriver, OrderWithRelations, StaffDashboardStats } from './types'
+
+// Shared by the POS receipt surfaces (OrderDetailView, the receipt page, and
+// the PDF receipt) so the Services/Add-ons split logic lives in one place
+// instead of being re-implemented three times.
+export function groupOrderItems(items: OrderItem[]): { services: OrderItem[]; addons: OrderItem[] } {
+  return {
+    services: items.filter((item) => !item.is_addon),
+    addons: items.filter((item) => item.is_addon),
+  }
+}
 
 const ORDER_WITH_RELATIONS_SELECT =
   '*, customer:customers(full_name, phone), assigned_staff:staff_members(id, title, profile:profiles(full_name)), items:order_items(*)'
@@ -163,6 +174,58 @@ export async function getOrderByNumber(supabase: SupabaseClient, businessId: str
     .eq('order_number', orderNumber)
     .maybeSingle()
   return data as { id: string } | null
+}
+
+const ORDER_PUBLIC_TRACKING_SELECT =
+  '*, items:order_items(*), business:businesses(name, logo_url, currency, address, phone)'
+
+export interface OrderPublicBusinessRef {
+  name: string
+  logo_url: string | null
+  currency: string
+  address: string
+  phone: string
+}
+
+export type OrderForPublicTracking = Order & { items: OrderItem[]; business: OrderPublicBusinessRef }
+
+// Public (no-login) tracking page: resolved by the opaque public_token
+// (never order_number, which is a sequential bigserial) via the admin
+// client, since there's no session to scope RLS by on an unauthenticated
+// page — this function IS the access check.
+export async function getOrderByPublicToken(token: string): Promise<OrderForPublicTracking | null> {
+  const admin = createAdminSupabase()
+  const { data } = await admin.from('orders').select(ORDER_PUBLIC_TRACKING_SELECT).eq('public_token', token).maybeSingle()
+  return data as unknown as OrderForPublicTracking | null
+}
+
+function normalizePhone(phone: string): string {
+  return phone.replace(/\D/g, '')
+}
+
+// Manual "Track my order" lookup: order_number alone is guessable (a plain
+// bigserial), so a phone match against either the walk-in phone or the
+// linked customer's phone is required before returning anything. Returns
+// null for "no such order" and "phone doesn't match" alike — one generic
+// error either way, same account-enumeration-avoidance style already used
+// by customerSignUp/resendConfirmation.
+export async function findOrderForTracking(orderNumber: string, phone: string): Promise<{ public_token: string } | null> {
+  const provided = normalizePhone(phone)
+  if (!provided) return null
+
+  const admin = createAdminSupabase()
+  const { data } = await admin
+    .from('orders')
+    .select('public_token, walk_in_phone, customer:customers(phone)')
+    .eq('order_number', orderNumber)
+    .maybeSingle()
+  if (!data) return null
+
+  const customerPhone = (data as unknown as { customer: { phone: string } | null }).customer?.phone
+  const candidates = [data.walk_in_phone, customerPhone].filter((p): p is string => !!p).map(normalizePhone)
+  if (!candidates.includes(provided)) return null
+
+  return { public_token: data.public_token as string }
 }
 
 export async function listRecentOrders(supabase: SupabaseClient, businessId: string, limit = 5) {

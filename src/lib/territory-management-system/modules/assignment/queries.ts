@@ -2,7 +2,7 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { calculateAssignment, isAssignmentError, type AssignmentError } from './engine'
 import { isBatchExpired } from './date'
-import { listRecordsAddedByPartnership, logVisit } from '../records/queries'
+import { listRecordsAddedByPartnership } from '../records/queries'
 import type {
   AssignmentBatch,
   BatchSummary,
@@ -108,12 +108,24 @@ export async function getApprovedRecordCounts(
 // not scoped to one creator) — used to block a second Group Leader from double-assigning the
 // same territory. Called after the caller's own prior batch for today (if regenerating) has
 // already been deleted, so this never conflicts with itself.
-async function getTerritoryIdsInUseToday(supabase: SupabaseClient, congregationId: string, assignmentDate: string): Promise<Set<string>> {
-  const { data: batches } = await supabase
+//
+// excludeCreatedBy: used by the overflow-assignment path (createAssignment's forceZeroRecords),
+// where a Group Leader deliberately generates a SECOND same-day batch on a territory they
+// themselves already cover — that's not a conflict, only a different Group Leader covering the
+// same territory today still is.
+async function getTerritoryIdsInUseToday(
+  supabase: SupabaseClient,
+  congregationId: string,
+  assignmentDate: string,
+  excludeCreatedBy?: string
+): Promise<Set<string>> {
+  let query = supabase
     .from('assignment_batches')
     .select('id')
     .eq('congregation_id', congregationId)
     .eq('assignment_date', assignmentDate)
+  if (excludeCreatedBy) query = query.neq('created_by', excludeCreatedBy)
+  const { data: batches } = await query
   const batchIds = (batches ?? []).map((b) => b.id as string)
   if (batchIds.length === 0) return new Set()
 
@@ -129,7 +141,19 @@ export interface CreateAssignmentResult {
 export async function createAssignment(
   supabase: SupabaseClient,
   congregationId: string,
-  input: { territoryIds: string[]; partnershipCount: number; assignmentDate: string; createdBy: string }
+  input: {
+    territoryIds: string[]
+    partnershipCount: number
+    assignmentDate: string
+    createdBy: string
+    // Overflow-assignment path only (see createOverflowAssignmentAction): every partnership is
+    // created with zero records regardless of what's technically still 'approved'/unassigned in
+    // the territory — this is deliberately a "go canvass/search" batch, not a recompute, so it
+    // never risks re-pulling a record another partnership already has open today. Also relaxes
+    // the territory-conflict check below to allow reusing a territory THIS SAME Group Leader
+    // already covers today (still blocks a different Group Leader's territory).
+    forceZeroRecords?: boolean
+  }
 ): Promise<CreateAssignmentResult | AssignmentError> {
   // The territory checkboxes are ordinary client-editable form values — confirm every
   // selected id actually belongs to this congregation before it's written into
@@ -145,8 +169,15 @@ export async function createAssignment(
   if (territoryIds.length === 0) return { error: 'Select at least one valid territory.' }
 
   // No two Group Leaders' active batches on the same day may cover the same territory —
-  // confirmed with Russell: a hard block with a clear error, not a silent auto-filter.
-  const inUseTerritoryIds = await getTerritoryIdsInUseToday(supabase, congregationId, input.assignmentDate)
+  // confirmed with Russell: a hard block with a clear error, not a silent auto-filter. The
+  // overflow path is this same Group Leader deliberately re-covering their own territory, so it
+  // excludes their own batches from the conflict check.
+  const inUseTerritoryIds = await getTerritoryIdsInUseToday(
+    supabase,
+    congregationId,
+    input.assignmentDate,
+    input.forceZeroRecords ? input.createdBy : undefined
+  )
   const conflictingNames = territoryIds.filter((id) => inUseTerritoryIds.has(id)).map((id) => ownedById.get(id) ?? id)
   if (conflictingNames.length > 0) {
     const list = conflictingNames.join(', ')
@@ -154,7 +185,7 @@ export async function createAssignment(
     return { error: `${list} ${verb} already assigned in another Group Leader's active batch today. Choose different territories.` }
   }
 
-  const eligibleRecordIds = await fetchEligibleRecordIds(supabase, congregationId, territoryIds)
+  const eligibleRecordIds = input.forceZeroRecords ? [] : await fetchEligibleRecordIds(supabase, congregationId, territoryIds)
   const plan = calculateAssignment(eligibleRecordIds, input.partnershipCount)
   if (isAssignmentError(plan)) return plan
 
@@ -213,23 +244,26 @@ export async function deleteBatch(supabase: SupabaseClient, batchId: string): Pr
   if (error) throw error
 }
 
-// Each Group Leader now has at most one batch per congregation per day (see
-// 013_group_leader_assignment_ownership.sql) — "today's batch" means "my own batch today,"
-// not "the congregation's one shared batch" the way it used to.
-export async function getBatchForGroupLeaderAndDate(
+// A Group Leader can now have multiple batches per congregation per day (see
+// 023_multiple_batches_per_group_leader.sql, which lifted the one-per-day unique constraint
+// 013_group_leader_assignment_ownership.sql originally added) — e.g. their original batch plus
+// one or more overflow batches generated for extra publishers later the same day. "Today's
+// batches" means "my own batches today," not "the congregation's one shared batch." Ordered
+// oldest-first so the original batch is always first in any switcher UI.
+export async function getBatchesForGroupLeaderAndDate(
   supabase: SupabaseClient,
   congregationId: string,
   groupLeaderId: string,
   assignmentDate: string
-): Promise<AssignmentBatch | null> {
+): Promise<AssignmentBatch[]> {
   const { data } = await supabase
     .from('assignment_batches')
     .select('*')
     .eq('congregation_id', congregationId)
     .eq('assignment_date', assignmentDate)
     .eq('created_by', groupLeaderId)
-    .maybeSingle()
-  return (data as AssignmentBatch | null) ?? null
+    .order('created_at')
+  return (data as AssignmentBatch[] | null) ?? []
 }
 
 // Shared by the admin Assignment Summary page, the public partnership-list page, and the
@@ -309,7 +343,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   const { data: partnershipRecords } = await supabase
     .from('partnership_records')
     .select(
-      'id, sequence, completed_at, record:territory_records(*, territory:territories(id, name, map_image_url), section:territory_sections(id, label), block:territory_blocks(id, label))'
+      'id, sequence, completed_at, passed_from_name, passed_from_at, record:territory_records(*, territory:territories(id, name, description, map_image_url), section:territory_sections(id, label), block:territory_blocks(id, label))'
     )
     .eq('partnership_id', partnership.id)
     .order('sequence')
@@ -375,12 +409,15 @@ export async function getBatchSiblingPartnerships(
 ): Promise<{ id: string; name: string }[]> {
   const { data } = await supabase
     .from('partnerships')
-    .select('id, name, ended_early_at')
+    .select('id, name, ended_early_at, finished_at')
     .eq('batch_id', batchId)
     .neq('id', excludePartnershipId)
     .order('sequence')
-  return ((data ?? []) as { id: string; name: string; ended_early_at: string | null }[])
-    .filter((p) => !p.ended_early_at)
+  // Excludes anyone who's already ended their ministry for the day, whether early
+  // (ended_early_at) or by finishing normally (finished_at) — there's no one left on that side
+  // to actually receive and act on a passed record.
+  return ((data ?? []) as { id: string; name: string; ended_early_at: string | null; finished_at: string | null }[])
+    .filter((p) => !p.ended_early_at && !p.finished_at)
     .map((p) => ({ id: p.id, name: p.name }))
 }
 
@@ -410,33 +447,16 @@ export async function renamePartnership(supabase: SupabaseClient, partnershipId:
   if (error) throw error
 }
 
-// Ends a Ministry Partner's session early. Every assigned record they hadn't gotten to yet gets
-// a real 'undone' visit logged — so Reports reflects it was genuinely left unfinished rather
-// than silently missing — and is stamped completed, same as any other visited record.
-export async function terminatePartnershipEarly(
-  supabase: SupabaseClient,
-  congregationId: string,
-  partnershipId: string,
-  partnershipName: string
-): Promise<void> {
-  const { data: unfinished } = await supabase
-    .from('partnership_records')
-    .select('record_id')
-    .eq('partnership_id', partnershipId)
-    .is('completed_at', null)
-
-  for (const row of unfinished ?? []) {
-    await logVisit(supabase, congregationId, {
-      recordId: row.record_id,
-      visitedAt: new Date().toISOString(),
-      result: 'undone',
-      notes: '',
-      createdBy: null,
-      partnerName: partnershipName || null,
-    })
-    await markPartnershipRecordCompleted(supabase, partnershipId, row.record_id)
-  }
-
+// Ends a Ministry Partner's session early. Deliberately does NOT touch any unfinished record —
+// no visit logged, completed_at left null — so the Group Leader's existing "Remaining Contact
+// Records" stat (a live count, not a snapshot) already reflects exactly how many were left
+// undone today, and each record's real last-visited date stays untouched, which is what
+// fetchEligibleRecordIds' staleness tiebreak relies on to put a record left undone today at the
+// front of the list next generation. A previous version of this logged a synthetic 'undone'
+// visit and force-completed these records — that both corrupted the staleness signal (an
+// untouched record looked freshly visited) and could mask an ongoing Bible Study's true latest
+// status.
+export async function terminatePartnershipEarly(supabase: SupabaseClient, partnershipId: string): Promise<void> {
   const { error } = await supabase
     .from('partnerships')
     .update({ ended_early_at: new Date().toISOString() })
@@ -448,7 +468,7 @@ export async function terminatePartnershipEarly(
 // The "we're genuinely done" signal, set the moment a publisher reaches Sync & Finish (Skip or
 // Send on the note screen) — reachable from BOTH the normal finish path and the End Early path,
 // since both route through that same note screen. Distinct from ended_early_at (only set by
-// terminatePartnershipEarly above, meaning unfinished records got marked undone); this fires
+// terminatePartnershipEarly above, meaning some assigned records were left incomplete for the day); this fires
 // regardless of which path got them there. Idempotent — a second call is a harmless no-op.
 export async function finishPartnership(supabase: SupabaseClient, partnershipId: string): Promise<void> {
   const { error } = await supabase
@@ -531,7 +551,8 @@ export async function movePartnershipRecord(
   supabase: SupabaseClient,
   sourcePartnershipId: string,
   destinationPartnershipId: string,
-  recordId: string
+  recordId: string,
+  sourcePartnershipName: string
 ): Promise<void> {
   const { data: lastRow } = await supabase
     .from('partnership_records')
@@ -542,10 +563,43 @@ export async function movePartnershipRecord(
     .maybeSingle()
   const nextSequence = ((lastRow?.sequence as number | undefined) ?? 0) + 1
 
+  // passed_from_name/passed_from_at (022_partnership_pass_tracking.sql) are a snapshot of the
+  // source partnership's name at move time, not a live reference — a plain column pair rather
+  // than a territory_record_visits row, since logVisit()'s same-day collapse and
+  // getLatestVisitResult()'s "latest row wins" narrowing would otherwise risk overwriting a real
+  // visit or masking an active Bible Study's true status for the receiving partner.
   const { error } = await supabase
     .from('partnership_records')
-    .update({ partnership_id: destinationPartnershipId, sequence: nextSequence, completed_at: null })
+    .update({
+      partnership_id: destinationPartnershipId,
+      sequence: nextSequence,
+      completed_at: null,
+      passed_from_name: sourcePartnershipName || null,
+      passed_from_at: new Date().toISOString(),
+    })
     .eq('partnership_id', sourcePartnershipId)
     .eq('record_id', recordId)
   if (error) throw error
+}
+
+// Admin-facing read of the current "passed by" marker for a record, if any — sourced from the
+// same passed_from_name/at columns the publisher badge uses, not from visit history (see
+// movePartnershipRecord above). Only ever set on a record's currently-active partnership_records
+// row, so a plain lookup by record_id is enough; a record with no assignment history at all, or
+// never passed, returns null.
+export async function getPassedFromForRecord(
+  supabase: SupabaseClient,
+  recordId: string
+): Promise<{ name: string; at: string } | null> {
+  const { data } = await supabase
+    .from('partnership_records')
+    .select('passed_from_name, passed_from_at')
+    .eq('record_id', recordId)
+    .not('passed_from_name', 'is', null)
+    .order('passed_from_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (!data) return null
+  const row = data as { passed_from_name: string | null; passed_from_at: string | null }
+  return row.passed_from_name && row.passed_from_at ? { name: row.passed_from_name, at: row.passed_from_at } : null
 }

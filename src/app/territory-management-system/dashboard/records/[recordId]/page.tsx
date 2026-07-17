@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { requireAdmin } from '@/lib/territory-management-system/modules/auth/queries'
 import { getRecordById, listVisits } from '@/lib/territory-management-system/modules/records/queries'
+import { getPassedFromForRecord } from '@/lib/territory-management-system/modules/assignment/queries'
 import { undoLastVisitAction } from '@/app/territory-management-system/actions/records'
 import PageHeader from '@/components/territory-management-system/dashboard/PageHeader'
 import ApprovalBadge from '@/components/territory-management-system/ApprovalBadge'
@@ -19,6 +20,7 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ r
   if (!record) notFound()
   const visits = await listVisits(supabase, recordId)
   const latestVisit = visits[0] ?? null
+  const passedFrom = await getPassedFromForRecord(supabase, recordId)
 
   return (
     <div className="space-y-8">
@@ -33,6 +35,11 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ r
           </div>
         }
       />
+      {passedFrom && (
+        <p className="text-sm font-medium text-amber-600">
+          Passed by {passedFrom.name} on {new Date(passedFrom.at).toLocaleDateString('en-US', { dateStyle: 'medium' })}
+        </p>
+      )}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RecordEditForm record={record} />
         <VisitLogForm recordId={record.id} latestResult={latestVisit?.result} doNotCall={record.do_not_call} />
