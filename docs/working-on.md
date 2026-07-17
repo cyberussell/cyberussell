@@ -1,5 +1,21 @@
 # Current Work
 
+**Territory Management System — Publisher workspace Home/List nav split, v2 live-test fixes (2026-07-17) — code done, tsc + vitest (52/52) + build clean, mostly live-verified via a temporary scratch route (one page couldn't be driven without a real DB-backed batch token — confirmed by clean build instead), no migration needed, not committed — see checkpoint `territory-management-publisher-home-list-nav-v2.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell live-tested v1 (below) on his phone and sent 2 screenshots with 3 fixes: (1) fold "Share with Partner" into the Home tab's map toggle as a 4th pill (was a separate card below), center that toggle, and put Release/End Ministry on one line instead of stacked, renamed "Release Assignment"/"Early Out"; (2) the batch-landing "Select your Partner" page (reached right after scanning the QR, both normal and overflow) had its own bottom nav that should be removed entirely; (3) the Download/Sync top bar (added in v1) should only show on the Home tab, not every tab.
+
+Current Status: Code complete, no migration needed.
+- `PublisherWorkspaceApp.tsx`: Download/Sync bar now gated `showSessionChrome && view.name === 'home'`; `mapView` widened with `'share'`, toggle's `tabs` array gained a `share` entry rendering `SharePartnershipCard` in place of a map; toggle row wrapped in `flex justify-center`; Release/End buttons switched from stacked `space-y-3` to side-by-side `flex gap-3`, relabeled.
+- `assignment/[batchToken]/page.tsx`: removed `BatchLandingBottomMenu` usage, `pb-24` → `pb-8`.
+- `BatchLandingBottomMenu.tsx` deleted (only usage was that one page).
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via a temporary scratch route (`/dev-scratch-tms-nav2`, removed before finishing): Home tab's centered toggle with working Share pill, side-by-side renamed buttons, Download/Sync bar absent on the List tab. The batch-landing page's nav removal was verified indirectly (clean build after deleting the component it imported) rather than click-tested, since exercising that page needs a real batch token.
+
+**Next recommended task:** Not committed. Russell live-verifies on a real batch, especially the batch-landing "Select your Partner" page (both a normal and overflow QR) now shows no bottom nav. Then commit + deploy at Russell's request.
+
+----------------------------------------
+
 **Territory Management System — Publisher workspace Home/List nav split (2026-07-17) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, no migration needed, not committed — see checkpoint `territory-management-publisher-home-list-nav-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

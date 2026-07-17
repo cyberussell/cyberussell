@@ -95,7 +95,7 @@ export default function PublisherWorkspaceApp({
   // Which map the list view shows when both are available — a toggle instead of stacking both
   // maps, for a cleaner one-screen-at-a-time look. Defaults to Territory Map (the prior default
   // visual order).
-  const [mapView, setMapView] = useState<'territory' | 'records' | 'search'>('territory')
+  const [mapView, setMapView] = useState<'territory' | 'records' | 'search' | 'share'>('territory')
   // Which branded confirm dialog (see ConfirmModal) is currently open, replacing
   // window.confirm() — its "www.cyberussell.com says" chrome reads as an unfamiliar browser
   // warning to a publisher in the field, not a TMS-branded prompt.
@@ -664,7 +664,7 @@ export default function PublisherWorkspaceApp({
       )}
 
       <div className="mx-auto max-w-lg space-y-6">
-        {showSessionChrome && (
+        {showSessionChrome && view.name === 'home' && (
           <div className="flex gap-2">
             <button
               type="button"
@@ -727,10 +727,11 @@ export default function PublisherWorkspaceApp({
 
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
-              const tabs: { key: 'territory' | 'records' | 'search'; label: string; available: boolean }[] = [
+              const tabs: { key: 'territory' | 'records' | 'search' | 'share'; label: string; available: boolean }[] = [
                 { key: 'territory', label: 'Territory Map', available: mappableTerritories.length > 0 },
                 { key: 'records', label: 'Assigned Records', available: assignedRecordLocations.length > 0 },
                 { key: 'search', label: 'Search Area', available: searchScopeLocations.length > 0 },
+                { key: 'share', label: 'Share', available: !readOnly },
               ]
               const availableTabs = tabs.filter((t) => t.available)
               if (availableTabs.length === 0) return null
@@ -744,19 +745,21 @@ export default function PublisherWorkspaceApp({
               return (
                 <div className="space-y-3">
                   {showToggle && (
-                    <div className="inline-flex flex-wrap rounded-full bg-blue-50 p-1">
-                      {availableTabs.map((t) => (
-                        <button
-                          key={t.key}
-                          type="button"
-                          onClick={() => setMapView(t.key)}
-                          className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                            activeView === t.key ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
-                          }`}
-                        >
-                          {t.label}
-                        </button>
-                      ))}
+                    <div className="flex justify-center">
+                      <div className="inline-flex flex-wrap justify-center rounded-full bg-blue-50 p-1">
+                        {availableTabs.map((t) => (
+                          <button
+                            key={t.key}
+                            type="button"
+                            onClick={() => setMapView(t.key)}
+                            className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                              activeView === t.key ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
+                            }`}
+                          >
+                            {t.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
 
@@ -787,34 +790,35 @@ export default function PublisherWorkspaceApp({
                       <HouseholdDistributionMap records={searchScopeLocations} />
                     </div>
                   )}
+
+                  {activeView === 'share' && !readOnly && (
+                    <SharePartnershipCard batchToken={batchToken} partnershipToken={partnershipToken} />
+                  )}
                 </div>
               )
             })()}
 
             {!readOnly && (
-              <div className="space-y-3">
+              <div className="flex gap-3">
                 {canRelease && (
                   <button
                     type="button"
                     disabled={releasing}
                     onClick={() => setConfirmDialog({ type: 'release' })}
-                    className="w-full rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 hover:bg-blue-50 disabled:opacity-50"
+                    className="flex-1 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 hover:bg-blue-50 disabled:opacity-50"
                   >
-                    {releasing ? 'Releasing…' : 'Release This Partnership'}
+                    {releasing ? 'Releasing…' : 'Release Assignment'}
                   </button>
                 )}
                 <button
                   type="button"
                   onClick={() => setConfirmDialog({ type: 'terminate' })}
-                  className="w-full rounded-lg border border-red-200 bg-white py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50"
+                  className="flex-1 rounded-lg border border-red-200 bg-white py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50"
                 >
-                  End My Ministry Early
+                  Early Out
                 </button>
               </div>
             )}
-
-            {/* Last, per Russell's ordering: name card, maps, session actions, then share. */}
-            {!readOnly && <SharePartnershipCard batchToken={batchToken} partnershipToken={partnershipToken} />}
           </>
         )}
 
