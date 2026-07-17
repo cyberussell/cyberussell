@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { CheckCircle2, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
@@ -14,16 +13,13 @@ import { downloadAssignment, getLocalMapImageUrl, isDownloaded } from '@/lib/ter
 import { enqueue, listQueue } from '@/lib/territory-management-system/modules/offline/queue'
 import { flushQueue } from '@/lib/territory-management-system/modules/offline/sync'
 import { useOnlineStatus } from '@/lib/territory-management-system/modules/offline/useOnlineStatus'
-import {
-  clearClaimedPartnershipToken,
-  getClaimedPartnershipToken,
-  setClaimedPartnershipToken,
-} from '@/lib/territory-management-system/modules/offline/claim'
-import { chooseSearchScopeAction, getSearchScopeRecordsAction, releasePartnershipAction } from '@/app/territory-management-system/actions/publisher'
+import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
+import { chooseSearchScopeAction, getSearchScopeRecordsAction } from '@/app/territory-management-system/actions/publisher'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
 import ConfirmModal from './ConfirmModal'
+import SlideToConfirm from './SlideToConfirm'
 import PartnershipRenameForm from './PartnershipRenameForm'
 import SharePartnershipCard from './SharePartnershipCard'
 import ChooseSearchScopeForm from './ChooseSearchScopeForm'
@@ -87,7 +83,6 @@ export default function PublisherWorkspaceApp({
   const [refreshingSearchScope, setRefreshingSearchScope] = useState(false)
   const [choosingSearchScope, setChoosingSearchScope] = useState(false)
   const [searchScopeChoiceError, setSearchScopeChoiceError] = useState('')
-  const [releasing, setReleasing] = useState(false)
   const [deletingAddedRecord, setDeletingAddedRecord] = useState(false)
   const [queue, setQueue] = useState<SyncQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
@@ -98,11 +93,10 @@ export default function PublisherWorkspaceApp({
   const [mapView, setMapView] = useState<'territory' | 'records' | 'search' | 'share'>('territory')
   // Which branded confirm dialog (see ConfirmModal) is currently open, replacing
   // window.confirm() — its "www.cyberussell.com says" chrome reads as an unfamiliar browser
-  // warning to a publisher in the field, not a TMS-branded prompt.
-  const [confirmDialog, setConfirmDialog] = useState<
-    { type: 'terminate' } | { type: 'deleteAddedRecord'; recordId: string } | { type: 'release' } | null
-  >(null)
-  const router = useRouter()
+  // warning to a publisher in the field, not a TMS-branded prompt. Early Out and Release now go
+  // through SlideToConfirm's own drag gesture instead (a deliberate slide is confirmation enough
+  // on its own), so only deleteAddedRecord still needs this.
+  const [confirmDialog, setConfirmDialog] = useState<{ type: 'deleteAddedRecord'; recordId: string } | null>(null)
   const online = useOnlineStatus()
   // Several call sites can each decide "we're online, sync now" in quick succession (a form
   // submit's own trigger, plus the reconnect effect) — without this, two overlapping
@@ -135,10 +129,6 @@ export default function PublisherWorkspaceApp({
   // Same rule PublisherRecordDetailView applies internally for assigned records — reused here
   // to gate the "Add a New Contact Record" button and the added-records Edit/Delete actions.
   const editable = !readOnly && !sessionEnded
-  // "Release" (a change of mind, not ending the ministry) is only offered while zero visits
-  // have been logged yet — the same "no real work happened yet" gate releasePartnershipAction
-  // re-checks server-side. Added records don't block it (the ask is specifically about visits).
-  const canRelease = !readOnly && Boolean(workspace.claimed_at) && !sessionEnded && workspace.records.every((r) => !r.completed_at)
 
   const refreshQueue = useCallback(async () => {
     setQueue(await listQueue(partnershipToken))
@@ -545,30 +535,6 @@ export default function PublisherWorkspaceApp({
     goToNote()
   }
 
-  // A change of mind, not ending the ministry — undoes this device's claim entirely so the
-  // partnership shows up as available again for anyone (including this same device) to claim
-  // fresh. Called directly (not through the offline sync queue) since it needs a live, current
-  // answer about whether any visit has actually been logged yet. On success there's nothing
-  // left for this device to show — clear its local claim and head back to the batch's partner
-  // list so a different (or the same) partnership can be picked.
-  async function handleRelease() {
-    setReleasing(true)
-    try {
-      const formData = new FormData()
-      formData.set('partnershipToken', partnershipToken)
-      const result = await releasePartnershipAction({}, formData)
-      if (result.error && result.error !== 'SAVED') {
-        toast.error(result.error)
-        return
-      }
-      clearClaimedPartnershipToken(batchToken)
-      toast.success('Partnership released.')
-      router.push(`/territory-management-system/assignment/${batchToken}`)
-    } finally {
-      setReleasing(false)
-    }
-  }
-
   function scrollToVisitForm() {
     document.getElementById('record-a-visit-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -729,9 +695,9 @@ export default function PublisherWorkspaceApp({
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
               const tabs: { key: 'territory' | 'records' | 'search' | 'share'; label: string; available: boolean }[] = [
                 { key: 'territory', label: 'Territory Map', available: mappableTerritories.length > 0 },
-                { key: 'records', label: 'Assigned Records', available: assignedRecordLocations.length > 0 },
+                { key: 'records', label: 'Live Map', available: assignedRecordLocations.length > 0 },
                 { key: 'search', label: 'Search Area', available: searchScopeLocations.length > 0 },
-                { key: 'share', label: 'Share', available: !readOnly },
+                { key: 'share', label: 'Share To', available: !readOnly },
               ]
               const availableTabs = tabs.filter((t) => t.available)
               if (availableTabs.length === 0) return null
@@ -779,7 +745,7 @@ export default function PublisherWorkspaceApp({
 
                   {activeView === 'records' && (
                     <div className="space-y-3">
-                      {!showToggle && <h2 className="font-semibold text-[#0B1B33]">My Assigned Records Map</h2>}
+                      {!showToggle && <h2 className="font-semibold text-[#0B1B33]">Live Map</h2>}
                       <HouseholdDistributionMap records={assignedRecordLocations} />
                     </div>
                   )}
@@ -798,26 +764,11 @@ export default function PublisherWorkspaceApp({
               )
             })()}
 
+            {/* Release Assignment moved to the batch-landing "Select your Partner" page (see
+                ReleaseAssignmentSlider) — that page is where a change-of-mind actually needs to
+                happen, before this device has even settled into a workspace. */}
             {!readOnly && (
-              <div className="flex gap-3">
-                {canRelease && (
-                  <button
-                    type="button"
-                    disabled={releasing}
-                    onClick={() => setConfirmDialog({ type: 'release' })}
-                    className="flex-1 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 hover:bg-blue-50 disabled:opacity-50"
-                  >
-                    {releasing ? 'Releasing…' : 'Release Assignment'}
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setConfirmDialog({ type: 'terminate' })}
-                  className="flex-1 rounded-lg border border-red-200 bg-white py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50"
-                >
-                  Early Out
-                </button>
-              </div>
+              <SlideToConfirm label="Slide for Early Out" confirmingLabel="Ending…" tone="danger" onConfirm={handleTerminate} />
             )}
           </>
         )}
@@ -826,12 +777,14 @@ export default function PublisherWorkspaceApp({
           <>
             {workspace.records.length > 0 && (
               <div>
-                <h2 className="font-semibold text-[#0B1B33]">Assigned Contact Records</h2>
-                {workspace.territories.map((t) => (
-                  <p key={t.id} className="text-xs text-slate-500">
-                    {t.name} — {t.description}
-                  </p>
-                ))}
+                <div className="text-center">
+                  <h2 className="text-xl font-bold text-[#0B1B33]">Assigned Contact Records</h2>
+                  {workspace.territories.map((t) => (
+                    <p key={t.id} className="text-xs text-slate-500">
+                      {t.name} — {t.description}
+                    </p>
+                  ))}
+                </div>
 
                 {!readOnly && allDone && (
                   <div className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center shadow-sm">
@@ -863,15 +816,17 @@ export default function PublisherWorkspaceApp({
                 const blockLabels = workspace.searchScope.blocks.map((b) => b.label)
                 return (
                   <div className={workspace.records.length > 0 ? 'mt-6' : ''}>
-                    <h2 className="font-semibold text-[#0B1B33]">Area To Search</h2>
-                    {scopeTerritory && (
+                    <div className="text-center">
+                      <h2 className="text-xl font-bold text-[#0B1B33]">Area To Search</h2>
+                      {scopeTerritory && (
+                        <p className="text-xs text-slate-500">
+                          {scopeTerritory.name} — {scopeTerritory.description}
+                        </p>
+                      )}
                       <p className="text-xs text-slate-500">
-                        {scopeTerritory.name} — {scopeTerritory.description}
+                        Section {workspace.searchScope.sectionLabel} — Block{blockLabels.length === 1 ? '' : 's'} {blockLabels.join(', ')}
                       </p>
-                    )}
-                    <p className="text-xs text-slate-500">
-                      Section {workspace.searchScope.sectionLabel} — Block{blockLabels.length === 1 ? '' : 's'} {blockLabels.join(', ')}
-                    </p>
+                    </div>
                     <div className="mt-3">
                       <SearchScopeRecordsList
                         sectionLabel={workspace.searchScope.sectionLabel}
@@ -927,7 +882,7 @@ export default function PublisherWorkspaceApp({
 
         {view.name === 'addedRecords' && (
           <div>
-            <h2 className="mb-3 font-semibold text-[#0B1B33]">My Added Records</h2>
+            <h2 className="mb-3 text-center text-xl font-bold text-[#0B1B33]">My Added Records</h2>
             <AddedRecordsList
               records={workspace.addedRecords}
               onSelect={(recordId) => setView({ name: 'addedRecordDetail', recordId })}
@@ -1058,17 +1013,6 @@ export default function PublisherWorkspaceApp({
       />
 
       <ConfirmModal
-        open={confirmDialog?.type === 'terminate'}
-        title="End your ministry early?"
-        message="Your progress so far is already saved. Any records you haven't gotten to yet will simply stay assigned as-is for next time — nothing is marked or changed."
-        confirmLabel="End Ministry"
-        onConfirm={() => {
-          setConfirmDialog(null)
-          handleTerminate()
-        }}
-        onCancel={() => setConfirmDialog(null)}
-      />
-      <ConfirmModal
         open={confirmDialog?.type === 'deleteAddedRecord'}
         title="Delete this contact record?"
         message="This cannot be undone."
@@ -1076,17 +1020,6 @@ export default function PublisherWorkspaceApp({
         onConfirm={() => {
           if (confirmDialog?.type === 'deleteAddedRecord') handleDeleteAddedRecord(confirmDialog.recordId)
           setConfirmDialog(null)
-        }}
-        onCancel={() => setConfirmDialog(null)}
-      />
-      <ConfirmModal
-        open={confirmDialog?.type === 'release'}
-        title="Release this partnership?"
-        message="This isn't ending your ministry — it just frees this partnership back up so anyone (including you) can claim it fresh. Only available since you haven't logged a visit yet."
-        confirmLabel="Release"
-        onConfirm={() => {
-          setConfirmDialog(null)
-          handleRelease()
         }}
         onCancel={() => setConfirmDialog(null)}
       />

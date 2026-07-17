@@ -1,5 +1,21 @@
 # Current Work
 
+**Territory Management System — Publisher workspace Home/List nav split, v3: slide-to-confirm + header polish (2026-07-17) — code done, tsc + vitest (52/52) + build clean, mostly live-verified via a temporary scratch route (Release's actual server round-trip untestable without live TMS Supabase creds — standing limitation), no migration needed, not committed — see checkpoint `territory-management-publisher-home-list-nav-v3.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 5 more asks from 3 screenshots: (1) center/enlarge "My Added Records" header; (2) center/enlarge the List tab's header, subheading lines centered only; (3) move "Release Assignment" off Home onto the batch-landing "Select your Partner" page as a big iOS-style slide-to-confirm button; (4) convert "Early Out" (stays on Home) to the same slide-to-confirm design; (5) rename map-toggle pills "Assigned Records"→"Live Map", "Share"→"Share To".
+
+Current Status: Code complete, no migration needed.
+- New `SlideToConfirm.tsx` — reusable iOS-style drag-to-confirm control (pointer events), the drag gesture itself replaces the old tap+modal confirmation.
+- New `ReleaseAssignmentSlider.tsx` — added to `assignment/[batchToken]/page.tsx`, reads the device's local claim, matches it against server-fetched partnerships, shows the slider only when eligible (mirrors the old `canRelease` gate), calls the existing `releasePartnershipAction` + `router.refresh()`.
+- `PublisherWorkspaceApp.tsx`: Release button/state/modal/handler all removed (moved to the slider above); Early Out now `<SlideToConfirm tone="danger" onConfirm={handleTerminate} />`; List/Added-Records headers centered+bold+larger (subheading lines centered only); map-toggle pills renamed.
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via `/dev-scratch-tms-nav3` (removed before finishing): confirmed drag-threshold behavior via dispatched `PointerEvent` sequences (a `left_click_drag`-driven click wasn't reliable for this custom pointer-based control), Early Out's full confirm path (no live creds needed), and the Release slider correctly reading the local claim on the mocked batch-landing page. Could not round-trip Release's actual server action — no live TMS Supabase credentials in this dev environment, same standing limitation noted in prior TMS checkpoints.
+
+**Next recommended task:** Not committed. Russell live-verifies both sliders on a real phone/touchscreen (drag threshold was tuned against simulated pointer events, not a real finger), especially that Release Assignment on the batch-landing page actually releases and refreshes the card list. Then commit + deploy at Russell's request.
+
+----------------------------------------
+
 **Territory Management System — Publisher workspace Home/List nav split, v2 live-test fixes (2026-07-17) — code done, tsc + vitest (52/52) + build clean, mostly live-verified via a temporary scratch route (one page couldn't be driven without a real DB-backed batch token — confirmed by clean build instead), no migration needed, not committed — see checkpoint `territory-management-publisher-home-list-nav-v2.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

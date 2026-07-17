@@ -3,6 +3,7 @@ import { createAdminSupabase } from '@/lib/territory-management-system/supabase-
 import { getBatchByToken } from '@/lib/territory-management-system/modules/assignment/queries'
 import PartnershipCard from '@/components/territory-management-system/publisher/PartnershipCard'
 import AssignmentEndedNotice from '@/components/territory-management-system/publisher/AssignmentEndedNotice'
+import ReleaseAssignmentSlider from '@/components/territory-management-system/publisher/ReleaseAssignmentSlider'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,6 +27,8 @@ export default async function BatchLandingPage({ params }: { params: Promise<{ b
             <PartnershipCard key={p.id} partnership={p} batchToken={batchToken} />
           ))}
         </div>
+
+        <ReleaseAssignmentSlider batchToken={batchToken} partnerships={batch.partnerships} />
       </div>
     </div>
   )
