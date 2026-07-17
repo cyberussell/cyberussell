@@ -23,11 +23,16 @@ export default function BatchLandingBottomMenu({ batchToken }: { batchToken: str
 
   const workspaceHref = `/territory-management-system/assignment/${batchToken}/${claimedToken}`
 
+  // The workspace always mounts fresh from this page (it's a real navigation, not a client-side
+  // view-state change) — without a hint it always lands on its default Home tab regardless of
+  // which icon was tapped. `view` here is only ever read once, on that initial mount (see
+  // PublisherWorkspaceApp's initialView prop) — it doesn't affect in-workspace navigation
+  // afterward.
   const items: { key: string; label: string; icon: LucideIcon; active: boolean; href: string | null }[] = [
     { key: 'home', label: 'Home', icon: Home, active: false, href: workspaceHref },
     { key: 'partners', label: 'All Partners', icon: Users, active: true, href: null },
-    { key: 'records', label: 'Assigned Records', icon: ClipboardList, active: false, href: workspaceHref },
-    { key: 'addedRecords', label: 'My Added Records', icon: ClipboardPlus, active: false, href: workspaceHref },
+    { key: 'records', label: 'Assigned Records', icon: ClipboardList, active: false, href: `${workspaceHref}?view=list` },
+    { key: 'addedRecords', label: 'My Added Records', icon: ClipboardPlus, active: false, href: `${workspaceHref}?view=addedRecords` },
   ]
 
   return (

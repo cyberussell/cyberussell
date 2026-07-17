@@ -11,7 +11,7 @@
 
 ## Files Modified
 
-**Migration** — `territory-management-system/migrations/027_do_not_call_lock.sql` (**Russell has not run this yet — required before deploying, see below**): adds `do_not_call_at timestamptz`, a `tms_set_do_not_call_at()` trigger (stamps `now()` the moment `do_not_call` flips true on insert or update, clears it back to null when flipped false), and a one-time backfill (`now()` for any record already flagged, since there's no way to know the real historical date).
+**Migration** — `territory-management-system/migrations/027_do_not_call_lock.sql` (**run by Russell 2026-07-18**): adds `do_not_call_at timestamptz`, a `tms_set_do_not_call_at()` trigger (stamps `now()` the moment `do_not_call` flips true on insert or update, clears it back to null when flipped false), and a one-time backfill (`now()` for any record already flagged, since there's no way to know the real historical date).
 
 **Schema/types**:
 - `records/types.ts` — `TerritoryRecord.do_not_call_at: string | null`.
@@ -37,8 +37,8 @@
 - An ongoing-Bible-Study `PublisherVisitLogForm` (`latestResult="bible_study"`) now offers Progressing / Discontinued / Not At Home (Moved stays filtered out here, same as before — that path goes through the separate Mark as Moved flow).
 - `VisitResultBarChart` renders an "Undone" bar correctly (already generic over every `VISIT_RESULTS` entry — no chart-side change was needed).
 
-## Remaining Work — migration must be run before this is safe to use
-**`027_do_not_call_lock.sql` has NOT been run yet.** Until it is, `getRecordDoNotCall`, `getBatchVisitResultCounts`, and the publisher's own Record a Visit flow all select `do_not_call_at`, a column that won't exist on the live DB — **every "Record a Visit" submission (publisher and Admin) and the Group Leader Home tab will error until the migration runs.** This needs to go out together: Russell should run migration 027 in the TMS Supabase SQL editor as part of, or immediately after, this deploy.
+## Remaining Work
+Migration 027 has been run. See the separate `territory-management-batch-graph-dnc-nav-fix-v1.md` checkpoint for a same-day follow-up fix (batch-landing nav bar always landing on Home regardless of which icon was tapped).
 
 ## Next Recommended Task
-Russell (1) runs migration 027, (2) confirms a real Do Not Call record locks for a publisher and shows the right unlock date, (3) confirms an ongoing Bible Study now offers Not At Home, (4) checks the Home tab's breakdown against a batch he knows the real numbers for — especially one day where a partnership was force-ended early, to confirm "Undone" shows up correctly and the totals no longer look inflated by another same-day batch.
+Russell (1) confirms a real Do Not Call record locks for a publisher and shows the right unlock date, (2) confirms an ongoing Bible Study now offers Not At Home, (3) checks the Home tab's breakdown against a batch he knows the real numbers for — especially one day where a partnership was force-ended early, to confirm "Undone" shows up correctly and the totals no longer look inflated by another same-day batch.

@@ -28,13 +28,12 @@ export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter(
 )
 
 // Once a record's most recent visit is 'bible_study' (confirmed ongoing — not the first-time
-// 'started_bible_study'), the next visit's Status choices narrow to just these follow-up
+// 'started_bible_study'), the next visit's Status choices narrow to just these three follow-up
 // outcomes instead of the full list — 'progressing' keeps counting as "ongoing" for this check,
 // so the narrowed list stays in place across every subsequent visit until the study ends one way
-// or the other. 'not_home' is included too — a Bible Study contact can still simply not be home
-// on a given visit, that's not itself a follow-up outcome for the study.
+// or the other.
 export const BIBLE_STUDY_ONGOING_RESULTS = ['bible_study', 'progressing'] as const
-export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'moved', 'not_home'] as const
+export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'moved'] as const
 
 // A record flagged do_not_call narrows to exactly these three outcomes, regardless of its
 // latest visit result — takes priority over the Bible Study narrowing below (the two states
@@ -82,7 +81,7 @@ export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string>
   return_visit: 'Visited Again',
   started_bible_study: 'Started Bible Study',
   bible_study: 'Bible Study',
-  progressing: 'Progressing',
+  progressing: 'Progressive BS',
   discontinued: 'Discontinued',
   not_home: 'Not At Home',
   do_not_call: 'Do Not Call',

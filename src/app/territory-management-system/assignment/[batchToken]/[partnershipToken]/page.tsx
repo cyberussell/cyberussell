@@ -8,12 +8,18 @@ import AssignmentEndedNotice from '@/components/territory-management-system/publ
 
 export const dynamic = 'force-dynamic'
 
+const VALID_INITIAL_VIEWS = ['home', 'list', 'addedRecords'] as const
+type InitialView = (typeof VALID_INITIAL_VIEWS)[number]
+
 export default async function PartnershipWorkspacePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ batchToken: string; partnershipToken: string }>
+  searchParams: Promise<{ view?: string }>
 }) {
   const { batchToken, partnershipToken } = await params
+  const { view } = await searchParams
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, partnershipToken)
   if (!partnership || partnership.batch.access_token !== batchToken) notFound()
@@ -23,6 +29,10 @@ export default async function PartnershipWorkspacePage({
     partnership.territories.map((t) => getTerritoryStructure(supabase, partnership.congregation_id, t.id))
   )
   const validStructures = territoryStructures.filter((s): s is TerritoryStructure => s !== null)
+  // From BatchLandingBottomMenu, which links straight into a specific tab (the workspace has no
+  // route per tab otherwise, so this ?view= param is the only way to land somewhere other than
+  // Home on first mount) — anything else falls back to the normal Home default.
+  const initialView: InitialView = (VALID_INITIAL_VIEWS as readonly string[]).includes(view ?? '') ? (view as InitialView) : 'home'
 
   return (
     <PublisherWorkspaceApp
@@ -30,6 +40,7 @@ export default async function PartnershipWorkspacePage({
       partnershipToken={partnershipToken}
       initialWorkspace={partnership}
       territoryStructures={validStructures}
+      initialView={initialView}
     />
   )
 }

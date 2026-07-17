@@ -1,12 +1,28 @@
 # Current Work
 
-**Territory Management System — Batch-scoped reporting graph, Undone bucket, Do Not Call 6-month lock (2026-07-17) — code done, tsc + vitest (52/52) + build clean, client-side pieces live-verified via a temporary scratch route, migration 027 NOT yet run by Russell (REQUIRED before this is safe — see below), committed and pushed + deployed at Russell's request — see checkpoint `territory-management-batch-graph-dnc-lock-v1.md` for full detail:**
+**Territory Management System — Batch-landing nav fix, locked-DNC completion, Bible Study copy (2026-07-18) — code done, tsc + vitest (52/52) + build clean, live-verified via temporary scratch routes, no migration needed, committed and pushed + deployed at Russell's request — see checkpoint `territory-management-batch-graph-dnc-nav-fix-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 3 fixes after Russell ran migration 027 and live-tested the Do Not Call lock: (1) the batch-landing "Select your Partner" page's nav bar always landed on Home regardless of which icon was tapped (every item linked to the same URL); (2) a locked-DNC record blocked "All assigned records are done! Sync & Finish" from ever appearing, since it can never get a real visit logged against it; (3) two copy/option reversals — remove Not At Home from the Bible Study follow-up dropdown (added earlier the same day, then asked to be removed after seeing it live), and rename the "Progressing" label to "Progressive BS" everywhere it appears (single shared label constant).
+
+Current Status: Code complete, no migration needed.
+- `BatchLandingBottomMenu.tsx`: "Assigned Records"/"My Added Records" now link with `?view=list`/`?view=addedRecords`; `assignment/[batchToken]/[partnershipToken]/page.tsx` reads that param into a validated `initialView` prop; `PublisherWorkspaceApp.tsx` seeds its view state from it on first mount only.
+- `PublisherWorkspaceApp.tsx`'s `allDone` check now also treats a locked-DNC record (`isDoNotCallLocked`) as "done" alongside `completed_at`.
+- `records/schema.ts`: `BIBLE_STUDY_FOLLOWUP_RESULTS` back to `['progressing', 'discontinued', 'moved']`; `VISIT_RESULT_LABELS.progressing` → "Progressive BS".
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via temporary scratch routes (removed before finishing): nav deep-links land correctly, Sync & Finish now appears with a locked-DNC record still incomplete, Bible Study dropdown correct (Progressive BS / Discontinued / Moved, no Not At Home).
+
+**Next recommended task:** Russell spot-checks all three live: the batch-landing nav icons, a real Do Not Call record no longer blocking Sync & Finish, and the renamed/trimmed Bible Study dropdown.
+
+----------------------------------------
+
+**Territory Management System — Batch-scoped reporting graph, Undone bucket, Do Not Call 6-month lock (2026-07-17) — code done, tsc + vitest (52/52) + build clean, client-side pieces live-verified via a temporary scratch route, migration 027 run by Russell 2026-07-18, committed and pushed + deployed at Russell's request — see checkpoint `territory-management-batch-graph-dnc-lock-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
 
 Current Feature: (1) the Group Leader Home tab's "completed today" graph was counting every visit logged today anywhere in the batch's territories instead of just this batch's own assigned records (inflated whenever a second same-day batch — e.g. this Group Leader's own overflow — touched the same territory); (2) a record left incomplete when its partnership is force-ended should show as "Undone" in that graph even though `terminatePartnershipEarly` deliberately never writes a DB row for it; (3) an ongoing Bible Study's follow-up options should include "Not At Home"; (4) a newly do-not-call-flagged record should be fully locked (no visit loggable at all) for 6 months, clearly marked on the card, and still counted in the graph despite having no visit row. Confirmed 3 real decisions via `AskUserQuestion` first: new `do_not_call_at` column (DB-trigger-maintained) over deriving from visit history; fully locked (not just visually marked) during the 6 months; graph fix scoped to the Group Leader Home tab only, not the Admin's congregation-wide Reports page.
 
-Current Status: Code complete. **Migration 027 has NOT been run yet and is required** — until it is, every Record a Visit submission (publisher and Admin) and the Group Leader Home tab will error, since the code now selects a `do_not_call_at` column that won't exist on the live DB yet.
+Current Status: Code complete and deployed. **Migration 027 has been run by Russell (2026-07-18).**
 - New migration `027_do_not_call_lock.sql`: `territory_records.do_not_call_at`, a trigger that auto-stamps/clears it whenever `do_not_call` flips, backfills existing DNC records to "now."
 - `records/schema.ts`: `getSelectableResults()` returns `[]` (locked) for a DNC record still within `DO_NOT_CALL_LOCK_MONTHS` (6) of `do_not_call_at`; Admin's own call site still omits `doNotCallAt`, so Admin is never locked, per Russell's confirmed scope. `BIBLE_STUDY_FOLLOWUP_RESULTS` gained `'not_home'`.
 - Publisher UI: `PublisherVisitLogForm`/`PublisherRecordDetailView`/`AssignedRecordsList` all show a clear locked state/badge instead of the normal form when locked.

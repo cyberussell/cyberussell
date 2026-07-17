@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { CheckCircle2, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
+import { isDoNotCallLocked } from '@/lib/territory-management-system/modules/records/schema'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import type { RecordLocation } from '@/lib/territory-management-system/modules/reports/queries'
@@ -65,14 +66,20 @@ export default function PublisherWorkspaceApp({
   partnershipToken,
   initialWorkspace,
   territoryStructures,
+  initialView = 'home',
 }: {
   batchToken: string
   partnershipToken: string
   initialWorkspace: PartnershipWorkspace
   territoryStructures: TerritoryStructure[]
+  // Which tab to land on for this initial mount only — the batch-landing page's nav bar links
+  // straight into a specific tab (see BatchLandingBottomMenu's ?view= query param) since there's
+  // no other way to reach anything but Home from a fresh navigation. Never consulted again after
+  // mount; all navigation from here on is the in-memory setView calls below.
+  initialView?: 'home' | 'list' | 'addedRecords'
 }) {
   const [workspace, setWorkspace] = useState(initialWorkspace)
-  const [view, setView] = useState<View>({ name: 'home' })
+  const [view, setView] = useState<View>({ name: initialView } as View)
   const [downloaded, setDownloaded] = useState(false)
   const [savingVisit, setSavingVisit] = useState(false)
   const [movingRecord, setMovingRecord] = useState(false)
@@ -548,7 +555,12 @@ export default function PublisherWorkspaceApp({
   // done! Sync & Finish" the instant it's claimed, since the whole point is spending the
   // allotted time adding new contact records, which can keep happening throughout the session.
   // "End My Ministry Early" is the only way that kind of partnership finishes for the day.
-  const allDone = workspace.records.length > 0 && workspace.records.every((r) => r.completed_at)
+  // A record still locked under the Do Not Call cooldown can never get a completed_at — there's
+  // structurally no visit a publisher can log against it — so it doesn't count against "done"
+  // either, the same way it never blocked completion before the lock existed.
+  const allDone =
+    workspace.records.length > 0 &&
+    workspace.records.every((r) => r.completed_at || isDoNotCallLocked(r.record.do_not_call, r.record.do_not_call_at))
   // Only hide a territory's map when it genuinely has no section/block structure at all — a
   // defensive guard, not the normal zero-records case (a fresh territory still has real
   // sections/blocks from the moment it's created; TerritoryMapViewer just has nothing useful to
