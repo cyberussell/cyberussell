@@ -1,5 +1,22 @@
 # Current Work
 
+**Territory Management System — Publisher workspace Home/List nav split (2026-07-17) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, no migration needed, not committed — see checkpoint `territory-management-publisher-home-list-nav-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 3 housekeeping asks for the publisher workspace bottom nav: (1) move Download/Sync from the bottom nav to a top bar; (2) add a Home tab (Partner name card → Maps → Release/End buttons → Share with Partner, in that order) and narrow the "Assigned Records" (List) tab to just the actual work list, with a new header (title + Territory No./Barangay Name, "Area To Search" + Territory/Barangay + Section/Blocks for overflow); (3) same split applies to overflow-generated assignments. Confirmed 3 ambiguities via `AskUserQuestion` first: Release/End buttons → Home tab; standalone "Search Area" nav tab → folded into List; multi-territory header → show all assigned territories.
+
+Current Status: Code complete, no migration needed (an additive `description` field already on `territories`, just widened the `select`).
+- `PartnershipWorkspace.territories` (`assignment/types.ts` + `queries.ts`) widened with `description` (barangay name).
+- `PublisherBottomMenu.tsx`: Download/Sync removed entirely (and all their props); new `home` item (first); `searchScope`/`searchScopeDetail`/`onGoToSearchScope`/`showSearchScope` removed — no more standalone Search Area tab.
+- `SearchScopeRecordsList.tsx`: new `showAreaLabel` prop (default true) to suppress its own Section/Block line when the parent already shows one.
+- `PublisherWorkspaceApp.tsx`: new `home` view (default initial view), top Download/Sync bar (shown whenever `showSessionChrome`), the "not claimed"/"choose search area" gates now block both Home and List, Home tab holds name card/maps/buttons/share, List tab holds the header + `AssignedRecordsList` and/or the folded-in "Area To Search" section (both can render together if a search-scope partner also has a passed-in assigned record).
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via a temporary scratch route (`/dev-scratch-tms-nav`, mock data, removed before finishing): confirmed top bar, Home tab ordering, List tab header/content for both a normal and an overflow/search-scope partnership, and that tapping into a search-scope record's detail still highlights the List tab.
+
+**Next recommended task:** Not committed. Russell live-verifies on a real claimed partnership (one normal batch, one overflow batch with a chosen search area) on an actual phone. Then commit + deploy at Russell's request.
+
+----------------------------------------
+
 **Territory Management System — Share Partnership With Ministry Partner (2026-07-17) — code done, tsc + vitest (52/52) + build clean, NOT live-verified (Browser pane preview tooling was unavailable the whole session — safety-classifier outage, confirmed via repeated retries), no migrations needed, not committed — see checkpoint `territory-management-share-partnership-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
