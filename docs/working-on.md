@@ -1,5 +1,20 @@
 # Current Work
 
+**Territory Management System — Share Partnership With Ministry Partner (2026-07-17) — code done, tsc + vitest (52/52) + build clean, NOT live-verified (Browser pane preview tooling was unavailable the whole session — safety-classifier outage, confirmed via repeated retries), no migrations needed, not committed — see checkpoint `territory-management-share-partnership-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked for a proper workflow to let the person working alongside a claimed Ministry Partner (e.g. a spouse/companion) get full access to that same list on their own phone, without ending up with a separate, overlapping partnership. Investigated first (per the standing plan-mode workflow): found the claim/read-only logic already silently lets a second, unclaimed device join an already-claimed partnership with full write access — the only real gap was no reliable way to get that second device onto the *exact* right partnership URL instead of risking a tap on a different, unclaimed card on the "Select your Partner" page.
+
+Current Status: Code complete, no migrations needed (UI-only, no schema/claim-logic changes).
+- New `SharePartnershipCard.tsx` — client component shown once a partnership is claimed, renders a QR code (client-side `qrcode.toDataURL`) and a "Copy Link" button for the direct `.../assignment/{batchToken}/{partnershipToken}` URL.
+- Wired into `PublisherWorkspaceApp.tsx` directly after the existing `PartnershipRenameForm`, same `!readOnly` gate.
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. **Not live-verified this session** — a temporary scratch route (`/dev-scratch-share-partner`) was built to exercise it, but the Browser pane's preview tooling (`preview_start`/`ScheduleWakeup`) returned a persistent "temporarily unavailable" classifier error across multiple retries; the scratch route was removed before finishing rather than left in the tree. Verified instead by static review — the new component doesn't touch the pre-existing claim/`readOnly` logic at all, only consumes it.
+
+**Next recommended task:** Not committed. Russell live-verifies: generate a batch with Group size 2+, claim a partnership on one phone, confirm the Share card's QR/link, open it on a second device and confirm it joins as a full editor (not read-only) on the identical list, confirm Copy Link works. Then commit + deploy at Russell's request.
+
+----------------------------------------
+
 **Territory Management System — Group Leader force-end any partnership, Publisher self-release (2026-07-17) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, no migration needed, committed and pushed at Russell's request ("deploy immediately") — see checkpoint `territory-management-end-partnership-release-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
