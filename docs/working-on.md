@@ -14,6 +14,10 @@ Current Status: Code complete, no migration needed.
 
 Also corrected within the same round: Russell clarified "Nav bar at the bottom, missing" (from the v2 screenshots) was a bug report, not confirmation — the batch-landing page should show no nav bar only before a partnership is claimed, and the standard nav bar once claimed. Recreated `BatchLandingBottomMenu.tsx` (deleted in v2) with the current icon set (Home/Partners/Records/Added Records, no Download/Sync), gated on `getClaimedPartnershipToken`; page padding restored to `pb-24`.
 
+One more same-round follow-up: once a ministry session has ended (Early Out or normal finish) and everything's synced, the Home tab's Early Out slider and top-bar Sync button now hide themselves — Early Out gated on `!sessionEnded`, Sync specifically on `sessionEnded && pendingCount === 0 && failedCount === 0` (stays visible if something still needs retrying after ending). Download stays either way.
+
+Deployed to production (`www.cyberussell.com`) at Russell's request, both this round and the prior nav-bar-fix round.
+
 **Next recommended task:** Not committed. Russell live-verifies both sliders on a real phone/touchscreen (drag threshold was tuned against simulated pointer events, not a real finger), especially that Release Assignment on the batch-landing page actually releases and refreshes the card list, and that the nav bar now correctly shows/hides around the claim moment. Then commit + deploy at Russell's request.
 
 ----------------------------------------

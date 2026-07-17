@@ -641,24 +641,30 @@ export default function PublisherWorkspaceApp({
               {downloaded ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Download className="h-3.5 w-3.5" />}
               {downloaded ? 'Downloaded' : 'Download'}
             </button>
-            <button
-              type="button"
-              onClick={handleSync}
-              disabled={syncing || (pendingCount === 0 && failedCount === 0)}
-              className="relative flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
-            >
-              {!online && !syncing ? (
-                <CloudOff className="h-3.5 w-3.5" />
-              ) : (
-                <RefreshCw className={`h-3.5 w-3.5 ${syncing ? 'animate-spin' : ''}`} />
-              )}
-              {syncing ? 'Syncing…' : !online ? 'Offline' : pendingCount + failedCount > 0 ? 'Sync' : 'Synced'}
-              {!syncing && pendingCount + failedCount > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white">
-                  {pendingCount + failedCount}
-                </span>
-              )}
-            </button>
+            {/* Once the ministry session has ended AND nothing is left pending/failed, there's
+                nothing left to sync — hide the button entirely rather than leaving a permanent
+                "Synced" no-op sitting there. If something still failed to sync by the time the
+                session ended, keep showing it so that can still be retried. */}
+            {!(sessionEnded && pendingCount === 0 && failedCount === 0) && (
+              <button
+                type="button"
+                onClick={handleSync}
+                disabled={syncing || (pendingCount === 0 && failedCount === 0)}
+                className="relative flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
+              >
+                {!online && !syncing ? (
+                  <CloudOff className="h-3.5 w-3.5" />
+                ) : (
+                  <RefreshCw className={`h-3.5 w-3.5 ${syncing ? 'animate-spin' : ''}`} />
+                )}
+                {syncing ? 'Syncing…' : !online ? 'Offline' : pendingCount + failedCount > 0 ? 'Sync' : 'Synced'}
+                {!syncing && pendingCount + failedCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white">
+                    {pendingCount + failedCount}
+                  </span>
+                )}
+              </button>
+            )}
           </div>
         )}
 
@@ -766,8 +772,10 @@ export default function PublisherWorkspaceApp({
 
             {/* Release Assignment moved to the batch-landing "Select your Partner" page (see
                 ReleaseAssignmentSlider) — that page is where a change-of-mind actually needs to
-                happen, before this device has even settled into a workspace. */}
-            {!readOnly && (
+                happen, before this device has even settled into a workspace. Early Out itself
+                disappears once the session has already ended (whether via this same slide or a
+                normal Sync & Finish) — there's nothing left to end. */}
+            {!readOnly && !sessionEnded && (
               <SlideToConfirm label="Slide for Early Out" confirmingLabel="Ending…" tone="danger" onConfirm={handleTerminate} />
             )}
           </>
