@@ -27,8 +27,11 @@ The Home tab's `!readOnly` button group is now just `<SlideToConfirm label="Slid
 - List tab: "Assigned Contact Records" now centered/bold/larger with a centered "Q-11 — Santos Quezon" subheading underneath.
 - "My Added Records": centered/bold/larger header confirmed.
 
+## Follow-up fix in the same round: batch-landing nav bar was wrongly removed entirely
+Russell corrected a misread from [[territory-management-publisher-home-list-nav-v2]]: "Nav bar at the bottom, missing" on the batch-landing page was a bug report, not confirmation that removing it entirely was correct. The real rule: no nav bar while nothing is claimed yet (straight off the QR scan), but once a partnership is claimed on this device, the same nav bar should appear. Recreated `BatchLandingBottomMenu.tsx` (previously deleted in v2) — now reads the local claim via `getClaimedPartnershipToken` and renders `null` until one exists; once claimed, shows Home/All Partners (active, since that's this page)/Assigned Records/My Added Records, all linking into the claimed partnership's workspace URL except "All Partners" (icon set matches the current `PublisherBottomMenu`, not the old Download/Sync-era one). `assignment/[batchToken]/page.tsx` padding restored to `pb-24` and the component wired back in.
+
 ## Remaining Work
-None — scoped to the 3 screenshots' asks. No migrations.
+None — scoped to the 3 screenshots' asks plus the batch-landing nav correction above. No migrations.
 
 ## Next Recommended Task
 Not committed. Russell live-verifies on a real batch: the two slide-to-confirm gestures feel right on an actual phone (drag distance/threshold tuned against a desktop-simulated pointer sequence, not a real touchscreen), and — most importantly, since it's the one path this session couldn't round-trip without live credentials — that sliding "Release Assignment" on the batch-landing page actually releases the partnership and the card list updates to "Unclaimed". Then commit + deploy at Russell's request.

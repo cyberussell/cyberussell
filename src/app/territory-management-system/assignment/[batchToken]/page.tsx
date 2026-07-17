@@ -4,6 +4,7 @@ import { getBatchByToken } from '@/lib/territory-management-system/modules/assig
 import PartnershipCard from '@/components/territory-management-system/publisher/PartnershipCard'
 import AssignmentEndedNotice from '@/components/territory-management-system/publisher/AssignmentEndedNotice'
 import ReleaseAssignmentSlider from '@/components/territory-management-system/publisher/ReleaseAssignmentSlider'
+import BatchLandingBottomMenu from '@/components/territory-management-system/publisher/BatchLandingBottomMenu'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +16,7 @@ export default async function BatchLandingPage({ params }: { params: Promise<{ b
   if (batch.expired) return <AssignmentEndedNotice />
 
   return (
-    <div className="min-h-screen bg-[#C9D8EE] px-4 pb-8 pt-8">
+    <div className="min-h-screen bg-[#C9D8EE] px-4 pb-24 pt-8">
       <div className="mx-auto max-w-lg">
         <h1 className="text-center text-xl font-bold text-[#0B1B33]">Today&apos;s Assignment</h1>
         <p className="mt-1 text-center text-sm text-slate-700">
@@ -30,6 +31,8 @@ export default async function BatchLandingPage({ params }: { params: Promise<{ b
 
         <ReleaseAssignmentSlider batchToken={batchToken} partnerships={batch.partnerships} />
       </div>
+
+      <BatchLandingBottomMenu batchToken={batchToken} />
     </div>
   )
 }
