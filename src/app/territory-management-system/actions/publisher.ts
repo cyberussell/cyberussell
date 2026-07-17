@@ -7,6 +7,7 @@ import { checkRateLimit, clientIp } from '@/lib/territory-management-system/rate
 import { logError } from '@/lib/territory-management-system/errors'
 import {
   addPublisherRecordSchema,
+  chooseSearchScopeSchema,
   deletePublisherAddedRecordSchema,
   editPublisherAddedRecordSchema,
   finishPartnershipSchema,
@@ -15,6 +16,7 @@ import {
   recommendCorrectionSchema,
   recommendRemovalSchema,
   recommendSearchScopeCorrectionSchema,
+  releasePartnershipSchema,
   renamePartnershipSchema,
   submitPartnershipNoteSchema,
   terminatePartnershipEarlySchema,
@@ -25,10 +27,12 @@ import {
   getBatchById,
   getPartnershipById,
   getPartnershipByToken,
-  getSearchScopeForBatch,
+  getSearchScopeForPartnership,
+  lockPartnershipSearchBlocks,
   markPartnershipRecordCompleted,
   movePartnershipRecord,
   partnershipHasRecord,
+  releasePartnership,
   renamePartnership,
   submitPartnershipNote,
   terminatePartnershipEarly,
@@ -171,6 +175,17 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
   const block = section?.blocks.find((b) => b.id === parsed.data.blockId)
   if (!territory || !section || !block) return { error: 'Invalid territory, section, or block.' }
 
+  // Once this partnership has locked in a search area (see 026_partnership_search_blocks.sql),
+  // every new record they add must stay within it — never trust the client's submitted
+  // section/block outright, even though PublisherRecordForm's own picker already narrows to
+  // just these blocks. A partnership with no locked scope (regular, non-overflow partnerships,
+  // or an overflow one that somehow reached this form before choosing one) keeps today's
+  // existing whole-territory behavior.
+  const searchScope = await getSearchScopeForPartnership(supabase, partnership.id)
+  if (searchScope && !searchScope.blocks.some((b) => b.id === parsed.data.blockId)) {
+    return { error: 'You can only add records within your locked search area.' }
+  }
+
   // A blank initialResult here re-derives the full SELECTABLE_VISIT_RESULTS list (a fresh
   // record has no prior visit and is never do_not_call yet), same re-validation pattern
   // logPublisherVisitAction already applies rather than trusting the submitted value outright.
@@ -280,6 +295,40 @@ export async function terminatePartnershipEarlyAction(_prev: ActionResult, formD
   } catch (e) {
     await logError(partnership.congregation_id, 'terminatePartnershipEarlyAction', e)
     return { error: e instanceof Error ? e.message : 'Could not end the ministry session.' }
+  }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}`)
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// "Release" — a change of mind before any real work happened, not ending the ministry (that's
+// terminatePartnershipEarlyAction above). Only allowed while every one of this partnership's
+// assigned records is still uncompleted — the moment even one visit is logged, this becomes
+// real field work and can no longer be undone this way. Resets the partnership back to
+// unclaimed so it shows up as available again on the batch landing page. Called directly (not
+// through the offline sync queue) since it needs a live, current answer about whether any visit
+// has actually been logged yet — the same reasoning as chooseSearchScopeAction.
+export async function releasePartnershipAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = releasePartnershipSchema.safeParse({ partnershipToken: formData.get('partnershipToken') })
+  if (!parsed.success) return { error: 'Invalid request.' }
+  if (!(await checkRateLimit(`tms-release:${clientIp(await headers())}`, 10))) return { error: 'Too many attempts. Please wait a moment.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+  if (!partnership.claimed_at) return { error: 'This partnership has not been claimed yet.' }
+  if (partnership.finished_at || partnership.ended_early_at) return { error: 'This ministry session has already ended.' }
+  if (partnership.records.some((r) => r.completed_at)) {
+    return { error: "You've already logged a visit — this can no longer be released." }
+  }
+
+  try {
+    await releasePartnership(supabase, partnership.id, partnership.sequence)
+  } catch (e) {
+    await logError(partnership.congregation_id, 'releasePartnershipAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not release this partnership.' }
   }
 
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}`)
@@ -564,24 +613,24 @@ export async function editPublisherAddedRecordAction(_prev: ActionResult, formDa
   return { error: 'SAVED' }
 }
 
-// Manual "Refresh" for the overflow batch's search-scope records list — a plain read, not
-// queued through the offline sync system, since the whole point is checking the LIVE state
-// (has anyone else logged this address in the last few minutes) rather than whatever was cached
-// at initial page load. Re-derives the scope from the batch itself rather than trusting a
-// client-supplied block list.
+// Manual "Refresh" for the partnership's search-scope records list — a plain read, not queued
+// through the offline sync system, since the whole point is checking the LIVE state (has anyone
+// else logged this address in the last few minutes) rather than whatever was cached at initial
+// page load. Re-derives the scope from the partnership's own locked blocks (see
+// 026_partnership_search_blocks.sql) rather than trusting a client-supplied block list.
 export async function getSearchScopeRecordsAction(partnershipToken: string): Promise<TerritoryRecordWithLocation[]> {
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, partnershipToken)
   if (!partnership) return []
-  const scope = await getSearchScopeForBatch(supabase, partnership.batch_id)
+  const scope = await getSearchScopeForPartnership(supabase, partnership.id)
   if (!scope) return []
-  return getRecordsInBlocks(supabase, partnership.congregation_id, scope.blockIds)
+  return getRecordsInBlocks(supabase, partnership.congregation_id, scope.blocks.map((b) => b.id))
 }
 
-// Recommends a Plus Code correction on a record the publisher found while searching their
-// overflow batch's chosen area — NOT a record assigned to their partnership (partnershipHasRecord
-// would fail here, correctly, since it never was). Instead validates the record's block_id is
-// one of the batch's own search-scope blocks (see 025_overflow_search_scope.sql) before allowing
+// Recommends a Plus Code correction on a record the publisher found while searching their own
+// locked search area — NOT a record assigned to their partnership (partnershipHasRecord would
+// fail here, correctly, since it never was). Instead validates the record's block_id is one of
+// THIS partnership's own locked blocks (see 026_partnership_search_blocks.sql) before allowing
 // it — same "never trust the client, re-verify against the DB" rule as every other action here.
 // Reuses recommendRecordCorrection() unchanged — lands in the Admin's existing Flagged for
 // Correction queue, same review gate as the assigned-record correction path above.
@@ -602,10 +651,10 @@ export async function recommendSearchScopeCorrectionAction(_prev: ActionResult, 
   if (!partnership) return { error: 'This partnership link is no longer valid.' }
   if (partnership.expired) return { error: 'This assignment has ended for the day.' }
 
-  const scope = await getSearchScopeForBatch(supabase, partnership.batch_id)
+  const scope = await getSearchScopeForPartnership(supabase, partnership.id)
   if (!scope) return { error: 'This assignment has no search area to correct records in.' }
   const record = await getRecordById(supabase, partnership.congregation_id, parsed.data.recordId)
-  if (!record || !scope.blockIds.includes(record.block_id)) return { error: 'This contact record is not in your search area.' }
+  if (!record || !scope.blocks.some((b) => b.id === record.block_id)) return { error: 'This contact record is not in your search area.' }
 
   try {
     await recommendRecordCorrection(supabase, parsed.data.recordId, parsed.data.plusCode, parsed.data.reason, partnership.name || 'Unnamed partnership')
@@ -614,5 +663,57 @@ export async function recommendSearchScopeCorrectionAction(_prev: ActionResult, 
     return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }
   }
 
+  return { error: 'SAVED' }
+}
+
+// An overflow Ministry Partner's one-time, locked-in search-area choice — made after claiming,
+// required before they can do anything else (see PublisherWorkspaceApp's gating). Called
+// directly (not through the offline sync queue) since it needs a live, real-time answer about
+// block availability — same "plain server call, not queued" precedent as
+// getSearchScopeRecordsAction's manual Refresh.
+export async function chooseSearchScopeAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = chooseSearchScopeSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    sectionId: formData.get('sectionId'),
+    blockIds: formData.getAll('blockIds'),
+  })
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please choose a section and at least one block.' }
+  if (!(await checkRateLimit(`tms-choose-search-scope:${clientIp(await headers())}`, 10))) {
+    return { error: 'Too many attempts. Please wait a moment.' }
+  }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+  if (!partnership.batch.is_overflow) return { error: 'This assignment does not use a search area.' }
+
+  // One-time only — a partnership that already locked in a scope can never change it (that's
+  // the whole point: it's what the overlap-prevention constraint is keyed on).
+  const existingScope = await getSearchScopeForPartnership(supabase, partnership.id)
+  if (existingScope) return { error: 'You have already chosen your search area for today.' }
+
+  // The section must belong to one of THIS batch's own territories — never trust the
+  // client-submitted sectionId outright, same rule as every other parent-id check in this file.
+  const { data: section } = await supabase
+    .from('territory_sections')
+    .select('id, territory_id')
+    .eq('congregation_id', partnership.congregation_id)
+    .eq('id', parsed.data.sectionId)
+    .maybeSingle()
+  const batchTerritoryIds = new Set(partnership.territories.map((t) => t.id))
+  if (!section || !batchTerritoryIds.has(section.territory_id as string)) return { error: 'Invalid section.' }
+
+  const result = await lockPartnershipSearchBlocks(
+    supabase,
+    partnership.congregation_id,
+    partnership.id,
+    parsed.data.sectionId,
+    parsed.data.blockIds,
+    partnership.batch.assignment_date
+  )
+  if (!result.ok) return { error: result.error ?? 'Could not save your search area.' }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
   return { error: 'SAVED' }
 }

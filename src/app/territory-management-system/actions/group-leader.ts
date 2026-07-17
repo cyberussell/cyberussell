@@ -3,11 +3,12 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { requireGroupLeader } from '@/lib/territory-management-system/modules/auth/queries'
-import { createAssignmentSchema, createOverflowAssignmentSchema } from '@/lib/territory-management-system/modules/assignment/schema'
+import { createAssignmentSchema } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
   createAssignment,
   deleteBatch,
   getBatchesForGroupLeaderAndDate,
+  terminatePartnershipEarly,
 } from '@/lib/territory-management-system/modules/assignment/queries'
 import { todayInTimezone } from '@/lib/territory-management-system/modules/assignment/date'
 import { isAssignmentError } from '@/lib/territory-management-system/modules/assignment/engine'
@@ -63,11 +64,9 @@ export async function createGroupLeaderAssignmentAction(_prev: ActionResult, for
 // deliberately a "go canvass/search" batch, not a second bite at the same eligible-record pool,
 // so it can never end up double-assigning an address someone else is already working today.
 export async function createOverflowAssignmentAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
-  const parsed = createOverflowAssignmentSchema.safeParse({
+  const parsed = createAssignmentSchema.safeParse({
     territoryIds: formData.getAll('territoryIds'),
     partnershipCount: formData.get('partnershipCount'),
-    searchSectionId: formData.get('searchSectionId') || undefined,
-    searchBlockIds: formData.getAll('searchBlockIds'),
   })
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in the form correctly.' }
 
@@ -97,10 +96,6 @@ export async function createOverflowAssignmentAction(_prev: ActionResult, formDa
     assignmentDate,
     createdBy: userId,
     forceZeroRecords: true,
-    searchScope:
-      parsed.data.searchSectionId && parsed.data.searchBlockIds.length > 0
-        ? { sectionId: parsed.data.searchSectionId, blockIds: parsed.data.searchBlockIds }
-        : undefined,
   })
   if (isAssignmentError(result)) return { error: result.error }
 
@@ -120,4 +115,26 @@ export async function deleteGroupLeaderAssignmentAction(batchId: string): Promis
   if (batch && (batch.created_by === userId || batch.created_by === null)) await deleteBatch(supabase, batchId)
   revalidatePath('/territory-management-system/group-leader/dashboard')
   redirect('/territory-management-system/group-leader/dashboard')
+}
+
+// Lets a Group Leader force-end any Ministry Partner's session directly from the Partners tab —
+// same terminatePartnershipEarly() a publisher's own "End My Ministry Early" calls, just
+// triggered by whoever's coordinating the day instead of the pair themselves (e.g. a pair went
+// quiet, or it's time to wrap up the whole batch). Deliberately no redirect (unlike the actions
+// above) — this is called from within the Partners tab's own client state, and a redirect would
+// reset GroupLeaderTabs back to the Home tab; revalidatePath alone refreshes the underlying data
+// in place.
+export async function endPartnershipAction(partnershipId: string): Promise<void> {
+  const { supabase, userId } = await requireGroupLeader()
+  // Same "never rely on RLS alone" re-verification as deleteGroupLeaderAssignmentAction above —
+  // trace the partnership back to a batch this Group Leader created (or a legacy, creator-less
+  // batch, manageable by any Group Leader) before terminating it.
+  const { data: partnership } = await supabase.from('partnerships').select('id, batch_id').eq('id', partnershipId).maybeSingle()
+  if (partnership) {
+    const { data: batch } = await supabase.from('assignment_batches').select('created_by').eq('id', partnership.batch_id).maybeSingle()
+    if (batch && (batch.created_by === userId || batch.created_by === null)) {
+      await terminatePartnershipEarly(supabase, partnershipId)
+    }
+  }
+  revalidatePath('/territory-management-system/group-leader/dashboard')
 }

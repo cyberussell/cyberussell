@@ -1,5 +1,56 @@
 # Current Work
 
+**Territory Management System — Group Leader force-end any partnership, Publisher self-release (2026-07-17) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, no migration needed, committed and pushed at Russell's request ("deploy immediately") — see checkpoint `territory-management-end-partnership-release-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: (1) the Group Leader can end any Ministry Partner's session directly from the Partners tab, so the whole day's ministry can be wrapped up even if a pair goes quiet; (2) a Ministry Partner can "release" their own claimed partnership (a change of mind, not ending the ministry) as long as they haven't logged a single visit yet, freeing it up for anyone to claim fresh.
+
+Current Status: Code complete, no migration needed, committed and pushed.
+- **Group Leader force-end**: new `endPartnershipAction` (ownership-checked, reuses the existing `terminatePartnershipEarly()`) wired into `PartnershipList.tsx` via a new optional `onEndPartnership` prop — only `GroupLeaderTabs` passes it, so the button never appears on the same component's public, unauthenticated `/progress` page use.
+- **Publisher self-release**: new `releasePartnership()` query (resets `claimed_at`/`name` back to unclaimed) + `releasePartnershipAction` (gated on zero completed assigned records) + `clearClaimedPartnershipToken()` (un-binds the device locally). New "Release This Partnership" button in `PublisherWorkspaceApp.tsx`, distinct from "End My Ministry Early" — navigates back to the batch landing page on success.
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via a temporary scratch route (mock data, removed before finishing): End Ministry shown for Claimed/Unclaimed partnerships and hidden for Done ones; Release shown with zero visits logged and correctly hidden once one visit exists.
+
+**Next recommended task:** Russell (1) confirms ending a partner's ministry from the Partners tab actually stops their session, (2) claims a partnership, releases it, and confirms it shows back up as "Unclaimed" for re-claiming, (3) confirms Release disappears once a visit is logged.
+
+----------------------------------------
+
+**Territory Management System — Overflow search-scope redesign: partnership-level choice, real overlap-prevention, colored map pins (2026-07-17) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, migration 026 NOT yet run by Russell (drops migration 025's table), not committed — see checkpoint `territory-management-partnership-search-scope-redesign-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Corrects this same session's earlier overflow search-scope feature (batch-level, Group-Leader-picks-it) after Russell reviewed it live: the choice moves to each **Ministry Partner**, made once after claiming their partnership, locked forever after — and that lock is what actually prevents two pairs covering the same block (the batch-level version never enforced that). Confirmed via 3 questions: overlap-prevention blocks a taken block congregation-wide for the day; keep the existing read-only records list *and* add colored pins; migration 025 had no real data yet, safe to supersede.
+
+Current Status: Code complete, migration not yet run (this migration drops migration 025's table).
+- **Group Leader side reverted**: `OverflowAssignmentForm.tsx` lost the "Narrow to a search area" step entirely — back to plain territory + publisher/group-size generation. `createOverflowAssignmentSchema`, `createAssignment()`'s `searchScope` param, and the now-dead `getBlockRecordCounts()` all removed.
+- **New migration `026_partnership_search_blocks.sql`**: drops `assignment_batch_search_blocks` (025), adds `partnership_search_blocks` — its `unique(block_id, assignment_date)` constraint is the real overlap-prevention mechanism, congregation-wide per day.
+- **New required one-time step**: `ChooseSearchScopeForm.tsx` — after claiming, an overflow partnership must pick one section + blocks (already-taken ones shown disabled) before anything else in the workspace appears (mirrors the existing unclaimed-state gating). New `chooseSearchScopeAction`/`lockPartnershipSearchBlocks()` catch a real DB unique-violation as the race-condition safety net, surfaced as a friendly "just claimed by another partner" message. Called directly, not through the offline sync queue (needs a live availability check).
+- **Add Record form locked**: `PublisherRecordForm.tsx` gained a `lockedScope` prop — territory/section become fixed text, block choice narrows to the partnership's own locked blocks. `addPublisherRecordAction` re-validates server-side.
+- **Blue/red map pins**: `HouseholdDistributionMap.tsx` takes an optional per-pin `color` (default blue, every existing call site unaffected); the Search Area map now shows existing records blue and this partnership's own added records red (small inline SVG marker, no new external dependency).
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via a temporary scratch route (mock data, removed before finishing): no search-area step on the Group Leader form; a claimed overflow partnership sees only the search-area picker with a pre-taken block correctly disabled; once locked, the full workspace unlocks with the Add Record form's fixed territory/section text and narrowed block dropdown; the Search Area map showed one blue and one red marker, confirmed by inspecting each marker's icon source.
+
+**Next recommended task:** Not committed. Russell (1) applies migration 026 in the TMS Supabase SQL editor, (2) generates a plain overflow batch and confirms no search-area step, (3) claims a partnership and confirms the required search-area step blocks everything else, (4) with two partnerships confirms the second sees the first's blocks as "Already claimed," (5) confirms the locked Add Record form and the blue/red map pins. Then commit + deploy at Russell's request.
+
+----------------------------------------
+
+**Territory Management System — TGL Home Generate/Regenerate toggle, territory map lightbox fix, header logout, Publisher workspace regrouping (2026-07-17) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, no migrations needed, not committed — see checkpoint `territory-management-tgl-publisher-ui-polish-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Five UI polish requests from Russell after real use: (1) a Generate/Regenerate toggle on the Group Leader Home tab (hidden by default, even after a refresh) instead of always stacking both forms; (2) the territory map lightbox was rendering at native size with an invisible/unclickable close "X"; (3) Group Leader "Log out" moved from the dashboard footer to the top header, right side; (4) Publisher workspace's "End My Ministry Early" moved up next to the map toggle as its own red group instead of sitting at the very bottom; (5) the redundant "+ Add a New Contact Record" button removed from the main Assigned Contact Records list (the copy inside "My Added Records," reachable via the bottom nav icon, is now the only entry point).
+
+Current Status: Code complete, no migrations needed (this batch is UI-only).
+- **Generate/Regenerate toggle**: `GroupLeaderTabs.tsx` gained `assignmentAction: 'generate' | 'regenerate' | null` state, defaulting to `null` (neither form shown) — deliberately different from the map-view toggles elsewhere in this codebase, which auto-select a first tab.
+- **Territory map lightbox fix**: `TerritoryMapViewer.tsx`'s fullscreen image now uses `max-h-full max-w-full object-contain` (scales to fit viewport) instead of native-size `max-w-none`; the close button now renders after the image in the DOM with an explicit `z-10`, so it can never be painted over.
+- **Header logout**: `group-leader/dashboard/layout.tsx` — `signOut` form moved into the existing `<header>`, right-aligned (`ml-auto`), label hidden below `sm:`.
+- **End Ministry Early regrouped**: moved from the bottom of `PublisherWorkspaceApp.tsx`'s card-list section to its own group directly after the Territory Map / Assigned Records / Search Area toggle.
+- **Redundant Add Record button removed**: gone from the main Assigned Contact Records list; the identical button inside "My Added Records" (bottom-nav `ClipboardPlus` icon) is untouched and is the only add-record path now.
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via a temporary scratch route (mock data, removed before finishing): toggle starts collapsed and expands/collapses on click; lightbox (tested against a deliberately oversized 2000×3000 mock image) scales to fit with the close button visible/clickable on top; End Ministry Early renders as its own red group right after the map toggle; Assigned Contact Records has no trailing Add Record button while My Added Records still has its own. Header-logout relocation is a simple JSX move behind Group Leader auth this sandbox can't authenticate into — confirmed by file read + clean tsc/build, not independently screenshot-verified.
+
+**Next recommended task:** Not committed. Russell (1) confirms Log out now sits top-right in the real Group Leader header, (2) spot-checks the Home tab toggle, a real territory map's lightbox, End Ministry Early's new position, and that adding a new contact record still works via My Added Records. No migrations pending — safe to commit/deploy whenever ready.
+
+----------------------------------------
+
 **Territory Management System — Navy overflow QR, cross-batch record passing, search-scope overflow assignments, pin popup fallback (2026-07-17) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, migration 025 NOT yet run by Russell, not committed — see checkpoint `territory-management-overflow-cross-batch-search-scope-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

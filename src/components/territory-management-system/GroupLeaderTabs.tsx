@@ -23,9 +23,8 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import type { BatchStats } from '@/lib/territory-management-system/modules/reports/queries'
-import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
-import { deleteGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
+import { deleteGroupLeaderAssignmentAction, endPartnershipAction } from '@/app/territory-management-system/actions/group-leader'
 import StatCard from '@/components/territory-management-system/dashboard/StatCard'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'
@@ -61,16 +60,15 @@ export default function GroupLeaderTabs({
   batches,
   activeTerritories,
   todaysTerritories,
-  todaysTerritoryStructures,
-  blockRecordCounts,
 }: {
   batches: BatchView[]
   activeTerritories: { id: string; name: string; barangayName: string; approvedCount: number }[]
   todaysTerritories: { id: string; name: string; barangayName: string }[]
-  todaysTerritoryStructures: TerritoryStructure[]
-  blockRecordCounts: Record<string, number>
 }) {
   const [tab, setTab] = useState<Tab>('home')
+  // Home tab's Generate/Regenerate toggle — deliberately starts at null (neither shown), even
+  // right after a page refresh, so the tab opens clean instead of always stacking both forms.
+  const [assignmentAction, setAssignmentAction] = useState<'generate' | 'regenerate' | null>(null)
   const [selectedBatchId, setSelectedBatchId] = useState(batches[0]?.batchId)
   const selected = batches.find((b) => b.batchId === selectedBatchId) ?? batches[0]
   const { batchId, qrDataUrl, publicUrl, requestedPartnershipCount, isOverflow, stats } = selected
@@ -237,27 +235,53 @@ export default function GroupLeaderTabs({
             </div>
           )}
 
-          {todaysTerritories.length > 0 && (
-            <div className="mx-auto max-w-md text-center">
-              <h2 className="mb-1 font-semibold text-[#0B1B33]">Generate Overflow Assignment</h2>
-              <p className="mb-4 text-xs text-slate-500">
-                For extra publishers when a territory has more people than the original assignment had room for. Adds a new,
-                separate QR code — today&apos;s existing assignment(s) are untouched.
-              </p>
-              <OverflowAssignmentForm
-                territories={todaysTerritories}
-                territoryStructures={todaysTerritoryStructures}
-                blockRecordCounts={blockRecordCounts}
-              />
-            </div>
-          )}
-
           <div className="mx-auto max-w-md text-center">
-            <h2 className="mb-4 font-semibold text-[#0B1B33]">Regenerate Assignment</h2>
-            <p className="mb-4 text-xs text-slate-500">
-              Replaces every one of today&apos;s assignments (all batches) with a brand new one.
-            </p>
-            <AssignmentForm territories={activeTerritories} hasExistingBatch={true} />
+            {/* Simple view: a toggle instead of always stacking both forms — neither is shown
+                until the Group Leader deliberately picks one, including right after a refresh
+                (no default selection), so the Home tab stays uncluttered day to day. */}
+            <div className="inline-flex rounded-full bg-blue-50 p-1">
+              {todaysTerritories.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setAssignmentAction((a) => (a === 'generate' ? null : 'generate'))}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                    assignmentAction === 'generate' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
+                  }`}
+                >
+                  Generate
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setAssignmentAction((a) => (a === 'regenerate' ? null : 'regenerate'))}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                  assignmentAction === 'regenerate' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
+                }`}
+              >
+                Regenerate
+              </button>
+            </div>
+
+            {assignmentAction === 'generate' && todaysTerritories.length > 0 && (
+              <div className="mt-4">
+                <h2 className="mb-1 font-semibold text-[#0B1B33]">Generate Overflow Assignment</h2>
+                <p className="mb-4 text-xs text-slate-500">
+                  For extra publishers when a territory has more people than the original assignment had room for. Adds a new,
+                  separate QR code — today&apos;s existing assignment(s) are untouched.
+                </p>
+                <OverflowAssignmentForm territories={todaysTerritories} />
+              </div>
+            )}
+
+            {assignmentAction === 'regenerate' && (
+              <div className="mt-4">
+                <h2 className="mb-4 font-semibold text-[#0B1B33]">Regenerate Assignment</h2>
+                <p className="mb-4 text-xs text-slate-500">
+                  Replaces every one of today&apos;s assignments (all batches) with a brand new one.
+                </p>
+                <AssignmentForm territories={activeTerritories} hasExistingBatch={true} />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -288,7 +312,7 @@ export default function GroupLeaderTabs({
         </div>
       )}
 
-      {tab === 'progress' && <PartnershipList partnerships={stats.partnerships} />}
+      {tab === 'progress' && <PartnershipList partnerships={stats.partnerships} onEndPartnership={endPartnershipAction} />}
     </div>
   )
 }

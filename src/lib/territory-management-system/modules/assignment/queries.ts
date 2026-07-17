@@ -153,12 +153,6 @@ export async function createAssignment(
     // the territory-conflict check below to allow reusing a territory THIS SAME Group Leader
     // already covers today (still blocks a different Group Leader's territory).
     forceZeroRecords?: boolean
-    // Overflow-assignment path only, optional: narrows the "go canvass" batch to one section +
-    // a chosen set of blocks within it (see 025_overflow_search_scope.sql), so the publisher
-    // workspace can show whatever already exists there (read-only) instead of an unscoped
-    // territory-wide search. Re-verified below the same way territoryIds is — a client-supplied
-    // section/block id is never trusted outright.
-    searchScope?: { sectionId: string; blockIds: string[] }
   }
 ): Promise<CreateAssignmentResult | AssignmentError> {
   // The territory checkboxes are ordinary client-editable form values — confirm every
@@ -173,31 +167,6 @@ export async function createAssignment(
   const ownedById = new Map((ownedTerritories ?? []).map((t) => [t.id as string, t.name as string]))
   const territoryIds = input.territoryIds.filter((id) => ownedById.has(id))
   if (territoryIds.length === 0) return { error: 'Select at least one valid territory.' }
-
-  // A search scope only ever makes sense against exactly one territory (a section belongs to
-  // one territory) — re-verified here rather than trusted from the client picker, same as every
-  // other client-supplied parent id in this file. A block that doesn't actually belong to the
-  // submitted section (or that section to the submitted territory) silently drops out rather
-  // than erroring the whole batch — matches the file's existing "filter out anything invalid"
-  // tone for territoryIds itself, just above.
-  let validSearchBlockIds: string[] = []
-  if (input.searchScope && input.searchScope.blockIds.length > 0 && territoryIds.length === 1) {
-    const { data: section } = await supabase
-      .from('territory_sections')
-      .select('id')
-      .eq('congregation_id', congregationId)
-      .eq('territory_id', territoryIds[0])
-      .eq('id', input.searchScope.sectionId)
-      .maybeSingle()
-    if (section) {
-      const { data: blocks } = await supabase
-        .from('territory_blocks')
-        .select('id')
-        .eq('section_id', input.searchScope.sectionId)
-        .in('id', input.searchScope.blockIds)
-      validSearchBlockIds = (blocks ?? []).map((b) => b.id as string)
-    }
-  }
 
   // No two Group Leaders' active batches on the same day may cover the same territory —
   // confirmed with Russell: a hard block with a clear error, not a silent auto-filter. The
@@ -238,18 +207,6 @@ export async function createAssignment(
     territoryIds.map((territoryId) => ({ congregation_id: congregationId, batch_id: batchId, territory_id: territoryId }))
   )
   if (territoriesError) return { error: territoriesError.message }
-
-  if (validSearchBlockIds.length > 0 && input.searchScope) {
-    const { error: searchBlocksError } = await supabase.from('assignment_batch_search_blocks').insert(
-      validSearchBlockIds.map((blockId) => ({
-        congregation_id: congregationId,
-        batch_id: batchId,
-        section_id: input.searchScope!.sectionId,
-        block_id: blockId,
-      }))
-    )
-    if (searchBlocksError) return { error: searchBlocksError.message }
-  }
 
   for (const partnershipPlan of plan.partnerships) {
     const { data: partnership, error: partnershipError } = await supabase
@@ -363,27 +320,84 @@ export async function getBatchSummary(
 }
 
 export interface SearchScope {
+  sectionId: string
   sectionLabel: string
-  blockLabels: string[]
-  blockIds: string[]
+  blocks: { id: string; label: string }[]
 }
 
-// The section/blocks a Group Leader narrowed an overflow batch to (see
-// 025_overflow_search_scope.sql), if any — null for every other batch, including an unscoped
-// overflow batch searching its whole territory. Shared by getPartnershipByToken and the
+// The section/blocks THIS Ministry Partner locked in for their overflow search area (see
+// 026_partnership_search_blocks.sql) — a one-time choice made after claiming, not the Group
+// Leader's (that's what 025_overflow_search_scope.sql tried and Russell corrected: a batch-level
+// choice can't enforce "no two pairs cover the same block," only a per-partnership one with a
+// real DB constraint can). Null until chosen. Shared by getPartnershipByToken and the
 // publisher's manual "Refresh" action, so both read the same live state.
-export async function getSearchScopeForBatch(supabase: SupabaseClient, batchId: string): Promise<SearchScope | null> {
+export async function getSearchScopeForPartnership(supabase: SupabaseClient, partnershipId: string): Promise<SearchScope | null> {
   const { data } = await supabase
-    .from('assignment_batch_search_blocks')
-    .select('section:territory_sections(label), block:territory_blocks(id, label)')
-    .eq('batch_id', batchId)
-  const rows = (data ?? []) as unknown as { section: { label: string } | null; block: { id: string; label: string } | null }[]
+    .from('partnership_search_blocks')
+    .select('section_id, section:territory_sections(label), block:territory_blocks(id, label)')
+    .eq('partnership_id', partnershipId)
+  const rows = (data ?? []) as unknown as { section_id: string; section: { label: string } | null; block: { id: string; label: string } | null }[]
   if (rows.length === 0) return null
   return {
+    sectionId: rows[0].section_id,
     sectionLabel: rows[0].section?.label ?? '',
-    blockLabels: rows.map((r) => r.block?.label ?? '').filter(Boolean),
-    blockIds: rows.map((r) => r.block?.id).filter((id): id is string => Boolean(id)),
+    blocks: rows.map((r) => r.block).filter((b): b is { id: string; label: string } => Boolean(b)),
   }
+}
+
+// Every block already locked in by ANY partnership congregation-wide today — feeds
+// ChooseSearchScopeForm's disabled/"Already claimed" state. The real enforcement is the DB's
+// own unique(block_id, assignment_date) constraint on partnership_search_blocks (a race between
+// two partnerships submitting at nearly the same instant is caught there, not here) — this is
+// just what makes the picker itself show accurate options rather than a client having to
+// discover the conflict only after submitting.
+export async function getTakenBlockIdsForDate(supabase: SupabaseClient, assignmentDate: string): Promise<Set<string>> {
+  const { data } = await supabase.from('partnership_search_blocks').select('block_id').eq('assignment_date', assignmentDate)
+  return new Set((data ?? []).map((r) => r.block_id as string))
+}
+
+export interface LockSearchBlocksResult {
+  ok: boolean
+  error?: string
+}
+
+// Locks in a partnership's one-time search-area choice — the caller (chooseSearchScopeAction)
+// has already verified the section belongs to one of the batch's territories; this re-verifies
+// every submitted block actually belongs to that section (never trusting the client) before
+// inserting. The DB's own unique(block_id, assignment_date) constraint is the real
+// race-condition safety net — two partnerships could both pass an app-level availability check
+// an instant apart, so a unique-violation on insert is caught here and turned into a friendly
+// message instead of a raw DB error.
+export async function lockPartnershipSearchBlocks(
+  supabase: SupabaseClient,
+  congregationId: string,
+  partnershipId: string,
+  sectionId: string,
+  blockIds: string[],
+  assignmentDate: string
+): Promise<LockSearchBlocksResult> {
+  const { data: blocks } = await supabase.from('territory_blocks').select('id').eq('section_id', sectionId).in('id', blockIds)
+  const validBlockIds = (blocks ?? []).map((b) => b.id as string)
+  if (validBlockIds.length === 0) return { ok: false, error: 'Choose at least one valid block.' }
+
+  const { error } = await supabase.from('partnership_search_blocks').insert(
+    validBlockIds.map((blockId) => ({
+      congregation_id: congregationId,
+      partnership_id: partnershipId,
+      section_id: sectionId,
+      block_id: blockId,
+      assignment_date: assignmentDate,
+    }))
+  )
+  if (error) {
+    // Postgres unique_violation — someone else locked one of these blocks between the picker
+    // loading takenBlockIds and this submission landing.
+    if (error.code === '23505') {
+      return { ok: false, error: 'One or more of these blocks were just claimed by another partner — please pick different ones.' }
+    }
+    return { ok: false, error: error.message }
+  }
+  return { ok: true }
 }
 
 // Resolves a batch by its raw id — used by movePartnershipRecordAction to check whether a
@@ -463,9 +477,17 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
 
   const siblingPartnerships = await getGroupLeaderPartnershipsForDate(supabase, batch as AssignmentBatch, partnership.id)
   const addedRecords = await listRecordsAddedByPartnership(supabase, partnership.id)
-  const rawSearchScope = await getSearchScopeForBatch(supabase, partnership.batch_id)
-  const searchScope = rawSearchScope ? { sectionLabel: rawSearchScope.sectionLabel, blockLabels: rawSearchScope.blockLabels } : null
-  const searchScopeRecords = rawSearchScope ? await getRecordsInBlocks(supabase, partnership.congregation_id, rawSearchScope.blockIds) : []
+  const searchScope = await getSearchScopeForPartnership(supabase, partnership.id)
+  const searchScopeRecords = searchScope
+    ? await getRecordsInBlocks(supabase, partnership.congregation_id, searchScope.blocks.map((b) => b.id))
+    : []
+  // Only meaningful (and only fetched) for an overflow partnership that hasn't picked a scope
+  // yet — feeds ChooseSearchScopeForm's disabled state. Every other partnership never renders
+  // that form, so there's nothing for this to do for them.
+  const takenBlockIds =
+    (batch as AssignmentBatch).is_overflow && !searchScope
+      ? [...(await getTakenBlockIdsForDate(supabase, (batch as AssignmentBatch).assignment_date))]
+      : []
 
   return {
     ...(partnership as Partnership),
@@ -478,6 +500,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     addedRecords,
     searchScope,
     searchScopeRecords,
+    takenBlockIds,
   }
 }
 
@@ -576,6 +599,20 @@ export async function renamePartnership(supabase: SupabaseClient, partnershipId:
   if (claimedRow) return
 
   const { error } = await supabase.from('partnerships').update({ name }).eq('id', partnershipId)
+  if (error) throw error
+}
+
+// "Release" — a change of mind, not ending the ministry. Resets the partnership back to its
+// pristine unclaimed state (null claimed_at, name back to the auto-generated default) so it
+// shows up as available again on the batch landing page for anyone (including a different
+// device) to claim. Deliberately distinct from terminatePartnershipEarly: that marks a real
+// day's work as cut short; this undoes a claim that never became real work in the first place —
+// releasePartnershipAction only allows it while zero records have been visited.
+export async function releasePartnership(supabase: SupabaseClient, partnershipId: string, sequence: number): Promise<void> {
+  const { error } = await supabase
+    .from('partnerships')
+    .update({ claimed_at: null, name: `Ministry Partner ${sequence}` })
+    .eq('id', partnershipId)
   if (error) throw error
 }
 

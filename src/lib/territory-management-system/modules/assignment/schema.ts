@@ -18,22 +18,23 @@ export const createAssignmentSchema = z.object({
 })
 export type CreateAssignmentInput = z.input<typeof createAssignmentSchema>
 
-// Overflow assignment's optional "narrow to a search area" step — only offered once exactly
-// one territory is selected. Both fields are optional (an overflow batch with neither behaves
-// exactly as before, an unscoped search across the whole territory); when present, every block
-// must belong to the submitted section (re-verified server-side in createOverflowAssignmentAction,
-// not trusted from the client picker).
-export const createOverflowAssignmentSchema = createAssignmentSchema.extend({
-  searchSectionId: z.string().uuid().optional(),
-  searchBlockIds: z.array(z.string().uuid()).optional().default([]),
-})
-export type CreateOverflowAssignmentInput = z.input<typeof createOverflowAssignmentSchema>
-
 export const renamePartnershipSchema = z.object({
   partnershipToken: z.string().min(1),
   name: z.string().min(1).max(60),
 })
 export type RenamePartnershipInput = z.input<typeof renamePartnershipSchema>
+
+// A Ministry Partner's one-time search-area choice for an overflow batch (see
+// 026_partnership_search_blocks.sql / chooseSearchScopeAction) — one section, one or more
+// blocks within it. Territory isn't submitted here: it's derived server-side from which section
+// the client picked (the action re-verifies that section belongs to one of the batch's own
+// territories, same "never trust a client-supplied parent id" rule as everywhere else).
+export const chooseSearchScopeSchema = z.object({
+  partnershipToken: z.string().min(1),
+  sectionId: z.string().uuid(),
+  blockIds: z.array(z.string().uuid()).min(1, 'Choose at least one block.'),
+})
+export type ChooseSearchScopeInput = z.input<typeof chooseSearchScopeSchema>
 
 // initialResult/initialConductorName/initialNotes optionally seed the new record's very first
 // visit at creation time — same idea and validation rules as records/schema.ts's
@@ -89,6 +90,13 @@ export const terminatePartnershipEarlySchema = z.object({
   partnershipToken: z.string().min(1),
 })
 export type TerminatePartnershipEarlyInput = z.input<typeof terminatePartnershipEarlySchema>
+
+// A "change of mind" undo of a claim, not ending the ministry — see releasePartnershipAction,
+// only allowed while zero of the partnership's assigned records have been visited yet.
+export const releasePartnershipSchema = z.object({
+  partnershipToken: z.string().min(1),
+})
+export type ReleasePartnershipInput = z.input<typeof releasePartnershipSchema>
 
 // Sent from the note screen's Skip/Send handlers — reachable from both the normal Sync &
 // Finish path and the End Early path, since both route through that screen.

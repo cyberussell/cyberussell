@@ -11,7 +11,7 @@ import 'leaflet/dist/leaflet.css'
 // Leaflet's default marker icon references image files by a relative path that breaks under
 // most bundlers (including Next.js) — the standard workaround is pointing it at a CDN copy of
 // the same icon images leaflet itself ships, rather than trying to bundle them locally.
-const markerIcon = L.icon({
+const blueMarkerIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -19,6 +19,22 @@ const markerIcon = L.icon({
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
+})
+
+// Red variant — used to distinguish a publisher's own newly-added (still pending Admin
+// approval) records from existing/pre-assigned ones on the overflow search-area map. A small
+// inline SVG data URI rather than a second CDN image: this codebase already leans on unpkg for
+// the default blue marker, and a color swap doesn't justify a second, less-maintained external
+// asset source — same geometry as the blue marker above so both align identically on the map.
+const redMarkerSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41">
+  <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 9.4 12.5 28.5 12.5 28.5s12.5-19.1 12.5-28.5C25 5.6 19.4 0 12.5 0z" fill="#DC2626" stroke="#7F1D1D" stroke-width="1"/>
+  <circle cx="12.5" cy="12.5" r="5" fill="#FFFFFF"/>
+</svg>`
+const redMarkerIcon = L.icon({
+  iconUrl: `data:image/svg+xml,${encodeURIComponent(redMarkerSvg)}`,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
 })
 
 const openLocationCode = new OpenLocationCode()
@@ -31,9 +47,10 @@ interface Pin {
   residentName: string
   plusCode: string
   territoryName: string
+  color: 'blue' | 'red'
 }
 
-function toPin(r: RecordLocation, code: string): Pin {
+function toPin(r: RecordLocation & { color?: 'blue' | 'red' }, code: string): Pin {
   const area = openLocationCode.decode(code)
   return {
     id: r.id,
@@ -43,6 +60,7 @@ function toPin(r: RecordLocation, code: string): Pin {
     residentName: r.residentName,
     plusCode: r.plusCode,
     territoryName: r.territoryName,
+    color: r.color ?? 'blue',
   }
 }
 
@@ -56,9 +74,9 @@ function toPin(r: RecordLocation, code: string): Pin {
 // then use their average position (any other record in the same congregation is geographically
 // close enough to be a valid reference — recoverNearest only needs to be within ~55km) to
 // recover the short codes too.
-function decodePins(records: RecordLocation[]): Pin[] {
+function decodePins(records: (RecordLocation & { color?: 'blue' | 'red' })[]): Pin[] {
   const fullPins: Pin[] = []
-  const shortRecords: RecordLocation[] = []
+  const shortRecords: (RecordLocation & { color?: 'blue' | 'red' })[] = []
   for (const r of records) {
     if (!openLocationCode.isValid(r.plusCode)) continue
     if (openLocationCode.isFull(r.plusCode)) {
@@ -93,7 +111,14 @@ function decodePins(records: RecordLocation[]): Pin[] {
   return [...fullPins, ...recoveredPins]
 }
 
-export default function HouseholdDistributionMap({ records }: { records: RecordLocation[] }) {
+export default function HouseholdDistributionMap({
+  records,
+}: {
+  // color defaults to blue (existing behavior, every current call site) — an overflow
+  // partnership's search-area map is the one place that passes 'red' for its own newly-added,
+  // still-pending-approval records, to distinguish them from existing/pre-assigned ones.
+  records: (RecordLocation & { color?: 'blue' | 'red' })[]
+}) {
   const pins = useMemo(() => decodePins(records), [records])
 
   if (pins.length === 0) {
@@ -117,7 +142,7 @@ export default function HouseholdDistributionMap({ records }: { records: RecordL
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {pins.map((pin) => (
-          <Marker key={pin.id} position={[pin.lat, pin.lng]} icon={markerIcon}>
+          <Marker key={pin.id} position={[pin.lat, pin.lng]} icon={pin.color === 'red' ? redMarkerIcon : blueMarkerIcon}>
             <Popup>
               {/* Falls back through resident name, then Plus Code, before giving up — a record
                   with no address on file is still identifiable if it has either of those. */}

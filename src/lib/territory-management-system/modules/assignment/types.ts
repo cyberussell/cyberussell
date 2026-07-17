@@ -87,12 +87,16 @@ export interface PartnershipWorkspace extends Partnership {
   // pending Admin review, but visible/editable/deletable by the publisher until their ministry
   // session ends (see created_by_partnership_id on TerritoryRecord).
   addedRecords: TerritoryRecordWithLocation[]
-  // Set only for an overflow batch whose Group Leader narrowed it to a specific section +
-  // blocks (see 025_overflow_search_scope.sql) — null for every other batch (including an
-  // unscoped overflow batch searching its whole territory).
-  searchScope: { sectionLabel: string; blockLabels: string[] } | null
+  // Set only once THIS partnership has locked in their own search area (section + blocks,
+  // one-time — see 026_partnership_search_blocks.sql and ChooseSearchScopeForm) — null until
+  // then, and null forever for a non-overflow partnership (they never see that step at all).
+  searchScope: { sectionId: string; sectionLabel: string; blocks: { id: string; label: string }[] } | null
   // Whatever records already exist in that search scope, read-only (see getRecordsInBlocks) —
   // shown so a publisher searching the area doesn't create a duplicate for a household someone
   // already logged. Always empty when searchScope is null.
   searchScopeRecords: TerritoryRecordWithLocation[]
+  // Every block already locked in by any partnership congregation-wide today — only populated
+  // (and only meaningful) for an overflow partnership that hasn't chosen a scope yet, to feed
+  // ChooseSearchScopeForm's disabled/"Already claimed" state. Always empty otherwise.
+  takenBlockIds: string[]
 }

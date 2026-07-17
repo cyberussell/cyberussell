@@ -60,17 +60,23 @@ export default function TerritoryMapViewer({
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setOpen(false)}>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            aria-label="Close"
-            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
-          >
-            <X className="h-5 w-5" />
-          </button>
-          <div className="max-h-full max-w-full overflow-auto" onClick={(e) => e.stopPropagation()}>
+          {/* Image is scaled to fit the viewport (object-contain within a full-size box) instead
+              of rendering at native resolution — a large map image used to render bigger than
+              the screen with only a scrollable overflow, which also visually covered the close
+              button (same stacking context, later in paint order) since it could stretch right
+              over the top-right corner. The close button now renders after the image in the DOM
+              with an explicit z-index, so it always paints on top and stays clickable. */}
+          <div className="relative flex h-full w-full items-center justify-center" onClick={(e) => e.stopPropagation()}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={mapImageUrl} alt={`${territoryName} map`} className="max-w-none" />
+            <img src={mapImageUrl} alt={`${territoryName} map`} className="max-h-full max-w-full object-contain" />
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close"
+              className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
         </div>
       )}

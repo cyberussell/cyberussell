@@ -43,18 +43,31 @@ export default function PublisherRecordForm({
   onCancel,
   mode = 'add',
   initialValues,
+  lockedScope,
 }: {
   territories: TerritoryStructure[]
   onSubmit: (payload: NewPublisherRecordPayload) => void
   onCancel: () => void
   mode?: 'add' | 'edit'
   initialValues?: Partial<Omit<NewPublisherRecordPayload, 'initialResult' | 'initialConductorName' | 'initialNotes'>>
+  // Set for an overflow Ministry Partner who has already locked in a search area (see
+  // ChooseSearchScopeForm) — territory/section become fixed (shown as plain text, not
+  // choosable) and the block choice narrows to just the blocks they locked in, since they may
+  // only add records within their own search area.
+  lockedScope?: {
+    territoryId: string
+    territoryName: string
+    sectionId: string
+    sectionLabel: string
+    blocks: { id: string; label: string }[]
+  }
 }) {
-  const [territoryId, setTerritoryId] = useState(initialValues?.territoryId ?? territories[0]?.id ?? '')
+  const [territoryId, setTerritoryId] = useState(lockedScope?.territoryId ?? initialValues?.territoryId ?? territories[0]?.id ?? '')
   const territory = territories.find((t) => t.id === territoryId)
-  const [sectionId, setSectionId] = useState(initialValues?.sectionId ?? territory?.sections[0]?.id ?? '')
+  const [sectionId, setSectionId] = useState(lockedScope?.sectionId ?? initialValues?.sectionId ?? territory?.sections[0]?.id ?? '')
   const section = territory?.sections.find((s) => s.id === sectionId)
-  const [blockId, setBlockId] = useState(initialValues?.blockId ?? section?.blocks[0]?.id ?? '')
+  const blockOptions = lockedScope ? lockedScope.blocks : (section?.blocks ?? [])
+  const [blockId, setBlockId] = useState(initialValues?.blockId ?? blockOptions[0]?.id ?? '')
   const [address, setAddress] = useState(initialValues?.address ?? '')
   const [unit, setUnit] = useState(initialValues?.unit ?? '')
   const [residentName, setResidentName] = useState(initialValues?.residentName ?? '')
@@ -125,47 +138,65 @@ export default function PublisherRecordForm({
     })
   }
 
-  if (!territory) return null
+  if (!territory && !lockedScope) return null
 
   return (
     <Card className="p-6">
       <h2 className="mb-1 font-semibold text-[#0B1B33]">{mode === 'edit' ? 'Edit Contact Record' : 'Add a New Contact Record'}</h2>
       <p className="mb-4 text-xs text-slate-500">
-        {mode === 'edit'
-          ? 'Still pending Admin review — you can keep editing until you end your ministry for today.'
-          : "You'll see it under My Added Records right away — still pending Admin review before it's used in a future assignment."}
+        {lockedScope
+          ? "Only within your locked search area — you'll see it under My Added Records right away, still pending Admin review."
+          : mode === 'edit'
+            ? 'Still pending Admin review — you can keep editing until you end your ministry for today.'
+            : "You'll see it under My Added Records right away — still pending Admin review before it's used in a future assignment."}
       </p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {territories.length > 1 && (
+          {lockedScope ? (
             <FormField label="Territory">
-              <select value={territoryId} onChange={(e) => handleTerritoryChange(e.target.value)} className={inputClass}>
-                {territories.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
+              <p className="mt-1 rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-sm text-[#0B1B33]">
+                {lockedScope.territoryName}
+              </p>
+            </FormField>
+          ) : (
+            territories.length > 1 && (
+              <FormField label="Territory">
+                <select value={territoryId} onChange={(e) => handleTerritoryChange(e.target.value)} className={inputClass}>
+                  {territories.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+            )
+          )}
+          {lockedScope ? (
+            <FormField label="Section">
+              <p className="mt-1 rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-sm text-[#0B1B33]">
+                Section {lockedScope.sectionLabel}
+              </p>
+            </FormField>
+          ) : (
+            <FormField label="Section">
+              <select value={sectionId} onChange={(e) => handleSectionChange(e.target.value)} className={inputClass}>
+                {territory?.sections.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    Section {s.label}
                   </option>
                 ))}
               </select>
             </FormField>
           )}
-          <FormField label="Section">
-            <select value={sectionId} onChange={(e) => handleSectionChange(e.target.value)} className={inputClass}>
-              {territory.sections.map((s) => (
-                <option key={s.id} value={s.id}>
-                  Section {s.label}
-                </option>
-              ))}
-            </select>
-          </FormField>
         </div>
         <FormField label="Block">
           <select
             value={blockId}
             onChange={(e) => setBlockId(e.target.value)}
             className={inputClass}
-            disabled={!section || section.blocks.length === 0}
+            disabled={blockOptions.length === 0}
           >
-            {(section?.blocks ?? []).map((b) => (
+            {blockOptions.map((b) => (
               <option key={b.id} value={b.id}>
                 Block {b.label}
               </option>
@@ -276,7 +307,7 @@ export default function PublisherRecordForm({
           </button>
           <button
             type="submit"
-            disabled={!section || section.blocks.length === 0}
+            disabled={blockOptions.length === 0}
             className="flex-1 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
           >
             {mode === 'edit' ? 'Save Changes' : 'Submit Record'}

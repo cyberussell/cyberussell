@@ -1,11 +1,33 @@
+'use client'
+
+import { useTransition } from 'react'
 import type { PartnershipWithProgress } from '@/lib/territory-management-system/modules/assignment/types'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
-// Presentational and DB-free — reused by both the admin Assignment Summary page and the
-// public Progress page ("Today's Assignment Progress"), which need the identical view.
-export default function PartnershipList({ partnerships }: { partnerships: PartnershipWithProgress[] }) {
+// Presentational — reused by both the Group Leader's own Partners tab (GroupLeaderTabs, which
+// passes onEndPartnership) and the public, unauthenticated Progress page ("Today's Assignment
+// Progress", which doesn't). onEndPartnership being optional is what keeps the End Ministry
+// action off that public page — the real enforcement is server-side in endPartnershipAction
+// itself (requireGroupLeader() + ownership check), this is just what keeps the button from
+// rendering somewhere it could never work anyway.
+export default function PartnershipList({
+  partnerships,
+  onEndPartnership,
+}: {
+  partnerships: PartnershipWithProgress[]
+  onEndPartnership?: (partnershipId: string) => Promise<void>
+}) {
+  const [pending, startTransition] = useTransition()
+
   if (partnerships.length === 0) {
     return <Card className="p-8 text-center text-sm text-slate-600">No Partners yet.</Card>
+  }
+
+  function handleEnd(id: string, name: string) {
+    if (!window.confirm(`End ${name}'s ministry for today? Any records they haven't gotten to will simply stay assigned as-is.`)) return
+    startTransition(() => {
+      onEndPartnership?.(id)
+    })
   }
 
   return (
@@ -38,6 +60,16 @@ export default function PartnershipList({ partnerships }: { partnerships: Partne
               {p.completedCount} of {p.recordCount} contact records completed
               {p.recordCount - p.completedCount > 0 ? ` · ${p.recordCount - p.completedCount} remaining` : ''}
             </p>
+            {onEndPartnership && !done && (
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => handleEnd(p.id, p.name)}
+                className="mt-3 w-full rounded-lg border border-red-200 bg-white py-1.5 text-xs font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
+              >
+                End Ministry
+              </button>
+            )}
           </Card>
         )
       })}

@@ -18,19 +18,17 @@ export default async function GroupLeaderLayout({ children }: { children: React.
           <p className="truncate text-sm font-semibold text-[#0B1B33]">{congregation.name}</p>
           <p className="text-xs text-slate-400">Territory Group Leader</p>
         </div>
-      </header>
-      <main className="px-4 py-8 sm:px-8">{children}</main>
-      <div className="border-t border-blue-100/60 bg-white px-4 py-6 text-center sm:px-8">
-        <form action={signOut}>
+        <form action={signOut} className="ml-auto shrink-0">
           <button
             type="submit"
-            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 hover:bg-[#F0F6FF] hover:text-[#0B1B33]"
+            className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-500 hover:bg-[#F0F6FF] hover:text-[#0B1B33]"
           >
             <LogOut className="h-4 w-4" />
-            Log out
+            <span className="hidden sm:inline">Log out</span>
           </button>
         </form>
-      </div>
+      </header>
+      <main className="px-4 py-8 sm:px-8">{children}</main>
       <Toaster position="bottom-right" richColors />
     </div>
   )

@@ -52,18 +52,6 @@ export async function getTerritoryStructure(
   return { ...(territory as Territory), sections: sectionsWithBlocks }
 }
 
-// Per-block record counts within one territory — feeds the Overflow Assignment form's optional
-// search-area picker, which flags a block as "Empty" when it has zero records rather than
-// restricting the picker to empty blocks only (confirmed with Russell: any block is selectable).
-export async function getBlockRecordCounts(supabase: SupabaseClient, territoryId: string): Promise<Record<string, number>> {
-  const { data } = await supabase.from('territory_records').select('block_id').eq('territory_id', territoryId)
-  const counts: Record<string, number> = {}
-  for (const row of (data ?? []) as { block_id: string }[]) {
-    counts[row.block_id] = (counts[row.block_id] ?? 0) + 1
-  }
-  return counts
-}
-
 export async function createTerritoryStructure(
   supabase: SupabaseClient,
   congregationId: string,

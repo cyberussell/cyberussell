@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
@@ -13,13 +14,18 @@ import { downloadAssignment, getLocalMapImageUrl, isDownloaded } from '@/lib/ter
 import { enqueue, listQueue } from '@/lib/territory-management-system/modules/offline/queue'
 import { flushQueue } from '@/lib/territory-management-system/modules/offline/sync'
 import { useOnlineStatus } from '@/lib/territory-management-system/modules/offline/useOnlineStatus'
-import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
-import { getSearchScopeRecordsAction } from '@/app/territory-management-system/actions/publisher'
+import {
+  clearClaimedPartnershipToken,
+  getClaimedPartnershipToken,
+  setClaimedPartnershipToken,
+} from '@/lib/territory-management-system/modules/offline/claim'
+import { chooseSearchScopeAction, getSearchScopeRecordsAction, releasePartnershipAction } from '@/app/territory-management-system/actions/publisher'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
 import ConfirmModal from './ConfirmModal'
 import PartnershipRenameForm from './PartnershipRenameForm'
+import ChooseSearchScopeForm from './ChooseSearchScopeForm'
 import AssignedRecordsList from './AssignedRecordsList'
 import AddedRecordsList from './AddedRecordsList'
 import PublisherRecordDetailView from './PublisherRecordDetailView'
@@ -78,6 +84,9 @@ export default function PublisherWorkspaceApp({
   const [recommendingCorrection, setRecommendingCorrection] = useState(false)
   const [recommendingSearchScopeCorrection, setRecommendingSearchScopeCorrection] = useState(false)
   const [refreshingSearchScope, setRefreshingSearchScope] = useState(false)
+  const [choosingSearchScope, setChoosingSearchScope] = useState(false)
+  const [searchScopeChoiceError, setSearchScopeChoiceError] = useState('')
+  const [releasing, setReleasing] = useState(false)
   const [deletingAddedRecord, setDeletingAddedRecord] = useState(false)
   const [queue, setQueue] = useState<SyncQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
@@ -89,9 +98,10 @@ export default function PublisherWorkspaceApp({
   // Which branded confirm dialog (see ConfirmModal) is currently open, replacing
   // window.confirm() — its "www.cyberussell.com says" chrome reads as an unfamiliar browser
   // warning to a publisher in the field, not a TMS-branded prompt.
-  const [confirmDialog, setConfirmDialog] = useState<{ type: 'terminate' } | { type: 'deleteAddedRecord'; recordId: string } | null>(
-    null
-  )
+  const [confirmDialog, setConfirmDialog] = useState<
+    { type: 'terminate' } | { type: 'deleteAddedRecord'; recordId: string } | { type: 'release' } | null
+  >(null)
+  const router = useRouter()
   const online = useOnlineStatus()
   // Several call sites can each decide "we're online, sync now" in quick succession (a form
   // submit's own trigger, plus the reconnect effect) — without this, two overlapping
@@ -124,6 +134,10 @@ export default function PublisherWorkspaceApp({
   // Same rule PublisherRecordDetailView applies internally for assigned records — reused here
   // to gate the "Add a New Contact Record" button and the added-records Edit/Delete actions.
   const editable = !readOnly && !sessionEnded
+  // "Release" (a change of mind, not ending the ministry) is only offered while zero visits
+  // have been logged yet — the same "no real work happened yet" gate releasePartnershipAction
+  // re-checks server-side. Added records don't block it (the ask is specifically about visits).
+  const canRelease = !readOnly && Boolean(workspace.claimed_at) && !sessionEnded && workspace.records.every((r) => !r.completed_at)
 
   const refreshQueue = useCallback(async () => {
     setQueue(await listQueue(partnershipToken))
@@ -341,6 +355,38 @@ export default function PublisherWorkspaceApp({
     }
   }
 
+  // The one-time, locked-in search-area choice — called directly (not through the offline sync
+  // queue) since it needs a live, real-time answer about whether these blocks are still
+  // available, same reasoning as handleRefreshSearchScope's direct call. On success, sets
+  // workspace.searchScope locally (which permanently hides this form, per the "no changing it
+  // later" rule) and immediately fetches whatever existing records are already in that area.
+  async function handleChooseSearchScope(sectionId: string, blockIds: string[]) {
+    setChoosingSearchScope(true)
+    setSearchScopeChoiceError('')
+    try {
+      const formData = new FormData()
+      formData.set('partnershipToken', partnershipToken)
+      formData.set('sectionId', sectionId)
+      blockIds.forEach((id) => formData.append('blockIds', id))
+      const result = await chooseSearchScopeAction({}, formData)
+      if (result.error && result.error !== 'SAVED') {
+        setSearchScopeChoiceError(result.error)
+        return
+      }
+      const territory = territoryStructures.find((t) => t.sections.some((s) => s.id === sectionId))
+      const section = territory?.sections.find((s) => s.id === sectionId)
+      const blocks = (section?.blocks ?? [])
+        .filter((b) => blockIds.includes(b.id))
+        .map((b) => ({ id: b.id, label: b.label }))
+      setWorkspace((w) => ({ ...w, searchScope: { sectionId, sectionLabel: section?.label ?? '', blocks } }))
+      const records = await getSearchScopeRecordsAction(partnershipToken)
+      setWorkspace((w) => ({ ...w, searchScopeRecords: records }))
+      toast.success('Search area saved.')
+    } finally {
+      setChoosingSearchScope(false)
+    }
+  }
+
   // The new record's id is generated here (not server-side) so it can be optimistically
   // rendered in "My Added Records" — and immediately made editable/deletable — before this
   // write has even synced. addPublisherRecordAction inserts under this exact id.
@@ -498,6 +544,30 @@ export default function PublisherWorkspaceApp({
     goToNote()
   }
 
+  // A change of mind, not ending the ministry — undoes this device's claim entirely so the
+  // partnership shows up as available again for anyone (including this same device) to claim
+  // fresh. Called directly (not through the offline sync queue) since it needs a live, current
+  // answer about whether any visit has actually been logged yet. On success there's nothing
+  // left for this device to show — clear its local claim and head back to the batch's partner
+  // list so a different (or the same) partnership can be picked.
+  async function handleRelease() {
+    setReleasing(true)
+    try {
+      const formData = new FormData()
+      formData.set('partnershipToken', partnershipToken)
+      const result = await releasePartnershipAction({}, formData)
+      if (result.error && result.error !== 'SAVED') {
+        toast.error(result.error)
+        return
+      }
+      clearClaimedPartnershipToken(batchToken)
+      toast.success('Partnership released.')
+      router.push(`/territory-management-system/assignment/${batchToken}`)
+    } finally {
+      setReleasing(false)
+    }
+  }
+
   function scrollToVisitForm() {
     document.getElementById('record-a-visit-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -529,16 +599,55 @@ export default function PublisherWorkspaceApp({
     plusCode: r.record.plus_code ?? '',
     territoryName: r.record.territory?.name ?? '',
   }))
-  // Pins for an overflow batch's chosen search area (see workspace.searchScopeRecords) — same
-  // shape, fed to the same map component, just a third source alongside the territory map and
-  // this partnership's own assigned records.
-  const searchScopeLocations: RecordLocation[] = workspace.searchScopeRecords.map((r) => ({
-    id: r.id,
-    address: r.address,
-    residentName: r.resident_name,
-    plusCode: r.plus_code ?? '',
-    territoryName: r.territory?.name ?? '',
-  }))
+  // Pins for an overflow batch's chosen search area — existing/pre-assigned records (blue) and
+  // this partnership's own newly-added, still-pending-Admin-approval ones (red), combined on
+  // one map so a publisher can tell "already known" from "what I just found" at a glance. Added
+  // records are filtered to this partnership's own locked blocks (should already always be true
+  // given the add-record form's own lock, but re-checked here rather than assumed).
+  const scopeBlockIds = new Set(workspace.searchScope?.blocks.map((b) => b.id) ?? [])
+  const searchScopeLocations: (RecordLocation & { color: 'blue' | 'red' })[] = [
+    ...workspace.searchScopeRecords.map((r) => ({
+      id: r.id,
+      address: r.address,
+      residentName: r.resident_name,
+      plusCode: r.plus_code ?? '',
+      territoryName: r.territory?.name ?? '',
+      color: 'blue' as const,
+    })),
+    ...workspace.addedRecords
+      .filter((r) => scopeBlockIds.has(r.block_id))
+      .map((r) => ({
+        id: r.id,
+        address: r.address,
+        residentName: r.resident_name,
+        plusCode: r.plus_code ?? '',
+        territoryName: r.territory?.name ?? '',
+        color: 'red' as const,
+      })),
+  ]
+  // An overflow partnership must lock in its search area before anything else in the workspace
+  // becomes visible — mirrors how the unclaimed state already hides everything behind the
+  // rename form. Never true for a non-overflow batch (searchScope stays permanently null for
+  // those) or once a scope has already been chosen (one-time only).
+  const needsSearchScope = !readOnly && workspace.batch.is_overflow && !workspace.searchScope
+  // Only this batch's own territories, narrowed from the full territoryStructures prop — the
+  // search-area picker can't offer a section from a territory this batch doesn't even cover.
+  const batchTerritoryStructures = territoryStructures.filter((t) => workspace.territories.some((wt) => wt.id === t.id))
+  // Once a search area is locked in, "Add a New Contact Record" narrows to it — this partner
+  // may only add records within their own scope. Undefined for every other partnership, which
+  // keeps the form's normal whole-territory behavior.
+  const addRecordLockedScope = (() => {
+    if (!workspace.searchScope) return undefined
+    const scopeTerritory = territoryStructures.find((t) => t.sections.some((s) => s.id === workspace.searchScope!.sectionId))
+    if (!scopeTerritory) return undefined
+    return {
+      territoryId: scopeTerritory.id,
+      territoryName: scopeTerritory.name,
+      sectionId: workspace.searchScope.sectionId,
+      sectionLabel: workspace.searchScope.sectionLabel,
+      blocks: workspace.searchScope.blocks,
+    }
+  })()
 
   return (
     <div className="min-h-screen bg-[#C9D8EE] px-4 pb-24 pt-8">
@@ -573,6 +682,18 @@ export default function PublisherWorkspaceApp({
           <>
             {!readOnly && <PartnershipRenameForm currentName={workspace.name} onRename={handleRename} />}
 
+            {needsSearchScope && (
+              <ChooseSearchScopeForm
+                territories={batchTerritoryStructures}
+                takenBlockIds={workspace.takenBlockIds}
+                submitting={choosingSearchScope}
+                error={searchScopeChoiceError}
+                onSubmit={handleChooseSearchScope}
+              />
+            )}
+
+            {!needsSearchScope && (
+              <>
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
               const tabs: { key: 'territory' | 'records' | 'search'; label: string; available: boolean }[] = [
@@ -639,6 +760,31 @@ export default function PublisherWorkspaceApp({
               )
             })()}
 
+            {/* Its own separate group, same level as the map toggle above — moved up from the
+                bottom of the card list so it's reachable without scrolling past everything
+                else. */}
+            {!readOnly && (
+              <div className="space-y-3">
+                {canRelease && (
+                  <button
+                    type="button"
+                    disabled={releasing}
+                    onClick={() => setConfirmDialog({ type: 'release' })}
+                    className="w-full rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 hover:bg-blue-50 disabled:opacity-50"
+                  >
+                    {releasing ? 'Releasing…' : 'Release This Partnership'}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setConfirmDialog({ type: 'terminate' })}
+                  className="w-full rounded-lg border border-red-200 bg-white py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50"
+                >
+                  End My Ministry Early
+                </button>
+              </div>
+            )}
+
             {!readOnly && allDone && (
               <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center shadow-sm">
                 <p className="text-sm font-semibold text-emerald-700">All assigned records are done!</p>
@@ -676,26 +822,7 @@ export default function PublisherWorkspaceApp({
                 </p>
               </div>
             )}
-
-            {editable && territoryStructures.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setView({ name: 'addRecord' })}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-medium text-[#2563EB] hover:border-[#38BDF8]/40"
-              >
-                <Plus className="h-4 w-4" />
-                Add a New Contact Record
-              </button>
-            )}
-
-            {!readOnly && (
-              <button
-                type="button"
-                onClick={() => setConfirmDialog({ type: 'terminate' })}
-                className="w-full rounded-lg border border-red-200 bg-white py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50"
-              >
-                End My Ministry Early
-              </button>
+              </>
             )}
           </>
         )}
@@ -721,7 +848,12 @@ export default function PublisherWorkspaceApp({
         )}
 
         {view.name === 'addRecord' && (
-          <PublisherRecordForm territories={territoryStructures} onSubmit={handleAddRecord} onCancel={() => setView({ name: 'list' })} />
+          <PublisherRecordForm
+            territories={territoryStructures}
+            lockedScope={addRecordLockedScope}
+            onSubmit={handleAddRecord}
+            onCancel={() => setView({ name: 'list' })}
+          />
         )}
 
         {view.name === 'addedRecords' && (
@@ -787,7 +919,7 @@ export default function PublisherWorkspaceApp({
         {view.name === 'searchScope' && workspace.searchScope && (
           <SearchScopeRecordsList
             sectionLabel={workspace.searchScope.sectionLabel}
-            blockLabels={workspace.searchScope.blockLabels}
+            blockLabels={workspace.searchScope.blocks.map((b) => b.label)}
             records={workspace.searchScopeRecords}
             refreshing={refreshingSearchScope}
             onRefresh={handleRefreshSearchScope}
@@ -891,6 +1023,17 @@ export default function PublisherWorkspaceApp({
         onConfirm={() => {
           if (confirmDialog?.type === 'deleteAddedRecord') handleDeleteAddedRecord(confirmDialog.recordId)
           setConfirmDialog(null)
+        }}
+        onCancel={() => setConfirmDialog(null)}
+      />
+      <ConfirmModal
+        open={confirmDialog?.type === 'release'}
+        title="Release this partnership?"
+        message="This isn't ending your ministry — it just frees this partnership back up so anyone (including you) can claim it fresh. Only available since you haven't logged a visit yet."
+        confirmLabel="Release"
+        onConfirm={() => {
+          setConfirmDialog(null)
+          handleRelease()
         }}
         onCancel={() => setConfirmDialog(null)}
       />
