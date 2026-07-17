@@ -16,6 +16,7 @@ export default function SearchScopeRecordsList({
   refreshing,
   onRefresh,
   onSelect,
+  showAreaLabel = true,
 }: {
   sectionLabel: string
   blockLabels: string[]
@@ -23,15 +24,21 @@ export default function SearchScopeRecordsList({
   refreshing: boolean
   onRefresh: () => void
   onSelect: (recordId: string) => void
+  // The caller may already show the Section/Block line as part of a page-level "Area To
+  // Search" header (see PublisherWorkspaceApp's List tab) — set false there to avoid repeating
+  // it right underneath.
+  showAreaLabel?: boolean
 }) {
   return (
     <div>
       <div className="mb-3 flex items-center justify-between gap-2">
         <div>
           <h2 className="font-semibold text-[#0B1B33]">Existing Records in This Area</h2>
-          <p className="text-xs text-slate-500">
-            Section {sectionLabel} — Block{blockLabels.length === 1 ? '' : 's'} {blockLabels.join(', ')}
-          </p>
+          {showAreaLabel && (
+            <p className="text-xs text-slate-500">
+              Section {sectionLabel} — Block{blockLabels.length === 1 ? '' : 's'} {blockLabels.join(', ')}
+            </p>
+          )}
         </div>
         <button
           type="button"

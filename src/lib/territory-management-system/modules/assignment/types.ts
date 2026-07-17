@@ -72,7 +72,7 @@ export interface PartnershipWorkspace extends Partnership {
   batch: AssignmentBatch
   congregationName: string
   records: PartnershipRecordDetail[]
-  territories: { id: string; name: string; map_image_url: string | null }[]
+  territories: { id: string; name: string; description: string; map_image_url: string | null }[]
   // Same meaning as BatchSummary.expired — checked again server-side before every
   // publisher-facing write (rename/log visit/add record), not just used for display.
   expired: boolean

@@ -469,11 +469,11 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   // one specific territory.
   const { data: batchTerritoryLinks } = await supabase
     .from('assignment_batch_territories')
-    .select('territory:territories(id, name, map_image_url)')
+    .select('territory:territories(id, name, description, map_image_url)')
     .eq('batch_id', partnership.batch_id)
-  const territories = ((batchTerritoryLinks ?? []) as unknown as { territory: { id: string; name: string; map_image_url: string | null } | null }[])
+  const territories = ((batchTerritoryLinks ?? []) as unknown as { territory: { id: string; name: string; description: string; map_image_url: string | null } | null }[])
     .map((l) => l.territory)
-    .filter((t): t is { id: string; name: string; map_image_url: string | null } => t !== null)
+    .filter((t): t is { id: string; name: string; description: string; map_image_url: string | null } => t !== null)
 
   const siblingPartnerships = await getGroupLeaderPartnershipsForDate(supabase, batch as AssignmentBatch, partnership.id)
   const addedRecords = await listRecordsAddedByPartnership(supabase, partnership.id)

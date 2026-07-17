@@ -1,60 +1,33 @@
 'use client'
 
 import Link from 'next/link'
-import { CheckCircle2, CloudOff, ClipboardCheck, ClipboardList, ClipboardPlus, Download, RefreshCw, Search, Users, type LucideIcon } from 'lucide-react'
+import { ClipboardCheck, ClipboardList, ClipboardPlus, Home, Users, type LucideIcon } from 'lucide-react'
 
 // Fixed bottom navigation for the publisher workspace, like a native app tab bar — easier to
-// reach one-handed than a top bar while out in ministry. Also folds in the two standalone
-// action cards (Download for Offline Use, Commit Today's Work) that used to sit above the
-// content, so every workspace-level action lives in one reachable place. "Record a Visit" only
+// reach one-handed than a top bar while out in ministry. Download/Sync live in a top bar
+// instead (see PublisherWorkspaceApp) — every other action lives here. "Record a Visit" only
 // appears once a record is actually open, since there's nothing to record a visit against
-// otherwise; Download/Sync only appear while `showSync` is true (hidden once already on the
-// dedicated Sync/Done screens, same as the cards they replaced).
+// otherwise.
 export default function PublisherBottomMenu({
   batchToken,
   view,
+  onGoToHome,
   onGoToRecords,
   onGoToAddedRecords,
   showAddedRecords,
-  onGoToSearchScope,
-  showSearchScope,
   onGoToVisitForm,
-  showSync,
-  downloaded,
-  onDownload,
-  online,
-  pendingCount,
-  failedCount,
-  syncing,
-  onSync,
 }: {
   batchToken: string
-  view: 'list' | 'detail' | 'addRecord' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord' | 'searchScope' | 'searchScopeDetail'
+  view: 'home' | 'list' | 'detail' | 'addRecord' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord'
+  onGoToHome: () => void
   onGoToRecords: () => void
   // Hidden while readOnly (viewing another Ministry Partner's assignment) — a publisher-added
   // record only ever belongs to the partnership that added it, same as "Add a New Contact
   // Record" itself, which is also readOnly-gated.
   onGoToAddedRecords: () => void
   showAddedRecords: boolean
-  // Only shown for an overflow batch whose Group Leader narrowed it to a search area (see
-  // PartnershipWorkspace.searchScope) — every other batch has nothing to show here.
-  onGoToSearchScope: () => void
-  showSearchScope: boolean
   onGoToVisitForm: () => void
-  showSync: boolean
-  downloaded: boolean
-  onDownload: () => void
-  online: boolean
-  pendingCount: number
-  failedCount: number
-  syncing: boolean
-  onSync: () => void
 }) {
-  const needsAttention = pendingCount > 0 || failedCount > 0
-  const syncIcon = syncing ? RefreshCw : !online ? CloudOff : RefreshCw
-  const syncLabel = syncing ? 'Syncing…' : !online ? 'Offline' : needsAttention ? 'Sync' : 'Synced'
-  const syncBadge = !syncing && needsAttention ? pendingCount + failedCount : null
-
   const items: {
     key: string
     label: string
@@ -67,29 +40,8 @@ export default function PublisherBottomMenu({
     href?: string
   }[] = []
 
-  // Download/Sync go on the left, ahead of the navigation items.
-  if (showSync) {
-    items.push({
-      key: 'download',
-      label: downloaded ? 'Downloaded' : 'Download',
-      icon: downloaded ? CheckCircle2 : Download,
-      active: downloaded,
-      disabled: downloaded,
-      onClick: onDownload,
-    })
-    items.push({
-      key: 'sync',
-      label: syncLabel,
-      icon: syncIcon,
-      active: needsAttention,
-      disabled: syncing || (pendingCount === 0 && failedCount === 0),
-      spin: syncing,
-      badge: syncBadge,
-      onClick: onSync,
-    })
-  }
-
   items.push(
+    { key: 'home', label: 'Home', icon: Home, active: view === 'home', onClick: onGoToHome },
     { key: 'partners', label: 'All Partners', icon: Users, active: false, href: `/territory-management-system/assignment/${batchToken}` },
     { key: 'records', label: 'Assigned Records', icon: ClipboardList, active: view === 'list', onClick: onGoToRecords }
   )
@@ -100,15 +52,6 @@ export default function PublisherBottomMenu({
       icon: ClipboardPlus,
       active: view === 'addedRecords' || view === 'addedRecordDetail' || view === 'editAddedRecord',
       onClick: onGoToAddedRecords,
-    })
-  }
-  if (showSearchScope) {
-    items.push({
-      key: 'searchScope',
-      label: 'Search Area',
-      icon: Search,
-      active: view === 'searchScope' || view === 'searchScopeDetail',
-      onClick: onGoToSearchScope,
     })
   }
   if (view === 'detail') {

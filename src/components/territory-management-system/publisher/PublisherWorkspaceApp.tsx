@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { PartyPopper, Plus, RefreshCw } from 'lucide-react'
+import { CheckCircle2, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
@@ -49,6 +49,7 @@ const HouseholdDistributionMap = dynamic(() => import('@/components/territory-ma
 })
 
 type View =
+  | { name: 'home' }
   | { name: 'list' }
   | { name: 'detail'; recordId: string }
   | { name: 'addRecord' }
@@ -58,7 +59,6 @@ type View =
   | { name: 'note' }
   | { name: 'sync' }
   | { name: 'done' }
-  | { name: 'searchScope' }
   | { name: 'searchScopeDetail'; recordId: string }
 
 // The offline-first app shell: everything after the initial server-rendered load happens as
@@ -76,7 +76,7 @@ export default function PublisherWorkspaceApp({
   territoryStructures: TerritoryStructure[]
 }) {
   const [workspace, setWorkspace] = useState(initialWorkspace)
-  const [view, setView] = useState<View>({ name: 'list' })
+  const [view, setView] = useState<View>({ name: 'home' })
   const [downloaded, setDownloaded] = useState(false)
   const [savingVisit, setSavingVisit] = useState(false)
   const [movingRecord, setMovingRecord] = useState(false)
@@ -336,7 +336,7 @@ export default function PublisherWorkspaceApp({
       await refreshQueue()
       if (online) await handleSync()
       toast.success('Correction recommendation sent to the Admin.')
-      setView({ name: 'searchScope' })
+      setView({ name: 'list' })
     } finally {
       setRecommendingSearchScopeCorrection(false)
     }
@@ -664,13 +664,45 @@ export default function PublisherWorkspaceApp({
       )}
 
       <div className="mx-auto max-w-lg space-y-6">
-        {readOnly && (view.name === 'list' || view.name === 'detail') && (
+        {showSessionChrome && (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={downloaded}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
+            >
+              {downloaded ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Download className="h-3.5 w-3.5" />}
+              {downloaded ? 'Downloaded' : 'Download'}
+            </button>
+            <button
+              type="button"
+              onClick={handleSync}
+              disabled={syncing || (pendingCount === 0 && failedCount === 0)}
+              className="relative flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
+            >
+              {!online && !syncing ? (
+                <CloudOff className="h-3.5 w-3.5" />
+              ) : (
+                <RefreshCw className={`h-3.5 w-3.5 ${syncing ? 'animate-spin' : ''}`} />
+              )}
+              {syncing ? 'Syncing…' : !online ? 'Offline' : pendingCount + failedCount > 0 ? 'Sync' : 'Synced'}
+              {!syncing && pendingCount + failedCount > 0 && (
+                <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white">
+                  {pendingCount + failedCount}
+                </span>
+              )}
+            </button>
+          </div>
+        )}
+
+        {readOnly && (view.name === 'home' || view.name === 'list' || view.name === 'detail') && (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-center text-sm font-medium text-amber-700 shadow-sm">
             Viewing {workspace.name}&apos;s assignment — read only.
           </div>
         )}
 
-        {view.name === 'list' && !readOnly && !workspace.claimed_at && (
+        {(view.name === 'home' || view.name === 'list') && !readOnly && !workspace.claimed_at && (
           <>
             <div className="rounded-2xl border border-gray-300 bg-white p-4 text-center text-sm text-slate-600 shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)]">
               Enter your name(s) below to begin — your assigned contact records will appear once saved.
@@ -679,23 +711,20 @@ export default function PublisherWorkspaceApp({
           </>
         )}
 
-        {view.name === 'list' && (readOnly || workspace.claimed_at) && (
+        {(view.name === 'home' || view.name === 'list') && (readOnly || workspace.claimed_at) && needsSearchScope && (
+          <ChooseSearchScopeForm
+            territories={batchTerritoryStructures}
+            takenBlockIds={workspace.takenBlockIds}
+            submitting={choosingSearchScope}
+            error={searchScopeChoiceError}
+            onSubmit={handleChooseSearchScope}
+          />
+        )}
+
+        {view.name === 'home' && (readOnly || workspace.claimed_at) && !needsSearchScope && (
           <>
             {!readOnly && <PartnershipRenameForm currentName={workspace.name} onRename={handleRename} />}
-            {!readOnly && <SharePartnershipCard batchToken={batchToken} partnershipToken={partnershipToken} />}
 
-            {needsSearchScope && (
-              <ChooseSearchScopeForm
-                territories={batchTerritoryStructures}
-                takenBlockIds={workspace.takenBlockIds}
-                submitting={choosingSearchScope}
-                error={searchScopeChoiceError}
-                onSubmit={handleChooseSearchScope}
-              />
-            )}
-
-            {!needsSearchScope && (
-              <>
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
               const tabs: { key: 'territory' | 'records' | 'search'; label: string; available: boolean }[] = [
@@ -762,9 +791,6 @@ export default function PublisherWorkspaceApp({
               )
             })()}
 
-            {/* Its own separate group, same level as the map toggle above — moved up from the
-                bottom of the card list so it's reachable without scrolling past everything
-                else. */}
             {!readOnly && (
               <div className="space-y-3">
                 {canRelease && (
@@ -787,44 +813,81 @@ export default function PublisherWorkspaceApp({
               </div>
             )}
 
-            {!readOnly && allDone && (
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center shadow-sm">
-                <p className="text-sm font-semibold text-emerald-700">All assigned records are done!</p>
-                <button
-                  type="button"
-                  onClick={goToNote}
-                  className="mt-3 w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
-                >
-                  Sync &amp; Finish
-                </button>
+            {/* Last, per Russell's ordering: name card, maps, session actions, then share. */}
+            {!readOnly && <SharePartnershipCard batchToken={batchToken} partnershipToken={partnershipToken} />}
+          </>
+        )}
+
+        {view.name === 'list' && (readOnly || workspace.claimed_at) && !needsSearchScope && (
+          <>
+            {workspace.records.length > 0 && (
+              <div>
+                <h2 className="font-semibold text-[#0B1B33]">Assigned Contact Records</h2>
+                {workspace.territories.map((t) => (
+                  <p key={t.id} className="text-xs text-slate-500">
+                    {t.name} — {t.description}
+                  </p>
+                ))}
+
+                {!readOnly && allDone && (
+                  <div className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center shadow-sm">
+                    <p className="text-sm font-semibold text-emerald-700">All assigned records are done!</p>
+                    <button
+                      type="button"
+                      onClick={goToNote}
+                      className="mt-3 w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+                    >
+                      Sync &amp; Finish
+                    </button>
+                  </div>
+                )}
+
+                <div className="mt-3">
+                  <AssignedRecordsList
+                    records={workspace.records}
+                    failedRecordIds={new Set(queue.filter((q) => q.status === 'failed' && q.payload.recordId).map((q) => q.payload.recordId))}
+                    onSelect={(recordId) => setView({ name: 'detail', recordId })}
+                  />
+                </div>
               </div>
             )}
 
-            {workspace.records.length > 0 ? (
-              <div>
-                <h2 className="mb-3 font-semibold text-[#0B1B33]">Assigned Contact Records</h2>
-                <AssignedRecordsList
-                  records={workspace.records}
-                  failedRecordIds={new Set(queue.filter((q) => q.status === 'failed' && q.payload.recordId).map((q) => q.payload.recordId))}
-                  onSelect={(recordId) => setView({ name: 'detail', recordId })}
-                />
-              </div>
-            ) : (
-              // Deliberately doesn't claim anything about how many records exist in the
-              // territory/blocks overall (that's often false — an overflow batch just means
-              // THIS partnership has zero assigned records, not that the area is empty; see
-              // workspace.searchScope for whatever already exists there) — generic wording that
-              // holds whether the real count is zero or nonzero.
+            {workspace.searchScope &&
+              (() => {
+                const scopeStructTerritory = territoryStructures.find((t) => t.sections.some((s) => s.id === workspace.searchScope!.sectionId))
+                const scopeTerritory = scopeStructTerritory ? workspace.territories.find((t) => t.id === scopeStructTerritory.id) : undefined
+                const blockLabels = workspace.searchScope.blocks.map((b) => b.label)
+                return (
+                  <div className={workspace.records.length > 0 ? 'mt-6' : ''}>
+                    <h2 className="font-semibold text-[#0B1B33]">Area To Search</h2>
+                    {scopeTerritory && (
+                      <p className="text-xs text-slate-500">
+                        {scopeTerritory.name} — {scopeTerritory.description}
+                      </p>
+                    )}
+                    <p className="text-xs text-slate-500">
+                      Section {workspace.searchScope.sectionLabel} — Block{blockLabels.length === 1 ? '' : 's'} {blockLabels.join(', ')}
+                    </p>
+                    <div className="mt-3">
+                      <SearchScopeRecordsList
+                        sectionLabel={workspace.searchScope.sectionLabel}
+                        blockLabels={blockLabels}
+                        records={workspace.searchScopeRecords}
+                        refreshing={refreshingSearchScope}
+                        onRefresh={handleRefreshSearchScope}
+                        onSelect={(recordId) => setView({ name: 'searchScopeDetail', recordId })}
+                        showAreaLabel={false}
+                      />
+                    </div>
+                  </div>
+                )
+              })()}
+
+            {workspace.records.length === 0 && !workspace.searchScope && (
               <div className="rounded-2xl border border-gray-300 bg-white p-4 text-center shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)]">
                 <p className="text-sm font-semibold text-[#0B1B33]">No contact records assigned to you.</p>
-                <p className="mt-1 text-sm text-slate-500">
-                  {workspace.searchScope
-                    ? 'This is a search assignment — check the Search Area tab for records already logged nearby, then add any new contact records you find.'
-                    : "This is a search assignment — search the area and add new contact records as you find them."}
-                </p>
+                <p className="mt-1 text-sm text-slate-500">Add any new contact records you find via My Added Records.</p>
               </div>
-            )}
-              </>
             )}
           </>
         )}
@@ -918,17 +981,6 @@ export default function PublisherWorkspaceApp({
             )
           })()}
 
-        {view.name === 'searchScope' && workspace.searchScope && (
-          <SearchScopeRecordsList
-            sectionLabel={workspace.searchScope.sectionLabel}
-            blockLabels={workspace.searchScope.blocks.map((b) => b.label)}
-            records={workspace.searchScopeRecords}
-            refreshing={refreshingSearchScope}
-            onRefresh={handleRefreshSearchScope}
-            onSelect={(recordId) => setView({ name: 'searchScopeDetail', recordId })}
-          />
-        )}
-
         {view.name === 'searchScopeDetail' &&
           (() => {
             const record = workspace.searchScopeRecords.find((r) => r.id === view.recordId)
@@ -989,21 +1041,16 @@ export default function PublisherWorkspaceApp({
 
       <PublisherBottomMenu
         batchToken={batchToken}
-        view={view.name === 'note' || view.name === 'sync' || view.name === 'done' ? 'list' : view.name}
+        view={
+          view.name === 'note' || view.name === 'sync' || view.name === 'done' || view.name === 'searchScopeDetail'
+            ? 'list'
+            : view.name
+        }
+        onGoToHome={() => setView({ name: 'home' })}
         onGoToRecords={() => setView({ name: 'list' })}
         onGoToAddedRecords={() => setView({ name: 'addedRecords' })}
         showAddedRecords={!readOnly}
-        onGoToSearchScope={() => setView({ name: 'searchScope' })}
-        showSearchScope={Boolean(workspace.searchScope)}
         onGoToVisitForm={scrollToVisitForm}
-        showSync={showSessionChrome}
-        downloaded={downloaded}
-        onDownload={handleDownload}
-        online={online}
-        pendingCount={pendingCount}
-        failedCount={failedCount}
-        syncing={syncing}
-        onSync={handleSync}
       />
 
       <ConfirmModal
