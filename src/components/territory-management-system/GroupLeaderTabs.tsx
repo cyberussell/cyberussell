@@ -23,6 +23,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import type { BatchStats } from '@/lib/territory-management-system/modules/reports/queries'
+import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import { deleteGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
 import StatCard from '@/components/territory-management-system/dashboard/StatCard'
@@ -60,10 +61,14 @@ export default function GroupLeaderTabs({
   batches,
   activeTerritories,
   todaysTerritories,
+  todaysTerritoryStructures,
+  blockRecordCounts,
 }: {
   batches: BatchView[]
   activeTerritories: { id: string; name: string; barangayName: string; approvedCount: number }[]
   todaysTerritories: { id: string; name: string; barangayName: string }[]
+  todaysTerritoryStructures: TerritoryStructure[]
+  blockRecordCounts: Record<string, number>
 }) {
   const [tab, setTab] = useState<Tab>('home')
   const [selectedBatchId, setSelectedBatchId] = useState(batches[0]?.batchId)
@@ -239,7 +244,11 @@ export default function GroupLeaderTabs({
                 For extra publishers when a territory has more people than the original assignment had room for. Adds a new,
                 separate QR code — today&apos;s existing assignment(s) are untouched.
               </p>
-              <OverflowAssignmentForm territories={todaysTerritories} />
+              <OverflowAssignmentForm
+                territories={todaysTerritories}
+                territoryStructures={todaysTerritoryStructures}
+                blockRecordCounts={blockRecordCounts}
+              />
             </div>
           )}
 

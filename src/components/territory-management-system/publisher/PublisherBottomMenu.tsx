@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { CheckCircle2, CloudOff, ClipboardCheck, ClipboardList, ClipboardPlus, Download, RefreshCw, Users, type LucideIcon } from 'lucide-react'
+import { CheckCircle2, CloudOff, ClipboardCheck, ClipboardList, ClipboardPlus, Download, RefreshCw, Search, Users, type LucideIcon } from 'lucide-react'
 
 // Fixed bottom navigation for the publisher workspace, like a native app tab bar — easier to
 // reach one-handed than a top bar while out in ministry. Also folds in the two standalone
@@ -16,6 +16,8 @@ export default function PublisherBottomMenu({
   onGoToRecords,
   onGoToAddedRecords,
   showAddedRecords,
+  onGoToSearchScope,
+  showSearchScope,
   onGoToVisitForm,
   showSync,
   downloaded,
@@ -27,13 +29,17 @@ export default function PublisherBottomMenu({
   onSync,
 }: {
   batchToken: string
-  view: 'list' | 'detail' | 'addRecord' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord'
+  view: 'list' | 'detail' | 'addRecord' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord' | 'searchScope' | 'searchScopeDetail'
   onGoToRecords: () => void
   // Hidden while readOnly (viewing another Ministry Partner's assignment) — a publisher-added
   // record only ever belongs to the partnership that added it, same as "Add a New Contact
   // Record" itself, which is also readOnly-gated.
   onGoToAddedRecords: () => void
   showAddedRecords: boolean
+  // Only shown for an overflow batch whose Group Leader narrowed it to a search area (see
+  // PartnershipWorkspace.searchScope) — every other batch has nothing to show here.
+  onGoToSearchScope: () => void
+  showSearchScope: boolean
   onGoToVisitForm: () => void
   showSync: boolean
   downloaded: boolean
@@ -94,6 +100,15 @@ export default function PublisherBottomMenu({
       icon: ClipboardPlus,
       active: view === 'addedRecords' || view === 'addedRecordDetail' || view === 'editAddedRecord',
       onClick: onGoToAddedRecords,
+    })
+  }
+  if (showSearchScope) {
+    items.push({
+      key: 'searchScope',
+      label: 'Search Area',
+      icon: Search,
+      active: view === 'searchScope' || view === 'searchScopeDetail',
+      onClick: onGoToSearchScope,
     })
   }
   if (view === 'detail') {

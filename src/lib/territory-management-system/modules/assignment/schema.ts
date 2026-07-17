@@ -18,6 +18,17 @@ export const createAssignmentSchema = z.object({
 })
 export type CreateAssignmentInput = z.input<typeof createAssignmentSchema>
 
+// Overflow assignment's optional "narrow to a search area" step — only offered once exactly
+// one territory is selected. Both fields are optional (an overflow batch with neither behaves
+// exactly as before, an unscoped search across the whole territory); when present, every block
+// must belong to the submitted section (re-verified server-side in createOverflowAssignmentAction,
+// not trusted from the client picker).
+export const createOverflowAssignmentSchema = createAssignmentSchema.extend({
+  searchSectionId: z.string().uuid().optional(),
+  searchBlockIds: z.array(z.string().uuid()).optional().default([]),
+})
+export type CreateOverflowAssignmentInput = z.input<typeof createOverflowAssignmentSchema>
+
 export const renamePartnershipSchema = z.object({
   partnershipToken: z.string().min(1),
   name: z.string().min(1).max(60),
@@ -136,6 +147,16 @@ export const recommendCorrectionSchema = z.object({
   reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
 })
 export type RecommendCorrectionInput = z.input<typeof recommendCorrectionSchema>
+
+// Same shape as recommendCorrectionSchema — used for a search-scope record instead (one that
+// was never assigned to this partnership at all, see recommendSearchScopeCorrectionAction).
+export const recommendSearchScopeCorrectionSchema = z.object({
+  partnershipToken: z.string().min(1),
+  recordId: z.string().uuid(),
+  plusCode: z.string().min(1, 'Plus Code is required.').max(20),
+  reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
+})
+export type RecommendSearchScopeCorrectionInput = z.input<typeof recommendSearchScopeCorrectionSchema>
 
 // Deleting a record the publisher added themselves — only reachable while their own ministry
 // session is still active (see deletePublisherAddedRecordAction).

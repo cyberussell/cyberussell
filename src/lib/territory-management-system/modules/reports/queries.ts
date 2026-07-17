@@ -238,6 +238,7 @@ export async function getTerritoryReportRows(supabase: SupabaseClient, congregat
 export interface RecordLocation {
   id: string
   address: string
+  residentName: string
   plusCode: string
   territoryName: string
 }
@@ -247,19 +248,33 @@ export interface RecordLocation {
 // CSV-imported records can have a null one, see plus_code's nullable column). Decoding each
 // Plus Code into a lat/lng happens client-side in HouseholdDistributionMap via the
 // open-location-code package already used by lib/plusCode.ts — no geocoding API call needed.
+// residentName backs the popup's fallback label (address, then name, then Plus Code) for a
+// record with no address on file.
 export async function getApprovedRecordLocations(supabase: SupabaseClient, congregationId: string): Promise<RecordLocation[]> {
   const { data } = await supabase
     .from('territory_records')
-    .select('id, address, plus_code, territory:territories(name)')
+    .select('id, address, resident_name, plus_code, territory:territories(name)')
     .eq('congregation_id', congregationId)
     .eq('status', 'approved')
     .not('plus_code', 'is', null)
 
   return (
-    (data ?? []) as unknown as { id: string; address: string; plus_code: string | null; territory: { name: string }[] | null }[]
+    (data ?? []) as unknown as {
+      id: string
+      address: string
+      resident_name: string
+      plus_code: string | null
+      territory: { name: string }[] | null
+    }[]
   )
     .filter((r): r is typeof r & { plus_code: string } => Boolean(r.plus_code))
-    .map((r) => ({ id: r.id, address: r.address, plusCode: r.plus_code, territoryName: r.territory?.[0]?.name ?? '' }))
+    .map((r) => ({
+      id: r.id,
+      address: r.address,
+      residentName: r.resident_name,
+      plusCode: r.plus_code,
+      territoryName: r.territory?.[0]?.name ?? '',
+    }))
 }
 
 // Congregation-wide rollup across every batch whose assignment_date falls in the range —

@@ -76,12 +76,23 @@ export interface PartnershipWorkspace extends Partnership {
   // Same meaning as BatchSummary.expired — checked again server-side before every
   // publisher-facing write (rename/log visit/add record), not just used for display.
   expired: boolean
-  // Other partnerships in the same batch a record can be moved/passed to — excludes this
-  // partnership itself and any that already ended their ministry early.
-  siblingPartnerships: { id: string; name: string }[]
+  // Every other Ministry Partner working under the same Group Leader today (original
+  // assignment + any overflow batches, see getGroupLeaderPartnershipsForDate) a record can be
+  // moved/passed to — excludes this partnership itself and any that already ended their
+  // ministry early. batchLabel ("Assignment"/"Overflow"/"Overflow 2"...) disambiguates which
+  // batch each sibling belongs to, since this can now span more than one.
+  siblingPartnerships: { id: string; name: string; batchLabel: string }[]
   // Records this partnership added via "Add a New Contact Record" — deliberately separate from
   // `records` above (today's assigned list): never linked into partnership_records, still
   // pending Admin review, but visible/editable/deletable by the publisher until their ministry
   // session ends (see created_by_partnership_id on TerritoryRecord).
   addedRecords: TerritoryRecordWithLocation[]
+  // Set only for an overflow batch whose Group Leader narrowed it to a specific section +
+  // blocks (see 025_overflow_search_scope.sql) — null for every other batch (including an
+  // unscoped overflow batch searching its whole territory).
+  searchScope: { sectionLabel: string; blockLabels: string[] } | null
+  // Whatever records already exist in that search scope, read-only (see getRecordsInBlocks) —
+  // shown so a publisher searching the area doesn't create a duplicate for a household someone
+  // already logged. Always empty when searchScope is null.
+  searchScopeRecords: TerritoryRecordWithLocation[]
 }

@@ -78,7 +78,7 @@ export default function PublisherRecordDetailView({
   // True while a just-submitted visit is being saved/synced — disables the form and shows a
   // spinner so a slow connection doesn't look like a missed tap.
   saving: boolean
-  siblingPartnerships: { id: string; name: string }[]
+  siblingPartnerships: { id: string; name: string; batchLabel: string }[]
   moving: boolean
   // True while either "Mark as Moved" path (Update Contact Record / Recommend for Admin
   // Removal) is being saved/synced.

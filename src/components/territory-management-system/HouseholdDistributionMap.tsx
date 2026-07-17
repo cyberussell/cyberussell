@@ -28,12 +28,22 @@ interface Pin {
   lat: number
   lng: number
   address: string
+  residentName: string
+  plusCode: string
   territoryName: string
 }
 
 function toPin(r: RecordLocation, code: string): Pin {
   const area = openLocationCode.decode(code)
-  return { id: r.id, lat: area.latitudeCenter, lng: area.longitudeCenter, address: r.address, territoryName: r.territoryName }
+  return {
+    id: r.id,
+    lat: area.latitudeCenter,
+    lng: area.longitudeCenter,
+    address: r.address,
+    residentName: r.residentName,
+    plusCode: r.plusCode,
+    territoryName: r.territoryName,
+  }
 }
 
 // Decoding happens entirely client-side (no geocoding API, no network call) — the same
@@ -109,7 +119,9 @@ export default function HouseholdDistributionMap({ records }: { records: RecordL
         {pins.map((pin) => (
           <Marker key={pin.id} position={[pin.lat, pin.lng]} icon={markerIcon}>
             <Popup>
-              <p className="font-medium">{pin.address || 'No address on file'}</p>
+              {/* Falls back through resident name, then Plus Code, before giving up — a record
+                  with no address on file is still identifiable if it has either of those. */}
+              <p className="font-medium">{pin.address || pin.residentName || pin.plusCode || 'No address on file'}</p>
               <p className="text-slate-500">{pin.territoryName}</p>
             </Popup>
           </Marker>

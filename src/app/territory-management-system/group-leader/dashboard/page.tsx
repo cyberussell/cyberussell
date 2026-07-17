@@ -1,6 +1,6 @@
 import { requireGroupLeader } from '@/lib/territory-management-system/modules/auth/queries'
 import { getApprovedRecordCounts, getBatchesForGroupLeaderAndDate } from '@/lib/territory-management-system/modules/assignment/queries'
-import { listTerritories } from '@/lib/territory-management-system/modules/territory/queries'
+import { getBlockRecordCounts, getTerritoryStructure, listTerritories } from '@/lib/territory-management-system/modules/territory/queries'
 import { getBatchStats } from '@/lib/territory-management-system/modules/reports/queries'
 import { getAssignmentBatchQrDataUrl, getAssignmentBatchUrl } from '@/lib/territory-management-system/modules/assignment/qr'
 import { todayInTimezone } from '@/lib/territory-management-system/modules/assignment/date'
@@ -44,7 +44,9 @@ export default async function GroupLeaderDashboardPage() {
       batches.map(async (batch): Promise<BatchView | null> => {
         const stats = await getBatchStats(supabase, congregation.id, batch.id, congregation.timezone)
         if (!stats) return null
-        const qrDataUrl = await getAssignmentBatchQrDataUrl(batch.access_token)
+        // Navy for an overflow batch's QR so it's visually distinct from the original
+        // assignment's black QR at a glance.
+        const qrDataUrl = await getAssignmentBatchQrDataUrl(batch.access_token, batch.is_overflow ? '#1E3A8A' : undefined)
         return {
           batchId: batch.id,
           qrDataUrl,
@@ -65,7 +67,22 @@ export default async function GroupLeaderDashboardPage() {
   const todaysTerritoryIds = new Set(batchViews.flatMap((v) => v.stats.territories.map((t) => t.id)))
   const todaysTerritories = activeTerritories.filter((t) => todaysTerritoryIds.has(t.id))
 
+  // Feeds the Overflow Assignment form's optional "narrow to a search area" step — only
+  // meaningful once exactly one of these territories is picked, so the whole structure is
+  // fetched up front rather than round-tripping per selection.
+  const [todaysTerritoryStructures, blockRecordCountEntries] = await Promise.all([
+    Promise.all(todaysTerritories.map((t) => getTerritoryStructure(supabase, congregation.id, t.id))),
+    Promise.all(todaysTerritories.map((t) => getBlockRecordCounts(supabase, t.id))),
+  ])
+  const blockRecordCounts = Object.assign({}, ...blockRecordCountEntries)
+
   return (
-    <GroupLeaderTabs batches={batchViews} activeTerritories={activeTerritories} todaysTerritories={todaysTerritories} />
+    <GroupLeaderTabs
+      batches={batchViews}
+      activeTerritories={activeTerritories}
+      todaysTerritories={todaysTerritories}
+      todaysTerritoryStructures={todaysTerritoryStructures.filter((t): t is NonNullable<typeof t> => t !== null)}
+      blockRecordCounts={blockRecordCounts}
+    />
   )
 }

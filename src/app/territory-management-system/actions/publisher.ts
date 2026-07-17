@@ -14,6 +14,7 @@ import {
   movePartnershipRecordSchema,
   recommendCorrectionSchema,
   recommendRemovalSchema,
+  recommendSearchScopeCorrectionSchema,
   renamePartnershipSchema,
   submitPartnershipNoteSchema,
   terminatePartnershipEarlySchema,
@@ -21,8 +22,10 @@ import {
 } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
   finishPartnership,
+  getBatchById,
   getPartnershipById,
   getPartnershipByToken,
+  getSearchScopeForBatch,
   markPartnershipRecordCompleted,
   movePartnershipRecord,
   partnershipHasRecord,
@@ -36,12 +39,14 @@ import {
   getLatestVisitResult,
   getRecordById,
   getRecordDoNotCall,
+  getRecordsInBlocks,
   logVisit,
   recommendRecordCorrection,
   recommendRecordForRemoval,
   recordAddedByPartnership,
   updateRecord,
 } from '@/lib/territory-management-system/modules/records/queries'
+import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 import { getSelectableResults, mergeConductorIntoNotes } from '@/lib/territory-management-system/modules/records/schema'
 import { getTerritoryStructure } from '@/lib/territory-management-system/modules/territory/queries'
 import { type ActionResult } from './shared'
@@ -212,9 +217,11 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
   return { error: 'SAVED' }
 }
 
-// Passes an assigned record to a different Ministry Partner in the same batch. Both sides are
-// re-resolved server-side (the source via the caller's own token, the destination by id) —
-// never trusts the client's claim that the destination actually belongs to this batch.
+// Passes an assigned record to a different Ministry Partner working under the same Group
+// Leader today (their original assignment or any overflow batch — see
+// getGroupLeaderPartnershipsForDate) — not just the same batch. Both sides are re-resolved
+// server-side (the source via the caller's own token, the destination by id) — never trusts
+// the client's claim that the destination actually belongs to a valid batch.
 export async function movePartnershipRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = movePartnershipRecordSchema.safeParse({
     partnershipToken: formData.get('partnershipToken'),
@@ -234,7 +241,17 @@ export async function movePartnershipRecordAction(_prev: ActionResult, formData:
   if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
 
   const destination = await getPartnershipById(supabase, parsed.data.destinationPartnershipId)
-  if (!destination || destination.batch_id !== partnership.batch_id) return { error: 'Invalid destination Ministry Partner.' }
+  if (!destination) return { error: 'Invalid destination Ministry Partner.' }
+  const destinationBatch = await getBatchById(supabase, destination.batch_id)
+  const sameGroupLeaderToday =
+    destinationBatch &&
+    destinationBatch.congregation_id === partnership.batch.congregation_id &&
+    destinationBatch.assignment_date === partnership.batch.assignment_date &&
+    destinationBatch.created_by !== null &&
+    destinationBatch.created_by === partnership.batch.created_by
+  if (!sameGroupLeaderToday && destination.batch_id !== partnership.batch_id) {
+    return { error: 'Invalid destination Ministry Partner.' }
+  }
   if (destination.ended_early_at || destination.finished_at) return { error: 'That Ministry Partner has already ended their ministry for today.' }
 
   try {
@@ -544,5 +561,58 @@ export async function editPublisherAddedRecordAction(_prev: ActionResult, formDa
   }
 
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// Manual "Refresh" for the overflow batch's search-scope records list — a plain read, not
+// queued through the offline sync system, since the whole point is checking the LIVE state
+// (has anyone else logged this address in the last few minutes) rather than whatever was cached
+// at initial page load. Re-derives the scope from the batch itself rather than trusting a
+// client-supplied block list.
+export async function getSearchScopeRecordsAction(partnershipToken: string): Promise<TerritoryRecordWithLocation[]> {
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, partnershipToken)
+  if (!partnership) return []
+  const scope = await getSearchScopeForBatch(supabase, partnership.batch_id)
+  if (!scope) return []
+  return getRecordsInBlocks(supabase, partnership.congregation_id, scope.blockIds)
+}
+
+// Recommends a Plus Code correction on a record the publisher found while searching their
+// overflow batch's chosen area — NOT a record assigned to their partnership (partnershipHasRecord
+// would fail here, correctly, since it never was). Instead validates the record's block_id is
+// one of the batch's own search-scope blocks (see 025_overflow_search_scope.sql) before allowing
+// it — same "never trust the client, re-verify against the DB" rule as every other action here.
+// Reuses recommendRecordCorrection() unchanged — lands in the Admin's existing Flagged for
+// Correction queue, same review gate as the assigned-record correction path above.
+export async function recommendSearchScopeCorrectionAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = recommendSearchScopeCorrectionSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    recordId: formData.get('recordId'),
+    plusCode: formData.get('plusCode'),
+    reason: formData.get('reason'),
+  })
+  if (!parsed.success) return { error: 'Please fill in the Plus Code and a reason for the recommendation.' }
+  if (!(await checkRateLimit(`tms-recommend-search-correction:${clientIp(await headers())}`, 15))) {
+    return { error: 'Too many attempts. Please wait a moment.' }
+  }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+
+  const scope = await getSearchScopeForBatch(supabase, partnership.batch_id)
+  if (!scope) return { error: 'This assignment has no search area to correct records in.' }
+  const record = await getRecordById(supabase, partnership.congregation_id, parsed.data.recordId)
+  if (!record || !scope.blockIds.includes(record.block_id)) return { error: 'This contact record is not in your search area.' }
+
+  try {
+    await recommendRecordCorrection(supabase, parsed.data.recordId, parsed.data.plusCode, parsed.data.reason, partnership.name || 'Unnamed partnership')
+  } catch (e) {
+    await logError(partnership.congregation_id, 'recommendSearchScopeCorrectionAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }
+  }
+
   return { error: 'SAVED' }
 }

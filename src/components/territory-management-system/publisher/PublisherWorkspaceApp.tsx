@@ -14,6 +14,7 @@ import { enqueue, listQueue } from '@/lib/territory-management-system/modules/of
 import { flushQueue } from '@/lib/territory-management-system/modules/offline/sync'
 import { useOnlineStatus } from '@/lib/territory-management-system/modules/offline/useOnlineStatus'
 import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
+import { getSearchScopeRecordsAction } from '@/app/territory-management-system/actions/publisher'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
@@ -26,6 +27,8 @@ import type { CorrectionFields } from './RecommendCorrectionForm'
 import PublisherAddedRecordDetailView from './PublisherAddedRecordDetailView'
 import PublisherRecordForm, { type NewPublisherRecordPayload } from './PublisherRecordForm'
 import PublisherNoteForm from './PublisherNoteForm'
+import SearchScopeRecordsList from './SearchScopeRecordsList'
+import SearchScopeRecordDetailView from './SearchScopeRecordDetailView'
 
 // Leaflet touches `window`/`document` on import — client-only, same pattern as the Admin
 // Reports page's own use of this same component.
@@ -48,6 +51,8 @@ type View =
   | { name: 'note' }
   | { name: 'sync' }
   | { name: 'done' }
+  | { name: 'searchScope' }
+  | { name: 'searchScopeDetail'; recordId: string }
 
 // The offline-first app shell: everything after the initial server-rendered load happens as
 // in-memory view-state changes here, never a new Next.js page navigation — that's what makes
@@ -71,6 +76,8 @@ export default function PublisherWorkspaceApp({
   const [sendingNote, setSendingNote] = useState(false)
   const [markingMoved, setMarkingMoved] = useState(false)
   const [recommendingCorrection, setRecommendingCorrection] = useState(false)
+  const [recommendingSearchScopeCorrection, setRecommendingSearchScopeCorrection] = useState(false)
+  const [refreshingSearchScope, setRefreshingSearchScope] = useState(false)
   const [deletingAddedRecord, setDeletingAddedRecord] = useState(false)
   const [queue, setQueue] = useState<SyncQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
@@ -78,7 +85,7 @@ export default function PublisherWorkspaceApp({
   // Which map the list view shows when both are available — a toggle instead of stacking both
   // maps, for a cleaner one-screen-at-a-time look. Defaults to Territory Map (the prior default
   // visual order).
-  const [mapView, setMapView] = useState<'territory' | 'records'>('territory')
+  const [mapView, setMapView] = useState<'territory' | 'records' | 'search'>('territory')
   // Which branded confirm dialog (see ConfirmModal) is currently open, replacing
   // window.confirm() — its "www.cyberussell.com says" chrome reads as an unfamiliar browser
   // warning to a publisher in the field, not a TMS-branded prompt.
@@ -304,6 +311,36 @@ export default function PublisherWorkspaceApp({
     window.scrollTo({ top: 0, behavior: 'auto' })
   }
 
+  // Recommends a Plus Code correction on a search-scope record (never assigned to this
+  // partnership — see recommendSearchScopeCorrectionAction). Doesn't change what's displayed
+  // (the Admin hasn't applied it yet), same as the assigned-record correction path.
+  async function handleRecommendSearchScopeCorrection(recordId: string, fields: CorrectionFields) {
+    setRecommendingSearchScopeCorrection(true)
+    try {
+      await enqueue(partnershipToken, 'recommendSearchScopeCorrection', { partnershipToken, recordId, plusCode: fields.plusCode, reason: fields.reason })
+      await refreshQueue()
+      if (online) await handleSync()
+      toast.success('Correction recommendation sent to the Admin.')
+      setView({ name: 'searchScope' })
+    } finally {
+      setRecommendingSearchScopeCorrection(false)
+    }
+  }
+
+  // Manual re-fetch of the search-scope records list — deliberately not automatic polling
+  // (this workspace is offline-first, no background network), but the whole point of this list
+  // is checking whether someone else just logged a record moments ago, so it's worth an explicit
+  // live re-check rather than only ever showing what was cached at initial page load.
+  async function handleRefreshSearchScope() {
+    setRefreshingSearchScope(true)
+    try {
+      const records = await getSearchScopeRecordsAction(partnershipToken)
+      setWorkspace((w) => ({ ...w, searchScopeRecords: records }))
+    } finally {
+      setRefreshingSearchScope(false)
+    }
+  }
+
   // The new record's id is generated here (not server-side) so it can be optimistically
   // rendered in "My Added Records" — and immediately made editable/deletable — before this
   // write has even synced. addPublisherRecordAction inserts under this exact id.
@@ -488,8 +525,19 @@ export default function PublisherWorkspaceApp({
   const assignedRecordLocations: RecordLocation[] = workspace.records.map((r) => ({
     id: r.record.id,
     address: r.record.address,
+    residentName: r.record.resident_name,
     plusCode: r.record.plus_code ?? '',
     territoryName: r.record.territory?.name ?? '',
+  }))
+  // Pins for an overflow batch's chosen search area (see workspace.searchScopeRecords) — same
+  // shape, fed to the same map component, just a third source alongside the territory map and
+  // this partnership's own assigned records.
+  const searchScopeLocations: RecordLocation[] = workspace.searchScopeRecords.map((r) => ({
+    id: r.id,
+    address: r.address,
+    residentName: r.resident_name,
+    plusCode: r.plus_code ?? '',
+    territoryName: r.territory?.name ?? '',
   }))
 
   return (
@@ -527,41 +575,40 @@ export default function PublisherWorkspaceApp({
 
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
-              const hasTerritoryMap = mappableTerritories.length > 0
-              const hasRecordsMap = assignedRecordLocations.length > 0
-              if (!hasTerritoryMap && !hasRecordsMap) return null
+              const tabs: { key: 'territory' | 'records' | 'search'; label: string; available: boolean }[] = [
+                { key: 'territory', label: 'Territory Map', available: mappableTerritories.length > 0 },
+                { key: 'records', label: 'Assigned Records', available: assignedRecordLocations.length > 0 },
+                { key: 'search', label: 'Search Area', available: searchScopeLocations.length > 0 },
+              ]
+              const availableTabs = tabs.filter((t) => t.available)
+              if (availableTabs.length === 0) return null
 
-              // A toggle only makes sense once there are genuinely two maps to switch between —
-              // with just one available, show it directly instead of a one-option pill row.
-              const showToggle = hasTerritoryMap && hasRecordsMap
-              const activeView = showToggle ? mapView : hasTerritoryMap ? 'territory' : 'records'
+              // A toggle only makes sense once there are genuinely two-or-more maps to switch
+              // between — with just one available, show it directly instead of a one-option
+              // pill row.
+              const showToggle = availableTabs.length > 1
+              const activeView = showToggle && availableTabs.some((t) => t.key === mapView) ? mapView : availableTabs[0].key
 
               return (
                 <div className="space-y-3">
                   {showToggle && (
-                    <div className="inline-flex rounded-full bg-blue-50 p-1">
-                      <button
-                        type="button"
-                        onClick={() => setMapView('territory')}
-                        className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                          activeView === 'territory' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
-                        }`}
-                      >
-                        Territory Map
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setMapView('records')}
-                        className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                          activeView === 'records' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
-                        }`}
-                      >
-                        Assigned Records
-                      </button>
+                    <div className="inline-flex flex-wrap rounded-full bg-blue-50 p-1">
+                      {availableTabs.map((t) => (
+                        <button
+                          key={t.key}
+                          type="button"
+                          onClick={() => setMapView(t.key)}
+                          className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                            activeView === t.key ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
+                          }`}
+                        >
+                          {t.label}
+                        </button>
+                      ))}
                     </div>
                   )}
 
-                  {activeView === 'territory' && hasTerritoryMap && (
+                  {activeView === 'territory' && (
                     <div className="space-y-3">
                       {!showToggle && (
                         <h2 className="font-semibold text-[#0B1B33]">Territory Map{mappableTerritories.length > 1 ? 's' : ''}</h2>
@@ -575,10 +622,17 @@ export default function PublisherWorkspaceApp({
                     </div>
                   )}
 
-                  {activeView === 'records' && hasRecordsMap && (
+                  {activeView === 'records' && (
                     <div className="space-y-3">
                       {!showToggle && <h2 className="font-semibold text-[#0B1B33]">My Assigned Records Map</h2>}
                       <HouseholdDistributionMap records={assignedRecordLocations} />
+                    </div>
+                  )}
+
+                  {activeView === 'search' && (
+                    <div className="space-y-3">
+                      {!showToggle && <h2 className="font-semibold text-[#0B1B33]">Search Area Map</h2>}
+                      <HouseholdDistributionMap records={searchScopeLocations} />
                     </div>
                   )}
                 </div>
@@ -723,6 +777,31 @@ export default function PublisherWorkspaceApp({
             )
           })()}
 
+        {view.name === 'searchScope' && workspace.searchScope && (
+          <SearchScopeRecordsList
+            sectionLabel={workspace.searchScope.sectionLabel}
+            blockLabels={workspace.searchScope.blockLabels}
+            records={workspace.searchScopeRecords}
+            refreshing={refreshingSearchScope}
+            onRefresh={handleRefreshSearchScope}
+            onSelect={(recordId) => setView({ name: 'searchScopeDetail', recordId })}
+          />
+        )}
+
+        {view.name === 'searchScopeDetail' &&
+          (() => {
+            const record = workspace.searchScopeRecords.find((r) => r.id === view.recordId)
+            if (!record) return null
+            return (
+              <SearchScopeRecordDetailView
+                record={record}
+                editable={editable}
+                submitting={recommendingSearchScopeCorrection}
+                onRecommendCorrection={(fields) => handleRecommendSearchScopeCorrection(record.id, fields)}
+              />
+            )
+          })()}
+
         {view.name === 'note' && <PublisherNoteForm sending={sendingNote} onSend={handleSendNote} onSkip={handleSkipNote} />}
 
         {view.name === 'sync' && (
@@ -773,6 +852,8 @@ export default function PublisherWorkspaceApp({
         onGoToRecords={() => setView({ name: 'list' })}
         onGoToAddedRecords={() => setView({ name: 'addedRecords' })}
         showAddedRecords={!readOnly}
+        onGoToSearchScope={() => setView({ name: 'searchScope' })}
+        showSearchScope={Boolean(workspace.searchScope)}
         onGoToVisitForm={scrollToVisitForm}
         showSync={showSessionChrome}
         downloaded={downloaded}

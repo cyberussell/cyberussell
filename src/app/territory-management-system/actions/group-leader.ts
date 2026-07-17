@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { requireGroupLeader } from '@/lib/territory-management-system/modules/auth/queries'
-import { createAssignmentSchema } from '@/lib/territory-management-system/modules/assignment/schema'
+import { createAssignmentSchema, createOverflowAssignmentSchema } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
   createAssignment,
   deleteBatch,
@@ -63,9 +63,11 @@ export async function createGroupLeaderAssignmentAction(_prev: ActionResult, for
 // deliberately a "go canvass/search" batch, not a second bite at the same eligible-record pool,
 // so it can never end up double-assigning an address someone else is already working today.
 export async function createOverflowAssignmentAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
-  const parsed = createAssignmentSchema.safeParse({
+  const parsed = createOverflowAssignmentSchema.safeParse({
     territoryIds: formData.getAll('territoryIds'),
     partnershipCount: formData.get('partnershipCount'),
+    searchSectionId: formData.get('searchSectionId') || undefined,
+    searchBlockIds: formData.getAll('searchBlockIds'),
   })
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in the form correctly.' }
 
@@ -95,6 +97,10 @@ export async function createOverflowAssignmentAction(_prev: ActionResult, formDa
     assignmentDate,
     createdBy: userId,
     forceZeroRecords: true,
+    searchScope:
+      parsed.data.searchSectionId && parsed.data.searchBlockIds.length > 0
+        ? { sectionId: parsed.data.searchSectionId, blockIds: parsed.data.searchBlockIds }
+        : undefined,
   })
   if (isAssignmentError(result)) return { error: result.error }
 

@@ -20,6 +20,22 @@ export async function listRecords(
   return (data ?? []) as unknown as TerritoryRecordWithLocation[]
 }
 
+// Every record currently in a given set of blocks — used by an overflow batch's optional search
+// scope (see 025_overflow_search_scope.sql) to show a publisher whatever already exists in the
+// area they're about to canvass, read-only, so they don't create a duplicate for a household
+// someone already logged. Deliberately unfiltered by status (a still-'pending' record is just as
+// real a duplicate risk as an 'approved' one).
+export async function getRecordsInBlocks(supabase: SupabaseClient, congregationId: string, blockIds: string[]): Promise<TerritoryRecordWithLocation[]> {
+  if (blockIds.length === 0) return []
+  const { data } = await supabase
+    .from('territory_records')
+    .select(RECORD_WITH_LOCATION_SELECT)
+    .eq('congregation_id', congregationId)
+    .in('block_id', blockIds)
+    .order('created_at', { ascending: false })
+  return (data ?? []) as unknown as TerritoryRecordWithLocation[]
+}
+
 export async function getRecordById(
   supabase: SupabaseClient,
   congregationId: string,

@@ -2,7 +2,7 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { calculateAssignment, isAssignmentError, type AssignmentError } from './engine'
 import { isBatchExpired } from './date'
-import { listRecordsAddedByPartnership } from '../records/queries'
+import { getRecordsInBlocks, listRecordsAddedByPartnership } from '../records/queries'
 import type {
   AssignmentBatch,
   BatchSummary,
@@ -153,6 +153,12 @@ export async function createAssignment(
     // the territory-conflict check below to allow reusing a territory THIS SAME Group Leader
     // already covers today (still blocks a different Group Leader's territory).
     forceZeroRecords?: boolean
+    // Overflow-assignment path only, optional: narrows the "go canvass" batch to one section +
+    // a chosen set of blocks within it (see 025_overflow_search_scope.sql), so the publisher
+    // workspace can show whatever already exists there (read-only) instead of an unscoped
+    // territory-wide search. Re-verified below the same way territoryIds is — a client-supplied
+    // section/block id is never trusted outright.
+    searchScope?: { sectionId: string; blockIds: string[] }
   }
 ): Promise<CreateAssignmentResult | AssignmentError> {
   // The territory checkboxes are ordinary client-editable form values — confirm every
@@ -167,6 +173,31 @@ export async function createAssignment(
   const ownedById = new Map((ownedTerritories ?? []).map((t) => [t.id as string, t.name as string]))
   const territoryIds = input.territoryIds.filter((id) => ownedById.has(id))
   if (territoryIds.length === 0) return { error: 'Select at least one valid territory.' }
+
+  // A search scope only ever makes sense against exactly one territory (a section belongs to
+  // one territory) — re-verified here rather than trusted from the client picker, same as every
+  // other client-supplied parent id in this file. A block that doesn't actually belong to the
+  // submitted section (or that section to the submitted territory) silently drops out rather
+  // than erroring the whole batch — matches the file's existing "filter out anything invalid"
+  // tone for territoryIds itself, just above.
+  let validSearchBlockIds: string[] = []
+  if (input.searchScope && input.searchScope.blockIds.length > 0 && territoryIds.length === 1) {
+    const { data: section } = await supabase
+      .from('territory_sections')
+      .select('id')
+      .eq('congregation_id', congregationId)
+      .eq('territory_id', territoryIds[0])
+      .eq('id', input.searchScope.sectionId)
+      .maybeSingle()
+    if (section) {
+      const { data: blocks } = await supabase
+        .from('territory_blocks')
+        .select('id')
+        .eq('section_id', input.searchScope.sectionId)
+        .in('id', input.searchScope.blockIds)
+      validSearchBlockIds = (blocks ?? []).map((b) => b.id as string)
+    }
+  }
 
   // No two Group Leaders' active batches on the same day may cover the same territory —
   // confirmed with Russell: a hard block with a clear error, not a silent auto-filter. The
@@ -207,6 +238,18 @@ export async function createAssignment(
     territoryIds.map((territoryId) => ({ congregation_id: congregationId, batch_id: batchId, territory_id: territoryId }))
   )
   if (territoriesError) return { error: territoriesError.message }
+
+  if (validSearchBlockIds.length > 0 && input.searchScope) {
+    const { error: searchBlocksError } = await supabase.from('assignment_batch_search_blocks').insert(
+      validSearchBlockIds.map((blockId) => ({
+        congregation_id: congregationId,
+        batch_id: batchId,
+        section_id: input.searchScope!.sectionId,
+        block_id: blockId,
+      }))
+    )
+    if (searchBlocksError) return { error: searchBlocksError.message }
+  }
 
   for (const partnershipPlan of plan.partnerships) {
     const { data: partnership, error: partnershipError } = await supabase
@@ -319,6 +362,38 @@ export async function getBatchSummary(
   }
 }
 
+export interface SearchScope {
+  sectionLabel: string
+  blockLabels: string[]
+  blockIds: string[]
+}
+
+// The section/blocks a Group Leader narrowed an overflow batch to (see
+// 025_overflow_search_scope.sql), if any — null for every other batch, including an unscoped
+// overflow batch searching its whole territory. Shared by getPartnershipByToken and the
+// publisher's manual "Refresh" action, so both read the same live state.
+export async function getSearchScopeForBatch(supabase: SupabaseClient, batchId: string): Promise<SearchScope | null> {
+  const { data } = await supabase
+    .from('assignment_batch_search_blocks')
+    .select('section:territory_sections(label), block:territory_blocks(id, label)')
+    .eq('batch_id', batchId)
+  const rows = (data ?? []) as unknown as { section: { label: string } | null; block: { id: string; label: string } | null }[]
+  if (rows.length === 0) return null
+  return {
+    sectionLabel: rows[0].section?.label ?? '',
+    blockLabels: rows.map((r) => r.block?.label ?? '').filter(Boolean),
+    blockIds: rows.map((r) => r.block?.id).filter((id): id is string => Boolean(id)),
+  }
+}
+
+// Resolves a batch by its raw id — used by movePartnershipRecordAction to check whether a
+// pass's destination batch belongs to the same Group Leader/day as the source, without pulling
+// in the full BatchSummary (territories/partnerships/stats) this doesn't need.
+export async function getBatchById(supabase: SupabaseClient, batchId: string): Promise<AssignmentBatch | null> {
+  const { data } = await supabase.from('assignment_batches').select('*').eq('id', batchId).maybeSingle()
+  return (data as AssignmentBatch | null) ?? null
+}
+
 // Public entry point: resolves a batch by its QR/URL token. No congregation auth involved —
 // the unguessable token itself is the access control for this one public-facing slice.
 export async function getBatchByToken(supabase: SupabaseClient, accessToken: string): Promise<BatchSummary | null> {
@@ -386,8 +461,11 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     .map((l) => l.territory)
     .filter((t): t is { id: string; name: string; map_image_url: string | null } => t !== null)
 
-  const siblingPartnerships = await getBatchSiblingPartnerships(supabase, partnership.batch_id, partnership.id)
+  const siblingPartnerships = await getGroupLeaderPartnershipsForDate(supabase, batch as AssignmentBatch, partnership.id)
   const addedRecords = await listRecordsAddedByPartnership(supabase, partnership.id)
+  const rawSearchScope = await getSearchScopeForBatch(supabase, partnership.batch_id)
+  const searchScope = rawSearchScope ? { sectionLabel: rawSearchScope.sectionLabel, blockLabels: rawSearchScope.blockLabels } : null
+  const searchScopeRecords = rawSearchScope ? await getRecordsInBlocks(supabase, partnership.congregation_id, rawSearchScope.blockIds) : []
 
   return {
     ...(partnership as Partnership),
@@ -398,11 +476,16 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     expired,
     siblingPartnerships,
     addedRecords,
+    searchScope,
+    searchScopeRecords,
   }
 }
 
 // Other partnerships in the same batch a record can be moved to — excludes the partnership
 // itself and any that already ended their ministry early (nothing left to hand a record to).
+// Superseded as the default sibling source by getGroupLeaderPartnershipsForDate below (which
+// spans every batch the same Group Leader owns today, not just this one) — kept as the
+// fallback for legacy batches with no created_by to group by.
 export async function getBatchSiblingPartnerships(
   supabase: SupabaseClient,
   batchId: string,
@@ -420,6 +503,54 @@ export async function getBatchSiblingPartnerships(
   return ((data ?? []) as { id: string; name: string; ended_early_at: string | null; finished_at: string | null }[])
     .filter((p) => !p.ended_early_at && !p.finished_at)
     .map((p) => ({ id: p.id, name: p.name }))
+}
+
+// Same label logic as GroupLeaderTabs.tsx's batchLabel() — kept in sync deliberately (both
+// derive "Assignment"/"Overflow"/"Overflow 2"... from is_overflow + oldest-first order) so a
+// partnership's sibling list and the Group Leader's own batch switcher never disagree about
+// what a given batch is called.
+function batchLabelFor(batches: AssignmentBatch[], batchId: string): string {
+  let overflowSeen = 0
+  for (const b of batches) {
+    if (!b.is_overflow) {
+      if (b.id === batchId) return 'Assignment'
+      continue
+    }
+    overflowSeen += 1
+    if (b.id === batchId) return overflowSeen === 1 ? 'Overflow' : `Overflow ${overflowSeen}`
+  }
+  return 'Assignment'
+}
+
+// Every other Ministry Partner working under the SAME Group Leader TODAY, across every batch
+// they own (original assignment + any overflow batches) — not just the caller's own batch.
+// Confirmed with Russell: overflow partners are meant to be reachable for a pass too (they're
+// working nearby, not in a separate silo). Falls back to same-batch-only siblings for a legacy
+// batch with created_by = null, since there's no safe way to group "unowned" batches together.
+export async function getGroupLeaderPartnershipsForDate(
+  supabase: SupabaseClient,
+  batch: AssignmentBatch,
+  excludePartnershipId: string
+): Promise<{ id: string; name: string; batchLabel: string }[]> {
+  if (!batch.created_by) {
+    const legacy = await getBatchSiblingPartnerships(supabase, batch.id, excludePartnershipId)
+    return legacy.map((p) => ({ ...p, batchLabel: 'Assignment' }))
+  }
+
+  const batches = await getBatchesForGroupLeaderAndDate(supabase, batch.congregation_id, batch.created_by, batch.assignment_date)
+  const batchIds = batches.map((b) => b.id)
+  if (batchIds.length === 0) return []
+
+  const { data } = await supabase
+    .from('partnerships')
+    .select('id, name, batch_id, ended_early_at, finished_at')
+    .in('batch_id', batchIds)
+    .neq('id', excludePartnershipId)
+    .order('sequence')
+
+  return ((data ?? []) as { id: string; name: string; batch_id: string; ended_early_at: string | null; finished_at: string | null }[])
+    .filter((p) => !p.ended_early_at && !p.finished_at)
+    .map((p) => ({ id: p.id, name: p.name, batchLabel: batchLabelFor(batches, p.batch_id) }))
 }
 
 // Resolves a partnership by its raw id (not claim_token) — used to validate a move's
