@@ -1,5 +1,23 @@
 # Current Work
 
+**Territory Management System — Batch-scoped reporting graph, Undone bucket, Do Not Call 6-month lock (2026-07-17) — code done, tsc + vitest (52/52) + build clean, client-side pieces live-verified via a temporary scratch route, migration 027 NOT yet run by Russell (REQUIRED before this is safe — see below), committed and pushed + deployed at Russell's request — see checkpoint `territory-management-batch-graph-dnc-lock-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: (1) the Group Leader Home tab's "completed today" graph was counting every visit logged today anywhere in the batch's territories instead of just this batch's own assigned records (inflated whenever a second same-day batch — e.g. this Group Leader's own overflow — touched the same territory); (2) a record left incomplete when its partnership is force-ended should show as "Undone" in that graph even though `terminatePartnershipEarly` deliberately never writes a DB row for it; (3) an ongoing Bible Study's follow-up options should include "Not At Home"; (4) a newly do-not-call-flagged record should be fully locked (no visit loggable at all) for 6 months, clearly marked on the card, and still counted in the graph despite having no visit row. Confirmed 3 real decisions via `AskUserQuestion` first: new `do_not_call_at` column (DB-trigger-maintained) over deriving from visit history; fully locked (not just visually marked) during the 6 months; graph fix scoped to the Group Leader Home tab only, not the Admin's congregation-wide Reports page.
+
+Current Status: Code complete. **Migration 027 has NOT been run yet and is required** — until it is, every Record a Visit submission (publisher and Admin) and the Group Leader Home tab will error, since the code now selects a `do_not_call_at` column that won't exist on the live DB yet.
+- New migration `027_do_not_call_lock.sql`: `territory_records.do_not_call_at`, a trigger that auto-stamps/clears it whenever `do_not_call` flips, backfills existing DNC records to "now."
+- `records/schema.ts`: `getSelectableResults()` returns `[]` (locked) for a DNC record still within `DO_NOT_CALL_LOCK_MONTHS` (6) of `do_not_call_at`; Admin's own call site still omits `doNotCallAt`, so Admin is never locked, per Russell's confirmed scope. `BIBLE_STUDY_FOLLOWUP_RESULTS` gained `'not_home'`.
+- Publisher UI: `PublisherVisitLogForm`/`PublisherRecordDetailView`/`AssignedRecordsList` all show a clear locked state/badge instead of the normal form when locked.
+- `actions/publisher.ts`'s `logPublisherVisitAction` re-derives the lock server-side (defense in depth).
+- `reports/queries.ts`: new `getBatchVisitResultCounts()` (batch-scoped: this batch's actual `partnership_records`, not "any visit in these territories today") replaces the old territory-wide call inside `getBatchStats` only — `getReportStats`'s congregation-wide rollup is untouched. Derives `undone` (ended-early partnership, no visit today) and `do_not_call` (still locked, no visit today) for records with no actual visit row.
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified the client-only pieces via a temporary scratch route (removed before finishing): locked-card badge/icon, the locked notice with correct unlock date, Bible Study's Not At Home option, and the bar chart's new Undone bar. The actual batch-scoped query and DB trigger were reviewed carefully but not round-tripped — no live TMS Supabase credentials in this dev environment (standing limitation).
+
+**Next recommended task:** Russell (1) runs migration 027 in the TMS Supabase SQL editor — needed for the app to keep working correctly, (2) confirms a real Do Not Call record locks and shows the right unlock date, (3) confirms Bible Study now offers Not At Home, (4) checks the Home tab breakdown against a batch with a known force-ended partnership to confirm Undone appears and totals aren't inflated by another same-day batch.
+
+----------------------------------------
+
 **Territory Management System — Publisher workspace Home/List nav split, v3: slide-to-confirm + header polish (2026-07-17) — code done, tsc + vitest (52/52) + build clean, mostly live-verified via a temporary scratch route (Release's actual server round-trip untestable without live TMS Supabase creds — standing limitation), no migration needed, not committed — see checkpoint `territory-management-publisher-home-list-nav-v3.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

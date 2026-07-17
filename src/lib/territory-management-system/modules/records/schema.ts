@@ -28,12 +28,13 @@ export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter(
 )
 
 // Once a record's most recent visit is 'bible_study' (confirmed ongoing — not the first-time
-// 'started_bible_study'), the next visit's Status choices narrow to just these three follow-up
+// 'started_bible_study'), the next visit's Status choices narrow to just these follow-up
 // outcomes instead of the full list — 'progressing' keeps counting as "ongoing" for this check,
 // so the narrowed list stays in place across every subsequent visit until the study ends one way
-// or the other.
+// or the other. 'not_home' is included too — a Bible Study contact can still simply not be home
+// on a given visit, that's not itself a follow-up outcome for the study.
 export const BIBLE_STUDY_ONGOING_RESULTS = ['bible_study', 'progressing'] as const
-export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'moved'] as const
+export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'moved', 'not_home'] as const
 
 // A record flagged do_not_call narrows to exactly these three outcomes, regardless of its
 // latest visit result — takes priority over the Bible Study narrowing below (the two states
@@ -41,11 +42,35 @@ export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'mov
 // Bible Study to follow up on).
 export const DO_NOT_CALL_RESULTS = ['do_not_call', 'moved', 'return_visit'] as const
 
+// How long a freshly-flagged Do Not Call record stays fully locked — no visit of any kind can
+// be logged against it — before a publisher can act on it again (see getSelectableResults
+// returning an empty array during the lock, and do_not_call_at, stamped by a DB trigger, see
+// 027_do_not_call_lock.sql).
+export const DO_NOT_CALL_LOCK_MONTHS = 6
+
+export function doNotCallUnlockDate(doNotCallAt: string): Date {
+  const d = new Date(doNotCallAt)
+  d.setMonth(d.getMonth() + DO_NOT_CALL_LOCK_MONTHS)
+  return d
+}
+
+export function isDoNotCallLocked(doNotCall: boolean, doNotCallAt: string | null): boolean {
+  if (!doNotCall || !doNotCallAt) return false
+  return doNotCallUnlockDate(doNotCallAt).getTime() > Date.now()
+}
+
+// Returns the empty array while a Do Not Call record is still within its lock window — callers
+// (VisitLogForm/PublisherVisitLogForm and whatever renders around them) treat zero options as
+// "no visit can be logged right now" and show a locked notice instead of a dropdown.
 export function getSelectableResults(
   latestResult?: string | null,
-  doNotCall?: boolean
+  doNotCall?: boolean,
+  doNotCallAt?: string | null
 ): readonly Exclude<(typeof VISIT_RESULTS)[number], 'undone' | 'initial_visit'>[] {
-  if (doNotCall) return DO_NOT_CALL_RESULTS
+  if (doNotCall) {
+    if (isDoNotCallLocked(doNotCall, doNotCallAt ?? null)) return []
+    return DO_NOT_CALL_RESULTS
+  }
   if (latestResult && (BIBLE_STUDY_ONGOING_RESULTS as readonly string[]).includes(latestResult)) {
     return BIBLE_STUDY_FOLLOWUP_RESULTS
   }

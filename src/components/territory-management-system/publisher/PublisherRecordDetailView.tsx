@@ -5,7 +5,7 @@ import { Anton } from 'next/font/google'
 import { ArrowRightLeft, MapPin, PencilLine, Truck } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
-import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
+import { doNotCallUnlockDate, isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import VisitHistoryList from '@/components/territory-management-system/VisitHistoryList'
 import VisitResultBadge from '@/components/territory-management-system/VisitResultBadge'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
@@ -138,7 +138,17 @@ export default function PublisherRecordDetailView({
           </p>
         )}
         {assigned.record.notes && <p className="mt-2 text-sm text-slate-500">{assigned.record.notes}</p>}
-        {assigned.record.do_not_call && <p className="mt-2 text-sm font-medium text-red-500">Do Not Call</p>}
+        {assigned.record.do_not_call && (
+          <p className="mt-2 text-sm font-medium text-red-500">
+            Do Not Call
+            {isDoNotCallLocked(assigned.record.do_not_call, assigned.record.do_not_call_at) && assigned.record.do_not_call_at && (
+              <span className="ml-1 font-normal text-red-400">
+                — locked until{' '}
+                {doNotCallUnlockDate(assigned.record.do_not_call_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+            )}
+          </p>
+        )}
         {assigned.passed_from_name && (
           <p className="mt-2 text-sm font-medium text-amber-600">
             Passed by {assigned.passed_from_name}
@@ -252,6 +262,7 @@ export default function PublisherRecordDetailView({
           <PublisherVisitLogForm
             latestResult={latestResult}
             doNotCall={assigned.record.do_not_call}
+            doNotCallAt={assigned.record.do_not_call_at}
             saving={saving}
             onLogVisit={onLogVisit}
           />

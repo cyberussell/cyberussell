@@ -399,6 +399,7 @@ export default function PublisherWorkspaceApp({
       household_members: payload.householdMembers ? Number(payload.householdMembers) : null,
       notes: payload.notes,
       do_not_call: false,
+      do_not_call_at: null,
       status: 'pending',
       source: 'publisher',
       removal_recommended_at: null,

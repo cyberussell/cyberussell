@@ -1,6 +1,6 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { VISIT_RESULTS } from '../records/schema'
+import { isDoNotCallLocked, VISIT_RESULTS } from '../records/schema'
 import type { VisitResult } from '../records/types'
 import { getBatchSummary } from '../assignment/queries'
 import type { PartnershipWithProgress } from '../assignment/types'
@@ -117,9 +117,87 @@ async function countActiveBibleStudies(supabase: SupabaseClient, congregationId:
   return count
 }
 
-// Backs both the Group Leader Dashboard (always today's batch) and, indirectly, the shape
-// Reports reuses for a single-day rollup — the two features share this one metric definition
-// rather than each inventing their own.
+// The Group Leader Home tab's "completed today" breakdown, strictly scoped to THIS batch's own
+// assigned records — not getVisitResultCounts' broader "any visit logged today anywhere in
+// these territories," which double-counts whenever the same Group Leader also has a second
+// batch (e.g. an overflow one) touching the same territory the same day, or a prior day's batch
+// left a record whose territory overlaps. Two of the buckets below never come from an actual
+// territory_record_visits row:
+//  - 'undone': terminatePartnershipEarly (Group Leader force-end or a publisher's own Early Out)
+//    deliberately never writes a visit row (see its own comment — a synthetic one used to
+//    corrupt the rotation staleness signal) — so an assigned record still incomplete once its
+//    partnership has ended_early_at is derived as undone here instead.
+//  - 'do_not_call': a record still inside its 6-month lock (see isDoNotCallLocked) can't have
+//    had a visit logged against it at all today, structurally — it still belongs in the
+//    breakdown as do_not_call rather than silently vanishing from the totals.
+// A record with neither an actual visit, an ended-early partnership, nor an active lock simply
+// isn't counted in any bucket — it's still in progress, which the separate remainingRecords
+// stat already covers.
+async function getBatchVisitResultCounts(
+  supabase: SupabaseClient,
+  congregationId: string,
+  batchId: string,
+  rangeStart: string,
+  rangeEnd: string
+): Promise<Record<VisitResult, number>> {
+  const counts = emptyResultCounts()
+
+  const { data: partnerships } = await supabase.from('partnerships').select('id, ended_early_at').eq('batch_id', batchId)
+  const endedEarlyByPartnership = new Map(
+    ((partnerships ?? []) as { id: string; ended_early_at: string | null }[]).map((p) => [p.id, Boolean(p.ended_early_at)])
+  )
+  const partnershipIds = [...endedEarlyByPartnership.keys()]
+  if (partnershipIds.length === 0) return counts
+
+  const { data: assigned } = await supabase.from('partnership_records').select('partnership_id, record_id').in('partnership_id', partnershipIds)
+  const assignedRows = (assigned ?? []) as { partnership_id: string; record_id: string }[]
+  if (assignedRows.length === 0) return counts
+
+  const recordIds = assignedRows.map((r) => r.record_id)
+
+  const [{ data: visits }, { data: records }] = await Promise.all([
+    supabase
+      .from('territory_record_visits')
+      .select('record_id, result, visited_at')
+      .eq('congregation_id', congregationId)
+      .in('record_id', recordIds)
+      .gte('visited_at', rangeStart)
+      .lt('visited_at', rangeEnd)
+      .order('visited_at', { ascending: false }),
+    supabase.from('territory_records').select('id, do_not_call, do_not_call_at').in('id', recordIds),
+  ])
+
+  // Same "rows ordered newest-first, first time we see a record_id is its latest result"
+  // de-dup pattern as getVisitResultCounts.
+  const latestResultByRecord = new Map<string, VisitResult>()
+  for (const row of (visits ?? []) as { record_id: string; result: VisitResult }[]) {
+    if (!latestResultByRecord.has(row.record_id)) latestResultByRecord.set(row.record_id, row.result)
+  }
+  const lockedByRecord = new Map(
+    ((records ?? []) as { id: string; do_not_call: boolean; do_not_call_at: string | null }[]).map((r) => [
+      r.id,
+      isDoNotCallLocked(r.do_not_call, r.do_not_call_at),
+    ])
+  )
+
+  for (const row of assignedRows) {
+    const visited = latestResultByRecord.get(row.record_id)
+    if (visited) {
+      counts[visited] = (counts[visited] ?? 0) + 1
+    } else if (lockedByRecord.get(row.record_id)) {
+      counts.do_not_call += 1
+    } else if (endedEarlyByPartnership.get(row.partnership_id)) {
+      counts.undone += 1
+    }
+  }
+
+  return counts
+}
+
+// Backs the Group Leader Dashboard (always today's own batch) — Reports (getReportStats below)
+// deliberately computes its own congregation-wide, multi-day rollup instead of reusing this,
+// since it's a broader admin tool where "every visit in range" is the right scope, not "just
+// this one batch."
 export async function getBatchStats(
   supabase: SupabaseClient,
   congregationId: string,
@@ -136,7 +214,7 @@ export async function getBatchStats(
   const rangeEnd = endOfDayUtcExclusive(batch.assignment_date, timezone)
 
   const [resultCounts, newRecordsSubmitted, activeBibleStudies] = await Promise.all([
-    getVisitResultCounts(supabase, congregationId, territoryIds, rangeStart, rangeEnd),
+    getBatchVisitResultCounts(supabase, congregationId, batchId, rangeStart, rangeEnd),
     countNewPublisherRecords(supabase, congregationId, territoryIds, rangeStart, rangeEnd),
     countActiveBibleStudies(supabase, congregationId, territoryIds),
   ])

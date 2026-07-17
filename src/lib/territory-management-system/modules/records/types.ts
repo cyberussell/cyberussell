@@ -26,6 +26,10 @@ export interface TerritoryRecord {
   household_members: number | null
   notes: string
   do_not_call: boolean
+  // Set automatically by a DB trigger the moment do_not_call flips true (see
+  // 027_do_not_call_lock.sql) — null whenever do_not_call is false. Powers the 6-month
+  // no-visit-can-be-logged cooldown (see isDoNotCallLocked in records/schema.ts).
+  do_not_call_at: string | null
   status: RecordStatus
   source: RecordSource
   // Set when a publisher marks this record "Moved" and chooses "Recommend for Admin Removal"

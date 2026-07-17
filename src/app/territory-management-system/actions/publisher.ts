@@ -104,15 +104,17 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
   if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
 
   // Re-derive the selectable results the same way the client's form does (from the record's
-  // latest visit result + do_not_call flag) rather than checking a static list — a static list
-  // can't account for the Bible Study follow-up or Do Not Call narrowing (getSelectableResults),
-  // which is exactly what caused Progressing/Discontinued to be wrongly rejected here before
-  // this fix.
-  const [latestResult, doNotCall] = await Promise.all([
+  // latest visit result + do_not_call flag/timestamp) rather than checking a static list — a
+  // static list can't account for the Bible Study follow-up or Do Not Call narrowing
+  // (getSelectableResults), which is exactly what caused Progressing/Discontinued to be wrongly
+  // rejected here before this fix. Passing doNotCallAt also means a locked record (still within
+  // its 6-month cooldown, see 027_do_not_call_lock.sql) gets an empty selectable list here — a
+  // crafted/stale submission can't bypass the client's own locked-notice UI.
+  const [latestResult, { doNotCall, doNotCallAt }] = await Promise.all([
     getLatestVisitResult(supabase, parsed.data.recordId),
     getRecordDoNotCall(supabase, parsed.data.recordId),
   ])
-  const selectable = getSelectableResults(latestResult, doNotCall)
+  const selectable = getSelectableResults(latestResult, doNotCall, doNotCallAt)
   if (!(selectable as readonly string[]).includes(parsed.data.result)) return { error: 'Invalid visit result.' }
 
   try {

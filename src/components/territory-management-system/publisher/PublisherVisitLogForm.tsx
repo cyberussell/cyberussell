@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { Lock } from 'lucide-react'
 import {
+  doNotCallUnlockDate,
   getSelectableResults,
   mergeConductorIntoNotes,
   SELECTABLE_VISIT_RESULTS,
@@ -29,11 +31,13 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 export default function PublisherVisitLogForm({
   latestResult,
   doNotCall,
+  doNotCallAt,
   saving,
   onLogVisit,
 }: {
   latestResult?: string | null
   doNotCall?: boolean
+  doNotCallAt?: string | null
   saving: boolean
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
 }) {
@@ -41,9 +45,31 @@ export default function PublisherVisitLogForm({
   const [result, setResult] = useState<(typeof SELECTABLE_VISIT_RESULTS)[number] | ''>('')
   const [conductorName, setConductorName] = useState('')
   const [notes, setNotes] = useState('')
-  const selectableResults = getSelectableResults(latestResult, doNotCall).filter((r) => r !== 'moved')
+  const selectableResults = getSelectableResults(latestResult, doNotCall, doNotCallAt).filter((r) => r !== 'moved')
   const notesRequired = result === 'other'
   const conductorPrompt = result ? VISIT_RESULT_CONDUCTOR_PROMPT[result] : undefined
+
+  // doNotCall + zero selectable results can only mean the 6-month lock is active (every other
+  // gating path always leaves at least one option) — nothing to log yet, so skip straight to a
+  // locked notice instead of an empty dropdown.
+  if (doNotCall && selectableResults.length === 0 && doNotCallAt) {
+    const unlockDate = doNotCallUnlockDate(doNotCallAt)
+    return (
+      <Card className="p-6">
+        <div className="flex items-center gap-2">
+          <Lock className="h-4 w-4 text-red-500" />
+          <h2 className="font-semibold text-[#0B1B33]">Do Not Call — Locked</h2>
+        </div>
+        <p className="mt-2 text-sm text-slate-600">
+          This record can&apos;t be visited while Do Not Call is still within its 6-month window. It unlocks on{' '}
+          <span className="font-medium text-[#0B1B33]">
+            {unlockDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+          </span>
+          .
+        </p>
+      </Card>
+    )
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

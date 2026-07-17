@@ -354,11 +354,18 @@ export async function getLatestVisitResult(supabase: SupabaseClient, recordId: s
   return (data as { result: string } | null)?.result ?? null
 }
 
-// Cheap do_not_call-only read — same rationale as getLatestVisitResult, used to re-derive
-// getSelectableResults() server-side without pulling the full record + location joins.
-export async function getRecordDoNotCall(supabase: SupabaseClient, recordId: string): Promise<boolean> {
-  const { data } = await supabase.from('territory_records').select('do_not_call').eq('id', recordId).maybeSingle()
-  return (data as { do_not_call: boolean } | null)?.do_not_call ?? false
+// Cheap do_not_call(+timestamp)-only read — same rationale as getLatestVisitResult, used to
+// re-derive getSelectableResults() server-side without pulling the full record + location
+// joins. doNotCallAt only matters to the publisher-facing 6-month lock (see
+// logPublisherVisitAction) — the Admin's own logVisitAction still calls getSelectableResults
+// with just the doNotCall flag, which never locks on its own.
+export async function getRecordDoNotCall(
+  supabase: SupabaseClient,
+  recordId: string
+): Promise<{ doNotCall: boolean; doNotCallAt: string | null }> {
+  const { data } = await supabase.from('territory_records').select('do_not_call, do_not_call_at').eq('id', recordId).maybeSingle()
+  const row = data as { do_not_call: boolean; do_not_call_at: string | null } | null
+  return { doNotCall: row?.do_not_call ?? false, doNotCallAt: row?.do_not_call_at ?? null }
 }
 
 export async function listVisits(supabase: SupabaseClient, recordId: string): Promise<RecordVisitWithAuthor[]> {

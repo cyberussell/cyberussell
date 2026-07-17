@@ -175,7 +175,7 @@ export async function logVisitAction(_prev: ActionResult, formData: FormData): P
   // Same narrowing the admin's own VisitLogForm applies client-side (Bible Study follow-up /
   // Do Not Call) — re-derived server-side so a stale or crafted form submission can't log a
   // result outside what's actually valid for this record's current state.
-  const [latestResult, doNotCall] = await Promise.all([
+  const [latestResult, { doNotCall }] = await Promise.all([
     recordQueries.getLatestVisitResult(supabase, parsed.data.recordId),
     recordQueries.getRecordDoNotCall(supabase, parsed.data.recordId),
   ])
