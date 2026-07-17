@@ -450,7 +450,9 @@
       "Bash(rm -rf /Users/russellparayno/Documents/Business/cyberussell.com/src/app/scratch-email-preview)",
       "Bash(rm -rf .next)",
       "Bash(grep -n \"assignment_batches'\\)\\\\s*$\\\\|.insert\\({\" /Users/russellparayno/Documents/Business/cyberussell.com/src/lib/territory-management-system/modules/assignment/queries.ts)",
-      "Bash(grep -rn \"section.label\\\\|block.label\\\\|sectionLabel\\\\|blockLabel\\\\|section?.label\\\\|\\\\.label}-\\\\${\" /Users/russellparayno/Documents/Business/cyberussell.com/src/components/territory-management-system /Users/russellparayno/Documents/Business/cyberussell.com/src/lib/territory-management-system)"
+      "Bash(grep -rn \"section.label\\\\|block.label\\\\|sectionLabel\\\\|blockLabel\\\\|section?.label\\\\|\\\\.label}-\\\\${\" /Users/russellparayno/Documents/Business/cyberussell.com/src/components/territory-management-system /Users/russellparayno/Documents/Business/cyberussell.com/src/lib/territory-management-system)",
+      "Bash(git -c gc.auto=0 push origin main)",
+      "Bash(xargs -I{} basename {})"
     ]
   }
 }
