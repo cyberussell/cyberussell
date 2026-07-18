@@ -1,27 +1,13 @@
-import { AlertTriangle, Check, Lock } from 'lucide-react'
+import { AlertTriangle, Check, Lock, Users } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
-import { getRecordCardTone, isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
+import { isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
-// Card-level tone — shared with PublisherRecordDetailView via getRecordCardTone so the list and
-// the detail card never drift out of sync with each other again. Do Not Call/Bible Study are
-// solid (not pastel) so they read at a glance in a scrolling list; Potential BS gets its own
-// solid yellow, split out from the confirmed-study green. Text colors are bundled alongside each
-// tone's background so they stay readable against it — the two need to change together.
-function cardTone(doNotCall: boolean, latestResult: string | undefined) {
-  switch (getRecordCardTone(doNotCall, latestResult)) {
-    case 'do_not_call':
-      return { container: 'border-red-700 bg-red-600 hover:border-red-800', primary: 'text-white', secondary: 'text-red-100' }
-    case 'potential_bible_study':
-      return { container: 'border-yellow-500 bg-yellow-400 hover:border-yellow-600', primary: 'text-black', secondary: 'text-black/70' }
-    case 'bible_study':
-      return { container: 'border-emerald-700 bg-emerald-600 hover:border-emerald-800', primary: 'text-white', secondary: 'text-emerald-100' }
-    case 'moved':
-      return { container: 'border-amber-300 bg-amber-50 hover:border-amber-400', primary: 'text-[#0B1B33]', secondary: 'text-slate-600' }
-    default:
-      return { container: 'border-blue-100/60 bg-white hover:border-[#38BDF8]/40', primary: 'text-[#0B1B33]', secondary: 'text-slate-600' }
-  }
-}
+// Deliberately no status-based tinting here (Russell: "Remove all the colors in the card list.
+// All white.") — every card in this scrolling list gets the same plain style regardless of
+// status, so nothing competes for attention while skimming. The colored full-panel treatment
+// only happens on PublisherRecordDetailView (the single record you've tapped into).
+const CARD_CONTAINER = 'border-blue-100/60 bg-white hover:border-[#38BDF8]/40'
 
 // Selecting a record is an in-memory view-state change (onSelect), not a route navigation —
 // the whole point of the offline-first workspace is that nothing after the initial load needs
@@ -43,35 +29,55 @@ export default function AssignedRecordsList({
     return <Card className="p-6 text-center text-sm text-slate-600">No contact records assigned.</Card>
   }
 
+  // "N at this address" — counts other assigned records sharing this record's (non-empty) Plus
+  // Code, so multiple people at one household read as a group while skimming the list instead
+  // of looking like coincidentally-separate addresses.
+  const plusCodeCounts = new Map<string, number>()
+  for (const r of records) {
+    if (!r.record.plus_code) continue
+    plusCodeCounts.set(r.record.plus_code, (plusCodeCounts.get(r.record.plus_code) ?? 0) + 1)
+  }
+
   return (
     <div className="space-y-2">
       {records.map((r) => {
         const locked = isDoNotCallLocked(r.record.do_not_call, r.record.do_not_call_at)
-        const tone = cardTone(r.record.do_not_call, r.visits[0]?.result)
+        const householdCount = r.record.plus_code ? (plusCodeCounts.get(r.record.plus_code) ?? 1) : 1
         return (
           <button
             key={r.id}
             type="button"
             onClick={() => onSelect(r.record.id)}
-            className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left shadow-sm transition ${tone.container}`}
+            className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left shadow-sm transition ${CARD_CONTAINER}`}
           >
             <div className="min-w-0">
-              <p className={`truncate font-medium ${tone.primary}`}>
-                {r.sequence}. {r.record.address || r.record.plus_code || 'Unlabeled record'}
-                {r.record.unit ? `, ${r.record.unit}` : ''}
+              <p className="flex items-center gap-1.5 truncate font-medium text-[#0B1B33]">
+                <span className="truncate">
+                  {r.sequence}. {r.record.address || r.record.plus_code || 'Unlabeled record'}
+                  {r.record.unit ? `, ${r.record.unit}` : ''}
+                </span>
+                {householdCount > 1 && (
+                  <span
+                    className="flex shrink-0 items-center gap-1 rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-[#2563EB]"
+                    title={`${householdCount} contact records at this address`}
+                  >
+                    <Users className="h-3 w-3" />
+                    {householdCount}
+                  </span>
+                )}
               </p>
-              {r.record.resident_name && <p className={`truncate text-xs ${tone.secondary}`}>{r.record.resident_name}</p>}
-              <p className={`truncate text-xs ${tone.secondary}`}>
+              {r.record.resident_name && <p className="truncate text-xs text-slate-600">{r.record.resident_name}</p>}
+              <p className="truncate text-xs text-slate-400">
                 {r.record.territory ? `${r.record.territory.name} — ${r.record.territory.description}` : '—'}
                 {' · '}
                 Sec {r.record.section?.label ?? '—'} / Blk {r.record.block?.label ?? '—'}
                 {r.record.do_not_call ? ` · Do Not Call${locked ? ' (Locked)' : ''}` : ''}
               </p>
-              <p className={`mt-0.5 truncate text-xs ${tone.secondary}`}>
+              <p className="mt-0.5 truncate text-xs text-slate-500">
                 {r.visits[0] ? VISIT_RESULT_LABELS[r.visits[0].result] : VISIT_RESULT_LABELS.initial_visit}
                 {r.visits[0]?.notes ? `: ${r.visits[0].notes}` : ''}
               </p>
-              {r.passed_from_name && <p className={`mt-0.5 truncate text-xs font-medium ${tone.primary}`}>Passed by {r.passed_from_name}</p>}
+              {r.passed_from_name && <p className="mt-0.5 truncate text-xs font-medium text-amber-600">Passed by {r.passed_from_name}</p>}
             </div>
             {failedRecordIds.has(r.record.id) ? (
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500" title="Sync failed — open to see why">

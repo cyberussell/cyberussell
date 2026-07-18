@@ -1,5 +1,23 @@
 # Current Work
 
+**Territory Management System — QR cascade bug fix, custom card-tone palette, multi-record households, sync copy-for-admin (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via temporary scratch routes, no migration needed, committed and pushed at Russell's request ("fix or finish all open items then deploy") — see checkpoints `territory-management-overflow-qr-cascade-bug-v1.md` and `territory-management-household-plus-code-color-revision-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 4 items closing out the open loop from the prior "solid card tones" round. (1) The overflow QR panel was STILL showing white in production despite the prior round's fix and a matching Vercel deployment SHA — root-caused via computed-style inspection to a real Tailwind CSS cascade bug (Card's own `bg-white`/`border-gray-300` beating the conditional `bg-black`/`border-black` regardless of className string order), fixed with the `!` important-modifier. (2) Russell revised the card-tone spec entirely: strip all coloring from the scrolling list (plain white always), and use his own exact hex palette on the single-record detail card instead of Tailwind's reds/greens/yellows — text colors picked by computed WCAG contrast ratio per background, not eyeballed. (3) New multi-record-household support: a "+ Add Another Person Here" quick-add button, a Plus-Code grouping badge on both the publisher list and Admin's Contact Records table, and a record picker on the Moved→Recommend-for-Removal flow so a publisher can specify which of several people at one address is being flagged. (4) A "Copy for Admin" button on the publisher's failed-sync screen — the cheap fallback for the "how does Admin override a stuck sync" question, since failures are confirmed to be poor-connectivity-driven rather than a systemic bug, not (yet) worth a full server-side Sync Issues table.
+
+Current Status: Code complete, no migration needed.
+- `GroupLeaderTabs.tsx`: `!border-black !bg-black` fixes the QR panel.
+- `PublisherRecordDetailView.tsx`/`AssignedRecordsList.tsx`: new hex palette (Bible Study `#4a6da7`, Potential BS `#799fcc`, Do Not Call `#e59797`, Default `#dadad9`), list tone-coloring removed entirely.
+- `PublisherWorkspaceApp.tsx`: `householdRecords` derivation (same-partnership, same-Plus-Code), `addRecord` view gained an optional `prefill`, `handleCopyFailedReport`/`buildFailedSyncReport`.
+- `MarkMovedForm.tsx`: record picker in "Recommend for Admin Removal," `onRecommend` signature gained a `recordId` param.
+- `RecordsTable.tsx` (Admin): same Plus-Code grouping badge.
+- `npx tsc --noEmit` and `npx vitest run` (52/52) clean. Live-verified via temporary scratch routes (removed before finishing): QR panel confirmed black via `getComputedStyle` + pixel-sampled the QR image itself (was always correctly inverted — the panel was the only real bug); household batch confirmed end-to-end (list badge, detail card colors/readability, add-sibling button, Moved record picker, Admin table badge) with mock two-person-household data.
+
+**Next recommended task:** Russell spot-checks all of it live: the overflow QR panel is now fully black with a visible white heading; the detail card's new colors read correctly across Do Not Call/Bible Study/Potential BS/default records while the list stays plain white; "Add Another Person Here" creates a second record at the same address correctly; the Moved flow's record picker appears once a real household has 2+ people; and, if a sync ever fails in the field, "Copy for Admin" produces legible text to paste into Messenger.
+
+----------------------------------------
+
 **Territory Management System — Overflow QR panel fix, status-help audit, solid card tones (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via a temporary scratch route, no migration needed, committed and pushed at Russell's request ("Deploy if done") — see checkpoint `territory-management-overflow-qr-panel-status-help-audit-card-tones-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

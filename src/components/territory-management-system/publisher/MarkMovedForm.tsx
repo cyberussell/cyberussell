@@ -28,16 +28,31 @@ export default function MarkMovedForm({
   // Mark as Moved" button row (PublisherRecordDetailView), which only mounts this component
   // once its own "Mark as Moved" button is tapped, so the trigger itself would be redundant.
   initialMode = 'closed',
+  currentRecordId,
+  currentRecordLabel,
+  householdRecords = [],
 }: {
   initial: MovedRecordFields
   submitting: boolean
   onUpdate: (fields: MovedRecordFields) => void
-  onRecommend: (reason: string) => void
+  // recordId is currentRecordId unless the publisher picks a different household member on the
+  // record-picker step below (only shown when householdRecords is non-empty).
+  onRecommend: (reason: string, recordId: string) => void
   initialMode?: 'closed' | 'choose'
+  // This record's own id/label, used as the record picker's default selection and its own radio
+  // option — required even when householdRecords is empty since onRecommend always needs a
+  // recordId.
+  currentRecordId: string
+  currentRecordLabel: string
+  // Other records at this same address (same Plus Code) already assigned to this partnership —
+  // see PublisherWorkspaceApp's householdRecords. Empty for a single-record household, in which
+  // case the picker step is skipped entirely (nothing to choose between).
+  householdRecords?: { id: string; label: string }[]
 }) {
   const [mode, setMode] = useState<'closed' | 'choose' | 'edit' | 'recommend'>(initialMode)
   const [fields, setFields] = useState(initial)
   const [reason, setReason] = useState('')
+  const [recommendRecordId, setRecommendRecordId] = useState(currentRecordId)
   const [locating, setLocating] = useState(false)
 
   async function handleUseMyLocation() {
@@ -206,6 +221,27 @@ export default function MarkMovedForm({
     <Card className="border-red-200 bg-red-50 p-6">
       <h2 className="font-semibold text-[#0B1B33]">Recommend for Admin Removal</h2>
       <p className="mt-1 text-sm text-slate-500">Required — tell the Admin why this record should be removed.</p>
+      {householdRecords.length > 0 && (
+        <div className="mt-4">
+          <FormField label="Which record?">
+            <div className="space-y-2">
+              {[{ id: currentRecordId, label: currentRecordLabel }, ...householdRecords].map((r) => (
+                <label key={r.id} className="flex items-center gap-2 text-sm text-slate-700">
+                  <input
+                    type="radio"
+                    name="recommendRecordId"
+                    checked={recommendRecordId === r.id}
+                    onChange={() => setRecommendRecordId(r.id)}
+                    disabled={submitting}
+                    className="h-4 w-4 border-blue-200"
+                  />
+                  {r.label}
+                </label>
+              ))}
+            </div>
+          </FormField>
+        </div>
+      )}
       <div className="mt-4">
         <FormField label="Reason">
           <textarea
@@ -231,7 +267,7 @@ export default function MarkMovedForm({
         </button>
         <button
           type="button"
-          onClick={() => onRecommend(reason)}
+          onClick={() => onRecommend(reason, recommendRecordId)}
           disabled={submitting || !reason.trim()}
           className="flex-1 rounded-lg bg-red-600 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
         >

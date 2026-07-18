@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Anton } from 'next/font/google'
-import { ArrowRightLeft, MapPin, PencilLine, Truck } from 'lucide-react'
+import { ArrowRightLeft, MapPin, PencilLine, Truck, UserPlus, Users } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { doNotCallUnlockDate, getRecordCardTone, isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
@@ -37,26 +37,25 @@ function ordinal(n: number): string {
   }
 }
 
-// Full-card tone — shared with AssignedRecordsList via getRecordCardTone (records/schema.ts) so
-// the list and this detail card never disagree about whether a record reads as Do Not Call /
-// active Bible Study / Potential BS / Moved. Deliberately still its own local mapping rather than
-// records/schema.ts's VISIT_RESULT_STYLES (that one backs badge pills everywhere else and stays
-// violet for Bible Study there) — this card's full-panel treatment is its own visual language,
-// just now driven by the same underlying rule. Do Not Call/Bible Study/Potential BS are solid
-// (not pastel), so every text line inside the card needs a tone-matched color too — bundled here
-// alongside the background so the two always change together.
+// Full-card tone — this is the ONLY place status coloring shows now (Russell: card list stays
+// all-white, this single-record detail card is where it "only changes when they are in the
+// actual record card"). Exact hex values from Russell, not Tailwind's palette. Text color per
+// tone picked by actual WCAG contrast ratio against each background, not eyeballed — #4a6da7 is
+// dark enough for white text (5.2:1) but #799fcc/#e59797/#dadad9 are all too light for white text
+// (2.3–2.8:1, fails AA) and need dark navy instead (7.6–15:1). Border is each background darkened
+// ~20% for a bit of edge definition against the page background.
 function cardTone(doNotCall: boolean, latestResult: string | undefined) {
   switch (getRecordCardTone(doNotCall, latestResult)) {
     case 'do_not_call':
-      return { container: 'border-red-700 bg-red-600', primary: 'text-white', secondary: 'text-red-100' }
+      return { container: 'border-[#b77979] bg-[#e59797]', primary: 'text-[#0B1B33]', secondary: 'text-[#0B1B33]/70' }
     case 'potential_bible_study':
-      return { container: 'border-yellow-500 bg-yellow-400', primary: 'text-black', secondary: 'text-black/70' }
+      return { container: 'border-[#617fa3] bg-[#799fcc]', primary: 'text-[#0B1B33]', secondary: 'text-[#0B1B33]/70' }
     case 'bible_study':
-      return { container: 'border-emerald-700 bg-emerald-600', primary: 'text-white', secondary: 'text-emerald-100' }
+      return { container: 'border-[#3b5786] bg-[#4a6da7]', primary: 'text-white', secondary: 'text-white/80' }
     case 'moved':
       return { container: 'border-amber-300 bg-amber-50', primary: 'text-[#0B1B33]', secondary: 'text-slate-500' }
     default:
-      return { container: 'border-gray-300 bg-white', primary: 'text-[#0B1B33]', secondary: 'text-slate-500' }
+      return { container: 'border-[#aeaeae] bg-[#dadad9]', primary: 'text-[#0B1B33]', secondary: 'text-[#0B1B33]/70' }
   }
 }
 
@@ -67,6 +66,7 @@ export default function PublisherRecordDetailView({
   sessionEnded,
   saving,
   siblingPartnerships,
+  householdRecords,
   moving,
   markingMoved,
   recommendingCorrection,
@@ -76,6 +76,7 @@ export default function PublisherRecordDetailView({
   onUpdateMoved,
   onRecommendRemoval,
   onRecommendCorrection,
+  onAddSibling,
 }: {
   assigned: PartnershipRecordDetail
   pendingVisits: SyncQueueItem[]
@@ -90,6 +91,11 @@ export default function PublisherRecordDetailView({
   // spinner so a slow connection doesn't look like a missed tap.
   saving: boolean
   siblingPartnerships: { id: string; name: string; batchLabel: string }[]
+  // Other records assigned to this partnership sharing this record's Plus Code — "other people
+  // at this address," not to be confused with siblingPartnerships above (other Ministry
+  // Partners). Empty when this record's Plus Code is blank or no other assigned record matches
+  // it. Drives both the "N at this address" line and MarkMovedForm's record picker.
+  householdRecords: { id: string; label: string }[]
   moving: boolean
   // True while either "Mark as Moved" path (Update Contact Record / Recommend for Admin
   // Removal) is being saved/synced.
@@ -103,8 +109,11 @@ export default function PublisherRecordDetailView({
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
   onMoveRecord: (destinationPartnershipId: string) => void
   onUpdateMoved: (fields: MovedRecordFields) => void
-  onRecommendRemoval: (reason: string) => void
+  // recordId defaults to this record's own id, but can be any entry from householdRecords —
+  // see MarkMovedForm's record picker.
+  onRecommendRemoval: (reason: string, recordId: string) => void
   onRecommendCorrection: (fields: CorrectionFields) => void
+  onAddSibling: () => void
 }) {
   const mapsUrl = assigned.record.plus_code
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assigned.record.plus_code)}`
@@ -150,6 +159,12 @@ export default function PublisherRecordDetailView({
             Household members: {assigned.record.household_members}
           </p>
         )}
+        {householdRecords.length > 0 && (
+          <p className={`mt-2 flex items-center gap-1.5 text-sm font-medium ${tone.primary}`}>
+            <Users className="h-4 w-4" />
+            {householdRecords.length + 1} contact records at this address
+          </p>
+        )}
         {assigned.record.notes && <p className={`mt-2 text-sm ${tone.secondary}`}>{assigned.record.notes}</p>}
         {assigned.record.do_not_call && (
           <p className={`mt-2 text-sm font-medium ${tone.primary}`}>
@@ -188,12 +203,31 @@ export default function PublisherRecordDetailView({
         )}
       </div>
 
+      {editable && (
+        <button
+          type="button"
+          onClick={onAddSibling}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+        >
+          <UserPlus className="h-4 w-4" />
+          Add Another Person Here
+        </button>
+      )}
+
       {editable && !assigned.completed_at && (
         <>
           {/* Desktop/tablet: all forms fully expanded, plenty of room */}
           <div className="hidden space-y-6 sm:block">
             <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
-            <MarkMovedForm initial={movedFields} submitting={markingMoved} onUpdate={onUpdateMoved} onRecommend={onRecommendRemoval} />
+            <MarkMovedForm
+              initial={movedFields}
+              submitting={markingMoved}
+              onUpdate={onUpdateMoved}
+              onRecommend={onRecommendRemoval}
+              currentRecordId={assigned.record.id}
+              currentRecordLabel={assigned.record.resident_name || assigned.record.address || 'this record'}
+              householdRecords={householdRecords}
+            />
             <RecommendCorrectionForm
               currentPlusCode={assigned.record.plus_code ?? ''}
               submitting={recommendingCorrection}
@@ -250,6 +284,9 @@ export default function PublisherRecordDetailView({
                   submitting={markingMoved}
                   onUpdate={onUpdateMoved}
                   onRecommend={onRecommendRemoval}
+                  currentRecordId={assigned.record.id}
+                  currentRecordLabel={assigned.record.resident_name || assigned.record.address || 'this record'}
+                  householdRecords={householdRecords}
                 />
               </div>
             )}

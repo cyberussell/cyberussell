@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { toast } from 'sonner'
-import { CheckCircle2, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
+import { CheckCircle2, ClipboardCopy, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 import { isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
@@ -72,11 +72,31 @@ function describeQueueItem(item: SyncQueueItem): string {
   return QUEUE_ITEM_TYPE_LABELS[item.type] ?? item.type
 }
 
+// Plain-text summary of everything still failing to sync — the cheap version of an admin
+// override: there's no server-side visibility into a stuck client-side queue item (it never
+// reached the server to be logged anywhere), so the publisher copies this and sends it to their
+// Group Leader/Admin directly (Messenger, etc.), who then re-enters it manually through the
+// existing Admin pages. Good enough for the actual failure mode here — poor connectivity in the
+// field, not a systemic bug — a real server-side "Sync Issues" admin page would be the next step
+// up if this starts happening often enough to justify it.
+function buildFailedSyncReport(items: SyncQueueItem[], partnerName: string): string {
+  const lines = [`Sync issues — ${partnerName || 'Ministry Partner'} — ${new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}`, '']
+  for (const item of items) {
+    lines.push(`• ${describeQueueItem(item)}`)
+    lines.push(`  Error: ${item.error ?? 'Sync failed.'}`)
+  }
+  return lines.join('\n')
+}
+
 type View =
   | { name: 'home' }
   | { name: 'list' }
   | { name: 'detail'; recordId: string }
-  | { name: 'addRecord' }
+  // prefill is set when reached via "+ Add Another Person Here" on a detail view — carries the
+  // current record's territory/section/block/address/Plus Code so a second household member
+  // doesn't need to be retyped from scratch. Undefined for the plain "My Added Records" entry
+  // point, which still starts blank.
+  | { name: 'addRecord'; prefill?: Partial<NewPublisherRecordPayload> }
   | { name: 'addedRecords' }
   | { name: 'addedRecordDetail'; recordId: string }
   | { name: 'editAddedRecord'; recordId: string }
@@ -230,6 +250,19 @@ export default function PublisherWorkspaceApp({
 
   const pendingCount = queue.filter((q) => q.status === 'pending' || q.status === 'syncing').length
   const failedCount = queue.filter((q) => q.status === 'failed').length
+
+  async function handleCopyFailedReport() {
+    const report = buildFailedSyncReport(
+      queue.filter((q) => q.status === 'failed'),
+      workspace.name
+    )
+    try {
+      await navigator.clipboard.writeText(report)
+      toast.success('Copied — send this to your Group Leader.')
+    } catch {
+      toast.error('Could not copy — please screenshot this screen instead.')
+    }
+  }
 
   // Once on the Sync screen, the moment nothing is left pending or failed, the session is done.
   useEffect(() => {
@@ -573,6 +606,17 @@ export default function PublisherWorkspaceApp({
   const selected = view.name === 'detail' ? (workspace.records.find((r) => r.record.id === view.recordId) ?? null) : null
   const pendingVisitsForSelected =
     view.name === 'detail' ? queue.filter((q) => q.type === 'visit' && q.payload.recordId === view.recordId) : []
+  // Other records assigned to this same partnership that share a non-empty Plus Code — reads as
+  // "other people at this address." Client-side only, matched against records already loaded
+  // into this workspace (offline-first — no server round-trip), so a sibling assigned to a
+  // different partner won't show up here. Used both for the "N at this address" context and for
+  // MarkMovedForm's record picker when recommending one specific person for removal.
+  const householdRecords =
+    selected && selected.record.plus_code
+      ? workspace.records
+          .filter((r) => r.record.id !== selected.record.id && r.record.plus_code === selected.record.plus_code)
+          .map((r) => ({ id: r.record.id, label: r.record.resident_name || r.record.address || r.record.plus_code || 'Unlabeled record' }))
+      : []
   // Deliberately requires at least one real assigned record — a "searching a fresh territory"
   // partnership (zero assigned records) should NOT auto-surface "All assigned records are
   // done! Sync & Finish" the instant it's claimed, since the whole point is spending the
@@ -905,6 +949,7 @@ export default function PublisherWorkspaceApp({
             sessionEnded={sessionEnded}
             saving={savingVisit}
             siblingPartnerships={workspace.siblingPartnerships}
+            householdRecords={householdRecords}
             moving={movingRecord}
             markingMoved={markingMoved}
             recommendingCorrection={recommendingCorrection}
@@ -912,8 +957,21 @@ export default function PublisherWorkspaceApp({
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
             onMoveRecord={(destinationPartnershipId) => handleMoveRecord(selected.record.id, destinationPartnershipId)}
             onUpdateMoved={(fields) => handleUpdateMoved(selected.record.id, fields)}
-            onRecommendRemoval={(reason) => handleRecommendRemoval(selected.record.id, reason)}
+            onRecommendRemoval={(reason, recordId) => handleRecommendRemoval(recordId, reason)}
             onRecommendCorrection={(fields) => handleRecommendCorrection(selected.record.id, fields)}
+            onAddSibling={() =>
+              setView({
+                name: 'addRecord',
+                prefill: {
+                  territoryId: selected.record.territory_id,
+                  sectionId: selected.record.section_id,
+                  blockId: selected.record.block_id,
+                  address: selected.record.address,
+                  unit: selected.record.unit,
+                  plusCode: selected.record.plus_code ?? '',
+                },
+              })
+            }
           />
         )}
 
@@ -921,6 +979,7 @@ export default function PublisherWorkspaceApp({
           <PublisherRecordForm
             territories={territoryStructures}
             lockedScope={addRecordLockedScope}
+            initialValues={view.prefill}
             onSubmit={handleAddRecord}
             onCancel={() => setView({ name: 'list' })}
           />
@@ -1029,6 +1088,14 @@ export default function PublisherWorkspaceApp({
                   Check your connection and tap Sync Now to retry. If this keeps failing, tell your Group Leader — they can check it from the
                   admin side.
                 </p>
+                <button
+                  type="button"
+                  onClick={handleCopyFailedReport}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+                >
+                  <ClipboardCopy className="h-3.5 w-3.5" />
+                  Copy for Admin
+                </button>
               </div>
             )}
             <button

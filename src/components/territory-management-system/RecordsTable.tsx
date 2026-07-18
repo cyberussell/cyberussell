@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from 'react'
 import Link from 'next/link'
+import { Users } from 'lucide-react'
 import DataTable from '@/components/territory-management-system/dashboard/DataTable'
 import FilterPills from '@/components/territory-management-system/dashboard/FilterPills'
 import TableSearchInput from '@/components/territory-management-system/dashboard/TableSearchInput'
@@ -41,6 +42,17 @@ export default function RecordsTable({ records }: { records: TerritoryRecordWith
     })
   }, [records, status, search])
 
+  // "N at this address" — counts records sharing a non-empty Plus Code, against the full
+  // (unfiltered) set so the count stays accurate regardless of the current status filter/search.
+  const plusCodeCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const r of records) {
+      if (!r.plus_code) continue
+      counts.set(r.plus_code, (counts.get(r.plus_code) ?? 0) + 1)
+    }
+    return counts
+  }, [records])
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -51,12 +63,26 @@ export default function RecordsTable({ records }: { records: TerritoryRecordWith
         columns={[
           {
             header: 'Address',
-            cell: (r) => (
-              <Link href={`/territory-management-system/dashboard/records/${r.id}`} className="font-medium hover:text-[#2563EB]">
-                {recordLabel(r)}
-                {r.unit ? `, ${r.unit}` : ''}
-              </Link>
-            ),
+            cell: (r) => {
+              const householdCount = r.plus_code ? (plusCodeCounts.get(r.plus_code) ?? 1) : 1
+              return (
+                <span className="flex items-center gap-1.5">
+                  <Link href={`/territory-management-system/dashboard/records/${r.id}`} className="font-medium hover:text-[#2563EB]">
+                    {recordLabel(r)}
+                    {r.unit ? `, ${r.unit}` : ''}
+                  </Link>
+                  {householdCount > 1 && (
+                    <span
+                      className="flex shrink-0 items-center gap-1 rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-[#2563EB]"
+                      title={`${householdCount} contact records at this address`}
+                    >
+                      <Users className="h-3 w-3" />
+                      {householdCount}
+                    </span>
+                  )}
+                </span>
+              )
+            },
             sortValue: (r) => recordLabel(r),
           },
           {
