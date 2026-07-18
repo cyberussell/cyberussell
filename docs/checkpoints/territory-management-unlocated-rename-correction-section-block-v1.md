@@ -29,13 +29,9 @@ Separately, Russell asked for the "Recommend a Correction" flow (`RecommendCorre
 None requested beyond what's built.
 
 ## Known Issues
-- **Migration 030 not yet applied to the live TMS Supabase project** — until Russell runs it, submitting a Section/Block correction (or any correction at all, since the write touches all four `correction_recommended_*` columns together) will fail in production with a missing-column error. SQL:
-  ```sql
-  alter table public.territory_records add column if not exists correction_recommended_section_id uuid references public.territory_sections(id) on delete set null;
-  alter table public.territory_records add column if not exists correction_recommended_block_id uuid references public.territory_blocks(id) on delete set null;
-  ```
-- The Flagged for Correction page's new Section/Block display line was code-reviewed only (relies on a PostgREST `!column_name` FK-disambiguation join hint, `correction_section:territory_sections!correction_recommended_section_id(id, label)`) — not live-verified against the real Supabase project, since that requires the migration above plus a real end-to-end correction submission with live credentials this sandbox doesn't have.
+- **Migration 030 confirmed applied by Russell, 2026-07-18** — the schema is live, but no real correction has actually been submitted end-to-end yet.
+- The Flagged for Correction page's new Section/Block display line was code-reviewed only (relies on a PostgREST `!column_name` FK-disambiguation join hint, `correction_section:territory_sections!correction_recommended_section_id(id, label)`) — not yet exercised against real data, since that requires a real publisher submission and live credentials this sandbox doesn't have.
 - Live-verified via a temporary scratch route: the "Unlocated" rename (MarkMovedForm button/heading, PublisherStatusHelp entry and cross-reference, malibang fix) and the RecommendCorrectionForm's new Section/Block cascading selects (prefill from mock "Section 3 / Block 12," switching Section resets Block correctly, submit payload includes the right `sectionId`/`blockId`) — all confirmed working client-side.
 
 ## Next Recommended Task
-Russell runs migration 030 against the live TMS Supabase project, then spot-checks live: a real "Recommend a Correction" submission with a changed Section/Block shows up correctly on the Admin's Flagged for Correction page, and "Apply Correction" actually moves the record to the new Section/Block.
+Russell spot-checks live: submit a real "Recommend a Correction" with a changed Section/Block as a publisher, confirm it shows up correctly on the Admin's Flagged for Correction page, and that "Apply Correction" actually moves the record to the new Section/Block.
