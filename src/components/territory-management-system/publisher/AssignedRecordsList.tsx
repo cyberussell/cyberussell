@@ -29,32 +29,51 @@ export default function AssignedRecordsList({
     return <Card className="p-6 text-center text-sm text-slate-600">No contact records assigned.</Card>
   }
 
-  // "N at this address" — counts other assigned records sharing this record's (non-empty) Plus
-  // Code, so multiple people at one household read as a group while skimming the list instead
-  // of looking like coincidentally-separate addresses.
-  const plusCodeCounts = new Map<string, number>()
+  // One card per Plus Code, not per record — a household with multiple contact records used to
+  // render as several near-identical adjacent cards, which read as duplicates rather than one
+  // stop with more than one person there. Grouped in list order (already sequence-sorted by the
+  // server, and the assignment engine always keeps a household's records adjacent — see
+  // engine.ts), so the first record encountered per Plus Code is always the lowest-sequence one
+  // and becomes the card's primary. A blank/null Plus Code never merges with another blank one —
+  // each such record stays its own singleton group, same rule as engine.ts/getBatchSummary.
+  const groups: PartnershipRecordDetail[][] = []
+  const groupIndexByPlusCode = new Map<string, number>()
   for (const r of records) {
-    if (!r.record.plus_code) continue
-    plusCodeCounts.set(r.record.plus_code, (plusCodeCounts.get(r.record.plus_code) ?? 0) + 1)
+    if (r.record.plus_code && groupIndexByPlusCode.has(r.record.plus_code)) {
+      groups[groupIndexByPlusCode.get(r.record.plus_code)!].push(r)
+      continue
+    }
+    if (r.record.plus_code) groupIndexByPlusCode.set(r.record.plus_code, groups.length)
+    groups.push([r])
   }
 
   return (
     <div className="space-y-2">
-      {records.map((r) => {
-        const locked = isDoNotCallLocked(r.record.do_not_call, r.record.do_not_call_at)
-        const householdCount = r.record.plus_code ? (plusCodeCounts.get(r.record.plus_code) ?? 1) : 1
+      {groups.map((group) => {
+        const primary = group[0]
+        const householdCount = group.length
+        // A record locked under the Do Not Call cooldown is only truly "nothing to do here"
+        // once every member of the household is locked — one locked resident shouldn't hide
+        // that a co-resident still needs a visit.
+        const allLocked = group.every((r) => isDoNotCallLocked(r.record.do_not_call, r.record.do_not_call_at))
+        const anyFailed = group.some((r) => failedRecordIds.has(r.record.id))
+        // Matches the Group Leader's "X of 6" rule (see getBatchSummary/engine.ts): the stop at
+        // this address counts as done once ANY one resident there has a logged visit, not only
+        // once every resident individually does — the household disclosure on the record detail
+        // page still shows each person's own status for anyone who wants that detail.
+        const anyCompleted = group.some((r) => r.completed_at)
         return (
           <button
-            key={r.id}
+            key={primary.id}
             type="button"
-            onClick={() => onSelect(r.record.id)}
+            onClick={() => onSelect(primary.record.id)}
             className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left shadow-sm transition ${CARD_CONTAINER}`}
           >
             <div className="min-w-0">
               <p className="flex items-center gap-1.5 truncate font-medium text-[#0B1B33]">
                 <span className="truncate">
-                  {r.sequence}. {r.record.address || r.record.plus_code || 'Unlabeled record'}
-                  {r.record.unit ? `, ${r.record.unit}` : ''}
+                  {primary.sequence}. {primary.record.address || primary.record.plus_code || 'Unlabeled record'}
+                  {primary.record.unit ? `, ${primary.record.unit}` : ''}
                 </span>
                 {householdCount > 1 && (
                   <span
@@ -66,28 +85,30 @@ export default function AssignedRecordsList({
                   </span>
                 )}
               </p>
-              {r.record.resident_name && <p className="truncate text-xs text-slate-600">{r.record.resident_name}</p>}
+              {primary.record.resident_name && <p className="truncate text-xs text-slate-600">{primary.record.resident_name}</p>}
               <p className="truncate text-xs text-slate-400">
-                {r.record.territory ? `${r.record.territory.name} — ${r.record.territory.description}` : '—'}
+                {primary.record.territory ? `${primary.record.territory.name} — ${primary.record.territory.description}` : '—'}
                 {' · '}
-                Sec {r.record.section?.label ?? '—'} / Blk {r.record.block?.label ?? '—'}
-                {r.record.do_not_call ? ` · Do Not Call${locked ? ' (Locked)' : ''}` : ''}
+                Sec {primary.record.section?.label ?? '—'} / Blk {primary.record.block?.label ?? '—'}
+                {primary.record.do_not_call ? ` · Do Not Call${allLocked ? ' (Locked)' : ''}` : ''}
               </p>
               <p className="mt-0.5 truncate text-xs text-slate-500">
-                {r.visits[0] ? VISIT_RESULT_LABELS[r.visits[0].result] : VISIT_RESULT_LABELS.initial_visit}
-                {r.visits[0]?.notes ? `: ${r.visits[0].notes}` : ''}
+                {primary.visits[0] ? VISIT_RESULT_LABELS[primary.visits[0].result] : VISIT_RESULT_LABELS.initial_visit}
+                {primary.visits[0]?.notes ? `: ${primary.visits[0].notes}` : ''}
               </p>
-              {r.passed_from_name && <p className="mt-0.5 truncate text-xs font-medium text-amber-600">Passed by {r.passed_from_name}</p>}
+              {primary.passed_from_name && (
+                <p className="mt-0.5 truncate text-xs font-medium text-amber-600">Passed by {primary.passed_from_name}</p>
+              )}
             </div>
-            {failedRecordIds.has(r.record.id) ? (
+            {anyFailed ? (
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500" title="Sync failed — open to see why">
                 <AlertTriangle className="h-3.5 w-3.5" />
               </span>
-            ) : locked ? (
+            ) : allLocked ? (
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-500" title="Locked — Do Not Call cooldown">
                 <Lock className="h-3.5 w-3.5" />
               </span>
-            ) : r.completed_at ? (
+            ) : anyCompleted ? (
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
                 <Check className="h-4 w-4" />
               </span>
