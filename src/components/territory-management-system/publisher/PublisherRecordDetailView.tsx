@@ -39,20 +39,24 @@ function ordinal(n: number): string {
 
 // Full-card tone — shared with AssignedRecordsList via getRecordCardTone (records/schema.ts) so
 // the list and this detail card never disagree about whether a record reads as Do Not Call /
-// active Bible Study / Moved. Deliberately still its own local className mapping rather than
+// active Bible Study / Potential BS / Moved. Deliberately still its own local mapping rather than
 // records/schema.ts's VISIT_RESULT_STYLES (that one backs badge pills everywhere else and stays
 // violet for Bible Study there) — this card's full-panel treatment is its own visual language,
-// just now driven by the same underlying rule.
-function cardToneClass(doNotCall: boolean, latestResult: string | undefined): string {
+// just now driven by the same underlying rule. Do Not Call/Bible Study/Potential BS are solid
+// (not pastel), so every text line inside the card needs a tone-matched color too — bundled here
+// alongside the background so the two always change together.
+function cardTone(doNotCall: boolean, latestResult: string | undefined) {
   switch (getRecordCardTone(doNotCall, latestResult)) {
     case 'do_not_call':
-      return 'border-red-300 bg-red-50'
+      return { container: 'border-red-700 bg-red-600', primary: 'text-white', secondary: 'text-red-100' }
+    case 'potential_bible_study':
+      return { container: 'border-yellow-500 bg-yellow-400', primary: 'text-black', secondary: 'text-black/70' }
     case 'bible_study':
-      return 'border-emerald-300 bg-emerald-50'
+      return { container: 'border-emerald-700 bg-emerald-600', primary: 'text-white', secondary: 'text-emerald-100' }
     case 'moved':
-      return 'border-amber-300 bg-amber-50'
+      return { container: 'border-amber-300 bg-amber-50', primary: 'text-[#0B1B33]', secondary: 'text-slate-500' }
     default:
-      return 'border-gray-300 bg-white'
+      return { container: 'border-gray-300 bg-white', primary: 'text-[#0B1B33]', secondary: 'text-slate-500' }
   }
 }
 
@@ -120,36 +124,38 @@ export default function PublisherRecordDetailView({
     notes: assigned.record.notes,
   }
 
+  const tone = cardTone(assigned.record.do_not_call, latestResult)
+
   return (
     <div className="space-y-6">
       <div
-        className={`rounded-2xl border p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)] ${cardToneClass(assigned.record.do_not_call, latestResult)}`}
+        className={`rounded-2xl border p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)] ${tone.container}`}
       >
-        <p className={`${anton.className} mb-2 text-xl uppercase tracking-wide text-[#0B1B33]`}>
+        <p className={`${anton.className} mb-2 text-xl uppercase tracking-wide ${tone.primary}`}>
           {ordinal(assigned.sequence)} Record to Visit
         </p>
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <h1 className="font-semibold text-[#0B1B33]">
+          <h1 className={`font-semibold ${tone.primary}`}>
             {assigned.record.address || assigned.record.plus_code || 'Unlabeled record'}
             {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
           </h1>
           <VisitResultBadge result={assigned.visits[0]?.result ?? 'initial_visit'} />
         </div>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className={`mt-1 text-sm ${tone.secondary}`}>
           Sec {assigned.record.section?.label ?? '—'} / Blk {assigned.record.block?.label ?? '—'}
         </p>
-        {assigned.record.resident_name && <p className="mt-2 text-sm text-slate-600">{assigned.record.resident_name}</p>}
+        {assigned.record.resident_name && <p className={`mt-2 text-sm ${tone.secondary}`}>{assigned.record.resident_name}</p>}
         {assigned.record.household_members != null && (
-          <p className="mt-2 text-sm text-slate-500">
+          <p className={`mt-2 text-sm ${tone.secondary}`}>
             Household members: {assigned.record.household_members}
           </p>
         )}
-        {assigned.record.notes && <p className="mt-2 text-sm text-slate-500">{assigned.record.notes}</p>}
+        {assigned.record.notes && <p className={`mt-2 text-sm ${tone.secondary}`}>{assigned.record.notes}</p>}
         {assigned.record.do_not_call && (
-          <p className="mt-2 text-sm font-medium text-red-500">
+          <p className={`mt-2 text-sm font-medium ${tone.primary}`}>
             Do Not Call
             {isDoNotCallLocked(assigned.record.do_not_call, assigned.record.do_not_call_at) && assigned.record.do_not_call_at && (
-              <span className="ml-1 font-normal text-red-400">
+              <span className={`ml-1 font-normal ${tone.secondary}`}>
                 — locked until{' '}
                 {doNotCallUnlockDate(assigned.record.do_not_call_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </span>
@@ -157,7 +163,7 @@ export default function PublisherRecordDetailView({
           </p>
         )}
         {assigned.passed_from_name && (
-          <p className="mt-2 text-sm font-medium text-amber-600">
+          <p className={`mt-2 text-sm font-medium ${tone.primary}`}>
             Passed by {assigned.passed_from_name}
             {assigned.passed_from_at ? ` on ${new Date(assigned.passed_from_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}
           </p>

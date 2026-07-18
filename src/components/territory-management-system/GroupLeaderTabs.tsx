@@ -259,7 +259,7 @@ export default function GroupLeaderTabs({
               >
                 {publicUrl}
               </a>
-              <p className={`text-xs ${isOverflow ? 'text-slate-300' : 'text-slate-600'}`}>
+              <p className={`text-xs ${isOverflow ? 'text-white' : 'text-slate-600'}`}>
                 Valid for today only — a new one is needed tomorrow.
               </p>
             </Card>

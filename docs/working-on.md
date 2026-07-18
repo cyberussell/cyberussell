@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Overflow QR panel fix, status-help audit, solid card tones (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via a temporary scratch route, no migration needed, committed and pushed at Russell's request ("Deploy if done") — see checkpoint `territory-management-overflow-qr-panel-status-help-audit-card-tones-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 3 items from Russell's screenshot review of the live GL dashboard. (1) Overflow QR panel's caption text fixed to pure white (was light gray) — everything else in the black panel was already correctly deployed, confirmed via Vercel that production was already running the commit with that styling. (2) Audited `getSelectableResults()`'s actual dropdown narrowing against every claim in `PublisherStatusHelp.tsx` — found and fixed one real mismatch (Bible Study's help text claimed "Moved" was a next-visit Status option, but `PublisherVisitLogForm.tsx` always filters it out of that dropdown; it's handled via a separate forced flow instead). (3) New solid card-tone colors: Do Not Call now solid red, Bible Study family solid green, and a new distinct Potential BS solid yellow tone (previously lumped into the same green as the rest of the Bible Study family) — applied to both `AssignedRecordsList.tsx` (card list) and `PublisherRecordDetailView.tsx` (single-record card), with every text line inside each toned card switching color to stay readable against the new solid backgrounds.
+
+Current Status: Code complete, no migration needed. `npx tsc --noEmit` and `npx vitest run` (52/52) clean. Live-verified via a temporary scratch route with mock records covering all three tones — screenshots confirmed readable text on solid red/green/yellow in both the list and detail card.
+
+**Next recommended task:** Russell spot-checks live: the overflow QR panel's caption is white now, a real DNC/Bible Study/Potential BS record shows correctly on both the Assigned Records list and the single-record detail view, and the reworded Bible Study help text reads correctly. The admin Territory detail page's address-click-to-popup task (converting `/dashboard/records/[recordId]` navigation into an in-place modal) is still queued, pending Russell's go-ahead.
+
+----------------------------------------
+
 **Territory Management System — Publisher status help (Tagalog), Bible Study funnel/sync-reason/QR-panel documentation backfill (2026-07-18) — code done, tsc + vitest (52/52) clean, committed and pushed (`f55e71d`), migration 028 confirmed applied by Russell — see checkpoints `territory-management-publisher-status-help-v1.md` and `territory-management-bible-study-funnel-sync-reasons-qr-panel-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

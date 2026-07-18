@@ -25,7 +25,8 @@ const STATUS_HELP: { status: string; description: string }[] = [
   },
   {
     status: 'Bible Study',
-    description: 'Kumpirmadong tuloy-tuloy na ang pag-aaral. Sa mga susunod na pagbisita, magiging Progressive BS, No Positive Response, o Moved.',
+    description:
+      'Kumpirmadong tuloy-tuloy na ang pag-aaral. Sa mga susunod na pagbisita, magiging Progressive BS o No Positive Response. (May hiwalay na paraan kung lumipat na sila — tingnan ang Moved sa ibaba.)',
   },
   {
     status: 'Progressive BS',

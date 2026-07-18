@@ -150,13 +150,15 @@ export const VISIT_RESULT_STYLES: Record<(typeof VISIT_RESULTS)[number], string>
 // card list) and PublisherRecordDetailView (the single-record contact card) — previously each
 // had its own slightly different local cardToneClass, so a record could show red/green on the
 // list but not the detail view (or vice versa). do_not_call is the persistent record flag, not
-// just the latest visit result, and takes priority; the Bible-Study-family green now covers the
-// whole funnel (Potential BS / Started Bible Study / Bible Study / Progressive BS), not just the
-// tail end of it.
-export type RecordCardTone = 'do_not_call' | 'bible_study' | 'moved' | 'default'
+// just the latest visit result, and takes priority. Potential BS gets its own tone (yellow —
+// interest shown, no confirmed study yet) split out from the rest of the Bible-Study family
+// (green — Started Bible Study / Bible Study / Progressive BS, a study is actually happening),
+// checked first since BIBLE_STUDY_FAMILY_RESULTS still includes 'potential_bible_study' itself.
+export type RecordCardTone = 'do_not_call' | 'potential_bible_study' | 'bible_study' | 'moved' | 'default'
 
 export function getRecordCardTone(doNotCall: boolean, latestResult?: string | null): RecordCardTone {
   if (doNotCall) return 'do_not_call'
+  if (latestResult === 'potential_bible_study') return 'potential_bible_study'
   if (latestResult && (BIBLE_STUDY_FAMILY_RESULTS as readonly string[]).includes(latestResult)) return 'bible_study'
   if (latestResult === 'moved') return 'moved'
   return 'default'
