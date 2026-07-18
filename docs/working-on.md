@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Merged household cards on Assigned Contact Records (2026-07-18) — code done, tsc + vitest clean (48/48, excluding the pre-existing unrelated live-DB Appointment System test failure), live-verified via a temporary scratch route, no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-merged-household-cards-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Follow-up to the household-single-record counting round — Russell caught that the publisher's own "Assigned Contact Records" list still showed one card per raw record, so a household of 2+ people still rendered as duplicate/triplicate adjacent cards even though the engine and Group Leader stats now treat them as one unit. `AssignedRecordsList.tsx` now groups records by Plus Code and renders exactly one card per group (lowest-sequence record as primary, tapping opens its detail view where the existing household disclosure surfaces the rest). Checkmark = any one member done (matches the Group Leader stat, confirmed with Russell); Do Not Call lock icon only shows once *every* member is locked, so one locked resident never hides that a co-resident still needs a visit.
+
+Current Status: Done and deployed. No migration needed. `npx tsc --noEmit` and `npx vitest run` (excluding the pre-existing unrelated `appointment-system/slots.test.ts`) clean. Live-verified via a temporary scratch route (removed before finishing).
+
+**Next recommended task:** Russell spot-checks live: a real multi-person household shows as one card, not two, on the Assigned Contact Records list.
+
+----------------------------------------
+
 **Territory Management System — Household counts as one assigned record, Record Detail household browsing (2026-07-18) — code done, tsc + vitest clean (48/48, excluding a pre-existing unrelated live-DB Appointment System test failure), live-verified the UI piece via a temporary scratch route, no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-household-single-record-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
