@@ -198,6 +198,16 @@ export function mergeConductorIntoNotes(conductorName: string, notes: string): s
   return merged.slice(0, 500)
 }
 
+// The inverse of mergeConductorIntoNotes — pulls the conductor's name back out of a prior
+// visit's notes so PublisherVisitLogForm can pre-fill "Who is conducting the Bible Study?" once
+// a study is already underway (result 'bible_study'/'progressing'), instead of asking the
+// publisher to retype the same name every visit. Returns '' if the notes don't start with the
+// fixed "Conducted by: " prefix (e.g. no prior study visit, or an Admin-edited note).
+export function extractConductorFromNotes(notes: string): string {
+  const match = /^Conducted by: (.+?)(?: — |$)/.exec(notes)
+  return match ? match[1] : ''
+}
+
 // A blank form field arrives as '' — coerce that to undefined so householdMembers stays
 // optional instead of coercing to 0 (a real headcount of "0" is different from "not recorded").
 export const householdMembersField = z.preprocess(

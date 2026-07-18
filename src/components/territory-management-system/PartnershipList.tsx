@@ -37,13 +37,16 @@ export default function PartnershipList({
         // finished_at/ended_early_at are the real "genuinely done" signal (see
         // 018_partnership_finished_at.sql) — this badge previously only ever distinguished
         // Claimed/Unclaimed, so a finished or early-ended partnership stayed "Claimed" forever.
-        const done = Boolean(p.finished_at || p.ended_early_at)
-        const status = done ? 'Done' : p.claimed_at ? 'Claimed' : 'Unclaimed'
-        const statusClass = done
-          ? 'bg-emerald-50 text-emerald-600'
-          : p.claimed_at
-            ? 'bg-blue-50 text-[#2563EB]'
-            : 'bg-slate-100 text-slate-500'
+        const endedEarly = Boolean(p.ended_early_at)
+        const done = Boolean(p.finished_at || endedEarly)
+        const status = endedEarly ? 'Ended Early' : done ? 'Done' : p.claimed_at ? 'Claimed' : 'Unclaimed'
+        const statusClass = endedEarly
+          ? 'bg-amber-50 text-amber-600'
+          : done
+            ? 'bg-emerald-50 text-emerald-600'
+            : p.claimed_at
+              ? 'bg-blue-50 text-[#2563EB]'
+              : 'bg-slate-100 text-slate-500'
         return (
           <Card key={p.id} className="p-4">
             <div className="mb-2 flex items-center justify-between gap-2">
@@ -60,6 +63,9 @@ export default function PartnershipList({
               {p.completedCount} of {p.recordCount} contact records completed
               {p.recordCount - p.completedCount > 0 ? ` · ${p.recordCount - p.completedCount} remaining` : ''}
             </p>
+            {endedEarly && (
+              <p className="mt-1 text-xs text-amber-600">Ended early — the remaining records weren&apos;t visited this session.</p>
+            )}
             {onEndPartnership && !done && (
               <button
                 type="button"

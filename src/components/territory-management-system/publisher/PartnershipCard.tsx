@@ -7,13 +7,16 @@ export default function PartnershipCard({ partnership, batchToken }: { partnersh
   // done" signal — completedCount >= recordCount alone can't be trusted (vacuously true for a
   // zero-record partnership) and this badge previously never checked completion at all, only
   // claimed_at, so a 100%-done or early-ended partnership stayed stuck on "In Progress" forever.
-  const done = Boolean(partnership.finished_at || partnership.ended_early_at)
-  const status = done ? 'Done' : partnership.claimed_at ? 'In Progress' : 'Unclaimed'
-  const statusClass = done
-    ? 'bg-emerald-50 text-emerald-600'
-    : partnership.claimed_at
-      ? 'bg-blue-50 text-[#2563EB]'
-      : 'bg-slate-100 text-slate-500'
+  const endedEarly = Boolean(partnership.ended_early_at)
+  const done = Boolean(partnership.finished_at || endedEarly)
+  const status = endedEarly ? 'Ended Early' : done ? 'Done' : partnership.claimed_at ? 'In Progress' : 'Unclaimed'
+  const statusClass = endedEarly
+    ? 'bg-amber-50 text-amber-600'
+    : done
+      ? 'bg-emerald-50 text-emerald-600'
+      : partnership.claimed_at
+        ? 'bg-blue-50 text-[#2563EB]'
+        : 'bg-slate-100 text-slate-500'
 
   return (
     <Link
@@ -30,6 +33,9 @@ export default function PartnershipCard({ partnership, batchToken }: { partnersh
       <p className="mt-1.5 text-xs text-slate-600">
         {partnership.completedCount} of {partnership.recordCount} contact records completed
       </p>
+      {endedEarly && (
+        <p className="mt-1 text-xs text-amber-600">Ended early — the remaining records weren&apos;t visited this session.</p>
+      )}
     </Link>
   )
 }

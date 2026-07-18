@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Lock } from 'lucide-react'
 import {
   doNotCallUnlockDate,
+  extractConductorFromNotes,
   getSelectableResults,
   mergeConductorIntoNotes,
   SELECTABLE_VISIT_RESULTS,
@@ -29,12 +30,16 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 // real value that gets saved.
 export default function PublisherVisitLogForm({
   latestResult,
+  latestVisitNotes,
   doNotCall,
   doNotCallAt,
   saving,
   onLogVisit,
 }: {
   latestResult?: string | null
+  // The prior visit's notes, used only to pre-fill the conductor name once a Bible Study is
+  // already underway ('bible_study'/'progressing') — see the result <select>'s onChange below.
+  latestVisitNotes?: string | null
   doNotCall?: boolean
   doNotCallAt?: string | null
   saving: boolean
@@ -92,7 +97,18 @@ export default function PublisherVisitLogForm({
             required
             disabled={saving}
             value={result}
-            onChange={(e) => setResult(e.target.value as (typeof SELECTABLE_VISIT_RESULTS)[number])}
+            onChange={(e) => {
+              const nextResult = e.target.value
+              setResult(nextResult as (typeof SELECTABLE_VISIT_RESULTS)[number])
+              // 'Started Bible Study' is the initial status change — nothing to carry over, so it
+              // stays blank. 'Bible Study'/'Progressing' are ongoing-study follow-ups (per
+              // getSelectableResults, mutually exclusive with 'started_bible_study' being
+              // selectable at the same time), so pre-fill from whoever was recorded as
+              // conducting it last time — the publisher can still edit it.
+              if (nextResult === 'bible_study' || nextResult === 'progressing') {
+                setConductorName(extractConductorFromNotes(latestVisitNotes ?? ''))
+              }
+            }}
             className={inputClass}
           >
             <option value="" disabled>

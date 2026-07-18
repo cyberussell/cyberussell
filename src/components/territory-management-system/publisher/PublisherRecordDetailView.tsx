@@ -311,6 +311,7 @@ export default function PublisherRecordDetailView({
         <div id="record-a-visit-form">
           <PublisherVisitLogForm
             latestResult={latestResult}
+            latestVisitNotes={assigned.visits[0]?.notes}
             doNotCall={assigned.record.do_not_call}
             doNotCallAt={assigned.record.do_not_call_at}
             saving={saving}
