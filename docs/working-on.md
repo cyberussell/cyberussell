@@ -1,5 +1,18 @@
 # Current Work
 
+**Territory Management System — Ended-early badge, Bible Study conductor pre-fill (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via a temporary scratch route, no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-ended-early-badge-bible-study-prefill-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 2 items from Russell's live screenshot review. (1) The publisher-facing batch-landing screen ("Select your Partner below") showed a partnership as plain green "Done" even with only 2 of 6 records completed, because the badge conflated a normal finish (`finished_at`) with an early termination (`ended_early_at`) — both now show a distinct amber "Ended Early" badge plus a note ("the remaining records weren't visited this session"); fixed in both `PartnershipCard.tsx` (the exact screen from the screenshot) and the Group Leader's own `PartnershipList.tsx` (same underlying bug). No per-partnership "reason" field exists for *why* it ended early (that's the separate, admin-only end-of-ministry note, deliberately excluded from Group Leader-facing data), so the note is a generic explanation, not a specific reason. (2) `PublisherVisitLogForm`'s "Who is conducting the Bible Study?" input now pre-fills from the prior visit's notes (new `extractConductorFromNotes()` in `schema.ts`, the inverse of the existing `mergeConductorIntoNotes()`) whenever the newly selected result is Bible Study or Progressive BS — editable afterward. "Started Bible Study" stays blank, since it's always the initial status change and is never selectable at the same time as Bible Study/Progressive BS.
+
+Current Status: Done and deployed. No migration needed.
+- `npx tsc --noEmit` and `npx vitest run` (52/52) clean. Live-verified via a temporary scratch route (removed before finishing): "Ended Early" badge/note render only for an early-ended partnership, not a normal finish; selecting "Progressive BS" pre-filled the conductor field from mock prior notes, still editable; selecting "Started Bible Study" left it blank.
+
+**Next recommended task:** Russell spot-checks live: a real "End Ministry Early" session shows the amber badge + note on both the publisher's own screen and the Group Leader's Partners tab, and a real Bible Study follow-up visit pre-fills the conductor name correctly.
+
+----------------------------------------
+
 **Territory Management System — Help tab fold-in, admin visit override, Moved cleanup, dashboard stats (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via a temporary scratch route, migration 029 confirmed applied by Russell, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-help-tab-admin-override-stats-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
