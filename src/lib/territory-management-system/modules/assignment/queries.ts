@@ -33,7 +33,11 @@ async function fetchEligibleRecordIds(
   const { data } = await supabase
     .from('territory_records')
     .select(
-      'id, territory_id, plus_code, created_at, section:territory_sections(sort_order), block:territory_blocks(sort_order)'
+      // !section_id/!block_id required — territory_records has had two FKs to each of
+      // territory_sections/territory_blocks since migration 030 (correction_recommended_*),
+      // so an unqualified embed is ambiguous to PostgREST and silently returns zero rows
+      // instead of erroring (see the matching comment on RECORD_WITH_LOCATION_SELECT).
+      'id, territory_id, plus_code, created_at, section:territory_sections!section_id(sort_order), block:territory_blocks!block_id(sort_order)'
     )
     .eq('congregation_id', congregationId)
     .in('territory_id', territoryIds)
@@ -476,7 +480,11 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   const { data: partnershipRecords } = await supabase
     .from('partnership_records')
     .select(
-      'id, sequence, completed_at, passed_from_name, passed_from_at, record:territory_records(*, territory:territories(id, name, description, map_image_url), section:territory_sections(id, label), block:territory_blocks(id, label))'
+      // !section_id/!block_id required — same ambiguous-embed hazard as fetchEligibleRecordIds
+      // above (territory_records has had two FKs to each of territory_sections/territory_blocks
+      // since migration 030); without the hint this silently returned every publisher's assigned
+      // records as an empty list.
+      'id, sequence, completed_at, passed_from_name, passed_from_at, record:territory_records(*, territory:territories(id, name, description, map_image_url), section:territory_sections!section_id(id, label), block:territory_blocks!block_id(id, label))'
     )
     .eq('partnership_id', partnership.id)
     .order('sequence')

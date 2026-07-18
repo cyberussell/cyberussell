@@ -2,8 +2,14 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { RecordStatus, RecordVisitWithAuthor, TerritoryRecord, TerritoryRecordWithLocation } from './types'
 
+// The !section_id/!block_id hints are required, not cosmetic: migration 030 added a second FK
+// from territory_records to each of territory_sections/territory_blocks (the
+// correction_recommended_* columns below), so an unqualified `territory_sections(...)`/
+// `territory_blocks(...)` embed is ambiguous to PostgREST and the whole query silently returns
+// zero rows instead of erroring — every embed of these two tables needs a hint, not just the
+// newer correction_* ones.
 const RECORD_WITH_LOCATION_SELECT =
-  '*, territory:territories(id, name), section:territory_sections(id, label), block:territory_blocks(id, label), ' +
+  '*, territory:territories(id, name), section:territory_sections!section_id(id, label), block:territory_blocks!block_id(id, label), ' +
   'correction_section:territory_sections!correction_recommended_section_id(id, label), ' +
   'correction_block:territory_blocks!correction_recommended_block_id(id, label)'
 

@@ -1,5 +1,29 @@
 # Current Work
 
+**Territory Management System — Bug fix: assignment generation returning 0 records despite approved records existing (2026-07-18) — code done, tsc + vitest (56/56) clean, NOT live-verified (no Supabase credentials in this sandbox), not committed — see checkpoint `territory-management-ambiguous-fk-embed-fix-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Directly following the round-3 audit below, Russell reported generating an assignment produced 0 records per Ministry Partner. First hypothesis (CSV-imported records sitting unapproved) was ruled out live — Russell confirmed the test territory ("Maligay") had 17 approved records. Root cause: migration `030_correction_section_block.sql` gave `territory_records` a second FK to each of `territory_sections`/`territory_blocks`, which makes every *other*, unhinted `section:territory_sections(...)`/`block:territory_blocks(...)` embed in the codebase ambiguous to PostgREST — the whole query gets rejected, and every affected call site here only destructures `{ data }` (ignoring `error`), so it silently reads as "zero rows" instead of surfacing a real error. Fixed 3 call sites with the same `!section_id`/`!block_id` disambiguation hint already used correctly for the correction-recommendation fields: `RECORD_WITH_LOCATION_SELECT` (records/queries.ts — feeds Admin's Contact Records page among others), `fetchEligibleRecordIds` (assignment/queries.ts — the exact function behind this bug), and `getPartnershipByToken`'s records embed (assignment/queries.ts — would have broken the publisher workspace's own record fetch next, once generation actually started producing assigned records).
+
+Current Status: Code done, not yet committed/deployed. `npx tsc --noEmit` and `npx vitest run` (56/56) clean. **Not live-verified** — all 3 Supabase MCP servers configured in this environment returned "Unauthorized" this session, so live DB state couldn't be queried directly either; this is the same standing no-live-credentials limitation as every other TMS session, just confirmed more thoroughly this time.
+
+**Next recommended task:** Russell reviews the diff, then commits/deploys and regenerates an assignment against the "Maligay" territory (or any territory with approved records) to confirm partnerships now get real records — plus checks the Admin Contact Records page and a publisher's assignment link, both of which shared the same underlying query bug.
+
+----------------------------------------
+
+**Territory Management System — Production-readiness audit, round 3: GO for production confirmed (2026-07-18) — audit-only, no code changes, see checkpoint `territory-management-production-audit-v3.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked for a full audit of whether TMS is a go for production. Reviewed git history, all 50 TMS checkpoints (including the two prior formal audits), all 30 migration files, `npx tsc --noEmit`, and `npx vitest run`. At the time this audit started, migration `030_correction_section_block.sql` (from the session directly below) had been committed/pushed but not yet applied to the live DB — meaning any real "Recommend a Correction" submission with a Section/Block change would have failed in production. Russell confirmed mid-audit that migration 030 is now applied.
+
+Current Status: **GO for production.** All TMS migrations through 030 are confirmed applied to the live Supabase project. No open blockers. `npx tsc --noEmit` clean, `npx vitest run` clean (56/56, 8 files), working tree clean. This reaffirms the "GO for production" verdict first reached in round 2 (`territory-management-production-audit-remediation-v2.md`, 2026-07-15), which has held through every subsequent feature session.
+
+**Next recommended task:** Russell spot-checks live: a real "Recommend a Correction" submission with a changed Section/Block succeeds, shows up correctly on the Admin's Flagged for Correction page, and "Apply Correction" actually moves the record to the new Section/Block. Otherwise, wait for Russell's next feature request.
+
+----------------------------------------
+
 **Territory Management System — "Moved" renamed to "Unlocated," Section/Block added to Recommend a Correction (2026-07-18) — code done, tsc + vitest (56/56) clean, publisher-side pieces live-verified via a temporary scratch route, Admin display code-reviewed only (no live credentials), committed and pushed and deployed at Russell's request — see checkpoint `territory-management-unlocated-rename-correction-section-block-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
