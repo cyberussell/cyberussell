@@ -1,5 +1,19 @@
 # Current Work
 
+**Territory Management System — "Moved" renamed to "Unlocated," Section/Block added to Recommend a Correction (2026-07-18) — code done, tsc + vitest (56/56) clean, publisher-side pieces live-verified via a temporary scratch route, Admin display code-reviewed only (no live credentials), committed and pushed and deployed at Russell's request — see checkpoint `territory-management-unlocated-rename-correction-section-block-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 3 items. (1) The "Moved" status/visit-result label renamed to "Unlocated" everywhere it's shown — confirmed via clarifying question this should apply globally (shared `VISIT_RESULT_LABELS`, so Admin/Group Leader screens too), not just publisher UI; the underlying `'moved'` DB value is unchanged. (2) Fixed a Tagalog typo Russell flagged directly: "malipang" → "malibang" in the Status tab's Progressive BS description. (3) The publisher's "Recommend a Correction" flow (previously Plus Code + reason only) gained Section/Block cascading dropdowns, prefilled from the record's current values (always possible since both call sites are real Contact Records) — confirmed via clarifying question these should be real dropdowns tied to the territory's actual Section/Block rows (not free text), so Admin's existing one-click "Apply Correction" can apply them the same way it already applies Plus Code. Required new migration `030_correction_section_block.sql`.
+
+Current Status: Code done and deployed to `main`. **Migration 030 NOT yet applied to the live Supabase project** — submitting any correction will fail in production until Russell runs it (SQL in the checkpoint).
+- `npx tsc --noEmit` and `npx vitest run` (56/56) clean.
+- Live-verified via a temporary scratch route: "Unlocated" rename (MarkMovedForm, Status tab, malibang fix) and RecommendCorrectionForm's new Section/Block selects (prefill, cascading reset on Section change, correct submit payload). The Admin Flagged for Correction page's new Section/Block display line (relies on a PostgREST FK-disambiguation join hint) was code-reviewed only, not live-tested — needs the migration plus live credentials this sandbox doesn't have.
+
+**Next recommended task:** Russell runs migration 030 against the live TMS Supabase project, then spot-checks live: a real Section/Block correction recommendation shows correctly on Flagged for Correction, and "Apply Correction" actually moves the record.
+
+----------------------------------------
+
 **Territory Management System — Publisher FAQ, surfaced to Group Leader and Admin (2026-07-18) — code done, tsc + vitest (56/56) clean, publisher/GL tabs live-verified via temporary scratch routes, Admin page code-reviewed only (no live credentials), no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-publisher-faq-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
