@@ -1,5 +1,20 @@
 # Current Work
 
+**Territory Management System — Lightweight "Add Another Person" form (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via a temporary scratch route, no migration needed, committed and pushed — see checkpoint `territory-management-lightweight-sibling-form-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell caught that "+ Add Another Person Here" (from the prior household batch) reused the full `PublisherRecordForm`, showing Territory/Section/Block/Address/Unit/Plus Code as editable fields even though they're identical to the record you're already viewing — clutter, and a real risk (an accidentally-edited Plus Code would silently break that person's household grouping). Replaced with a dedicated minimal form: Name (required), Status (required, no "leave blank" option), Notes (optional). Location fields carried over silently, never shown.
+
+Current Status: Code complete, no migration needed.
+- New `AddHouseholdMemberForm.tsx`; `PublisherWorkspaceApp.tsx`'s `'addRecord'` view gained `returnToRecordId` so submitting/cancelling returns to the originating record instead of "My Added Records"; `handleAddRecord` gained an optional `redirectTo` param.
+- Bug caught during verification: the new form's Status dropdown initially included "Moved," which doesn't make sense as a brand-new person's first status and has no forced follow-up flow here — filtered out, matching `PublisherVisitLogForm`'s existing exclusion. **Flagged, not fixed:** the general `PublisherRecordForm`'s own Initial status dropdown has this same gap — out of scope for this task.
+- `npx tsc --noEmit` and `npx vitest run` (52/52) clean. Live-verified via a temporary scratch route (removed before finishing): field set confirmed minimal, Bible Study conductor prompt works, "Moved" absent, full submit produces the correct payload shape.
+
+**Next recommended task:** Russell spot-checks live: "+ Add Another Person Here" opens the short form, submitting returns to the original record, and the new person shows up correctly once Admin approves it (added records land in the pending-review list, same as the existing "Add a New Contact Record" flow — not immediately reflected in the "N at this address" count until approved). Optional follow-up, not requested: filter "Moved" out of `PublisherRecordForm`'s own dropdown too, for consistency.
+
+----------------------------------------
+
 **Territory Management System — QR cascade bug fix, custom card-tone palette, multi-record households, sync copy-for-admin (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via temporary scratch routes, no migration needed, committed and pushed at Russell's request ("fix or finish all open items then deploy") — see checkpoints `territory-management-overflow-qr-cascade-bug-v1.md` and `territory-management-household-plus-code-color-revision-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

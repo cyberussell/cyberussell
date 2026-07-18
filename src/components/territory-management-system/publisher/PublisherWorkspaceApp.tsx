@@ -31,6 +31,7 @@ import PublisherRecordDetailView from './PublisherRecordDetailView'
 import type { CorrectionFields } from './RecommendCorrectionForm'
 import PublisherAddedRecordDetailView from './PublisherAddedRecordDetailView'
 import PublisherRecordForm, { type NewPublisherRecordPayload } from './PublisherRecordForm'
+import AddHouseholdMemberForm from './AddHouseholdMemberForm'
 import PublisherNoteForm from './PublisherNoteForm'
 import SearchScopeRecordsList from './SearchScopeRecordsList'
 import SearchScopeRecordDetailView from './SearchScopeRecordDetailView'
@@ -92,11 +93,14 @@ type View =
   | { name: 'home' }
   | { name: 'list' }
   | { name: 'detail'; recordId: string }
-  // prefill is set when reached via "+ Add Another Person Here" on a detail view — carries the
-  // current record's territory/section/block/address/Plus Code so a second household member
-  // doesn't need to be retyped from scratch. Undefined for the plain "My Added Records" entry
-  // point, which still starts blank.
-  | { name: 'addRecord'; prefill?: Partial<NewPublisherRecordPayload> }
+  // prefill + returnToRecordId are both set when reached via "+ Add Another Person Here" on a
+  // detail view — prefill carries the current record's territory/section/block/address/Plus
+  // Code so a second household member doesn't need to be retyped, and its presence is what picks
+  // the lightweight AddHouseholdMemberForm over the full PublisherRecordForm below.
+  // returnToRecordId sends the publisher back to the record they came from on submit/cancel
+  // instead of "My Added Records". Both undefined for the plain "My Added Records" entry point,
+  // which still starts blank and lands on "My Added Records" afterward as before.
+  | { name: 'addRecord'; prefill?: Partial<NewPublisherRecordPayload>; returnToRecordId?: string }
   | { name: 'addedRecords' }
   | { name: 'addedRecordDetail'; recordId: string }
   | { name: 'editAddedRecord'; recordId: string }
@@ -448,7 +452,9 @@ export default function PublisherWorkspaceApp({
   // The new record's id is generated here (not server-side) so it can be optimistically
   // rendered in "My Added Records" — and immediately made editable/deletable — before this
   // write has even synced. addPublisherRecordAction inserts under this exact id.
-  async function handleAddRecord(payload: NewPublisherRecordPayload) {
+  // redirectTo lets "+ Add Another Person Here" send the publisher back to the household record
+  // they came from instead of the default "My Added Records" landing spot.
+  async function handleAddRecord(payload: NewPublisherRecordPayload, redirectTo?: View) {
     const recordId = crypto.randomUUID()
     const territory = territoryStructures.find((t) => t.id === payload.territoryId)
     const section = territory?.sections.find((s) => s.id === payload.sectionId)
@@ -486,7 +492,7 @@ export default function PublisherWorkspaceApp({
     setWorkspace((w) => ({ ...w, addedRecords: [optimisticRecord, ...w.addedRecords] }))
     await enqueue(partnershipToken, 'addRecord', { partnershipToken, recordId, ...payload })
     await refreshQueue()
-    setView({ name: 'addedRecords' })
+    setView(redirectTo ?? { name: 'addedRecords' })
     toast.success('Contact record added.')
     if (online) handleSync()
   }
@@ -970,20 +976,41 @@ export default function PublisherWorkspaceApp({
                   unit: selected.record.unit,
                   plusCode: selected.record.plus_code ?? '',
                 },
+                returnToRecordId: selected.record.id,
               })
             }
           />
         )}
 
-        {view.name === 'addRecord' && (
-          <PublisherRecordForm
-            territories={territoryStructures}
-            lockedScope={addRecordLockedScope}
-            initialValues={view.prefill}
-            onSubmit={handleAddRecord}
-            onCancel={() => setView({ name: 'list' })}
-          />
-        )}
+        {view.name === 'addRecord' &&
+          (view.prefill ? (
+            <AddHouseholdMemberForm
+              address={view.prefill.address || view.prefill.plusCode || 'this address'}
+              onSubmit={(memberPayload) =>
+                handleAddRecord(
+                  {
+                    territoryId: view.prefill?.territoryId ?? '',
+                    sectionId: view.prefill?.sectionId ?? '',
+                    blockId: view.prefill?.blockId ?? '',
+                    address: view.prefill?.address ?? '',
+                    unit: view.prefill?.unit ?? '',
+                    plusCode: view.prefill?.plusCode ?? '',
+                    householdMembers: '',
+                    ...memberPayload,
+                  },
+                  view.returnToRecordId ? { name: 'detail', recordId: view.returnToRecordId } : undefined
+                )
+              }
+              onCancel={() => setView(view.returnToRecordId ? { name: 'detail', recordId: view.returnToRecordId } : { name: 'list' })}
+            />
+          ) : (
+            <PublisherRecordForm
+              territories={territoryStructures}
+              lockedScope={addRecordLockedScope}
+              onSubmit={handleAddRecord}
+              onCancel={() => setView({ name: 'list' })}
+            />
+          ))}
 
         {view.name === 'addedRecords' && (
           <div>
