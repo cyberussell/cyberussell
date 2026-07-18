@@ -148,7 +148,7 @@ export default function PublisherWorkspaceApp({
   // Which map the list view shows when both are available — a toggle instead of stacking both
   // maps, for a cleaner one-screen-at-a-time look. Defaults to Territory Map (the prior default
   // visual order).
-  const [mapView, setMapView] = useState<'territory' | 'records' | 'search' | 'share'>('territory')
+  const [mapView, setMapView] = useState<'territory' | 'records' | 'search' | 'share' | 'help'>('territory')
   // Which branded confirm dialog (see ConfirmModal) is currently open, replacing
   // window.confirm() — its "www.cyberussell.com says" chrome reads as an unfamiliar browser
   // warning to a publisher in the field, not a TMS-branded prompt. Early Out and Release now go
@@ -785,11 +785,12 @@ export default function PublisherWorkspaceApp({
 
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
-              const tabs: { key: 'territory' | 'records' | 'search' | 'share'; label: string; available: boolean }[] = [
+              const tabs: { key: 'territory' | 'records' | 'search' | 'share' | 'help'; label: string; available: boolean }[] = [
                 { key: 'territory', label: 'Territory Map', available: mappableTerritories.length > 0 },
                 { key: 'records', label: 'Live Map', available: assignedRecordLocations.length > 0 },
                 { key: 'search', label: 'Search Area', available: searchScopeLocations.length > 0 },
                 { key: 'share', label: 'Share To', available: !readOnly },
+                { key: 'help', label: 'Help', available: true },
               ]
               const availableTabs = tabs.filter((t) => t.available)
               if (availableTabs.length === 0) return null
@@ -852,11 +853,11 @@ export default function PublisherWorkspaceApp({
                   {activeView === 'share' && !readOnly && (
                     <SharePartnershipCard batchToken={batchToken} partnershipToken={partnershipToken} />
                   )}
+
+                  {activeView === 'help' && <PublisherStatusHelp />}
                 </div>
               )
             })()}
-
-            <PublisherStatusHelp />
 
             {/* Release Assignment moved to the batch-landing "Select your Partner" page (see
                 ReleaseAssignmentSlider) — that page is where a change-of-mind actually needs to

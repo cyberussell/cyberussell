@@ -1,5 +1,18 @@
 # Current Work
 
+**Territory Management System — Help tab fold-in, admin visit override, Moved cleanup, dashboard stats (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via a temporary scratch route, migration 029 NOT yet run by Russell, committed and pushed at Russell's request ("Deploy when done") — see checkpoint `territory-management-help-tab-admin-override-stats-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 6-item batch. (1) "Help" folded into the Home tab's Territory Map/Live Map/Share To pill toggle as a 5th tab, replacing the standalone collapsible card. (2) Admin can now override a record's latest visit result/notes in place (new migration `029`, `overridden_by_admin_at` audit marker shown as "Overridden by admin" in Visit History) — scoped to the latest visit only, matching the existing Undo pattern; deliberately doesn't auto-toggle `do_not_call`. (3) "Moved" removed from every selectable Status dropdown at the single source (`getSelectableResults()` in `records/schema.ts`) — this also fixed a bug Russell caught: the Admin's own `RecordForm`/`VisitLogForm` and the publisher's `PublisherRecordForm` had never excluded it, unlike `PublisherVisitLogForm`/`AddHouseholdMemberForm` which already had their own local (now-redundant, removed) filters. (4) New Admin dashboard stats: Total Records (relabeled from "Contact Records," same underlying count), Total Houses (distinct Plus Codes), Household (sum of `household_members`). (5) Persons-icon badge on multi-record cards — already built in the prior round, confirmed still intact. (6) Confirmed via code (not a change) that every GL dashboard number already counts per-record, not per-Plus-Code, so a multi-person household already counts correctly everywhere.
+
+Current Status: Code complete. **Migration 029 not yet run.**
+- `npx tsc --noEmit` and `npx vitest run` (52/52) clean. Live-verified via a temporary scratch route (removed before finishing): Help tab content, admin override form pre-fill/submit, "Moved" confirmed absent from both publisher and admin status dropdowns, new dashboard stat cards render correctly.
+
+**Next recommended task:** Russell (1) runs migration `029_admin_visit_override.sql` in the TMS Supabase SQL editor, (2) spot-checks live: Help tab pill, a real visit override showing "Overridden by admin," "Moved" absent everywhere, and the new Total Records/Total Houses/Household numbers against real data.
+
+----------------------------------------
+
 **Territory Management System — Lightweight "Add Another Person" form (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via a temporary scratch route, no migration needed, committed and pushed — see checkpoint `territory-management-lightweight-sibling-form-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

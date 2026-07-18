@@ -93,21 +93,31 @@ export function isDoNotCallLocked(doNotCall: boolean, doNotCallAt: string | null
 // Returns the empty array while a Do Not Call record is still within its lock window — callers
 // (VisitLogForm/PublisherVisitLogForm and whatever renders around them) treat zero options as
 // "no visit can be logged right now" and show a locked notice instead of a dropdown.
+//
+// 'moved' is filtered out of every branch below, everywhere — it's never a plain Status pick, on
+// either the publisher side (a dedicated "Mark as Moved" button forces Update Contact Record /
+// Recommend for Admin Removal instead — see MarkMovedForm) or the Admin side (Admin can just
+// edit the record directly, no forced flow needed). Filtering it here, at the single source both
+// every UI dropdown *and* every server action's validation call through, means it's genuinely
+// unselectable everywhere at once rather than hidden per-component.
 export function getSelectableResults(
   latestResult?: string | null,
   doNotCall?: boolean,
   doNotCallAt?: string | null
-): readonly Exclude<(typeof VISIT_RESULTS)[number], 'undone' | 'initial_visit'>[] {
-  if (doNotCall) {
-    if (isDoNotCallLocked(doNotCall, doNotCallAt ?? null)) return []
-    return DO_NOT_CALL_RESULTS
-  }
-  if (latestResult === 'potential_bible_study') return POTENTIAL_BIBLE_STUDY_RESULTS
-  if (latestResult === 'started_bible_study') return STARTED_BIBLE_STUDY_RESULTS
-  if (latestResult && (BIBLE_STUDY_ONGOING_RESULTS as readonly string[]).includes(latestResult)) {
-    return BIBLE_STUDY_FOLLOWUP_RESULTS
-  }
-  return SELECTABLE_VISIT_RESULTS
+): readonly Exclude<(typeof VISIT_RESULTS)[number], 'undone' | 'initial_visit' | 'moved'>[] {
+  const pool = (() => {
+    if (doNotCall) {
+      if (isDoNotCallLocked(doNotCall, doNotCallAt ?? null)) return []
+      return DO_NOT_CALL_RESULTS
+    }
+    if (latestResult === 'potential_bible_study') return POTENTIAL_BIBLE_STUDY_RESULTS
+    if (latestResult === 'started_bible_study') return STARTED_BIBLE_STUDY_RESULTS
+    if (latestResult && (BIBLE_STUDY_ONGOING_RESULTS as readonly string[]).includes(latestResult)) {
+      return BIBLE_STUDY_FOLLOWUP_RESULTS
+    }
+    return SELECTABLE_VISIT_RESULTS
+  })()
+  return pool.filter((r) => r !== 'moved') as readonly Exclude<(typeof VISIT_RESULTS)[number], 'undone' | 'initial_visit' | 'moved'>[]
 }
 
 export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string> = {

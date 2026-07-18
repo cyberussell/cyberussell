@@ -299,6 +299,32 @@ export async function deleteLatestVisit(supabase: SupabaseClient, recordId: stri
   if (error) throw error
 }
 
+// Admin corrects the result/notes a publisher actually submitted, in place — distinct from
+// deleteLatestVisit (removes it outright) and from just logging a fresh visit today (only
+// collapses into the existing row if it's the same calendar day; an older mistaken entry needs
+// fixing in place instead). visited_at/created_by/partner_name are left untouched so the visit
+// still reads as "submitted by X on Y," just with corrected result/notes and a new
+// overridden_by_admin_at marker (migration 029) for Visit History to show "Overridden by admin."
+// Deliberately does NOT touch the record's own do_not_call flag even if the new result is/was
+// 'do_not_call' — that's a separate, explicit toggle on RecordEditForm with its own 6-month-lock
+// trigger; auto-flipping it here as a side effect of a notes/status correction would be a
+// surprising, easy-to-miss consequence.
+export async function overrideLatestVisit(supabase: SupabaseClient, recordId: string, result: string, notes: string): Promise<void> {
+  const { data: latest } = await supabase
+    .from('territory_record_visits')
+    .select('id')
+    .eq('record_id', recordId)
+    .order('visited_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (!latest) throw new Error('No visit to override.')
+  const { error } = await supabase
+    .from('territory_record_visits')
+    .update({ result, notes, overridden_by_admin_at: new Date().toISOString() })
+    .eq('id', (latest as { id: string }).id)
+  if (error) throw error
+}
+
 interface ImportRow {
   territoryId: string
   sectionId: string

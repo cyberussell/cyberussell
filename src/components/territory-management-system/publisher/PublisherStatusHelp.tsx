@@ -1,12 +1,10 @@
-'use client'
-
-import { useState } from 'react'
-import { ChevronDown, ChevronRight, HelpCircle } from 'lucide-react'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
 // Status labels stay in English (matching the "Status" dropdown in PublisherVisitLogForm) —
 // only the explanations are in Tagalog, per Russell's request. Content is presentational copy
-// specific to this help widget, kept local rather than folded into records/schema.ts.
+// specific to this help widget, kept local rather than folded into records/schema.ts. Rendered
+// as a peer tab alongside Territory Map/Live Map/Share To in PublisherWorkspaceApp's Home
+// toggle (not a separate collapsible card) — the tab switcher itself is the show/hide control.
 const STATUS_HELP: { status: string; description: string }[] = [
   { status: 'Not At Home', description: 'Walang sumagot sa bahay. Ito ang gagamitin kapag walang aktwal na nakausap.' },
   {
@@ -42,46 +40,26 @@ const STATUS_HELP: { status: string; description: string }[] = [
   },
   {
     status: 'Moved',
-    description: 'Hindi na sila nakatira doon. Hihilingin sa iyo na itama ang address/contact info o irekomenda ang record para tanggalin.',
+    description:
+      'Hindi na sila nakatira doon. May sariling button ito (hindi bahagi ng Status dropdown) — hihilingin sa iyo na itama ang address/contact info o irekomenda ang record para tanggalin.',
   },
   { status: 'Other', description: 'Hindi kasya sa alinman sa mga nasa itaas — kailangan ng notes.' },
 ]
 
 export default function PublisherStatusHelp() {
-  const [expanded, setExpanded] = useState(false)
-
   return (
-    <Card className="p-0">
-      <button
-        type="button"
-        onClick={() => setExpanded((v) => !v)}
-        className="flex w-full items-center justify-between gap-2 p-4 text-left"
-      >
-        <span className="flex items-center gap-2 text-sm font-semibold text-[#0B1B33]">
-          <HelpCircle className="h-4 w-4 text-[#2563EB]" />
-          Help — Mga Status ng Pagbisita
-        </span>
-        {expanded ? (
-          <ChevronDown className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
-        ) : (
-          <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
-        )}
-      </button>
-      {expanded && (
-        <div className="space-y-3 border-t border-blue-50 p-4 pt-3">
-          {STATUS_HELP.map(({ status, description }) => (
-            <div key={status}>
-              <p className="text-sm font-semibold text-[#0B1B33]">{status}</p>
-              <p className="mt-0.5 text-sm text-slate-600">{description}</p>
-            </div>
-          ))}
-          <p className="border-t border-blue-50 pt-3 text-xs text-slate-500">
-            Hindi pinipili ng publisher — system-only: <span className="font-medium text-slate-600">Initial Visit</span> ay ang
-            default/blangkong estado bago pa man magkaroon ng na-log na bisita; <span className="font-medium text-slate-600">Undone</span> ay
-            awtomatikong ilalagay kapag tinapos nang maaga ng isang partner ang kanilang assignment na may mga hindi pa tapos na records.
-          </p>
+    <Card className="space-y-3 p-4">
+      {STATUS_HELP.map(({ status, description }) => (
+        <div key={status}>
+          <p className="text-sm font-semibold text-[#0B1B33]">{status}</p>
+          <p className="mt-0.5 text-sm text-slate-600">{description}</p>
         </div>
-      )}
+      ))}
+      <p className="border-t border-blue-50 pt-3 text-xs text-slate-500">
+        Hindi pinipili ng publisher — system-only: <span className="font-medium text-slate-600">Initial Visit</span> ay ang
+        default/blangkong estado bago pa man magkaroon ng na-log na bisita; <span className="font-medium text-slate-600">Undone</span> ay
+        awtomatikong ilalagay kapag tinapos nang maaga ng isang partner ang kanilang assignment na may mga hindi pa tapos na records.
+      </p>
     </Card>
   )
 }

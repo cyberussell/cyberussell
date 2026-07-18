@@ -131,6 +131,22 @@ export async function undoLastVisitAction(recordId: string): Promise<void> {
   revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
 }
 
+// Admin corrects the result/notes of a record's latest logged visit in place — see
+// overrideLatestVisit (records/queries.ts) for why this is distinct from Undo or logging a
+// fresh visit. Re-validates result against getSelectableResults() same as logVisitAction, even
+// though the UI only ever offers that same set — defense in depth against a crafted submission.
+export async function overrideLatestVisitAction(recordId: string, result: string, notes: string): Promise<{ error: string } | { error: 'SAVED' }> {
+  if (!(getSelectableResults() as readonly string[]).includes(result)) return { error: 'Invalid status.' }
+  const { supabase } = await requireAdmin()
+  try {
+    await recordQueries.overrideLatestVisit(supabase, recordId, result, notes)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Could not save the override.' }
+  }
+  revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
+  return { error: 'SAVED' }
+}
+
 // Admin dismisses a publisher's "Recommend for Admin Removal" without deleting the record —
 // clears it off the Flagged for Removal list.
 export async function dismissRemovalRecommendationAction(recordId: string): Promise<void> {

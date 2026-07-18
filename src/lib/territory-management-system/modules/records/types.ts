@@ -71,6 +71,10 @@ export interface RecordVisit {
   created_by: string | null
   partner_name: string | null
   created_at: string
+  // Set when an Admin overrides this visit's result/notes after the fact (see
+  // overrideLatestVisitAction, migration 029) — null for a visit that's never been touched by
+  // an Admin. visited_at/created_by/partner_name stay as the original submission's.
+  overridden_by_admin_at: string | null
 }
 
 export interface RecordVisitWithAuthor extends RecordVisit {

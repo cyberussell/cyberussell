@@ -34,9 +34,7 @@ export default function AddHouseholdMemberForm({
   const [initialResult, setInitialResult] = useState<ReturnType<typeof getSelectableResults>[number] | ''>('')
   const [initialConductorName, setInitialConductorName] = useState('')
   const [notes, setNotes] = useState('')
-  // 'moved' excluded same as PublisherVisitLogForm — doesn't make sense as a brand-new person's
-  // very first status, and this form has no forced Update/Recommend-Removal follow-up for it.
-  const selectableResults = getSelectableResults().filter((r) => r !== 'moved')
+  const selectableResults = getSelectableResults()
   const notesRequired = initialResult === 'other'
   const conductorPrompt = initialResult ? VISIT_RESULT_CONDUCTOR_PROMPT[initialResult] : undefined
 

@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, ClipboardList, LayoutGrid, Map } from 'lucide-react'
+import { CheckCircle2, Clock, ClipboardList, Home, LayoutGrid, Map, Users } from 'lucide-react'
 import { requireAdmin } from '@/lib/territory-management-system/modules/auth/queries'
 import { getDashboardStats } from '@/lib/territory-management-system/modules/dashboard/queries'
 import PageHeader from '@/components/territory-management-system/dashboard/PageHeader'
@@ -16,7 +16,9 @@ export default async function DashboardPage() {
           <StatCard icon={Map} label="Territories" value={stats.territoryCount} />
           <StatCard icon={LayoutGrid} label="Sections" value={stats.sectionCount} />
           <StatCard icon={LayoutGrid} label="Blocks" value={stats.blockCount} />
-          <StatCard icon={ClipboardList} label="Contact Records" value={stats.recordCount} />
+          <StatCard icon={ClipboardList} label="Total Records" value={stats.recordCount} />
+          <StatCard icon={Home} label="Total Houses" value={stats.totalHouses} hint="Unique Plus Codes" />
+          <StatCard icon={Users} label="Household" value={stats.householdMembersTotal} hint="Total people recorded" />
           <StatCard
             icon={Clock}
             label="Pending Approval"
