@@ -25,12 +25,12 @@ const STATUS_HELP: { status: string; description: string }[] = [
   {
     status: 'Bible Study',
     description:
-      'Maaring na-ireport na ito bilang Bible Study sa kongregasiyon. Sa mga susunod na pagbisita, magiging Progressive BS o No Positive Response. (May hiwalay na paraan kung lumipat na sila — tingnan ang Moved sa ibaba.)',
+      'Maaring na-ireport na ito bilang Bible Study sa kongregasiyon. Sa mga susunod na pagbisita, magiging Progressive BS o No Positive Response. (May hiwalay na paraan kung lumipat na sila — tingnan ang Unlocated sa ibaba.)',
   },
   {
     status: 'Progressive BS',
     description:
-      'Sumusulong ang Bible Study. Huwag palitan ng iyong pangalan ang pangalan ng nagko-conduct ng Bible Study malipang pormal na inilipat ito sa iyo.',
+      'Sumusulong ang Bible Study. Huwag palitan ng iyong pangalan ang pangalan ng nagko-conduct ng Bible Study malibang pormal na inilipat ito sa iyo.',
   },
   {
     status: 'No Positive Response',
@@ -42,7 +42,7 @@ const STATUS_HELP: { status: string; description: string }[] = [
       'Hiniling ng individual na huwag na silang bisitahin. Ini-lock ng system ang record mula sa anumang pagbisita sa loob ng 6 na buwan. Pwedeng mag-add ng person sa kaparehong address kung may interesado sa address na iyon',
   },
   {
-    status: 'Moved',
+    status: 'Unlocated',
     description:
       'Hindi na sila nakatira doon. May sariling button ito (hindi bahagi ng Status dropdown) — hihilingin sa iyo na itama ang address/contact info o irekomenda ang record para tanggalin ng admin.',
   },

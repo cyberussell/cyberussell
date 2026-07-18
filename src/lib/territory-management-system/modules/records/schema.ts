@@ -133,7 +133,7 @@ export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string>
   discontinued: 'No Positive Response',
   not_home: 'Not At Home',
   do_not_call: 'Do Not Call',
-  moved: 'Moved',
+  moved: 'Unlocated',
   other: 'Other',
   undone: 'Undone',
 }

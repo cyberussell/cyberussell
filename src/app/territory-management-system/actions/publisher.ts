@@ -498,6 +498,8 @@ export async function recommendCorrectionAction(_prev: ActionResult, formData: F
     recordId: formData.get('recordId'),
     plusCode: formData.get('plusCode'),
     reason: formData.get('reason'),
+    sectionId: formData.get('sectionId'),
+    blockId: formData.get('blockId'),
   })
   if (!parsed.success) return { error: 'Please fill in the Plus Code and a reason for the recommendation.' }
   if (!(await checkRateLimit(`tms-recommend-correction:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
@@ -511,7 +513,15 @@ export async function recommendCorrectionAction(_prev: ActionResult, formData: F
   if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
 
   try {
-    await recommendRecordCorrection(supabase, parsed.data.recordId, parsed.data.plusCode, parsed.data.reason, partnership.name || 'Unnamed partnership')
+    await recommendRecordCorrection(
+      supabase,
+      parsed.data.recordId,
+      parsed.data.plusCode,
+      parsed.data.reason,
+      partnership.name || 'Unnamed partnership',
+      parsed.data.sectionId,
+      parsed.data.blockId
+    )
   } catch (e) {
     await logError(partnership.congregation_id, 'recommendCorrectionAction', e)
     return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }
@@ -642,6 +652,8 @@ export async function recommendSearchScopeCorrectionAction(_prev: ActionResult, 
     recordId: formData.get('recordId'),
     plusCode: formData.get('plusCode'),
     reason: formData.get('reason'),
+    sectionId: formData.get('sectionId'),
+    blockId: formData.get('blockId'),
   })
   if (!parsed.success) return { error: 'Please fill in the Plus Code and a reason for the recommendation.' }
   if (!(await checkRateLimit(`tms-recommend-search-correction:${clientIp(await headers())}`, 15))) {
@@ -659,7 +671,15 @@ export async function recommendSearchScopeCorrectionAction(_prev: ActionResult, 
   if (!record || !scope.blocks.some((b) => b.id === record.block_id)) return { error: 'This contact record is not in your search area.' }
 
   try {
-    await recommendRecordCorrection(supabase, parsed.data.recordId, parsed.data.plusCode, parsed.data.reason, partnership.name || 'Unnamed partnership')
+    await recommendRecordCorrection(
+      supabase,
+      parsed.data.recordId,
+      parsed.data.plusCode,
+      parsed.data.reason,
+      partnership.name || 'Unnamed partnership',
+      parsed.data.sectionId,
+      parsed.data.blockId
+    )
   } catch (e) {
     await logError(partnership.congregation_id, 'recommendSearchScopeCorrectionAction', e)
     return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }

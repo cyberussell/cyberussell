@@ -72,6 +72,7 @@ export default function PublisherRecordDetailView({
   moving,
   markingMoved,
   recommendingCorrection,
+  sections,
   mapUrl,
   onLogVisit,
   onMoveRecord,
@@ -109,6 +110,10 @@ export default function PublisherRecordDetailView({
   markingMoved: boolean
   // True while the "Correction" (Recommend a Correction) form is being saved/synced.
   recommendingCorrection: boolean
+  // The record's own territory's Section/Block structure, for RecommendCorrectionForm's
+  // dropdowns — resolved by the parent from the full territoryStructures prop, keyed off
+  // assigned.record.territory_id.
+  sections: { id: string; label: string; blocks: { id: string; label: string }[] }[]
   // The record's own territory map — resolved by the parent (preferring an offline-cached
   // blob over the live URL, same as the workspace list view's Territory Map(s) section).
   // Undefined/empty when the territory has no map uploaded, or hasn't been resolved yet.
@@ -261,6 +266,9 @@ export default function PublisherRecordDetailView({
             />
             <RecommendCorrectionForm
               currentPlusCode={assigned.record.plus_code ?? ''}
+              currentSectionId={assigned.record.section_id}
+              currentBlockId={assigned.record.block_id}
+              sections={sections}
               submitting={recommendingCorrection}
               onSubmit={onRecommendCorrection}
             />
@@ -284,7 +292,7 @@ export default function PublisherRecordDetailView({
                   className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 py-2.5 text-sm font-semibold text-amber-700 transition hover:border-amber-300"
                 >
                   <Truck className="h-4 w-4" />
-                  Moved
+                  Unlocated
                 </button>
                 <button
                   type="button"
@@ -328,6 +336,9 @@ export default function PublisherRecordDetailView({
                 </button>
                 <RecommendCorrectionForm
                   currentPlusCode={assigned.record.plus_code ?? ''}
+                  currentSectionId={assigned.record.section_id}
+                  currentBlockId={assigned.record.block_id}
+                  sections={sections}
                   submitting={recommendingCorrection}
                   onSubmit={onRecommendCorrection}
                   initialOpen

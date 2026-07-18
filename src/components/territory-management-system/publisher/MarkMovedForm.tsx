@@ -77,7 +77,7 @@ export default function MarkMovedForm({
         className="flex w-full items-center justify-center gap-2 rounded-lg border border-amber-200 bg-amber-50 py-2.5 text-sm font-semibold text-amber-700 transition hover:border-amber-300"
       >
         <Truck className="h-4 w-4" />
-        Moved
+        Unlocated
       </button>
     )
   }
@@ -85,8 +85,8 @@ export default function MarkMovedForm({
   if (mode === 'choose') {
     return (
       <Card className="border-amber-200 bg-amber-50 p-6">
-        <h2 className="font-semibold text-[#0B1B33]">This Household Moved</h2>
-        <p className="mt-1 text-sm text-slate-500">Choose one before this can be logged as Moved.</p>
+        <h2 className="font-semibold text-[#0B1B33]">This Household Is Unlocated</h2>
+        <p className="mt-1 text-sm text-slate-500">Choose one before this can be logged as Unlocated.</p>
         <div className="mt-4 space-y-2">
           <button
             type="button"

@@ -51,6 +51,11 @@ export interface TerritoryRecord {
   correction_recommended_plus_code: string | null
   correction_recommended_reason: string | null
   correction_recommended_by: string | null
+  // Section/Block half of the same correction recommendation above — see
+  // 030_correction_section_block.sql. Independent of the Plus Code fields; a recommendation can
+  // touch either or both.
+  correction_recommended_section_id: string | null
+  correction_recommended_block_id: string | null
   created_at: string
   updated_at: string
 }
@@ -59,6 +64,8 @@ export interface TerritoryRecordWithLocation extends TerritoryRecord {
   territory: { id: string; name: string } | null
   section: { id: string; label: string } | null
   block: { id: string; label: string } | null
+  correction_section: { id: string; label: string } | null
+  correction_block: { id: string; label: string } | null
 }
 
 export interface RecordVisit {

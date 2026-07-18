@@ -19,7 +19,7 @@ const FAQ: { question: string; answer: string }[] = [
   },
   {
     question: 'What if someone moved or the address is wrong?',
-    answer: 'Mark the record "Moved." You\'ll be asked to fix the address or recommend it for removal.',
+    answer: 'Mark the record "Unlocated." You\'ll be asked to fix the address or recommend it for removal.',
   },
   {
     question: "How do I know I'm done?",

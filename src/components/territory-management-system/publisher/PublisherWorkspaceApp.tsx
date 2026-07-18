@@ -371,7 +371,14 @@ export default function PublisherWorkspaceApp({
   async function handleRecommendCorrection(recordId: string, fields: CorrectionFields) {
     setRecommendingCorrection(true)
     try {
-      await enqueue(partnershipToken, 'recommendCorrection', { partnershipToken, recordId, plusCode: fields.plusCode, reason: fields.reason })
+      await enqueue(partnershipToken, 'recommendCorrection', {
+        partnershipToken,
+        recordId,
+        plusCode: fields.plusCode,
+        reason: fields.reason,
+        sectionId: fields.sectionId,
+        blockId: fields.blockId,
+      })
       await refreshQueue()
       if (online) await handleSync()
       toast.success('Correction recommendation sent to the Admin.')
@@ -394,7 +401,14 @@ export default function PublisherWorkspaceApp({
   async function handleRecommendSearchScopeCorrection(recordId: string, fields: CorrectionFields) {
     setRecommendingSearchScopeCorrection(true)
     try {
-      await enqueue(partnershipToken, 'recommendSearchScopeCorrection', { partnershipToken, recordId, plusCode: fields.plusCode, reason: fields.reason })
+      await enqueue(partnershipToken, 'recommendSearchScopeCorrection', {
+        partnershipToken,
+        recordId,
+        plusCode: fields.plusCode,
+        reason: fields.reason,
+        sectionId: fields.sectionId,
+        blockId: fields.blockId,
+      })
       await refreshQueue()
       if (online) await handleSync()
       toast.success('Correction recommendation sent to the Admin.')
@@ -483,12 +497,16 @@ export default function PublisherWorkspaceApp({
       correction_recommended_plus_code: null,
       correction_recommended_reason: null,
       correction_recommended_by: null,
+      correction_recommended_section_id: null,
+      correction_recommended_block_id: null,
       created_by_partnership_id: workspace.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       territory: territory ? { id: territory.id, name: territory.name } : null,
       section: section ? { id: section.id, label: section.label } : null,
       block: block ? { id: block.id, label: block.label } : null,
+      correction_section: null,
+      correction_block: null,
     }
     setWorkspace((w) => ({ ...w, addedRecords: [optimisticRecord, ...w.addedRecords] }))
     await enqueue(partnershipToken, 'addRecord', { partnershipToken, recordId, ...payload })
@@ -975,6 +993,7 @@ export default function PublisherWorkspaceApp({
             moving={movingRecord}
             markingMoved={markingMoved}
             recommendingCorrection={recommendingCorrection}
+            sections={territoryStructures.find((t) => t.id === selected.record.territory_id)?.sections ?? []}
             mapUrl={selected.record.territory ? mapUrls[selected.record.territory.id] : undefined}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
             onMoveRecord={(destinationPartnershipId) => handleMoveRecord(selected.record.id, destinationPartnershipId)}
@@ -1095,6 +1114,7 @@ export default function PublisherWorkspaceApp({
             return (
               <SearchScopeRecordDetailView
                 record={record}
+                sections={territoryStructures.find((t) => t.id === record.territory_id)?.sections ?? []}
                 editable={editable}
                 submitting={recommendingSearchScopeCorrection}
                 onRecommendCorrection={(fields) => handleRecommendSearchScopeCorrection(record.id, fields)}

@@ -153,6 +153,8 @@ export const recommendCorrectionSchema = z.object({
   recordId: z.string().uuid(),
   plusCode: z.string().min(1, 'Plus Code is required.').max(20),
   reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
+  sectionId: z.string().uuid(),
+  blockId: z.string().uuid(),
 })
 export type RecommendCorrectionInput = z.input<typeof recommendCorrectionSchema>
 
@@ -163,6 +165,8 @@ export const recommendSearchScopeCorrectionSchema = z.object({
   recordId: z.string().uuid(),
   plusCode: z.string().min(1, 'Plus Code is required.').max(20),
   reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
+  sectionId: z.string().uuid(),
+  blockId: z.string().uuid(),
 })
 export type RecommendSearchScopeCorrectionInput = z.input<typeof recommendSearchScopeCorrectionSchema>
 

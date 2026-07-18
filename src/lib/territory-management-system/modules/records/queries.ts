@@ -3,7 +3,9 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import type { RecordStatus, RecordVisitWithAuthor, TerritoryRecord, TerritoryRecordWithLocation } from './types'
 
 const RECORD_WITH_LOCATION_SELECT =
-  '*, territory:territories(id, name), section:territory_sections(id, label), block:territory_blocks(id, label)'
+  '*, territory:territories(id, name), section:territory_sections(id, label), block:territory_blocks(id, label), ' +
+  'correction_section:territory_sections!correction_recommended_section_id(id, label), ' +
+  'correction_block:territory_blocks!correction_recommended_block_id(id, label)'
 
 export async function listRecords(
   supabase: SupabaseClient,
@@ -222,7 +224,9 @@ export async function recommendRecordCorrection(
   recordId: string,
   plusCode: string,
   reason: string,
-  recommendedBy: string
+  recommendedBy: string,
+  sectionId: string,
+  blockId: string
 ): Promise<void> {
   const { error } = await supabase
     .from('territory_records')
@@ -231,6 +235,8 @@ export async function recommendRecordCorrection(
       correction_recommended_plus_code: plusCode,
       correction_recommended_reason: reason,
       correction_recommended_by: recommendedBy,
+      correction_recommended_section_id: sectionId,
+      correction_recommended_block_id: blockId,
     })
     .eq('id', recordId)
   if (error) throw error
@@ -241,33 +247,42 @@ export async function recommendRecordCorrection(
 export async function dismissCorrectionRecommendation(supabase: SupabaseClient, recordId: string): Promise<void> {
   const { error } = await supabase
     .from('territory_records')
-    .update({ correction_recommended_at: null, correction_recommended_plus_code: null, correction_recommended_reason: null, correction_recommended_by: null })
-    .eq('id', recordId)
-  if (error) throw error
-}
-
-// Admin applies a correction recommendation — writes the recommended Plus Code onto the
-// record's real plus_code and clears the recommendation flag in the same update. Reads the
-// recommended value first since Supabase's update() can't copy one column's value into another
-// server-side without a raw SQL/RPC call.
-export async function applyRecordCorrection(supabase: SupabaseClient, recordId: string): Promise<void> {
-  const { data: existing } = await supabase
-    .from('territory_records')
-    .select('correction_recommended_plus_code')
-    .eq('id', recordId)
-    .maybeSingle()
-  if (!existing?.correction_recommended_plus_code) return
-  const { error } = await supabase
-    .from('territory_records')
     .update({
-      plus_code: existing.correction_recommended_plus_code,
       correction_recommended_at: null,
       correction_recommended_plus_code: null,
       correction_recommended_reason: null,
       correction_recommended_by: null,
-      updated_at: new Date().toISOString(),
+      correction_recommended_section_id: null,
+      correction_recommended_block_id: null,
     })
     .eq('id', recordId)
+  if (error) throw error
+}
+
+// Admin applies a correction recommendation — writes the recommended Plus Code/Section/Block
+// onto the record's real columns and clears the recommendation flag in the same update. Reads
+// the recommended values first since Supabase's update() can't copy one column's value into
+// another server-side without a raw SQL/RPC call.
+export async function applyRecordCorrection(supabase: SupabaseClient, recordId: string): Promise<void> {
+  const { data: existing } = await supabase
+    .from('territory_records')
+    .select('correction_recommended_plus_code, correction_recommended_section_id, correction_recommended_block_id')
+    .eq('id', recordId)
+    .maybeSingle()
+  if (!existing?.correction_recommended_plus_code && !existing?.correction_recommended_section_id && !existing?.correction_recommended_block_id) return
+  const update: Record<string, unknown> = {
+    correction_recommended_at: null,
+    correction_recommended_plus_code: null,
+    correction_recommended_reason: null,
+    correction_recommended_by: null,
+    correction_recommended_section_id: null,
+    correction_recommended_block_id: null,
+    updated_at: new Date().toISOString(),
+  }
+  if (existing.correction_recommended_plus_code) update.plus_code = existing.correction_recommended_plus_code
+  if (existing.correction_recommended_section_id) update.section_id = existing.correction_recommended_section_id
+  if (existing.correction_recommended_block_id) update.block_id = existing.correction_recommended_block_id
+  const { error } = await supabase.from('territory_records').update(update).eq('id', recordId)
   if (error) throw error
 }
 

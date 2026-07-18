@@ -11,11 +11,15 @@ import RecommendCorrectionForm, { type CorrectionFields } from './RecommendCorre
 // which is the one thing that actually prevents a duplicate entry for the same household.
 export default function SearchScopeRecordDetailView({
   record,
+  sections,
   editable,
   submitting,
   onRecommendCorrection,
 }: {
   record: TerritoryRecordWithLocation
+  // The record's own territory's Section/Block structure, for RecommendCorrectionForm's
+  // dropdowns — same as PublisherRecordDetailView's own `sections` prop.
+  sections: { id: string; label: string; blocks: { id: string; label: string }[] }[]
   // False while viewing another Ministry Partner's assignment (readOnly) or after this
   // partnership's own ministry session has ended — same gating PublisherRecordDetailView
   // applies to its own editing controls.
@@ -53,7 +57,15 @@ export default function SearchScopeRecordDetailView({
 
       {editable ? (
         <>
-          <RecommendCorrectionForm currentPlusCode={record.plus_code ?? ''} submitting={submitting} onSubmit={onRecommendCorrection} initialOpen />
+          <RecommendCorrectionForm
+            currentPlusCode={record.plus_code ?? ''}
+            currentSectionId={record.section_id}
+            currentBlockId={record.block_id}
+            sections={sections}
+            submitting={submitting}
+            onSubmit={onRecommendCorrection}
+            initialOpen
+          />
           <p className="text-center text-xs text-slate-500">
             This record isn&apos;t assigned to your partnership — you can only recommend a location fix, not edit it directly.
           </p>
