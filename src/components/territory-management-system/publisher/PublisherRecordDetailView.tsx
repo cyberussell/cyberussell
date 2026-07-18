@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { Anton } from 'next/font/google'
-import { ArrowRightLeft, MapPin, PencilLine, Truck, UserPlus, Users } from 'lucide-react'
+import { ArrowRightLeft, ChevronDown, ChevronRight, MapPin, PencilLine, Truck, UserPlus, Users } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
+import type { VisitResult } from '@/lib/territory-management-system/modules/records/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { doNotCallUnlockDate, getRecordCardTone, isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import VisitHistoryList from '@/components/territory-management-system/VisitHistoryList'
@@ -67,6 +68,7 @@ export default function PublisherRecordDetailView({
   saving,
   siblingPartnerships,
   householdRecords,
+  onSelectHouseholdRecord,
   moving,
   markingMoved,
   recommendingCorrection,
@@ -94,8 +96,13 @@ export default function PublisherRecordDetailView({
   // Other records assigned to this partnership sharing this record's Plus Code — "other people
   // at this address," not to be confused with siblingPartnerships above (other Ministry
   // Partners). Empty when this record's Plus Code is blank or no other assigned record matches
-  // it. Drives both the "N at this address" line and MarkMovedForm's record picker.
-  householdRecords: { id: string; label: string }[]
+  // it. Drives the "N at this address" disclosure below, MarkMovedForm's record picker, and the
+  // "+ Add Another Person Here" button.
+  householdRecords: { id: string; label: string; latestResult: VisitResult | null }[]
+  // Jumps the workspace to another household member's own detail view — see the "N contact
+  // records at this address" disclosure below. Plain navigation, not a mutation, so it's
+  // available even on the read-only/other-partner's-assignment view.
+  onSelectHouseholdRecord: (recordId: string) => void
   moving: boolean
   // True while either "Mark as Moved" path (Update Contact Record / Recommend for Admin
   // Removal) is being saved/synced.
@@ -125,6 +132,7 @@ export default function PublisherRecordDetailView({
   // a lot of scrolling past two big cards to reach Record a Visit. Collapsed behind a two-button
   // row instead; tapping one reveals its panel in place of the row.
   const [mobileAction, setMobileAction] = useState<'none' | 'move' | 'moved' | 'correction'>('none')
+  const [householdOpen, setHouseholdOpen] = useState(false)
   const movedFields = {
     address: assigned.record.address,
     unit: assigned.record.unit,
@@ -160,10 +168,33 @@ export default function PublisherRecordDetailView({
           </p>
         )}
         {householdRecords.length > 0 && (
-          <p className={`mt-2 flex items-center gap-1.5 text-sm font-medium ${tone.primary}`}>
-            <Users className="h-4 w-4" />
-            {householdRecords.length + 1} contact records at this address
-          </p>
+          <div className="mt-2">
+            <button
+              type="button"
+              onClick={() => setHouseholdOpen((o) => !o)}
+              aria-expanded={householdOpen}
+              className={`flex items-center gap-1.5 text-sm font-medium ${tone.primary}`}
+            >
+              <Users className="h-4 w-4" />
+              {householdRecords.length + 1} contact records at this address
+              {householdOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+            </button>
+            {householdOpen && (
+              <div className="mt-2 space-y-1 rounded-lg bg-white/80 p-1.5">
+                {householdRecords.map((h) => (
+                  <button
+                    key={h.id}
+                    type="button"
+                    onClick={() => onSelectHouseholdRecord(h.id)}
+                    className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm text-[#0B1B33] transition hover:bg-white"
+                  >
+                    <span className="truncate">{h.label}</span>
+                    <VisitResultBadge result={h.latestResult ?? 'initial_visit'} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         )}
         {assigned.record.notes && <p className={`mt-2 text-sm ${tone.secondary}`}>{assigned.record.notes}</p>}
         {assigned.record.do_not_call && (

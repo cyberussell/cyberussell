@@ -1,6 +1,6 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { calculateAssignment, isAssignmentError, type AssignmentError } from './engine'
+import { calculateAssignment, isAssignmentError, type AssignmentError, type EligibleRecord } from './engine'
 import { isBatchExpired } from './date'
 import { getRecordsInBlocks, listRecordsAddedByPartnership } from '../records/queries'
 import { isDoNotCallLocked } from '../records/schema'
@@ -29,10 +29,12 @@ async function fetchEligibleRecordIds(
   supabase: SupabaseClient,
   congregationId: string,
   territoryIds: string[]
-): Promise<string[]> {
+): Promise<EligibleRecord[]> {
   const { data } = await supabase
     .from('territory_records')
-    .select('id, territory_id, created_at, section:territory_sections(sort_order), block:territory_blocks(sort_order)')
+    .select(
+      'id, territory_id, plus_code, created_at, section:territory_sections(sort_order), block:territory_blocks(sort_order)'
+    )
     .eq('congregation_id', congregationId)
     .in('territory_id', territoryIds)
     .eq('status', 'approved')
@@ -41,6 +43,7 @@ async function fetchEligibleRecordIds(
   const rows = (data ?? []) as unknown as Array<{
     id: string
     territory_id: string
+    plus_code: string | null
     created_at: string
     section: { sort_order: number } | null
     block: { sort_order: number } | null
@@ -65,7 +68,7 @@ async function fetchEligibleRecordIds(
     return a.created_at.localeCompare(b.created_at)
   })
 
-  return rows.map((r) => r.id)
+  return rows.map((r) => ({ id: r.id, plusCode: r.plus_code }))
 }
 
 // One query for the whole eligible pool rather than per-record, then reduced in JS to "first
@@ -186,8 +189,8 @@ export async function createAssignment(
     return { error: `${list} ${verb} already assigned in another Group Leader's active batch today. Choose different territories.` }
   }
 
-  const eligibleRecordIds = input.forceZeroRecords ? [] : await fetchEligibleRecordIds(supabase, congregationId, territoryIds)
-  const plan = calculateAssignment(eligibleRecordIds, input.partnershipCount)
+  const eligibleRecords = input.forceZeroRecords ? [] : await fetchEligibleRecordIds(supabase, congregationId, territoryIds)
+  const plan = calculateAssignment(eligibleRecords, input.partnershipCount)
   if (isAssignmentError(plan)) return plan
 
   const { data: batch, error: batchError } = await supabase
@@ -302,13 +305,14 @@ export async function getBatchSummary(
     partnershipIds.length > 0
       ? await supabase
           .from('partnership_records')
-          .select('partnership_id, completed_at, record:territory_records(do_not_call, do_not_call_at)')
+          .select('partnership_id, record_id, completed_at, record:territory_records(plus_code, do_not_call, do_not_call_at)')
           .in('partnership_id', partnershipIds)
       : {
           data: [] as {
             partnership_id: string
+            record_id: string
             completed_at: string | null
-            record: { do_not_call: boolean; do_not_call_at: string | null } | null
+            record: { plus_code: string | null; do_not_call: boolean; do_not_call_at: string | null } | null
           }[],
         }
 
@@ -316,8 +320,9 @@ export async function getBatchSummary(
     const records = (
       (allRecords ?? []) as unknown as {
         partnership_id: string
+        record_id: string
         completed_at: string | null
-        record: { do_not_call: boolean; do_not_call_at: string | null } | null
+        record: { plus_code: string | null; do_not_call: boolean; do_not_call_at: string | null } | null
       }[]
     ).filter((r) => r.partnership_id === p.id)
     // A record still locked under the Do Not Call cooldown can never be completed this session —
@@ -326,10 +331,26 @@ export async function getBatchSummary(
     // this, a partnership that finished everything actually reachable still read as "Done" next
     // to a contradictory "N remaining".
     const countable = records.filter((r) => !isDoNotCallLocked(r.record?.do_not_call ?? false, r.record?.do_not_call_at ?? null))
+
+    // A household (multiple records sharing a Plus Code — see the "multi-record households"
+    // feature) counts as ONE record toward "of N," matching the assignment engine keeping the
+    // whole household in a single slot (see engine.ts). Grouped by Plus Code, falling back to
+    // the record's own id (always a unique singleton) when it has none. A group counts as
+    // completed once ANY member has a logged visit — confirmed with Russell: the publisher's
+    // stop at that address is done once someone there has an outcome recorded, not only once
+    // every resident individually does.
+    const groups = new Map<string, typeof countable>()
+    for (const r of countable) {
+      const key = r.record?.plus_code || r.record_id
+      const group = groups.get(key)
+      if (group) group.push(r)
+      else groups.set(key, [r])
+    }
+
     return {
       ...(p as Partnership),
-      recordCount: countable.length,
-      completedCount: countable.filter((r) => r.completed_at !== null).length,
+      recordCount: groups.size,
+      completedCount: Array.from(groups.values()).filter((group) => group.some((r) => r.completed_at !== null)).length,
     }
   })
 

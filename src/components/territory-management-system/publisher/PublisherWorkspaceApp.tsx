@@ -621,7 +621,11 @@ export default function PublisherWorkspaceApp({
     selected && selected.record.plus_code
       ? workspace.records
           .filter((r) => r.record.id !== selected.record.id && r.record.plus_code === selected.record.plus_code)
-          .map((r) => ({ id: r.record.id, label: r.record.resident_name || r.record.address || r.record.plus_code || 'Unlabeled record' }))
+          .map((r) => ({
+            id: r.record.id,
+            label: r.record.resident_name || r.record.address || r.record.plus_code || 'Unlabeled record',
+            latestResult: r.visits[0]?.result ?? null,
+          }))
       : []
   // Deliberately requires at least one real assigned record — a "searching a fresh territory"
   // partnership (zero assigned records) should NOT auto-surface "All assigned records are
@@ -950,6 +954,13 @@ export default function PublisherWorkspaceApp({
 
         {view.name === 'detail' && selected && (
           <PublisherRecordDetailView
+            // Forces a remount whenever the viewed record changes — including jumping straight
+            // to a sibling via onSelectHouseholdRecord below, which (unlike the list->detail
+            // navigation this view previously only ever appeared from) doesn't unmount this
+            // component on its own. Without this, per-record UI state (the household disclosure,
+            // the mobile Move/Moved/Correction toggle) would incorrectly carry over from the
+            // record you just left.
+            key={selected.record.id}
             assigned={selected}
             pendingVisits={pendingVisitsForSelected}
             readOnly={readOnly}
@@ -957,6 +968,7 @@ export default function PublisherWorkspaceApp({
             saving={savingVisit}
             siblingPartnerships={workspace.siblingPartnerships}
             householdRecords={householdRecords}
+            onSelectHouseholdRecord={(recordId) => setView({ name: 'detail', recordId })}
             moving={movingRecord}
             markingMoved={markingMoved}
             recommendingCorrection={recommendingCorrection}
