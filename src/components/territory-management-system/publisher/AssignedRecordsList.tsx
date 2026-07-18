@@ -1,18 +1,21 @@
 import { AlertTriangle, Check, Lock } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
-import { isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
+import { getRecordCardTone, isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import Card from '@/components/territory-management-system/dashboard/Card'
 
-// Card-level tone — Do Not Call (the persistent record flag, not just the latest visit result)
-// takes priority over an active Bible Study, mirroring PublisherRecordDetailView's own
-// cardToneClass. 'started_bible_study' counts as active here too (not just 'bible_study'/
-// 'progressing') since that's the very first visit that starts one.
+// Card-level tone — shared with PublisherRecordDetailView via getRecordCardTone so the list and
+// the detail card never drift out of sync with each other again.
 function cardToneClass(doNotCall: boolean, latestResult: string | undefined): string {
-  if (doNotCall) return 'border-red-300 bg-red-50 hover:border-red-400'
-  if (latestResult === 'started_bible_study' || latestResult === 'bible_study' || latestResult === 'progressing') {
-    return 'border-emerald-300 bg-emerald-50 hover:border-emerald-400'
+  switch (getRecordCardTone(doNotCall, latestResult)) {
+    case 'do_not_call':
+      return 'border-red-300 bg-red-50 hover:border-red-400'
+    case 'bible_study':
+      return 'border-emerald-300 bg-emerald-50 hover:border-emerald-400'
+    case 'moved':
+      return 'border-amber-300 bg-amber-50 hover:border-amber-400'
+    default:
+      return 'border-blue-100/60 bg-white hover:border-[#38BDF8]/40'
   }
-  return 'border-blue-100/60 bg-white hover:border-[#38BDF8]/40'
 }
 
 // Selecting a record is an in-memory view-state change (onSelect), not a route navigation —

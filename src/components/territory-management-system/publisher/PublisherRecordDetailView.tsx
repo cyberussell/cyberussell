@@ -5,7 +5,7 @@ import { Anton } from 'next/font/google'
 import { ArrowRightLeft, MapPin, PencilLine, Truck } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
-import { doNotCallUnlockDate, isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
+import { doNotCallUnlockDate, getRecordCardTone, isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import VisitHistoryList from '@/components/territory-management-system/VisitHistoryList'
 import VisitResultBadge from '@/components/territory-management-system/VisitResultBadge'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
@@ -37,16 +37,23 @@ function ordinal(n: number): string {
   }
 }
 
-// Full-card tone driven by the record's latest logged visit result — a glance-level warning
-// (Do Not Call), good-news highlight (Bible Study), or moved-out flag that's more visible than
-// a small badge alone. Deliberately its own local mapping rather than records/schema.ts's shared
-// VISIT_RESULT_STYLES (that one backs badge pills everywhere else and stays violet for Bible
-// Study there) — this card's full-panel treatment is a distinct, one-off UX request.
-function cardToneClass(latestResult: string | undefined): string {
-  if (latestResult === 'do_not_call') return 'border-red-300 bg-red-50'
-  if (latestResult === 'bible_study' || latestResult === 'progressing') return 'border-emerald-300 bg-emerald-50'
-  if (latestResult === 'moved') return 'border-amber-300 bg-amber-50'
-  return 'border-gray-300 bg-white'
+// Full-card tone — shared with AssignedRecordsList via getRecordCardTone (records/schema.ts) so
+// the list and this detail card never disagree about whether a record reads as Do Not Call /
+// active Bible Study / Moved. Deliberately still its own local className mapping rather than
+// records/schema.ts's VISIT_RESULT_STYLES (that one backs badge pills everywhere else and stays
+// violet for Bible Study there) — this card's full-panel treatment is its own visual language,
+// just now driven by the same underlying rule.
+function cardToneClass(doNotCall: boolean, latestResult: string | undefined): string {
+  switch (getRecordCardTone(doNotCall, latestResult)) {
+    case 'do_not_call':
+      return 'border-red-300 bg-red-50'
+    case 'bible_study':
+      return 'border-emerald-300 bg-emerald-50'
+    case 'moved':
+      return 'border-amber-300 bg-amber-50'
+    default:
+      return 'border-gray-300 bg-white'
+  }
 }
 
 export default function PublisherRecordDetailView({
@@ -116,7 +123,7 @@ export default function PublisherRecordDetailView({
   return (
     <div className="space-y-6">
       <div
-        className={`rounded-2xl border p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)] ${cardToneClass(latestResult)}`}
+        className={`rounded-2xl border p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)] ${cardToneClass(assigned.record.do_not_call, latestResult)}`}
       >
         <p className={`${anton.className} mb-2 text-xl uppercase tracking-wide text-[#0B1B33]`}>
           {ordinal(assigned.sequence)} Record to Visit

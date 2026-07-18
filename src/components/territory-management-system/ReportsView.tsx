@@ -13,6 +13,7 @@ import {
   Percent,
   PhoneOff,
   Repeat,
+  Sparkles,
   TrendingUp,
   Truck,
   XCircle,
@@ -76,6 +77,7 @@ export default function ReportsView({
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-7">
           <StatCard icon={ClipboardList} label={VISIT_RESULT_LABELS.initial_visit} value={stats.resultCounts.initial_visit} />
           <StatCard icon={Repeat} label={VISIT_RESULT_LABELS.return_visit} value={stats.resultCounts.return_visit} />
+          <StatCard icon={Sparkles} label={VISIT_RESULT_LABELS.potential_bible_study} value={stats.resultCounts.potential_bible_study} />
           <StatCard icon={BookMarked} label={VISIT_RESULT_LABELS.started_bible_study} value={stats.resultCounts.started_bible_study} />
           <StatCard icon={BookOpen} label={VISIT_RESULT_LABELS.bible_study} value={stats.resultCounts.bible_study} />
           <StatCard icon={TrendingUp} label={VISIT_RESULT_LABELS.progressing} value={stats.resultCounts.progressing} />

@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { CheckCircle2, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
-import { isDoNotCallLocked } from '@/lib/territory-management-system/modules/records/schema'
+import { isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import type { RecordLocation } from '@/lib/territory-management-system/modules/reports/queries'
@@ -19,6 +19,7 @@ import { chooseSearchScopeAction, getSearchScopeRecordsAction } from '@/app/terr
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
+import PublisherStatusHelp from './PublisherStatusHelp'
 import ConfirmModal from './ConfirmModal'
 import SlideToConfirm from './SlideToConfirm'
 import PartnershipRenameForm from './PartnershipRenameForm'
@@ -44,6 +45,32 @@ const HouseholdDistributionMap = dynamic(() => import('@/components/territory-ma
     </Card>
   ),
 })
+
+// Friendly label for a queued sync item, used to show the publisher (or whoever they show their
+// screen to) *what* failed, alongside its captured error, instead of just a bare count.
+const QUEUE_ITEM_TYPE_LABELS: Record<SyncQueueItem['type'], string> = {
+  rename: 'Rename partnership',
+  visit: 'Visit',
+  addRecord: 'Add contact record',
+  terminate: 'End ministry early',
+  moveRecord: 'Pass record to another partner',
+  note: 'Note to Group Leader',
+  updateRecord: 'Update contact record',
+  recommendRemoval: 'Recommend for removal',
+  finish: 'Finish',
+  deleteAddedRecord: 'Delete added record',
+  editAddedRecord: 'Edit added record',
+  recommendCorrection: 'Recommend a correction',
+  recommendSearchScopeCorrection: 'Recommend a correction',
+}
+
+function describeQueueItem(item: SyncQueueItem): string {
+  if (item.type === 'visit' && item.payload.result) {
+    const label = VISIT_RESULT_LABELS[item.payload.result as keyof typeof VISIT_RESULT_LABELS]
+    return label ? `Visit: ${label}` : QUEUE_ITEM_TYPE_LABELS.visit
+  }
+  return QUEUE_ITEM_TYPE_LABELS[item.type] ?? item.type
+}
 
 type View =
   | { name: 'home' }
@@ -779,6 +806,8 @@ export default function PublisherWorkspaceApp({
               )
             })()}
 
+            <PublisherStatusHelp />
+
             {/* Release Assignment moved to the batch-landing "Select your Partner" page (see
                 ReleaseAssignmentSlider) — that page is where a change-of-mind actually needs to
                 happen, before this device has even settled into a workspace. Early Out itself
@@ -985,6 +1014,22 @@ export default function PublisherWorkspaceApp({
             </p>
             {!online && (
               <p className="mt-2 text-xs text-amber-600">You&apos;re offline — this will sync automatically once you&apos;re back online.</p>
+            )}
+            {failedCount > 0 && (
+              <div className="mt-4 space-y-2 text-left">
+                {queue
+                  .filter((q) => q.status === 'failed')
+                  .map((q) => (
+                    <div key={q.id} className="rounded-lg border border-red-200 bg-red-50 p-3">
+                      <p className="text-sm font-medium text-red-700">{describeQueueItem(q)}</p>
+                      <p className="mt-0.5 text-xs text-red-500">{q.error ?? 'Sync failed.'}</p>
+                    </div>
+                  ))}
+                <p className="text-xs text-slate-500">
+                  Check your connection and tap Sync Now to retry. If this keeps failing, tell your Group Leader — they can check it from the
+                  admin side.
+                </p>
+              </div>
             )}
             <button
               type="button"

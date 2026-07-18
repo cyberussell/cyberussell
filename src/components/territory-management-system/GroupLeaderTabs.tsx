@@ -16,6 +16,7 @@ import {
   Percent,
   PhoneOff,
   Repeat,
+  Sparkles,
   TrendingUp,
   Truck,
   Users,
@@ -234,20 +235,33 @@ export default function GroupLeaderTabs({
               </div>
             </Card>
           ) : (
-            <Card className="relative flex flex-col items-center gap-3 p-6 text-center">
+            <Card
+              className={`relative flex flex-col items-center gap-3 p-6 text-center ${
+                isOverflow ? 'border-black bg-black' : ''
+              }`}
+            >
               <ConfirmDeleteButton
                 action={deleteGroupLeaderAssignmentAction.bind(null, batchId)}
                 confirmMessage="Delete this assignment? Publishers who scanned the QR code will lose access."
                 ariaLabel="Delete Assignment"
-                className="absolute right-4 top-4 text-red-400 hover:text-red-600"
+                className={isOverflow ? 'absolute right-4 top-4 text-red-400 hover:text-red-300' : 'absolute right-4 top-4 text-red-400 hover:text-red-600'}
               />
-              <h2 className="font-semibold text-[#0B1B33]">{isOverflow ? 'Overflow QR Code' : 'Assignment QR Code'}</h2>
+              <h2 className={`font-semibold ${isOverflow ? 'text-white' : 'text-[#0B1B33]'}`}>
+                {isOverflow ? 'Overflow QR Code' : 'Assignment QR Code'}
+              </h2>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={qrDataUrl} alt="Assignment QR code" className="h-80 w-80 sm:h-40 sm:w-40" />
-              <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="break-all text-xs text-[#2563EB] hover:underline">
+              <a
+                href={publicUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`break-all text-xs hover:underline ${isOverflow ? 'text-[#60A5FA]' : 'text-[#2563EB]'}`}
+              >
                 {publicUrl}
               </a>
-              <p className="text-xs text-slate-600">Valid for today only — a new one is needed tomorrow.</p>
+              <p className={`text-xs ${isOverflow ? 'text-slate-300' : 'text-slate-600'}`}>
+                Valid for today only — a new one is needed tomorrow.
+              </p>
             </Card>
           )}
 
@@ -327,6 +341,7 @@ export default function GroupLeaderTabs({
             [
               ['initial_visit', ClipboardList],
               ['return_visit', Repeat],
+              ['potential_bible_study', Sparkles],
               ['started_bible_study', BookMarked],
               ['bible_study', BookOpen],
               ['progressing', TrendingUp],

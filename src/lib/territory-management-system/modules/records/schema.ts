@@ -5,6 +5,7 @@ import { z } from 'zod'
 export const VISIT_RESULTS = [
   'initial_visit',
   'return_visit',
+  'potential_bible_study',
   'started_bible_study',
   'bible_study',
   'progressing',
@@ -23,8 +24,16 @@ export const VISIT_RESULTS = [
 // manually) it's excluded from the dropdown both visit-log forms present to a human.
 // 'progressing'/'discontinued' are excluded too — they only ever appear via
 // BIBLE_STUDY_FOLLOWUP_RESULTS below, once a record is already an ongoing Bible Study.
+// 'started_bible_study' is excluded from the default pool too — it's now only reachable as a
+// locked follow-up once a record is already 'potential_bible_study' (see
+// POTENTIAL_BIBLE_STUDY_RESULTS below), not something a publisher can pick from a cold start.
 export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter(
-  (r) => r !== 'undone' && r !== 'initial_visit' && r !== 'progressing' && r !== 'discontinued'
+  (r) =>
+    r !== 'undone' &&
+    r !== 'initial_visit' &&
+    r !== 'progressing' &&
+    r !== 'discontinued' &&
+    r !== 'started_bible_study'
 )
 
 // Once a record's most recent visit is 'bible_study' (confirmed ongoing — not the first-time
@@ -34,6 +43,29 @@ export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter(
 // or the other.
 export const BIBLE_STUDY_ONGOING_RESULTS = ['bible_study', 'progressing'] as const
 export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'moved'] as const
+
+// The Bible Study funnel's two earlier stages, each with their own narrowed follow-up choices —
+// evaluated in getSelectableResults() before the BIBLE_STUDY_ONGOING_RESULTS check above:
+//   'potential_bible_study' ("Potential BS", the default-pool entry point) -> locks to
+//     [started_bible_study, potential_bible_study, discontinued] ("Started Bible Study" confirms
+//     a real study began, "Potential BS" re-confirms still-just-potential, "No Positive Response"
+//     — discontinued's display label — returns the record to the regular/default pool).
+//   'started_bible_study' (confirmed a real study began) -> locks to [bible_study, discontinued],
+//     matching BIBLE_STUDY_FOLLOWUP_RESULTS' own choice of "No Positive Response" for a dead end.
+// From 'bible_study' onward the existing BIBLE_STUDY_ONGOING_RESULTS/BIBLE_STUDY_FOLLOWUP_RESULTS
+// narrowing above takes over unchanged.
+export const POTENTIAL_BIBLE_STUDY_RESULTS = ['started_bible_study', 'potential_bible_study', 'discontinued'] as const
+export const STARTED_BIBLE_STUDY_RESULTS = ['bible_study', 'discontinued'] as const
+
+// Any visit result that should read as "there's an active Bible Study interest here" for
+// card-tone purposes (see getRecordCardTone below) — a superset of the funnel/follow-up
+// narrowing sets above, used purely for coloring, not for narrowing dropdown choices.
+export const BIBLE_STUDY_FAMILY_RESULTS = [
+  'potential_bible_study',
+  'started_bible_study',
+  'bible_study',
+  'progressing',
+] as const
 
 // A record flagged do_not_call narrows to exactly these three outcomes, regardless of its
 // latest visit result — takes priority over the Bible Study narrowing below (the two states
@@ -70,6 +102,8 @@ export function getSelectableResults(
     if (isDoNotCallLocked(doNotCall, doNotCallAt ?? null)) return []
     return DO_NOT_CALL_RESULTS
   }
+  if (latestResult === 'potential_bible_study') return POTENTIAL_BIBLE_STUDY_RESULTS
+  if (latestResult === 'started_bible_study') return STARTED_BIBLE_STUDY_RESULTS
   if (latestResult && (BIBLE_STUDY_ONGOING_RESULTS as readonly string[]).includes(latestResult)) {
     return BIBLE_STUDY_FOLLOWUP_RESULTS
   }
@@ -79,10 +113,14 @@ export function getSelectableResults(
 export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string> = {
   initial_visit: 'Initial Visit',
   return_visit: 'Visited Again',
+  potential_bible_study: 'Potential BS',
   started_bible_study: 'Started Bible Study',
   bible_study: 'Bible Study',
   progressing: 'Progressive BS',
-  discontinued: 'Discontinued',
+  // Renamed from "Discontinued" — same single shared label constant everywhere it's used,
+  // including as the funnel's dead-end/no-interest outcome from Potential BS and Started Bible
+  // Study, and as the existing ongoing-study follow-up in BIBLE_STUDY_FOLLOWUP_RESULTS.
+  discontinued: 'No Positive Response',
   not_home: 'Not At Home',
   do_not_call: 'Do Not Call',
   moved: 'Moved',
@@ -96,6 +134,7 @@ export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string>
 export const VISIT_RESULT_STYLES: Record<(typeof VISIT_RESULTS)[number], string> = {
   initial_visit: 'bg-blue-50 text-[#2563EB]',
   return_visit: 'bg-sky-50 text-sky-600',
+  potential_bible_study: 'bg-cyan-50 text-cyan-700',
   started_bible_study: 'bg-indigo-50 text-indigo-600',
   bible_study: 'bg-violet-50 text-violet-600',
   progressing: 'bg-emerald-50 text-emerald-600',
@@ -105,6 +144,22 @@ export const VISIT_RESULT_STYLES: Record<(typeof VISIT_RESULTS)[number], string>
   moved: 'bg-amber-50 text-amber-600',
   other: 'bg-orange-50 text-orange-600',
   undone: 'bg-gray-100 text-gray-500',
+}
+
+// A record card's full-panel tone, one rule shared by both AssignedRecordsList (the publisher's
+// card list) and PublisherRecordDetailView (the single-record contact card) — previously each
+// had its own slightly different local cardToneClass, so a record could show red/green on the
+// list but not the detail view (or vice versa). do_not_call is the persistent record flag, not
+// just the latest visit result, and takes priority; the Bible-Study-family green now covers the
+// whole funnel (Potential BS / Started Bible Study / Bible Study / Progressive BS), not just the
+// tail end of it.
+export type RecordCardTone = 'do_not_call' | 'bible_study' | 'moved' | 'default'
+
+export function getRecordCardTone(doNotCall: boolean, latestResult?: string | null): RecordCardTone {
+  if (doNotCall) return 'do_not_call'
+  if (latestResult && (BIBLE_STUDY_FAMILY_RESULTS as readonly string[]).includes(latestResult)) return 'bible_study'
+  if (latestResult === 'moved') return 'moved'
+  return 'default'
 }
 
 // Both study-related results ask who's conducting it — worded differently since "started" vs.

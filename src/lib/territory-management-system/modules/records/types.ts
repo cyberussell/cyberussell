@@ -3,6 +3,7 @@ export type RecordSource = 'manual' | 'csv_import' | 'publisher'
 export type VisitResult =
   | 'initial_visit'
   | 'return_visit'
+  | 'potential_bible_study'
   | 'started_bible_study'
   | 'bible_study'
   | 'progressing'

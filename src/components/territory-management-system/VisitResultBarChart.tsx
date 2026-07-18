@@ -7,6 +7,7 @@ import type { VisitResult } from '@/lib/territory-management-system/modules/reco
 const RESULT_COLORS: Record<VisitResult, string> = {
   initial_visit: '#3B82F6',
   return_visit: '#0EA5E9',
+  potential_bible_study: '#06B6D4',
   started_bible_study: '#6366F1',
   bible_study: '#8B5CF6',
   progressing: '#10B981',
