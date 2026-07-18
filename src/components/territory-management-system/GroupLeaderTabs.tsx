@@ -264,17 +264,6 @@ export default function GroupLeaderTabs({
                 until the Group Leader deliberately picks one, including right after a refresh
                 (no default selection), so the Home tab stays uncluttered day to day. */}
             <div className="inline-flex rounded-full bg-blue-50 p-1">
-              {todaysTerritories.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setAssignmentAction((a) => (a === 'generate' ? null : 'generate'))}
-                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                    assignmentAction === 'generate' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
-                  }`}
-                >
-                  Generate
-                </button>
-              )}
               <button
                 type="button"
                 onClick={() => setAssignmentAction((a) => (a === 'regenerate' ? null : 'regenerate'))}
@@ -284,6 +273,17 @@ export default function GroupLeaderTabs({
               >
                 Regenerate
               </button>
+              {todaysTerritories.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setAssignmentAction((a) => (a === 'generate' ? null : 'generate'))}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                    assignmentAction === 'generate' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
+                  }`}
+                >
+                  Generate Overflow
+                </button>
+              )}
             </div>
 
             {assignmentAction === 'generate' && todaysTerritories.length > 0 && (

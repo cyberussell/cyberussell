@@ -11,12 +11,14 @@ export function getAssignmentBatchUrl(accessToken: string): string {
 
 // Scanning this with an ordinary phone camera opens the batch's public partnership list
 // directly — no in-app scanner needed, no publisher account required.
-// darkColor lets the caller distinguish an overflow batch's QR (navy) from a normal
-// assignment's (black) at a glance — see group-leader/dashboard/page.tsx.
-export async function getAssignmentBatchQrDataUrl(accessToken: string, darkColor = '#000000'): Promise<string> {
+// darkColor/lightColor let the caller distinguish an overflow batch's QR from a normal
+// assignment's at a glance — see group-leader/dashboard/page.tsx, which fully inverts an
+// overflow batch's QR (white on black) rather than just recoloring the dark modules, since
+// that reads as visually distinct faster than a navy-on-white variant did.
+export async function getAssignmentBatchQrDataUrl(accessToken: string, darkColor = '#000000', lightColor = '#FFFFFF'): Promise<string> {
   return QRCode.toDataURL(getAssignmentBatchUrl(accessToken), {
     margin: 1,
     width: 480,
-    color: { dark: darkColor, light: '#FFFFFF' },
+    color: { dark: darkColor, light: lightColor },
   })
 }

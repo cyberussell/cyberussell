@@ -1,5 +1,21 @@
 # Current Work
 
+**Territory Management System — Note form copy, overflow button swap, inverted overflow QR (2026-07-18) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, no migration needed, committed and pushed + deployed at Russell's request — see checkpoint `territory-management-note-copy-overflow-qr-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 3 small polish items: (1) the note screen repeated "optional" (description text + field label both said it) and the placeholder was replaced with a more realistic example; (2) the Home tab's "Generate" toggle button renamed to "Generate Overflow" (a batch already exists at this point, it never generates a fresh first one) and swapped to come after Regenerate; (3) an overflow batch's QR code changed from navy-on-white to a full white-on-black inversion, more visually distinct from the normal assignment's black-on-white QR at a glance.
+
+Current Status: Code complete, no migration needed.
+- `PublisherNoteForm.tsx`: dropped the redundant "— optional." from the description line; placeholder now "e.g. web app is lagging in 4G."
+- `GroupLeaderTabs.tsx`: Regenerate now first, "Generate Overflow" (renamed from "Generate") second — same onClick/state wiring, just reordered.
+- `assignment/qr.ts`'s `getAssignmentBatchQrDataUrl` gained an optional `lightColor` param; `group-leader/dashboard/page.tsx` passes white-on-black for an overflow batch instead of navy-on-white.
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified via a temporary scratch route (removed before finishing): copy/placeholder correct, toggle order/labels correct with each button still opening its own correct form, and the QR color inversion verified by reproducing the same `qrcode` call client-side and sampling the rendered background pixel (black, was white).
+
+**Next recommended task:** Russell spot-checks a real overflow batch's QR appears fully inverted next to the original assignment's plain black-on-white one.
+
+----------------------------------------
+
 **Territory Management System — Locked-DNC count consistency, note-form parity, StatCard centering (2026-07-18) — code done, tsc + vitest (52/52) + build clean, client pieces live-verified via a temporary scratch route, no migration needed, committed and pushed + deployed at Russell's request — see checkpoint `territory-management-dnc-count-consistency-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

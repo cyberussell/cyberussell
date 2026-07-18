@@ -21,9 +21,7 @@ export default function PublisherNoteForm({
   return (
     <Card className="p-6">
       <h2 className="font-semibold text-[#0B1B33]">Leave a Note for the Admin?</h2>
-      <p className="mt-1 text-sm text-slate-500">
-        Anything about today&apos;s records or the app you&apos;d like the Admin to know — optional.
-      </p>
+      <p className="mt-1 text-sm text-slate-500">Anything about today&apos;s records or the app you&apos;d like the Admin to know.</p>
       <div className="mt-4">
         <FormField label="Note" optional>
           <textarea
@@ -33,7 +31,7 @@ export default function PublisherNoteForm({
             rows={4}
             disabled={sending}
             className={inputClass}
-            placeholder="e.g. a household asked not to be visited on Sundays…"
+            placeholder="e.g. web app is lagging in 4G."
           />
         </FormField>
       </div>
