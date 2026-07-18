@@ -1,5 +1,18 @@
 # Current Work
 
+**Territory Management System — Household counts as one assigned record, Record Detail household browsing (2026-07-18) — code done, tsc + vitest clean (48/48, excluding a pre-existing unrelated live-DB Appointment System test failure), live-verified the UI piece via a temporary scratch route, no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-household-single-record-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 2 related changes. (1) The assignment engine (`calculateAssignment`) previously had zero Plus Code awareness, so a multi-person household could get split across two Ministry Partners and each member counted separately toward "of 6" — it now groups same-Plus-Code records into a single unit before chunking (a unit fills exactly one slot regardless of headcount, members always land together), and `getBatchSummary`'s `recordCount`/`completedCount` dedupe the same way. Confirmed with Russell: a household counts as completed once **any one** member has a logged visit, not every resident individually. (2) The Record Detail page's "N contact records at this address" line is now a tap-to-expand disclosure listing each sibling + their status badge, tappable to jump straight to that person's own detail view — collapsed by default so records with no household stay uncluttered. Required adding `key={selected.record.id}` to `PublisherRecordDetailView`'s render so per-record UI state doesn't leak across the new cross-record jump.
+
+Current Status: Done and deployed. No migration needed.
+- `npx tsc --noEmit` clean. `npx vitest run` clean excluding `appointment-system/slots.test.ts` (pre-existing, unrelated, live-Supabase-network-dependent, already failing in this sandbox before this session) — 48/48, including new `engine.test.ts` household-grouping coverage (14/14 total in that file). Live-verified the Record Detail disclosure/navigation via a temporary scratch route (removed before finishing) — the engine/`getBatchSummary` grouping logic couldn't be live-verified against the real Supabase project (no live credentials in this sandbox), reviewed carefully and covered by new unit tests instead.
+
+**Next recommended task:** Russell spot-checks live: generate a fresh assignment over a territory with a real multi-person household and confirm both land in the same partnership, the Group Leader's "X of 6" doesn't double-count them, logging one visit marks the pair done, and the Record Detail household disclosure works correctly.
+
+----------------------------------------
+
 **Territory Management System — Ended-early badge, Bible Study conductor pre-fill (2026-07-18) — code done, tsc + vitest (52/52) clean, live-verified via a temporary scratch route, no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-ended-early-badge-bible-study-prefill-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
