@@ -237,7 +237,12 @@ export default function GroupLeaderTabs({
           ) : (
             <Card
               className={`relative flex flex-col items-center gap-3 p-6 text-center ${
-                isOverflow ? 'border-black bg-black' : ''
+                // Card's own panelClass already sets bg-white/border-gray-300 on this same
+                // element — a plain bg-black/border-black loses that cascade fight regardless of
+                // string order (Tailwind's compiled stylesheet order decides ties, not source
+                // order), leaving the panel white even when isOverflow is true. The `!` important
+                // modifier forces this override to actually win.
+                isOverflow ? '!border-black !bg-black' : ''
               }`}
             >
               <ConfirmDeleteButton
