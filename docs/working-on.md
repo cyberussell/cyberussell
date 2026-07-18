@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Status help copy revision, Home tab toggle rename (2026-07-18) — code done, tsc + vitest clean (excluding the pre-existing unrelated live-DB Appointment System test failure), live-verified via temporary scratch routes, no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-status-help-copy-toggle-rename-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 2 independent copy/UI changes. (1) `PublisherStatusHelp.tsx`'s Tagalog explanations replaced with Russell's fully revised copy for all 10 statuses, and the old system-only footnote (Initial Visit/Undone) swapped for a new closing note about asking an elder/Group Leader and not screenshotting/sharing the page. (2) The publisher workspace Home tab's Territory Map/Live Map/Share To pill toggle renamed to Map/Pins/Share/Help (Help unchanged), including the matching single-map fallback headers for consistency. `Search Area` (a third conditional tab) untouched.
+
+Current Status: Done and deployed. No migration needed. `npx tsc --noEmit` and `npx vitest run` (excluding the pre-existing unrelated `appointment-system/slots.test.ts`) clean. Live-verified via temporary scratch routes (removed before finishing).
+
+**Next recommended task:** Russell spot-checks live: the Home tab toggle reads Map/Pins/Share/Help, and the Help tab shows the revised Tagalog copy correctly.
+
+----------------------------------------
+
 **Territory Management System — Merged household cards on Assigned Contact Records (2026-07-18) — code done, tsc + vitest clean (48/48, excluding the pre-existing unrelated live-DB Appointment System test failure), live-verified via a temporary scratch route, no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-merged-household-cards-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
