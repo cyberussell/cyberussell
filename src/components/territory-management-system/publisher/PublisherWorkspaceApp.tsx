@@ -20,6 +20,7 @@ import TerritoryMapViewer from '@/components/territory-management-system/Territo
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
 import PublisherStatusHelp from './PublisherStatusHelp'
+import PublisherFAQ from './PublisherFAQ'
 import ConfirmModal from './ConfirmModal'
 import SlideToConfirm from './SlideToConfirm'
 import PartnershipRenameForm from './PartnershipRenameForm'
@@ -148,7 +149,7 @@ export default function PublisherWorkspaceApp({
   // Which map the list view shows when both are available — a toggle instead of stacking both
   // maps, for a cleaner one-screen-at-a-time look. Defaults to Territory Map (the prior default
   // visual order).
-  const [mapView, setMapView] = useState<'territory' | 'records' | 'search' | 'share' | 'help'>('territory')
+  const [mapView, setMapView] = useState<'territory' | 'records' | 'search' | 'share' | 'help' | 'faq'>('territory')
   // Which branded confirm dialog (see ConfirmModal) is currently open, replacing
   // window.confirm() — its "www.cyberussell.com says" chrome reads as an unfamiliar browser
   // warning to a publisher in the field, not a TMS-branded prompt. Early Out and Release now go
@@ -789,12 +790,13 @@ export default function PublisherWorkspaceApp({
 
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
-              const tabs: { key: 'territory' | 'records' | 'search' | 'share' | 'help'; label: string; available: boolean }[] = [
+              const tabs: { key: 'territory' | 'records' | 'search' | 'share' | 'help' | 'faq'; label: string; available: boolean }[] = [
                 { key: 'territory', label: 'Map', available: mappableTerritories.length > 0 },
                 { key: 'records', label: 'Pins', available: assignedRecordLocations.length > 0 },
                 { key: 'search', label: 'Search Area', available: searchScopeLocations.length > 0 },
                 { key: 'share', label: 'Share', available: !readOnly },
-                { key: 'help', label: 'Help', available: true },
+                { key: 'help', label: 'Status', available: true },
+                { key: 'faq', label: 'FAQ', available: true },
               ]
               const availableTabs = tabs.filter((t) => t.available)
               if (availableTabs.length === 0) return null
@@ -859,6 +861,7 @@ export default function PublisherWorkspaceApp({
                   )}
 
                   {activeView === 'help' && <PublisherStatusHelp />}
+                  {activeView === 'faq' && <PublisherFAQ />}
                 </div>
               )
             })()}

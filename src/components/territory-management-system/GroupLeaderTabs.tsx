@@ -33,14 +33,16 @@ import PartnershipList from '@/components/territory-management-system/Partnershi
 import VisitResultBarChart from '@/components/territory-management-system/VisitResultBarChart'
 import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
 import OverflowAssignmentForm from '@/components/territory-management-system/OverflowAssignmentForm'
+import PublisherFAQ from '@/components/territory-management-system/publisher/PublisherFAQ'
 
-type Tab = 'home' | 'dashboard' | 'results' | 'progress'
+type Tab = 'home' | 'dashboard' | 'results' | 'progress' | 'faq'
 
 const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'results', label: 'Visits', icon: ClipboardList },
   { id: 'progress', label: 'Partners', icon: Users },
+  { id: 'faq', label: 'FAQ', icon: HelpCircle },
 ]
 
 // One entry per batch this Group Leader owns today — a Group Leader can now have more than one
@@ -369,6 +371,8 @@ export default function GroupLeaderTabs({
       )}
 
       {tab === 'progress' && <PartnershipList partnerships={stats.partnerships} onEndPartnership={endPartnershipAction} />}
+
+      {tab === 'faq' && <PublisherFAQ />}
     </div>
   )
 }

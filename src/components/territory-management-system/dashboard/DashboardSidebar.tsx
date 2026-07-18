@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   MessageSquareText,
+  HelpCircle,
 } from 'lucide-react'
 import { signOut } from '@/app/territory-management-system/actions/auth'
 
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   // Publisher end-of-ministry notes — admin-only, deliberately not visible anywhere in the
   // Group Leader dashboard (see 011_partnership_admin_note.sql).
   { label: 'Notes', href: '/territory-management-system/dashboard/notes', icon: MessageSquareText },
+  { label: 'FAQ', href: '/territory-management-system/dashboard/faq', icon: HelpCircle },
   { label: 'Settings', href: '/territory-management-system/dashboard/settings', icon: SettingsIcon },
 ]
 
