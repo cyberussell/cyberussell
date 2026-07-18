@@ -11,12 +11,16 @@ const HANDLE_SIZE = 48 // px — matches h-12/w-12 below
 // accident, so there's no second confirmation step once the slide completes.
 export default function SlideToConfirm({
   label,
+  draggingLabel = 'Confirm',
   confirmingLabel,
   onConfirm,
   disabled,
   tone = 'primary',
 }: {
   label: string
+  // Shown mid-drag, replacing the static label — gives feedback that the gesture registered
+  // before the handle actually reaches the end.
+  draggingLabel?: string
   confirmingLabel: string
   onConfirm: () => void | Promise<void>
   disabled?: boolean
@@ -74,7 +78,7 @@ export default function SlideToConfirm({
       className={`relative h-16 w-full select-none overflow-hidden rounded-full border ${trackTone} ${disabled ? 'opacity-50' : ''}`}
     >
       <div className={`pointer-events-none absolute inset-0 flex items-center justify-center px-14 text-center text-base font-bold ${textTone}`}>
-        {confirming ? confirmingLabel : label}
+        {confirming ? confirmingLabel : dragging ? draggingLabel : label}
       </div>
       <div
         onPointerDown={handlePointerDown}

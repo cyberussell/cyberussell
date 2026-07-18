@@ -75,6 +75,13 @@ export default function GroupLeaderTabs({
   const [selectedBatchId, setSelectedBatchId] = useState(batches[0]?.batchId)
   const selected = batches.find((b) => b.batchId === selectedBatchId) ?? batches[0]
   const { batchId, qrDataUrl, publicUrl, requestedPartnershipCount, isOverflow, stats } = selected
+  // The barangay/locality name for the QR card's own heading — territory.name is the internal
+  // code (e.g. "Q-11"), the barangay name lives in activeTerritories' barangayName (sourced from
+  // territories.description, see group-leader/dashboard/page.tsx). stats.territories only has
+  // {id, name}, so this cross-references by id rather than widening that type just for a label.
+  const batchBarangays = stats.territories
+    .map((t) => activeTerritories.find((at) => at.id === t.id)?.barangayName)
+    .filter((b): b is string => Boolean(b && b.trim()))
 
   // The "Visits" tab shows each result's count as of when this device first opened this batch's
   // dashboard, plus a live delta badge (see StatCard) for whatever's changed since then. Kept in
@@ -256,6 +263,11 @@ export default function GroupLeaderTabs({
               <h2 className={`font-semibold ${isOverflow ? 'text-white' : 'text-[#0B1B33]'}`}>
                 {isOverflow ? 'Overflow QR Code' : 'Assignment QR Code'}
               </h2>
+              {batchBarangays.length > 0 && (
+                <p className={`-mt-2 text-xs font-medium ${isOverflow ? 'text-[#60A5FA]' : 'text-[#2563EB]'}`}>
+                  {batchBarangays.join(', ')}
+                </p>
+              )}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={qrDataUrl} alt="Assignment QR code" className="h-80 w-80 sm:h-40 sm:w-40" />
               <a

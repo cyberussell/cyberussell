@@ -203,18 +203,18 @@ export default function PublisherRecordForm({
             ))}
           </select>
         </FormField>
-        <FormField label="Address" optional>
-          <input
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            maxLength={200}
-            className={inputClass}
-            placeholder="123 Main St"
-          />
+        <FormField label="Unit" optional>
+          <input value={unit} onChange={(e) => setUnit(e.target.value)} maxLength={40} className={inputClass} />
         </FormField>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="Unit" optional>
-            <input value={unit} onChange={(e) => setUnit(e.target.value)} maxLength={40} className={inputClass} />
+          <FormField label="Address" optional>
+            <input
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              maxLength={200}
+              className={inputClass}
+              placeholder="123 Main St"
+            />
           </FormField>
           <FormField label="Resident name" optional>
             <input value={residentName} onChange={(e) => setResidentName(e.target.value)} maxLength={120} className={inputClass} />

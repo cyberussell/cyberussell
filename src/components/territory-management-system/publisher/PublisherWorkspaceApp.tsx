@@ -701,11 +701,12 @@ export default function PublisherWorkspaceApp({
         color: 'red' as const,
       })),
   ]
-  // An overflow partnership must lock in its search area before anything else in the workspace
-  // becomes visible — mirrors how the unclaimed state already hides everything behind the
-  // rename form. Never true for a non-overflow batch (searchScope stays permanently null for
-  // those) or once a scope has already been chosen (one-time only).
-  const needsSearchScope = !readOnly && workspace.batch.is_overflow && !workspace.searchScope
+  // An overflow partnership — or any partnership that simply has zero assigned records, e.g. a
+  // batch generated against a brand-new/unmapped territory — must lock in its search area before
+  // anything else in the workspace becomes visible, mirroring how the unclaimed state already
+  // hides everything behind the rename form. Skipped once a scope has already been chosen
+  // (one-time only) or if there are real assigned records to work instead.
+  const needsSearchScope = !readOnly && (workspace.batch.is_overflow || workspace.records.length === 0) && !workspace.searchScope
   // Only this batch's own territories, narrowed from the full territoryStructures prop — the
   // search-area picker can't offer a section from a territory this batch doesn't even cover.
   const batchTerritoryStructures = territoryStructures.filter((t) => workspace.territories.some((wt) => wt.id === t.id))

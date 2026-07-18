@@ -708,7 +708,12 @@ export async function chooseSearchScopeAction(_prev: ActionResult, formData: For
   const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
   if (!partnership) return { error: 'This partnership link is no longer valid.' }
   if (partnership.expired) return { error: 'This assignment has ended for the day.' }
-  if (!partnership.batch.is_overflow) return { error: 'This assignment does not use a search area.' }
+  // Allowed for an overflow partnership, or any partnership with zero assigned records (a
+  // batch generated against a brand-new/unmapped territory) — same eligibility rule as
+  // PublisherWorkspaceApp's needsSearchScope.
+  if (!partnership.batch.is_overflow && partnership.records.length > 0) {
+    return { error: 'This assignment does not use a search area.' }
+  }
 
   // One-time only — a partnership that already locked in a scope can never change it (that's
   // the whole point: it's what the overlap-prevention constraint is keyed on).

@@ -129,14 +129,19 @@ export default function HouseholdDistributionMap({
     )
   }
 
-  const center: [number, number] = [
-    pins.reduce((sum, p) => sum + p.lat, 0) / pins.length,
-    pins.reduce((sum, p) => sum + p.lng, 0) / pins.length,
-  ]
+  // A fixed center+zoom used to leave the pins tiny and off-center for a tightly-clustered
+  // territory (zoom 13 suits a whole town, not a block) — fitting bounds to the actual pins
+  // instead means the view always lands zoomed to what's really there, however spread out.
+  const bounds = L.latLngBounds(pins.map((p): [number, number] => [p.lat, p.lng]))
 
   return (
     <Card className="overflow-hidden p-0">
-      <MapContainer center={center} zoom={13} scrollWheelZoom style={{ height: '480px', width: '100%' }}>
+      <MapContainer
+        bounds={bounds}
+        boundsOptions={{ padding: [32, 32], maxZoom: 18 }}
+        scrollWheelZoom
+        style={{ width: '100%', aspectRatio: '1 / 1' }}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -123,21 +123,21 @@ export default function MarkMovedForm({
           for admin removal
         </p>
         <div className="mt-4 space-y-4">
-          <FormField label="Address">
+          <FormField label="Unit" optional>
             <input
-              value={fields.address}
-              onChange={(e) => setFields((f) => ({ ...f, address: e.target.value }))}
-              maxLength={200}
+              value={fields.unit}
+              onChange={(e) => setFields((f) => ({ ...f, unit: e.target.value }))}
+              maxLength={40}
               disabled={submitting}
               className={inputClass}
             />
           </FormField>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <FormField label="Unit" optional>
+            <FormField label="Address">
               <input
-                value={fields.unit}
-                onChange={(e) => setFields((f) => ({ ...f, unit: e.target.value }))}
-                maxLength={40}
+                value={fields.address}
+                onChange={(e) => setFields((f) => ({ ...f, address: e.target.value }))}
+                maxLength={200}
                 disabled={submitting}
                 className={inputClass}
               />

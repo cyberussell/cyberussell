@@ -532,11 +532,13 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   const searchScopeRecords = searchScope
     ? await getRecordsInBlocks(supabase, partnership.congregation_id, searchScope.blocks.map((b) => b.id))
     : []
-  // Only meaningful (and only fetched) for an overflow partnership that hasn't picked a scope
-  // yet — feeds ChooseSearchScopeForm's disabled state. Every other partnership never renders
-  // that form, so there's nothing for this to do for them.
+  // Only meaningful (and only fetched) for an overflow partnership — or a zero-record
+  // partnership, same "needs to pick a search area" case as PublisherWorkspaceApp's
+  // needsSearchScope — that hasn't picked a scope yet; feeds ChooseSearchScopeForm's disabled
+  // state. Every other partnership never renders that form, so there's nothing for this to do
+  // for them.
   const takenBlockIds =
-    (batch as AssignmentBatch).is_overflow && !searchScope
+    ((batch as AssignmentBatch).is_overflow || records.length === 0) && !searchScope
       ? [...(await getTakenBlockIdsForDate(supabase, (batch as AssignmentBatch).assignment_date))]
       : []
 

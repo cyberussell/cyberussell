@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Anton } from 'next/font/google'
-import { ArrowRightLeft, ChevronDown, ChevronRight, MapPin, PencilLine, Truck, UserPlus, Users } from 'lucide-react'
+import { ArrowRightLeft, ChevronDown, ChevronRight, MapPin, PencilLine, Truck, UserPlus, Users, X } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { VisitResult } from '@/lib/territory-management-system/modules/records/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
@@ -15,6 +15,22 @@ import PublisherVisitLogForm from './PublisherVisitLogForm'
 import MoveRecordForm from './MoveRecordForm'
 import MarkMovedForm, { type MovedRecordFields } from './MarkMovedForm'
 import RecommendCorrectionForm, { type CorrectionFields } from './RecommendCorrectionForm'
+
+// Closes one of the mobile Pass/Unlocated/Correction sub-forms, back to the 3-button row —
+// overlaid on the sub-form's own Card via the parent's `relative` wrapper rather than sitting as
+// a separate line above it, since a plain small-text "‹ Back" link there was hard to notice.
+function CloseMobileActionButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Close"
+      className="absolute right-3 top-3 z-10 rounded-full p-1 text-red-500 transition hover:bg-red-50"
+    >
+      <X className="h-5 w-5" />
+    </button>
+  )
+}
 
 // A heavy, condensed display face just for the "Nth Record to Visit" header — deliberately not
 // mixed into the site's normal Syne/Inter body faces (see root layout.tsx), since this is a
@@ -305,18 +321,14 @@ export default function PublisherRecordDetailView({
               </div>
             )}
             {mobileAction === 'move' && (
-              <div className="space-y-3">
-                <button type="button" onClick={() => setMobileAction('none')} className="text-xs font-medium text-slate-400 hover:underline">
-                  ‹ Back
-                </button>
+              <div className="relative">
+                <CloseMobileActionButton onClick={() => setMobileAction('none')} />
                 <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
               </div>
             )}
             {mobileAction === 'moved' && (
-              <div className="space-y-3">
-                <button type="button" onClick={() => setMobileAction('none')} className="text-xs font-medium text-slate-400 hover:underline">
-                  ‹ Back
-                </button>
+              <div className="relative">
+                <CloseMobileActionButton onClick={() => setMobileAction('none')} />
                 <MarkMovedForm
                   initialMode="choose"
                   initial={movedFields}
@@ -330,10 +342,8 @@ export default function PublisherRecordDetailView({
               </div>
             )}
             {mobileAction === 'correction' && (
-              <div className="space-y-3">
-                <button type="button" onClick={() => setMobileAction('none')} className="text-xs font-medium text-slate-400 hover:underline">
-                  ‹ Back
-                </button>
+              <div className="relative">
+                <CloseMobileActionButton onClick={() => setMobileAction('none')} />
                 <RecommendCorrectionForm
                   currentPlusCode={assigned.record.plus_code ?? ''}
                   currentSectionId={assigned.record.section_id}

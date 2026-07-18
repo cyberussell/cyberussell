@@ -58,7 +58,7 @@ export default function SharePartnershipCard({ batchToken, partnershipToken }: {
       {qrDataUrl && (
         <div className="mt-3 flex justify-center">
           {/* eslint-disable-next-line @next/next/no-img-element -- a data: URL, next/image can't optimize it */}
-          <img src={qrDataUrl} alt="QR code to this partnership" className="h-36 w-36 rounded-lg border border-gray-200" />
+          <img src={qrDataUrl} alt="QR code to this partnership" className="h-72 w-72 rounded-lg border border-gray-200" />
         </div>
       )}
 
