@@ -76,12 +76,13 @@ export default function GroupLeaderTabs({
   const selected = batches.find((b) => b.batchId === selectedBatchId) ?? batches[0]
   const { batchId, qrDataUrl, publicUrl, requestedPartnershipCount, isOverflow, stats } = selected
   // The barangay/locality name for the QR card's own heading — territory.name is the internal
-  // code (e.g. "Q-11"), the barangay name lives in activeTerritories' barangayName (sourced from
-  // territories.description, see group-leader/dashboard/page.tsx). stats.territories only has
-  // {id, name}, so this cross-references by id rather than widening that type just for a label.
-  const batchBarangays = stats.territories
-    .map((t) => activeTerritories.find((at) => at.id === t.id)?.barangayName)
-    .filter((b): b is string => Boolean(b && b.trim()))
+  // code (e.g. "Q-11"), the barangay name is territory.description. Read directly off
+  // stats.territories (sourced from getBatchSummary's own territory join, so it's guaranteed to
+  // reflect exactly what this batch covers) rather than cross-referencing the separate
+  // activeTerritories prop (scoped/filtered for the New Assignment form's territory picker,
+  // e.g. by status === 'active' — a real but different purpose that this earlier lookup wrongly
+  // piggybacked on and could silently miss).
+  const batchBarangays = stats.territories.map((t) => t.description).filter((d): d is string => Boolean(d && d.trim()))
 
   // The "Visits" tab shows each result's count as of when this device first opened this batch's
   // dashboard, plus a live delta badge (see StatCard) for whatever's changed since then. Kept in

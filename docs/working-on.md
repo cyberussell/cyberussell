@@ -1,6 +1,18 @@
 # Current Work
 
-**Territory Management System — Publisher UI polish round 2: zero-record search scope, red X close icon, form/map/QR/slider/QR-header tweaks (2026-07-18) — code done, tsc + vitest (56/56) clean, most items live-verified via a temporary scratch route, not committed — see checkpoint `territory-management-publisher-ui-polish-round2-v1.md`:**
+**Territory Management System — QR barangay label bug fix + iOS input-zoom fix (2026-07-18) — code done, tsc + vitest (56/56) clean, live-verified via a temporary scratch route, not committed — see checkpoint `territory-management-qr-barangay-fix-ios-zoom-fix-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 2 bug fixes Russell hit testing the just-deployed publisher UI polish round. (1) The Assignment/Overflow QR card's new barangay-name line (added in the prior round) didn't show for a real, non-zero-record assignment — root cause was a fragile cross-reference against `activeTerritories` (a differently-scoped, `status === 'active'`-filtered prop meant for the New Assignment form's picker, not for describing an already-generated batch). Fixed properly: `getBatchSummary`'s own territory join now selects `description` directly, threaded through `BatchSummary.territories`/`BatchStats.territories` (both widened), so `GroupLeaderTabs.tsx` reads the barangay name straight off the batch's own data — same reliable source already used by the adjacent "Territories worked" line. (2) Tapping any text input (e.g. "Partner Name") zoomed the whole page in on iOS Safari, requiring a manual pinch back out — classic iOS behavior triggered by a focused input rendering below 16px. Fixed at the shared source: `FormField.tsx`'s `inputClass` (used by every input/textarea/select in both Admin and publisher surfaces) gained an explicit `text-base` (16px).
+
+Current Status: Code done, not yet committed. `npx tsc --noEmit` and `npx vitest run` (56/56) clean. Live-verified via a temporary scratch route: the barangay-label logic renders correctly against mock territory data, and the Partner Name input's computed font-size measured exactly 16px post-fix. Full end-to-end confirmation (a real batch's QR card, a real iOS Safari device not zooming) still needs Russell — neither can be fully proven from this sandbox.
+
+**Next recommended task:** Russell reviews the diff, commits/deploys, then confirms live: a real assignment's QR card shows its barangay name, and text inputs no longer zoom the page on a real iOS device.
+
+----------------------------------------
+
+**Territory Management System — Publisher UI polish round 2: zero-record search scope, red X close icon, form/map/QR/slider/QR-header tweaks (2026-07-18) — code done, tsc + vitest (56/56) clean, most items live-verified via a temporary scratch route, committed and pushed (`c0acd40`), deployed via Vercel auto-deploy on push — see checkpoint `territory-management-publisher-ui-polish-round2-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 

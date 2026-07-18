@@ -19,8 +19,8 @@ export interface BatchStats extends ReportStats {
   activeBibleStudies: number
   partnerships: PartnershipWithProgress[]
   // Today's assigned territories, for the Home tab's "territories worked today" summary once
-  // every partner is done.
-  territories: { id: string; name: string }[]
+  // every partner is done, and the QR card's barangay-name heading before that.
+  territories: { id: string; name: string; description: string }[]
 }
 
 function emptyResultCounts(): Record<VisitResult, number> {

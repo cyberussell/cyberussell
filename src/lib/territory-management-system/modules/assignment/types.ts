@@ -41,7 +41,7 @@ export interface PartnershipWithProgress extends Partnership {
 }
 
 export interface BatchSummary extends AssignmentBatch {
-  territories: { id: string; name: string }[]
+  territories: { id: string; name: string; description: string }[]
   partnerships: PartnershipWithProgress[]
   // True once assignment_date is before today in the congregation's timezone — the public
   // landing/progress pages render an "ended" state instead of the live view when this is set.

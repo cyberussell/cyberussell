@@ -292,7 +292,7 @@ export async function getBatchSummary(
   if (!batch) return null
 
   const [{ data: territoryLinks }, { data: partnerships }, { data: congregation }] = await Promise.all([
-    supabase.from('assignment_batch_territories').select('territory:territories(id, name)').eq('batch_id', batchId),
+    supabase.from('assignment_batch_territories').select('territory:territories(id, name, description)').eq('batch_id', batchId),
     // Explicit column list, not select('*') — this feeds both the Admin dashboard and the
     // Group Leader's stats.partnerships (via getBatchStats), and admin_note/admin_note_at
     // must never reach the Group Leader surface (see 011_partnership_admin_note.sql).
@@ -360,7 +360,7 @@ export async function getBatchSummary(
 
   return {
     ...(batch as AssignmentBatch),
-    territories: ((territoryLinks ?? []) as unknown as { territory: { id: string; name: string } }[]).map((t) => t.territory),
+    territories: ((territoryLinks ?? []) as unknown as { territory: { id: string; name: string; description: string } }[]).map((t) => t.territory),
     partnerships: partnershipsWithProgress,
     expired: isBatchExpired((batch as AssignmentBatch).assignment_date, congregation?.timezone ?? 'UTC'),
   }
