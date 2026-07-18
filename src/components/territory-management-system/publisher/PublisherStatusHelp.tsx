@@ -6,44 +6,47 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 // as a peer tab alongside Territory Map/Live Map/Share To in PublisherWorkspaceApp's Home
 // toggle (not a separate collapsible card) — the tab switcher itself is the show/hide control.
 const STATUS_HELP: { status: string; description: string }[] = [
-  { status: 'Not At Home', description: 'Walang sumagot sa bahay. Ito ang gagamitin kapag walang aktwal na nakausap.' },
+  { status: 'Not At Home', description: 'Walang tao sa bahay. Ito ang status ng kausap kapag walang aktwal na nakausap.' },
   {
     status: 'Visited Again',
     description:
-      'Nakausap mo ulit sila pero walang bagong nangyari sa pag-uusap. (Ito rin ang gagamitin kapag pwede nang bisitahin ulit ang isang naka-Do Not Call na record at gusto nilang makipag-usap.)',
+      'Nakausap mo ulit sila as return visit. (Ito rin ang gagamitin kapag pwede nang bisitahin ulit ang isang naka-Do Not Call na record at gusto nilang makipag-usap na muli.)',
   },
   {
     status: 'Potential BS',
     description:
-      'Nagpakita sila ng tunay na interes sa talakayan tungkol sa Bibliya, pero wala pang regular na pag-aaral na nagsimula. Dito nagsisimula ang funnel ng Bible Study — sa susunod na pagbisita, pipiliin mo ang Started Bible Study, ulitin ang Potential BS, o No Positive Response.',
+      'Nagpakita sila ng kahit kauting interes sa Bibliya, pero wala pang regular na pag-aaral ang napasimulan. Sa susunod na pagbisita, maaari mo ng piliin ang Started Bible Study, o kaya ulitin ang Potential BS, o No Positive Response.',
   },
   {
     status: 'Started Bible Study',
-    description: 'Kakasimula lang ng unang regular na pag-aaral. Sa susunod na pagbisita, magiging Bible Study (kung tuloy-tuloy) o No Positive Response.',
+    description:
+      'Kakasimula lang ng unang regular na pag-aaral gamit ang Bibliya o anumang aklat na ginagamit sa pag-aaral. Sa susunod na pagbisita, magiging Bible Study (kung tuloy-tuloy) o No Positive Response ang status.',
   },
   {
     status: 'Bible Study',
     description:
-      'Kumpirmadong tuloy-tuloy na ang pag-aaral. Sa mga susunod na pagbisita, magiging Progressive BS o No Positive Response. (May hiwalay na paraan kung lumipat na sila — tingnan ang Moved sa ibaba.)',
+      'Maaring na-ireport na ito bilang Bible Study sa kongregasiyon. Sa mga susunod na pagbisita, magiging Progressive BS o No Positive Response. (May hiwalay na paraan kung lumipat na sila — tingnan ang Moved sa ibaba.)',
   },
   {
     status: 'Progressive BS',
-    description: 'Maganda ang takbo ng tuloy-tuloy na pag-aaral. Nananatili itong nasa "ongoing" funnel para sa susunod na pagbisita.',
+    description:
+      'Sumusulong ang Bible Study. Huwag palitan ng iyong pangalan ang pangalan ng nagko-conduct ng Bible Study malipang pormal na inilipat ito sa iyo.',
   },
   {
     status: 'No Positive Response',
-    description: 'Hindi tumuloy ang lead (Potential BS, Started, o ongoing) — dito nagtatapos ang funnel.',
+    description: 'Walang positibong pagtugon sa kasalukuyan pero hindi naman Do Not Call.',
   },
   {
     status: 'Do Not Call',
-    description: 'Hiniling nilang huwag na silang bisitahin. Ini-lock ang record mula sa anumang pagbisita sa loob ng 6 na buwan.',
+    description:
+      'Hiniling ng individual na huwag na silang bisitahin. Ini-lock ng system ang record mula sa anumang pagbisita sa loob ng 6 na buwan. Pwedeng mag-add ng person sa kaparehong address kung may interesado sa address na iyon',
   },
   {
     status: 'Moved',
     description:
-      'Hindi na sila nakatira doon. May sariling button ito (hindi bahagi ng Status dropdown) — hihilingin sa iyo na itama ang address/contact info o irekomenda ang record para tanggalin.',
+      'Hindi na sila nakatira doon. May sariling button ito (hindi bahagi ng Status dropdown) — hihilingin sa iyo na itama ang address/contact info o irekomenda ang record para tanggalin ng admin.',
   },
-  { status: 'Other', description: 'Hindi kasya sa alinman sa mga nasa itaas — kailangan ng notes.' },
+  { status: 'Other', description: 'Default status para sa mga hindi sakop ng ibang status — kailangan ito ng notes.' },
 ]
 
 export default function PublisherStatusHelp() {
@@ -56,9 +59,8 @@ export default function PublisherStatusHelp() {
         </div>
       ))}
       <p className="border-t border-blue-50 pt-3 text-xs text-slate-500">
-        Hindi pinipili ng publisher — system-only: <span className="font-medium text-slate-600">Initial Visit</span> ay ang
-        default/blangkong estado bago pa man magkaroon ng na-log na bisita; <span className="font-medium text-slate-600">Undone</span> ay
-        awtomatikong ilalagay kapag tinapos nang maaga ng isang partner ang kanilang assignment na may mga hindi pa tapos na records.
+        Kung may mga katanungan, tanungin ang sinumang elder or Group Leader sa araw ng inyong paglabas. Wag i-screenshot ang anumang
+        details dito o ipost ito sa anumang social media.
       </p>
     </Card>
   )

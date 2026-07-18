@@ -790,10 +790,10 @@ export default function PublisherWorkspaceApp({
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
               const tabs: { key: 'territory' | 'records' | 'search' | 'share' | 'help'; label: string; available: boolean }[] = [
-                { key: 'territory', label: 'Territory Map', available: mappableTerritories.length > 0 },
-                { key: 'records', label: 'Live Map', available: assignedRecordLocations.length > 0 },
+                { key: 'territory', label: 'Map', available: mappableTerritories.length > 0 },
+                { key: 'records', label: 'Pins', available: assignedRecordLocations.length > 0 },
                 { key: 'search', label: 'Search Area', available: searchScopeLocations.length > 0 },
-                { key: 'share', label: 'Share To', available: !readOnly },
+                { key: 'share', label: 'Share', available: !readOnly },
                 { key: 'help', label: 'Help', available: true },
               ]
               const availableTabs = tabs.filter((t) => t.available)
@@ -829,7 +829,7 @@ export default function PublisherWorkspaceApp({
                   {activeView === 'territory' && (
                     <div className="space-y-3">
                       {!showToggle && (
-                        <h2 className="font-semibold text-[#0B1B33]">Territory Map{mappableTerritories.length > 1 ? 's' : ''}</h2>
+                        <h2 className="font-semibold text-[#0B1B33]">Map{mappableTerritories.length > 1 ? 's' : ''}</h2>
                       )}
                       {mappableTerritories.map((t) => (
                         <div key={t.id}>
@@ -842,7 +842,7 @@ export default function PublisherWorkspaceApp({
 
                   {activeView === 'records' && (
                     <div className="space-y-3">
-                      {!showToggle && <h2 className="font-semibold text-[#0B1B33]">Live Map</h2>}
+                      {!showToggle && <h2 className="font-semibold text-[#0B1B33]">Pins</h2>}
                       <HouseholdDistributionMap records={assignedRecordLocations} />
                     </div>
                   )}
