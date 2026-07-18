@@ -1,5 +1,19 @@
 # Current Work
 
+**Territory Management System — Publisher FAQ, surfaced to Group Leader and Admin (2026-07-18) — code done, tsc + vitest (56/56) clean, publisher/GL tabs live-verified via temporary scratch routes, Admin page code-reviewed only (no live credentials), no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-publisher-faq-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: New general publisher FAQ (`PublisherFAQ.tsx`, 18 Q&As in plain English), separate from the existing per-Status help panel. The publisher workspace's Home tab pill toggle had "Help" renamed to "Status" with a new "FAQ" tab added alongside it (on top of an unrelated concurrent session's own Help→Status-adjacent copy/rename work — see the entry directly below, `territory-management-status-help-copy-toggle-rename-v1.md`, which this one built on without conflict). The same FAQ component was then reused as-is in the Group Leader ("TGL") dashboard (new "FAQ" tab in `GroupLeaderTabs.tsx`) and the Admin dashboard (new `/dashboard/faq` page + sidebar entry) — same content across all three roles, no per-role variants requested.
+
+Current Status: Done and deployed. No migration needed.
+- `npx tsc --noEmit` and `npx vitest run` (56/56) clean.
+- Publisher workspace ("Status"/"FAQ" tabs) and Group Leader dashboard ("FAQ" tab) both screenshot-verified live via temporary scratch routes (removed before finishing). Admin's `/dashboard/faq` page follows the identical `requireAdmin()` + `PageHeader` pattern as `notes`/`settings` but wasn't click-tested live (no live Supabase credentials in this sandbox, a standing limitation for this product).
+
+**Next recommended task:** Russell spot-checks live: the Admin sidebar's new "FAQ" page loads correctly and matches the publisher/Group Leader FAQ tabs.
+
+----------------------------------------
+
 **Territory Management System — Status help copy revision, Home tab toggle rename (2026-07-18) — code done, tsc + vitest clean (excluding the pre-existing unrelated live-DB Appointment System test failure), live-verified via temporary scratch routes, no migration needed, committed and pushed and deployed at Russell's request — see checkpoint `territory-management-status-help-copy-toggle-rename-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
