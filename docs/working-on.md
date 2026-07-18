@@ -1,5 +1,20 @@
 # Current Work
 
+**Territory Management System — Publisher status help (Tagalog), Bible Study funnel/sync-reason/QR-panel documentation backfill (2026-07-18) — code done, tsc + vitest (52/52) clean, committed and pushed (`f55e71d`), migration 028 confirmed applied by Russell — see checkpoints `territory-management-publisher-status-help-v1.md` and `territory-management-bible-study-funnel-sync-reasons-qr-panel-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Two things landed in the same commit. (1) New collapsible Tagalog help card on the publisher workspace Home tab explaining each visit Status and when to choose it — content drafted and edited by Russell before implementation. (2) A documentation backfill: an earlier session had built a 4-item batch (new "Potential BS" Bible Study funnel stage + migration 028, sync failure reasons surfaced in the aggregate sync screen, an overflow-QR black panel, and card-tone unification between `AssignedRecordsList`/`PublisherRecordDetailView`) that was fully coded, committed, and working — but never got a `working-on.md` entry or checkpoint, discovered mid-session as uncommitted/undocumented work while checking for pending sessions before a deploy.
+
+Current Status: Both done.
+- `PublisherStatusHelp.tsx` (new) + `PublisherWorkspaceApp.tsx` — see checkpoint for full detail.
+- Migration `028_potential_bible_study_result.sql` (widens the `territory_record_visits_result_check` constraint) — **confirmed applied by Russell, 2026-07-18.**
+- `npx tsc --noEmit` and `npx vitest run` (52/52) clean.
+
+**Next recommended task:** A third TMS item is queued but not yet built, pending Russell's go-ahead: converting the Admin Territory detail page's Contact Records address click from a full page navigation (`/dashboard/records/[recordId]`) into an in-place popup/modal, so editing a record doesn't require Territory → Contact Records → back-and-forth. Plan: new `getRecordDetailAction` server action + new `RecordDetailModal.tsx` (same overlay pattern as `CsvImportDialog.tsx`) + `RecordsTable.tsx`'s address cell switched from `<Link>` to a button that opens it. No DB changes. Also still open: confirming whether migrations 022–026 have actually been run against the live TMS Supabase DB (last logged as "not yet run" at the time they were written, status unconfirmed since — this session had no live TMS DB credentials to check directly).
+
+----------------------------------------
+
 **Territory Management System — Note form copy, overflow button swap, inverted overflow QR (2026-07-18) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, no migration needed, committed and pushed + deployed at Russell's request — see checkpoint `territory-management-note-copy-overflow-qr-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
