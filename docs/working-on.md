@@ -1,6 +1,21 @@
 # Current Work
 
-**Territory Management System — GL dashboard StatCard redesign + delta badges, redundant nav icon removed (2026-07-18) — code done, tsc + vitest (52/52) + build clean, live-verified via a temporary scratch route, no migration needed, not committed — see checkpoint `territory-management-gl-dashboard-statcard-delta-v1.md` for full detail:**
+**Territory Management System — Locked-DNC count consistency, note-form parity, StatCard centering (2026-07-18) — code done, tsc + vitest (52/52) + build clean, client pieces live-verified via a temporary scratch route, no migration needed, committed and pushed + deployed at Russell's request — see checkpoint `territory-management-dnc-count-consistency-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked for a re-review of the whole locked-DNC/finishing flow after live-testing. Found 2 real bugs beyond what he explicitly flagged: (1) "Send & Finish" on the note screen was silently disabled (did nothing) whenever the optional note was left empty — Skip always worked, Send & Finish didn't, which is what "should have the same workflow" was pointing at; (2) last round's fix only excluded locked-DNC records from the publisher's own "Sync & Finish" gate, not from the underlying recordCount/completedCount numbers everything else (Partners tab, Dashboard tab, Visits tab) reads from — so a finished partnership could show "Done" next to a contradictory "2 remaining". Also: StatCard values weren't centered, and the Visits tab's delta badge (added last round) never survived a plain page reload since the baseline lived in component state only.
+
+Current Status: Code complete, no migration needed (reads the same do_not_call/do_not_call_at columns from migration 027).
+- `PublisherNoteForm.tsx`: "Send & Finish" only disables while sending; an empty note now calls `onSkip()` directly instead of doing nothing.
+- `assignment/queries.ts`'s `getBatchSummary`: `recordCount`/`completedCount` now exclude any `isDoNotCallLocked` record entirely (both numerator and denominator), not just the publisher's own `allDone` check — the single source every downstream stat/card reads from.
+- `StatCard.tsx`: value + delta row centered.
+- `GroupLeaderTabs.tsx`: delta baseline persisted to `localStorage` keyed by `batchId` (naturally resets each day since batches are per-day) instead of only component state, so a page reload no longer silently zeroes the delta.
+- `npx tsc --noEmit`, `npx vitest run` (52/52), `npx next build` all clean. Live-verified the client-only pieces via a temporary scratch route (removed before finishing): "Send & Finish" with an empty note fires the same `onSkip()` Skip does; StatCard values render centered. The count-consistency fix is server-only/live-DB and was reviewed carefully but not round-tripped (standing no-live-credentials limitation).
+
+**Next recommended task:** Russell re-tests the exact scenario: a partnership with a locked-DNC record, everything else done, taps Sync & Finish (or Skip with nothing typed), and confirms the Partners tab shows "Done" with a completion count that no longer contradicts it. Also confirms the Visits tab delta survives a real reload now.
+
+----------------------------------------
 
 Current Product: Territory Management System (TMS).
 

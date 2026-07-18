@@ -3,6 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { calculateAssignment, isAssignmentError, type AssignmentError } from './engine'
 import { isBatchExpired } from './date'
 import { getRecordsInBlocks, listRecordsAddedByPartnership } from '../records/queries'
+import { isDoNotCallLocked } from '../records/schema'
 import type {
   AssignmentBatch,
   BatchSummary,
@@ -299,15 +300,36 @@ export async function getBatchSummary(
   const partnershipIds = (partnerships ?? []).map((p) => p.id)
   const { data: allRecords } =
     partnershipIds.length > 0
-      ? await supabase.from('partnership_records').select('partnership_id, completed_at').in('partnership_id', partnershipIds)
-      : { data: [] as { partnership_id: string; completed_at: string | null }[] }
+      ? await supabase
+          .from('partnership_records')
+          .select('partnership_id, completed_at, record:territory_records(do_not_call, do_not_call_at)')
+          .in('partnership_id', partnershipIds)
+      : {
+          data: [] as {
+            partnership_id: string
+            completed_at: string | null
+            record: { do_not_call: boolean; do_not_call_at: string | null } | null
+          }[],
+        }
 
   const partnershipsWithProgress: PartnershipWithProgress[] = (partnerships ?? []).map((p) => {
-    const records = (allRecords ?? []).filter((r) => r.partnership_id === p.id)
+    const records = (
+      (allRecords ?? []) as unknown as {
+        partnership_id: string
+        completed_at: string | null
+        record: { do_not_call: boolean; do_not_call_at: string | null } | null
+      }[]
+    ).filter((r) => r.partnership_id === p.id)
+    // A record still locked under the Do Not Call cooldown can never be completed this session —
+    // there's structurally no visit a publisher can log against it (see isDoNotCallLocked) — so
+    // it's excluded from both sides of the count entirely, not just from blocking "done". Without
+    // this, a partnership that finished everything actually reachable still read as "Done" next
+    // to a contradictory "N remaining".
+    const countable = records.filter((r) => !isDoNotCallLocked(r.record?.do_not_call ?? false, r.record?.do_not_call_at ?? null))
     return {
       ...(p as Partnership),
-      recordCount: records.length,
-      completedCount: records.filter((r) => r.completed_at !== null).length,
+      recordCount: countable.length,
+      completedCount: countable.filter((r) => r.completed_at !== null).length,
     }
   })
 

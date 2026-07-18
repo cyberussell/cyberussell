@@ -74,13 +74,26 @@ export default function GroupLeaderTabs({
   const { batchId, qrDataUrl, publicUrl, requestedPartnershipCount, isOverflow, stats } = selected
 
   // The "Visits" tab shows each result's count as of when this device first opened this batch's
-  // dashboard, plus a live delta badge (see StatCard) for whatever's changed since then — a
-  // pinned snapshot instead of the number silently jumping on every periodic router.refresh()
-  // below, so a Group Leader glancing back at the tab can tell what's new since they started
-  // watching. Reset only when switching to a different batch, never on a stats refresh.
+  // dashboard, plus a live delta badge (see StatCard) for whatever's changed since then. Kept in
+  // localStorage (not just component state) keyed by batchId — a batch is a new one every day,
+  // so this naturally resets each morning with no extra logic — because relying on component
+  // state alone meant a plain page reload (as opposed to the in-place router.refresh() poll)
+  // silently reset the baseline to the just-loaded numbers, making the delta permanently read 0.
+  const baselineStorageKey = `tms_gl_result_baseline_${batchId}`
   const [resultBaseline, setResultBaseline] = useState(stats.resultCounts)
   useEffect(() => {
+    if (typeof window === 'undefined') return
+    const stored = window.localStorage.getItem(baselineStorageKey)
+    if (stored) {
+      try {
+        setResultBaseline(JSON.parse(stored))
+        return
+      } catch {
+        // Falls through to re-seed below if the stored value was somehow corrupt.
+      }
+    }
     setResultBaseline(stats.resultCounts)
+    window.localStorage.setItem(baselineStorageKey, JSON.stringify(stats.resultCounts))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchId])
 

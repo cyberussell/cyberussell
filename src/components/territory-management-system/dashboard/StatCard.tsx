@@ -35,7 +35,7 @@ export default function StatCard({
         <Icon className="h-4 w-4 shrink-0 text-[#2563EB]" aria-hidden />
         <p className="min-w-0 flex-1 break-words text-xs font-medium leading-snug text-slate-500">{label}</p>
       </div>
-      <div className="mt-2 flex flex-wrap items-baseline gap-2">
+      <div className="mt-2 flex flex-wrap items-baseline justify-center gap-2 text-center">
         <p className="text-2xl font-bold text-[#0B1B33]">{value}</p>
         {deltaBadge}
       </div>
