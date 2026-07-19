@@ -65,18 +65,44 @@ export function NumberStepper({
   )
 }
 
+// Natural sort by territory number ("M-2" before "M-6" before "M-11", not lexicographic which
+// would put "M-11" before "M-2") — splits into alternating digit/non-digit chunks and compares
+// numeric chunks as numbers, everything else as plain strings. A territory with no number in its
+// name (e.g. "Maligaya") just becomes a single non-digit chunk and sorts in wherever its letters
+// naturally fall, no special-casing needed.
+function naturalCompare(a: string, b: string): number {
+  const chunk = (s: string) => s.match(/\d+|\D+/g) ?? []
+  const ca = chunk(a)
+  const cb = chunk(b)
+  const len = Math.max(ca.length, cb.length)
+  for (let i = 0; i < len; i++) {
+    const x = ca[i] ?? ''
+    const y = cb[i] ?? ''
+    if (x === y) continue
+    const nx = Number(x)
+    const ny = Number(y)
+    if (x !== '' && y !== '' && !isNaN(nx) && !isNaN(ny)) {
+      if (nx !== ny) return nx - ny
+    } else {
+      return x < y ? -1 : 1
+    }
+  }
+  return 0
+}
+
 // Group-Leader-only (assignment generation moved off the Admin dashboard — see
 // actions/group-leader.ts). Asks for a publisher headcount rather than a raw partnership
 // count directly, since on a campaign day the Group Leader knows "how many people showed up,"
 // not how the engine should group them — partnershipCount is derived (ceil(publishers /
 // groupSize)) and submitted as the hidden field the engine actually expects.
 export default function AssignmentForm({
-  territories,
+  territories: territoriesProp,
   hasExistingBatch,
 }: {
   territories: { id: string; name: string; barangayName: string; approvedCount: number }[]
   hasExistingBatch: boolean
 }) {
+  const territories = useMemo(() => [...territoriesProp].sort((a, b) => naturalCompare(a.name, b.name)), [territoriesProp])
   const { dispatch, pending, error } = useServerAction(createGroupLeaderAssignmentAction)
   const [selected, setSelected] = useState<string[]>([])
   const [publisherCount, setPublisherCount] = useState(4)
@@ -128,13 +154,13 @@ export default function AssignmentForm({
   }
 
   return (
-    <Card className="max-w-2xl p-6">
-      <form action={dispatch} onSubmit={handleSubmit} className="space-y-4">
-        {hasExistingBatch && (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700">
-            An assignment already exists for today. Generating a new one will replace it.
-          </div>
-        )}
+    <form action={dispatch} onSubmit={handleSubmit} className="max-w-2xl space-y-4">
+      {hasExistingBatch && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700">
+          An assignment already exists for today. Generating a new one will replace it.
+        </div>
+      )}
+      <Card className="p-6">
         <FormField label="Territory map(s)">
           {territories.length === 0 ? (
             <p className="text-sm text-slate-600">No active territories yet.</p>
@@ -160,49 +186,56 @@ export default function AssignmentForm({
             </div>
           )}
         </FormField>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <NumberStepper label="Publishers going out" value={publisherCount} onChange={setPublisherCount} min={1} max={999} />
-          <NumberStepper label="Group size" value={groupSize} onChange={setGroupSize} min={1} max={10} />
-        </div>
-        {/* Meaningless with zero approved records selected — there's nothing for a per-partnership
-            cap to act on, every partnership starts empty regardless of this value. Still submitted
-            via the hidden field below at whatever it's currently set to (harmless — calculateAssignment
-            has nothing to cap either way), just not shown as a choice the Group Leader needs to make. */}
-        {eligibleTotal > 0 && (
-          <NumberStepper label="Records per publisher" value={maxPerPartnership} onChange={setMaxPerPartnership} min={1} max={30} />
-        )}
-        <input type="hidden" name="partnershipCount" value={partnershipCount} />
-        <input type="hidden" name="maxPerPartnership" value={maxPerPartnership} />
-        <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">
-          <p>
-            {publisherCount} publisher{publisherCount === 1 ? '' : 's'} in groups of {groupSize} → {partnershipCount} partnership
-            {partnershipCount === 1 ? '' : 's'}.
-          </p>
-          <ul className="mt-1 list-disc space-y-1 pl-4">
-            {eligibleTotal > 0 && <li>Each partnership can hold up to {maxPerPartnership} approved records.</li>}
-            <li>
-              {eligibleTotal === 0
-                ? 'No approved contact records yet in the selected territories — every partnership will start empty.'
-                : `${eligibleTotal} approved contact record${eligibleTotal === 1 ? '' : 's'} available across the selected territories — enough for up to ${recordsMaxPartnerships} partnership${recordsMaxPartnerships === 1 ? '' : 's'} (${breakdownText}).`}
-            </li>
-          </ul>
-          {insufficientForHeadcount && (
-            <p className="mt-2 font-medium text-amber-600">
-              Only {recordsMaxPartnerships} of {partnershipCount} partnership{partnershipCount === 1 ? '' : 's'} will have
-              territory work today — {shortfallPublishers} publisher{shortfallPublishers === 1 ? '' : 's'} should do another
-              form of ministry instead (Street Witnessing, Return Visits, Business Witnessing, or other).
-            </p>
+      </Card>
+
+      {/* Hidden until at least one territory is ticked — nothing here is meaningful without a
+          territory selected, and it kept the form looking cluttered/unfinished while empty. */}
+      {selected.length > 0 && (
+        <Card className="space-y-4 p-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <NumberStepper label="Publishers going out" value={publisherCount} onChange={setPublisherCount} min={1} max={999} />
+            <NumberStepper label="Group size" value={groupSize} onChange={setGroupSize} min={1} max={10} />
+          </div>
+          {/* Meaningless with zero approved records selected — there's nothing for a per-partnership
+              cap to act on, every partnership starts empty regardless of this value. Still submitted
+              via the hidden field below at whatever it's currently set to (harmless — calculateAssignment
+              has nothing to cap either way), just not shown as a choice the Group Leader needs to make. */}
+          {eligibleTotal > 0 && (
+            <NumberStepper label="Records per publisher" value={maxPerPartnership} onChange={setMaxPerPartnership} min={1} max={30} />
           )}
-        </div>
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        <button
-          type="submit"
-          disabled={pending || selected.length === 0}
-          className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
-        >
-          {pending ? 'Generating…' : 'Generate Assignment'}
-        </button>
-      </form>
-    </Card>
+          <input type="hidden" name="partnershipCount" value={partnershipCount} />
+          <input type="hidden" name="maxPerPartnership" value={maxPerPartnership} />
+          <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">
+            <p>
+              {publisherCount} publisher{publisherCount === 1 ? '' : 's'} in groups of {groupSize} → {partnershipCount} partnership
+              {partnershipCount === 1 ? '' : 's'}.
+            </p>
+            <ul className="mt-1 list-disc space-y-1 pl-4">
+              {eligibleTotal > 0 && <li>Each partnership can hold up to {maxPerPartnership} approved records.</li>}
+              <li>
+                {eligibleTotal === 0
+                  ? 'No approved contact records yet in the selected territories — every partnership will start empty.'
+                  : `${eligibleTotal} approved contact record${eligibleTotal === 1 ? '' : 's'} available across the selected territories — enough for up to ${recordsMaxPartnerships} partnership${recordsMaxPartnerships === 1 ? '' : 's'} (${breakdownText}).`}
+              </li>
+            </ul>
+            {insufficientForHeadcount && (
+              <p className="mt-2 font-medium text-amber-600">
+                Only {recordsMaxPartnerships} of {partnershipCount} partnership{partnershipCount === 1 ? '' : 's'} will have
+                territory work today — {shortfallPublishers} publisher{shortfallPublishers === 1 ? '' : 's'} should do another
+                form of ministry instead (Street Witnessing, Return Visits, Business Witnessing, or other).
+              </p>
+            )}
+          </div>
+          {error && <p className="text-sm text-red-500">{error}</p>}
+          <button
+            type="submit"
+            disabled={pending}
+            className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+          >
+            {pending ? 'Generating…' : 'Generate Assignment'}
+          </button>
+        </Card>
+      )}
+    </form>
   )
 }

@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — New Assignment form: split territory/partnership panels, natural territory sort (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, committed and pushed, no migration needed — see checkpoint `territory-management-assignment-form-split-sort-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell wanted the Group Leader's "New Assignment" form cleaner — the Territory map(s) checklist and the publisher/partnership settings (Publishers going out, Group size, Records per publisher, breakdown, Generate button) were all crammed into one card, shown at once whether or not anything was selected. Split `AssignmentForm.tsx` into two separate `<Card>`s — the second one now only renders once at least one territory checkbox is ticked, hidden entirely otherwise. Also added a `naturalCompare()` sort so the territory checklist orders by territory number correctly (M-2, M-6, M-11 — not the lexicographic M-11, M-2, M-6 a plain string sort would produce), with unnumbered entries (e.g. "Maligaya") falling into their natural alphabetical position with no special-casing needed.
+
+Current Status: Code done, committed and pushed to `main`. `npx tsc --noEmit`, `npx next build`, and `npx vitest run` (56/56) all clean. Live-verified via a temporary scratch route (removed before finishing) using the exact 7-territory list from Russell's screenshot: confirmed sort order, confirmed the second card is fully hidden with nothing selected, and appears/disappears correctly as territories are ticked/unticked. Pure client-side presentational change — no migration, no data dependency change.
+
+**Next recommended task:** Russell spot-checks live: the New Assignment form now shows the territory checklist alone until something's ticked, the second panel appears cleanly once it is, and territories list in the expected M-2/M-6/M-11/.../Q-4/Q-9/Q-11 order.
+
+----------------------------------------
+
 **Territory Management System — Ministry Partner cards show territory/barangay for multi-territory batches (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, committed and pushed, no migration needed — see checkpoint `territory-management-partner-card-territory-label-v1.md`:**
 
 Current Product: Territory Management System (TMS).
