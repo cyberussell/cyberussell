@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Fix frozen Visits tab stats, move "Generate New" off the results graph, show all result categories in the Home chart (2026-07-20) — code done, tsc + vitest (67/67) + next build clean, live-verified via a temporary scratch route, committed and pushed (`bd79872`), deployed via Vercel auto-deploy on push, no migration needed:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Two bugs Russell reported from live screenshots of the Group Leader ("TGL") workspace. (1) The Visits tab's stat cards were displaying `resultBaseline[key]` (a `localStorage` snapshot taken the first time the device opened that day's batch) as the big number, while only the small delta badge reflected the live count — so the number a Group Leader actually looks at never visibly changed after a publisher logged a new visit. Swapped the displayed `value` to the live `stats.resultCounts[key]`, kept the delta badge as-is (still baseline-relative, useful "since I opened this page" context). (2) On the Home tab's "all partners done" summary card, `VisitResultBarChart` only rendered result types with a nonzero count — on a day with activity in just one category (e.g. only Do Not Call), that produced a single lone bar that didn't read as "a graph" to Russell (confirmed via `AskUserQuestion` — he wanted every category visible, not a missing/broken chart). Removed the zero-count filter (now shows all 11 result types, excluding the internal-only `undone` status, sorted by count) and guarded the bar-width math against an all-zero day. Also moved the "Generate New" button out of that same summary card into the standalone actions row below (next to "Create Auxiliary Groups"), per Russell's explicit ask that it not sit inside the card with the graph — the not-done QR-code card keeps its own inline "Generate New" button unchanged.
+
+Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (67/67), and `npx next build` all clean (only pre-existing unrelated `.next/types/* N.ts` duplicate-file errors from stale build artifacts, not source). Live-verified via a temporary scratch route (`territory-management-system/scratch-verify-tmp`, removed before finishing) with mock data matching Russell's exact screenshot scenario (2 partnerships done, Do Not Call = 3, everything else 0): Home tab now shows all 11 categories in the chart with "Generate New" below the card instead of inside it; Visits tab confirmed showing the live count (3) with a correct delta badge (+2) after simulating a stale `localStorage` baseline of 1.
+
+**Next recommended task:** Russell spot-checks live: the Visits tab numbers actually move as publishers sync new visits (not just the delta arrow), the Home tab's results chart shows every category (including zeros) once all partners are done, and "Generate New" appears below the results card rather than inside it.
+
+----------------------------------------
+
 **Territory Management System — Branded confirm/prompt modals everywhere + assignment-panel scroll-into-view (2026-07-19) — code done, tsc + vitest (56/56) + next build clean, live-verified via a temporary scratch route, committed and pushed, no migration needed — see checkpoint `territory-management-branded-modals-v1.md`:**
 
 Current Product: Territory Management System (TMS).
