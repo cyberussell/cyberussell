@@ -14,6 +14,9 @@ import {
   type InviteGroupLeaderResult,
 } from '@/app/territory-management-system/actions/group-leaders'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
+import { useConfirm } from '@/lib/territory-management-system/hooks/useConfirm'
+import { usePrompt } from '@/lib/territory-management-system/hooks/usePrompt'
+import type { ConfirmVariant } from '@/components/territory-management-system/ConfirmModal'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import DataTable from '@/components/territory-management-system/dashboard/DataTable'
@@ -33,6 +36,8 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
   // Holds whichever temp password (invite or reset) needs to stay visible until the Admin
   // dismisses it — a toast would vanish before there's time to copy/relay it.
   const [revealedPassword, setRevealedPassword] = useState<{ name: string; password: string } | null>(null)
+  const { confirm, ConfirmDialog } = useConfirm()
+  const { prompt, PromptDialog } = usePrompt()
 
   useEffect(() => {
     if (successMessage) {
@@ -42,8 +47,15 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [successMessage])
 
-  function runAction(id: string, action: (id: string) => Promise<{ error?: string }>, confirmMessage: string, successToast: string) {
-    if (!window.confirm(confirmMessage)) return
+  async function runAction(
+    id: string,
+    action: (id: string) => Promise<{ error?: string }>,
+    confirmMessage: string,
+    successToast: string,
+    variant: ConfirmVariant
+  ) {
+    const ok = await confirm({ message: confirmMessage, variant })
+    if (!ok) return
     setPendingId(id)
     startTransition(async () => {
       const result = await action(id)
@@ -56,13 +68,15 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
     })
   }
 
-  function runResetPassword(id: string, name: string) {
+  async function runResetPassword(id: string, name: string) {
     // Same override as the invite form (a text field there, a prompt here since this is a
     // single-click row action with no form of its own) — leave blank to auto-generate.
-    const custom = window.prompt(
-      `Reset the password for ${name}?\n\nOptionally set a custom temporary password (at least 8 characters) — leave blank to auto-generate one.`,
-      ''
-    )
+    const custom = await prompt({
+      title: 'Reset password',
+      message: `Reset the password for ${name}? Optionally set a custom temporary password (at least 8 characters) — leave blank to auto-generate one.`,
+      placeholder: 'Leave blank to auto-generate',
+      confirmLabel: 'Reset',
+    })
     if (custom === null) return // cancelled
     if (custom && custom.length < 8) {
       toast.error('Temporary password must be at least 8 characters.')
@@ -82,6 +96,8 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
 
   return (
     <div className="space-y-6">
+      {ConfirmDialog}
+      {PromptDialog}
       {revealedPassword && (
         <Card className="border-2 border-[#2563EB] p-6">
           <h2 className="font-semibold text-[#0B1B33]">Temporary password for {revealedPassword.name}</h2>
@@ -173,7 +189,9 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
                     <button
                       type="button"
                       disabled={rowPending}
-                      onClick={() => runAction(g.id, restoreGroupLeaderAccessAction, `Restore access for ${g.full_name}?`, 'Access restored.')}
+                      onClick={() =>
+                        runAction(g.id, restoreGroupLeaderAccessAction, `Restore access for ${g.full_name}?`, 'Access restored.', 'info')
+                      }
                       className="text-sm font-medium text-[#2563EB] hover:underline disabled:opacity-50"
                     >
                       Restore Access
@@ -187,7 +205,8 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
                           g.id,
                           revokeGroupLeaderAccessAction,
                           `Revoke access for ${g.full_name}? They will be immediately logged out and unable to log back in.`,
-                          'Access revoked.'
+                          'Access revoked.',
+                          'caution'
                         )
                       }
                       className="text-sm font-medium text-amber-600 hover:underline disabled:opacity-50"
@@ -212,7 +231,8 @@ export default function GroupLeadersManager({ initialGroupLeaders }: { initialGr
                         g.id,
                         deleteGroupLeaderAction,
                         `Permanently delete ${g.full_name} from Group Leader history? This cannot be undone.`,
-                        'Deleted.'
+                        'Deleted.',
+                        'caution'
                       )
                     }
                     className="text-sm font-medium text-red-500 hover:underline disabled:opacity-40 disabled:hover:no-underline"

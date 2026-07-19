@@ -1,17 +1,22 @@
 'use client'
 
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Info } from 'lucide-react'
 
-// Replaces window.confirm() in the publisher workspace — the browser's native confirm shows
-// "www.cyberussell.com says", which reads as an unbranded, unfamiliar warning to a publisher
-// out in the field. This renders as a TMS-styled card instead, matching the rest of the
-// workspace's look.
+// Shared across the whole product (Admin dashboard, Group Leader dashboard, and the publisher
+// workspace) — replaces window.confirm()'s "www.cyberussell.com says" browser chrome, which
+// reads as an unbranded, unfamiliar warning rather than a TMS-styled prompt. 'caution' (amber
+// AlertTriangle) is for anything destructive/hard-to-reverse — deletes, revokes, replacing an
+// existing assignment; 'info' (blue Info) is for a plain heads-up/confirmation with no real
+// downside (e.g. restoring access). See useConfirm for the usual way to drive this.
+export type ConfirmVariant = 'caution' | 'info'
+
 export default function ConfirmModal({
   open,
   title,
   message,
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
+  variant = 'caution',
   onConfirm,
   onCancel,
 }: {
@@ -20,16 +25,20 @@ export default function ConfirmModal({
   message: string
   confirmLabel?: string
   cancelLabel?: string
+  variant?: ConfirmVariant
   onConfirm: () => void
   onCancel: () => void
 }) {
   if (!open) return null
 
+  const Icon = variant === 'info' ? Info : AlertTriangle
+  const iconClass = variant === 'info' ? 'bg-blue-50 text-[#2563EB]' : 'bg-amber-50 text-amber-600'
+
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-sm rounded-2xl border border-gray-300 bg-white p-6 text-center shadow-xl">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-600">
-          <AlertTriangle className="h-6 w-6" />
+        <div className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${iconClass}`}>
+          <Icon className="h-6 w-6" />
         </div>
         <h2 className="mt-4 font-semibold text-[#0B1B33]">{title}</h2>
         <p className="mt-2 text-sm text-slate-600">{message}</p>

@@ -3,10 +3,12 @@
 import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { approveRecordAction, rejectRecordAction } from '@/app/territory-management-system/actions/records'
+import { useConfirm } from '@/lib/territory-management-system/hooks/useConfirm'
 
 export default function RecordApprovalActions({ recordId }: { recordId: string }) {
   const [pending, startTransition] = useTransition()
   const router = useRouter()
+  const { confirm, ConfirmDialog } = useConfirm()
 
   function handleApprove() {
     startTransition(async () => {
@@ -15,8 +17,14 @@ export default function RecordApprovalActions({ recordId }: { recordId: string }
     })
   }
 
-  function handleReject() {
-    if (!window.confirm('Reject and delete this pending contact record?')) return
+  async function handleReject() {
+    const ok = await confirm({
+      title: 'Reject this record?',
+      message: 'Reject and delete this pending contact record?',
+      confirmLabel: 'Reject',
+      variant: 'caution',
+    })
+    if (!ok) return
     startTransition(async () => {
       await rejectRecordAction(recordId)
       router.push('/territory-management-system/dashboard/records')
@@ -25,6 +33,7 @@ export default function RecordApprovalActions({ recordId }: { recordId: string }
 
   return (
     <div className="flex items-center gap-3">
+      {ConfirmDialog}
       <button
         onClick={handleApprove}
         disabled={pending}

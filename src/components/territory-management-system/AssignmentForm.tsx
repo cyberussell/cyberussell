@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { AlertTriangle, Minus, Plus } from 'lucide-react'
 import { createGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
+import { useConfirm } from '@/lib/territory-management-system/hooks/useConfirm'
 import { DEFAULT_MAX_PER_PARTNERSHIP } from '@/lib/territory-management-system/modules/assignment/engine'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
@@ -104,6 +105,7 @@ export default function AssignmentForm({
 }) {
   const territories = useMemo(() => [...territoriesProp].sort((a, b) => naturalCompare(a.name, b.name)), [territoriesProp])
   const { dispatch, pending, error } = useServerAction(createGroupLeaderAssignmentAction)
+  const { confirm, ConfirmDialog } = useConfirm()
   const [selected, setSelected] = useState<string[]>([])
   const [publisherCount, setPublisherCount] = useState(4)
   const [groupSize, setGroupSize] = useState(2)
@@ -136,19 +138,25 @@ export default function AssignmentForm({
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    if (
-      hasExistingBatch &&
-      !window.confirm(
-        "An assignment already exists for today. Generating a new one replaces it — any Partners publishers have already claimed today will be lost. Continue?"
-      )
-    ) {
-      e.preventDefault()
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    if (hasExistingBatch) {
+      const ok = await confirm({
+        title: 'Replace today’s assignment?',
+        message:
+          'An assignment already exists for today. Generating a new one replaces it — any Partners publishers have already claimed today will be lost. Continue?',
+        confirmLabel: 'Generate New',
+        variant: 'caution',
+      })
+      if (!ok) return
     }
+    dispatch(formData)
   }
 
   return (
-    <form action={dispatch} onSubmit={handleSubmit} className="max-w-2xl space-y-4">
+    <form onSubmit={handleSubmit} className="max-w-2xl space-y-4">
+      {ConfirmDialog}
       {hasExistingBatch && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700">
           An assignment already exists for today. Generating a new one will replace it.

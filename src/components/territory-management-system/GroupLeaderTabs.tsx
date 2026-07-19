@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   BookMarked,
@@ -72,6 +72,13 @@ export default function GroupLeaderTabs({
   // Home tab's Generate/Regenerate toggle — deliberately starts at null (neither shown), even
   // right after a page refresh, so the tab opens clean instead of always stacking both forms.
   const [assignmentAction, setAssignmentAction] = useState<'generate' | 'regenerate' | null>(null)
+  // Both panels render well below the fold (under the QR/summary card and, for regenerate, a
+  // solid button inside it) — without this, picking either one silently expands content the
+  // Group Leader has to go hunting for by scrolling themselves.
+  const assignmentPanelRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (assignmentAction) assignmentPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [assignmentAction])
   const [selectedBatchId, setSelectedBatchId] = useState(batches[0]?.batchId)
   const selected = batches.find((b) => b.batchId === selectedBatchId) ?? batches[0]
   const { batchId, qrDataUrl, publicUrl, requestedPartnershipCount, isOverflow, stats } = selected
@@ -325,7 +332,7 @@ export default function GroupLeaderTabs({
             )}
 
             {assignmentAction === 'generate' && todaysTerritories.length > 0 && (
-              <div className="mt-4">
+              <div ref={assignmentPanelRef} className="mt-4 scroll-mt-4">
                 <h2 className="mb-1 font-semibold text-[#0B1B33]">Create Auxiliary Groups</h2>
                 <p className="mb-4 text-xs text-slate-500">
                   For extra publishers when a territory has more people than the original assignment had room for. Adds a new,
@@ -336,7 +343,7 @@ export default function GroupLeaderTabs({
             )}
 
             {assignmentAction === 'regenerate' && (
-              <div className="mt-4">
+              <div ref={assignmentPanelRef} className="mt-4 scroll-mt-4">
                 <h2 className="mb-4 font-semibold text-[#0B1B33]">Generate New Assignment</h2>
                 <p className="mb-4 text-xs text-slate-500">
                   Replaces every one of today&apos;s assignments (all batches) with a brand new one.
