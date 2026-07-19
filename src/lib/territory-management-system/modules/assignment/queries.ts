@@ -3,7 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { calculateAssignment, isAssignmentError, type AssignmentError, type EligibleRecord } from './engine'
 import { isBatchExpired } from './date'
 import { getRecordsInBlocks, listRecordsAddedByPartnership } from '../records/queries'
-import { isDoNotCallLocked } from '../records/schema'
+import { BIBLE_STUDY_FAMILY_RESULTS, isDoNotCallLocked } from '../records/schema'
 import type {
   AssignmentBatch,
   BatchSummary,
@@ -332,6 +332,23 @@ export async function getBatchSummary(
           }[],
         }
 
+  // Latest visit result per record (newest-first, first occurrence wins — same de-dup pattern as
+  // getVisitResultCounts/getReportStats) — used only to flag a partnership card with "a Bible
+  // Study is in here somewhere," not for progress/completion math.
+  const recordIdsForVisits = (allRecords ?? []).map((r) => r.record_id)
+  const { data: visitRows } =
+    recordIdsForVisits.length > 0
+      ? await supabase
+          .from('territory_record_visits')
+          .select('record_id, result')
+          .in('record_id', recordIdsForVisits)
+          .order('visited_at', { ascending: false })
+      : { data: [] as { record_id: string; result: string }[] }
+  const latestResultByRecord = new Map<string, string>()
+  for (const row of (visitRows ?? []) as { record_id: string; result: string }[]) {
+    if (!latestResultByRecord.has(row.record_id)) latestResultByRecord.set(row.record_id, row.result)
+  }
+
   // Batch-wide territory id -> {id, name, description} lookup — every record assigned to any
   // partnership in this batch necessarily belongs to one of these (fetchEligibleRecordIds only
   // ever pulls from the batch's own selected territoryIds), so this reuses the already-fetched
@@ -386,11 +403,29 @@ export async function getBatchSummary(
       else groups.set(key, [r])
     }
 
+    // DNC count (household-grouped, same key as `groups` above but over every assigned record,
+    // not just the countable ones — a locked DNC record is exactly the kind excluded from
+    // `countable`, so this has to start from the full `records` list instead).
+    const allGroups = new Map<string, typeof records>()
+    for (const r of records) {
+      const key = r.record?.plus_code || r.record_id
+      const group = allGroups.get(key)
+      if (group) group.push(r)
+      else allGroups.set(key, [r])
+    }
+    const dncCount = Array.from(allGroups.values()).filter((group) => group.some((r) => r.record?.do_not_call)).length
+    const hasBibleStudy = records.some((r) => {
+      const result = latestResultByRecord.get(r.record_id)
+      return result ? (BIBLE_STUDY_FAMILY_RESULTS as readonly string[]).includes(result) : false
+    })
+
     return {
       ...(p as Partnership),
       recordCount: groups.size,
       completedCount: Array.from(groups.values()).filter((group) => group.some((r) => r.completed_at !== null)).length,
       territories,
+      dncCount,
+      hasBibleStudy,
     }
   })
 

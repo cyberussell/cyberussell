@@ -31,8 +31,11 @@ export default function PartnershipCard({
   return (
     <Link
       href={`/territory-management-system/assignment/${batchToken}/${partnership.claim_token}`}
-      className="block rounded-2xl border border-gray-300 bg-white p-4 shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)] transition hover:border-[#38BDF8]/40"
+      className="relative block overflow-hidden rounded-2xl border border-gray-300 bg-white p-4 shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)] transition hover:border-[#38BDF8]/40"
     >
+      {partnership.hasBibleStudy && (
+        <span className="absolute right-4 top-0 h-1.5 w-12 rounded-b-full bg-[#4a6da7]" aria-label="Bible Study included" />
+      )}
       <div className="flex items-center justify-between gap-2">
         <p className="font-semibold text-[#0B1B33]">{partnership.name}</p>
         <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${statusClass}`}>{status}</span>
@@ -42,6 +45,7 @@ export default function PartnershipCard({
       </div>
       <p className="mt-1.5 text-xs text-slate-600">
         {partnership.completedCount} of {partnership.recordCount} contact records completed
+        {partnership.dncCount > 0 && <span className="text-red-600"> · {partnership.dncCount} Do Not Call</span>}
       </p>
       {multiTerritoryBatch && partnership.territories.length > 0 && (
         <p className="mt-0.5 text-xs text-slate-400">

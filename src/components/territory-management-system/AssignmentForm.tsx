@@ -131,12 +131,6 @@ export default function AssignmentForm({
     : 0
   const fullPartnerships = Math.floor(eligibleTotal / maxPerPartnership)
   const remainder = eligibleTotal % maxPerPartnership
-  const breakdownText =
-    remainder === 0
-      ? `${fullPartnerships} partnership${fullPartnerships === 1 ? '' : 's'} with ${maxPerPartnership} records each`
-      : fullPartnerships === 0
-        ? `1 partnership with ${remainder} record${remainder === 1 ? '' : 's'}`
-        : `${fullPartnerships} partnership${fullPartnerships === 1 ? '' : 's'} with ${maxPerPartnership} records and 1 partnership with ${remainder} record${remainder === 1 ? '' : 's'}`
 
   function toggle(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -206,15 +200,25 @@ export default function AssignmentForm({
           <input type="hidden" name="partnershipCount" value={partnershipCount} />
           <input type="hidden" name="maxPerPartnership" value={maxPerPartnership} />
           <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">
-            <p>
-              {publisherCount} publisher{publisherCount === 1 ? '' : 's'} in groups of {groupSize} → {partnershipCount} partnership
-              {partnershipCount === 1 ? '' : 's'}.
-            </p>
-            <p className="mt-1">
-              {eligibleTotal === 0
-                ? 'No approved contact records yet in the selected territories — every partnership will start empty.'
-                : `${eligibleTotal} approved record${eligibleTotal === 1 ? '' : 's'} available: ${breakdownText}.`}
-            </p>
+            {eligibleTotal === 0 ? (
+              <p>No approved contact records yet in the selected territories — every partnership will start empty.</p>
+            ) : (
+              <>
+                <p className="text-center font-bold text-[#0B1B33]">
+                  {eligibleTotal} approved record{eligibleTotal === 1 ? '' : 's'} available
+                </p>
+                {fullPartnerships > 0 && (
+                  <p className="mt-1 text-center">
+                    {maxPerPartnership} Record{maxPerPartnership === 1 ? '' : 's'} Per Ministry Partner
+                  </p>
+                )}
+                {remainder > 0 && (
+                  <p className="mt-1 text-center">
+                    1 Ministry Partner will only have {remainder} Record{remainder === 1 ? '' : 's'} to work on
+                  </p>
+                )}
+              </>
+            )}
           </div>
           {insufficientForHeadcount && (
             <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700">

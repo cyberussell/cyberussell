@@ -52,7 +52,10 @@ export default function PartnershipList({
               ? 'bg-blue-50 text-[#2563EB]'
               : 'bg-slate-100 text-slate-500'
         return (
-          <Card key={p.id} className="p-4">
+          <Card key={p.id} className="relative overflow-hidden p-4">
+            {p.hasBibleStudy && (
+              <span className="absolute right-4 top-0 h-1.5 w-12 rounded-b-full bg-[#4a6da7]" aria-label="Bible Study included" />
+            )}
             <div className="mb-2 flex items-center justify-between gap-2">
               <p className="font-semibold text-[#0B1B33]">{p.name}</p>
               <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${statusClass}`}>{status}</span>
@@ -66,6 +69,7 @@ export default function PartnershipList({
             <p className="mt-2 text-xs text-slate-600">
               {p.completedCount} of {p.recordCount} contact records completed
               {p.recordCount - p.completedCount > 0 ? ` · ${p.recordCount - p.completedCount} remaining` : ''}
+              {p.dncCount > 0 && <span className="text-red-600"> · {p.dncCount} Do Not Call</span>}
             </p>
             {multiTerritoryBatch && p.territories.length > 0 && (
               <p className="mt-0.5 text-xs text-slate-400">{p.territories.map((t) => `${t.name} — ${t.description}`).join(', ')}</p>

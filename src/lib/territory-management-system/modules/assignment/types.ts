@@ -42,6 +42,14 @@ export interface PartnershipWithProgress extends Partnership {
   // getBatchSummary's comment: a partnership can span more than one when a territory's record
   // count isn't an exact multiple of maxPerPartnership. Empty for a zero-record partnership.
   territories: { id: string; name: string; description: string }[]
+  // Household-grouped count of this partnership's assigned records flagged Do Not Call (locked
+  // or not) — shown on the card so a Ministry Partner/Group Leader knows some of their "N
+  // records" aren't actually actionable this session.
+  dncCount: number
+  // True if any of this partnership's assigned records has a latest visit result in the Bible
+  // Study family (potential_bible_study/started_bible_study/bible_study) — surfaced as a
+  // corner accent on the card.
+  hasBibleStudy: boolean
 }
 
 export interface BatchSummary extends AssignmentBatch {
