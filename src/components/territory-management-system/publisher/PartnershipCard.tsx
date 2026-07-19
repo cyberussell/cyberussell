@@ -4,13 +4,9 @@ import type { PartnershipWithProgress } from '@/lib/territory-management-system/
 export default function PartnershipCard({
   partnership,
   batchToken,
-  // Only worth showing per-card when the batch itself covers more than one territory — with a
-  // single territory it'd just repeat what the page header above the whole list already says.
-  multiTerritoryBatch,
 }: {
   partnership: PartnershipWithProgress
   batchToken: string
-  multiTerritoryBatch: boolean
 }) {
   const pct = partnership.recordCount > 0 ? Math.round((partnership.completedCount / partnership.recordCount) * 100) : 0
   // finished_at/ended_early_at (see 018_partnership_finished_at.sql) are the real "genuinely
@@ -47,7 +43,7 @@ export default function PartnershipCard({
         {partnership.completedCount} of {partnership.recordCount} contact records completed
         {partnership.dncCount > 0 && <span className="text-red-600"> · {partnership.dncCount} Do Not Call</span>}
       </p>
-      {multiTerritoryBatch && partnership.territories.length > 0 && (
+      {partnership.territories.length > 0 && (
         <p className="mt-0.5 text-xs text-slate-400">
           {partnership.territories.map((t) => `${t.name} — ${t.description}`).join(', ')}
         </p>

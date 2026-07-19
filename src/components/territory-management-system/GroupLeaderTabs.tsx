@@ -384,11 +384,7 @@ export default function GroupLeaderTabs({
       )}
 
       {tab === 'progress' && (
-        <PartnershipList
-          partnerships={stats.partnerships}
-          onEndPartnership={endPartnershipAction}
-          multiTerritoryBatch={stats.territories.length > 1}
-        />
+        <PartnershipList partnerships={stats.partnerships} onEndPartnership={endPartnershipAction} />
       )}
 
       {tab === 'faq' && <PublisherFAQ />}

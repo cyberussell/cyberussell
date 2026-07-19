@@ -19,7 +19,7 @@ export default async function ProgressPage({ params }: { params: Promise<{ batch
         <h1 className="text-center text-xl font-bold text-[#0B1B33]">Today&apos;s Assignment Progress</h1>
         <p className="mt-1 text-center text-sm text-slate-700">{batch.assignment_date}</p>
         <div className="mt-6">
-          <PartnershipList partnerships={batch.partnerships} multiTerritoryBatch={batch.territories.length > 1} />
+          <PartnershipList partnerships={batch.partnerships} />
         </div>
       </div>
     </div>
