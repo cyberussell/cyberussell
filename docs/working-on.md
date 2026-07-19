@@ -10,6 +10,10 @@ Current Status: Code done, committed and pushed to `main`. `npx tsc --noEmit`, `
 
 **Next recommended task:** Russell spot-checks live: every delete button, Reject on a pending record, End Ministry, generating a new assignment over an existing one, and the three Group Leader row actions all show the branded modal; "Generate New"/"Create Auxiliary Groups" scroll their panel into view.
 
+**Follow-up (same session, next commit `0a6881d`):** Russell asked for a different, purely formula-driven summary box (three rows: Ministry Partners = publishers/group size; Records to be worked on = that × records-per-publisher; Records still need to be worked on = territory's approved total − that), replacing the earlier engine-aware breakdown from this same session — verified live with 4 publishers/2 group/10 per publisher against 33 approved records: "2 Ministry Partners / 20 Records to be worked on / 13 Records still need to be worked on." Also added `sections` to `PartnershipWithProgress` (new `!section_id`-disambiguated embed in `getBatchSummary`, same pattern as `territories`) and surfaced "Section A" (or "Section A, B" for a partnership spanning more than one) on both `PartnershipCard.tsx` and `PartnershipList.tsx`, alongside the existing territory/barangay line. `tsc`/`vitest`/`next build` clean, live-verified via a scratch route (removed). Committed and pushed.
+
+**Next recommended task:** Russell spot-checks live: the New Assignment summary box's three new rows compute correctly for real inputs, and both partner-card surfaces show the section label(s) alongside territory/barangay.
+
 ----------------------------------------
 
 **Territory Management System — Assignment summary reformat + DNC/Bible Study card indicators (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, NOT YET committed, no migration needed — see checkpoint `territory-management-assignment-summary-dnc-bible-study-v1.md`:**
