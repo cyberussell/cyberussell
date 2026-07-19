@@ -6,7 +6,8 @@ import { toast } from 'sonner'
 import { CheckCircle2, ClipboardCopy, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
-import { isPartnershipAllDone, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
+import { isPartnershipAllDone, VISIT_RESULT_LABELS, VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
+import type { VisitResult } from '@/lib/territory-management-system/modules/records/types'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import type { RecordLocation } from '@/lib/territory-management-system/modules/reports/queries'
@@ -17,6 +18,7 @@ import { useOnlineStatus } from '@/lib/territory-management-system/modules/offli
 import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
 import { chooseSearchScopeAction, getSearchScopeRecordsAction } from '@/app/territory-management-system/actions/publisher'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
+import VisitResultBarChart from '@/components/territory-management-system/VisitResultBarChart'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
 import PublisherStatusHelp from './PublisherStatusHelp'
@@ -150,7 +152,7 @@ export default function PublisherWorkspaceApp({
   // Which map the list view shows when both are available — a toggle instead of stacking both
   // maps, for a cleaner one-screen-at-a-time look. Defaults to Territory Map (the prior default
   // visual order).
-  const [mapView, setMapView] = useState<'territory' | 'records' | 'search' | 'share' | 'help' | 'faq'>('territory')
+  const [mapView, setMapView] = useState<'territory' | 'records' | 'search' | 'summary' | 'share' | 'help' | 'faq'>('territory')
   // Which branded confirm dialog (see ConfirmModal) is currently open, replacing
   // window.confirm() — its "www.cyberussell.com says" chrome reads as an unfamiliar browser
   // warning to a publisher in the field, not a TMS-branded prompt. Early Out and Release now go
@@ -721,6 +723,19 @@ export default function PublisherWorkspaceApp({
       doNotCallAt: r.record.do_not_call_at,
     }))
   )
+  // This partnership's own results breakdown — same shape/component as the Group Leader's Home
+  // tab graph (VisitResultBarChart), but counting only records THIS partnership has actually
+  // logged a visit against, not the congregation-wide totals. A record with zero logged visits
+  // is skipped entirely rather than counted as 'initial_visit' — that's the implicit "not yet
+  // visited" default, never a result a publisher actually chose (see records/schema.ts).
+  const myResultCounts = ((): Record<VisitResult, number> => {
+    const counts = Object.fromEntries(VISIT_RESULTS.map((r) => [r, 0])) as Record<VisitResult, number>
+    for (const r of workspace.records) {
+      const latest = r.visits[0]?.result
+      if (latest) counts[latest] += 1
+    }
+    return counts
+  })()
   // Only hide a territory's map when it genuinely has no section/block structure at all — a
   // defensive guard, not the normal zero-records case (a fresh territory still has real
   // sections/blocks from the moment it's created; TerritoryMapViewer just has nothing useful to
@@ -873,10 +888,11 @@ export default function PublisherWorkspaceApp({
 
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
-              const tabs: { key: 'territory' | 'records' | 'search' | 'share' | 'help' | 'faq'; label: string; available: boolean }[] = [
+              const tabs: { key: 'territory' | 'records' | 'search' | 'summary' | 'share' | 'help' | 'faq'; label: string; available: boolean }[] = [
                 { key: 'territory', label: 'Map', available: mappableTerritories.length > 0 },
                 { key: 'records', label: 'Pins', available: assignedRecordLocations.length > 0 },
                 { key: 'search', label: 'Search Area', available: searchScopeLocations.length > 0 },
+                { key: 'summary', label: 'Summary', available: true },
                 { key: 'share', label: 'Share', available: !readOnly },
                 { key: 'help', label: 'Status', available: true },
                 { key: 'faq', label: 'FAQ', available: true },
@@ -939,6 +955,15 @@ export default function PublisherWorkspaceApp({
                     </div>
                   )}
 
+                  {activeView === 'summary' && (
+                    <div className="space-y-3">
+                      {!showToggle && <h2 className="font-semibold text-[#0B1B33]">Your Results</h2>}
+                      <Card className="p-4">
+                        <VisitResultBarChart resultCounts={myResultCounts} />
+                      </Card>
+                    </div>
+                  )}
+
                   {activeView === 'share' && !readOnly && (
                     <SharePartnershipCard batchToken={batchToken} partnershipToken={partnershipToken} />
                   )}
@@ -976,13 +1001,19 @@ export default function PublisherWorkspaceApp({
                 {!readOnly && allDone && (
                   <div className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center shadow-sm">
                     <p className="text-sm font-semibold text-emerald-700">All assigned records are done!</p>
-                    <button
-                      type="button"
-                      onClick={goToNote}
-                      className="mt-3 w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
-                    >
-                      Sync &amp; Finish
-                    </button>
+                    {/* Once this session has already been synced and finished, there's nothing
+                        left to do here — a clickable "Sync & Finish" re-appearing on every
+                        return to this list would just re-trigger the note/sync flow for no
+                        reason. The plain note above is enough. */}
+                    {!sessionEnded && (
+                      <button
+                        type="button"
+                        onClick={goToNote}
+                        className="mt-3 w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+                      >
+                        Sync &amp; Finish
+                      </button>
+                    )}
                   </div>
                 )}
 

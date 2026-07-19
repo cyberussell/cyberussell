@@ -92,6 +92,10 @@ export interface PartnershipRecordDetail {
 export interface PartnershipWorkspace extends Partnership {
   batch: AssignmentBatch
   congregationName: string
+  // IANA zone (e.g. "Asia/Manila"), defaults to 'UTC' if unset — used to correctly convert this
+  // partnership's own "Visited at" datetime-local submissions (see localDatetimeToUtcIso), which
+  // otherwise silently corrupt by the server-vs-congregation timezone gap.
+  timezone: string
   records: PartnershipRecordDetail[]
   territories: { id: string; name: string; description: string; map_image_url: string | null }[]
   // Same meaning as BatchSummary.expired — checked again server-side before every

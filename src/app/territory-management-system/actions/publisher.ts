@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { createAdminSupabase } from '@/lib/territory-management-system/supabase-server'
+import { localDatetimeToUtcIso } from '@/lib/territory-management-system/modules/assignment/date'
 import { checkRateLimit, clientIp } from '@/lib/territory-management-system/rateLimit'
 import { logError } from '@/lib/territory-management-system/errors'
 import {
@@ -123,7 +124,7 @@ export async function logPublisherVisitAction(_prev: ActionResult, formData: For
   try {
     await logVisit(supabase, partnership.congregation_id, {
       recordId: parsed.data.recordId,
-      visitedAt: new Date(parsed.data.visitedAt).toISOString(),
+      visitedAt: localDatetimeToUtcIso(parsed.data.visitedAt, partnership.timezone),
       result: parsed.data.result,
       notes: parsed.data.notes,
       createdBy: null,

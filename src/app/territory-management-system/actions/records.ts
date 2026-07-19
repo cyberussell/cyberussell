@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/territory-management-system/modules/auth/queries'
+import { localDatetimeToUtcIso } from '@/lib/territory-management-system/modules/assignment/date'
 import {
   createRecordSchema,
   getSelectableResults,
@@ -230,7 +231,7 @@ export async function logVisitAction(_prev: ActionResult, formData: FormData): P
   try {
     await recordQueries.logVisit(supabase, congregation.id, {
       recordId: parsed.data.recordId,
-      visitedAt: new Date(parsed.data.visitedAt).toISOString(),
+      visitedAt: localDatetimeToUtcIso(parsed.data.visitedAt, congregation.timezone),
       result: parsed.data.result,
       notes: mergeConductorIntoNotes(parsed.data.conductorName, parsed.data.notes),
       createdBy: userId,

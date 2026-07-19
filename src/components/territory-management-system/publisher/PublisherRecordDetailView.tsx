@@ -272,6 +272,9 @@ export default function PublisherRecordDetailView({
             show per-entry in Visit History below. */}
         {(mapsUrl || mapUrl) && (
           <div className="mt-4 flex justify-end gap-3">
+            {mapUrl && (
+              <TerritoryMapViewer mapImageUrl={mapUrl} territoryName={assigned.record.territory?.name ?? 'Territory'} variant="icon" />
+            )}
             {mapsUrl && (
               <a
                 href={mapsUrl}
@@ -283,9 +286,6 @@ export default function PublisherRecordDetailView({
               >
                 <MapPin className="h-6 w-6" />
               </a>
-            )}
-            {mapUrl && (
-              <TerritoryMapViewer mapImageUrl={mapUrl} territoryName={assigned.record.territory?.name ?? 'Territory'} variant="icon" />
             )}
           </div>
         )}

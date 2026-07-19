@@ -650,6 +650,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     ...(partnership as Partnership),
     batch: batch as AssignmentBatch,
     congregationName: congregation?.name ?? '',
+    timezone: congregation?.timezone ?? 'UTC',
     records,
     territories,
     expired,
