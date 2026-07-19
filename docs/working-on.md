@@ -14,6 +14,10 @@ Current Status: Code done, committed and pushed to `main`. `npx tsc --noEmit`, `
 
 **Next recommended task:** Russell spot-checks live: the New Assignment summary box's three new rows compute correctly for real inputs, and both partner-card surfaces show the section label(s) alongside territory/barangay.
 
+**Follow-up (same session, next commit `92c7655`):** Russell caught two bugs in the formula-based summary from live testing (11 publishers/group 3/9 per publisher against 33 approved): (1) "Records to be worked on" showed 36 when only 33 records exist — `recordsToWork` is now `Math.min(partnershipCount * maxPerPartnership, eligibleTotal)`. (2) `partnershipCount` used ceil, so 11/3 → 4 "partnerships" (treating a lone leftover publisher as their own partner) — switched to floor, added a red "N publisher(s) without a Ministry Partner" row for the remainder, and disabled the Generate button (with inline copy) for the edge case where floor works out to zero. Verified live: 11/3/9 → "3 Ministry Partners / 2 publishers without a Ministry Partner / 27 Records to be worked on / 6 Records still need to be worked on"; 5/2 → "2 Ministry Partners / 1 publisher without a Ministry Partner". `tsc`/`vitest`/`next build` clean. Committed then pushed on request (not auto-pushed this round since "deploy" wasn't said until the next message).
+
+**Next recommended task:** Russell spot-checks live: the summary never shows more records-to-work-on than the territory's approved total, and an odd publisher/group-size combination shows the correct floored partner count plus the red leftover-publisher row.
+
 ----------------------------------------
 
 **Territory Management System — Assignment summary reformat + DNC/Bible Study card indicators (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, NOT YET committed, no migration needed — see checkpoint `territory-management-assignment-summary-dnc-bible-study-v1.md`:**
