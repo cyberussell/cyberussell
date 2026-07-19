@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Minus, Plus } from 'lucide-react'
+import { AlertTriangle, Minus, Plus } from 'lucide-react'
 import { createGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import { DEFAULT_MAX_PER_PARTNERSHIP } from '@/lib/territory-management-system/modules/assignment/engine'
@@ -210,22 +210,22 @@ export default function AssignmentForm({
               {publisherCount} publisher{publisherCount === 1 ? '' : 's'} in groups of {groupSize} → {partnershipCount} partnership
               {partnershipCount === 1 ? '' : 's'}.
             </p>
-            <ul className="mt-1 list-disc space-y-1 pl-4">
-              {eligibleTotal > 0 && <li>Each partnership can hold up to {maxPerPartnership} approved records.</li>}
-              <li>
-                {eligibleTotal === 0
-                  ? 'No approved contact records yet in the selected territories — every partnership will start empty.'
-                  : `${eligibleTotal} approved contact record${eligibleTotal === 1 ? '' : 's'} available across the selected territories — enough for up to ${recordsMaxPartnerships} partnership${recordsMaxPartnerships === 1 ? '' : 's'} (${breakdownText}).`}
-              </li>
-            </ul>
-            {insufficientForHeadcount && (
-              <p className="mt-2 font-medium text-amber-600">
+            <p className="mt-1">
+              {eligibleTotal === 0
+                ? 'No approved contact records yet in the selected territories — every partnership will start empty.'
+                : `${eligibleTotal} approved record${eligibleTotal === 1 ? '' : 's'} available: ${breakdownText}.`}
+            </p>
+          </div>
+          {insufficientForHeadcount && (
+            <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <p>
                 Only {recordsMaxPartnerships} of {partnershipCount} partnership{partnershipCount === 1 ? '' : 's'} will have
                 territory work today — {shortfallPublishers} publisher{shortfallPublishers === 1 ? '' : 's'} should do another
                 form of ministry instead (Street Witnessing, Return Visits, Business Witnessing, or other).
               </p>
-            )}
-          </div>
+            </div>
+          )}
           {error && <p className="text-sm text-red-500">{error}</p>}
           <button
             type="submit"

@@ -23,3 +23,7 @@ None — no migration, no schema change, no new server action.
 
 ## Known Issues
 None identified this pass.
+
+## Addendum (same session, same file): simplified summary text + separated caution warning
+
+Follow-up refinement, same commit as the rest of this checkpoint's work would have shipped in but landed as a separate commit since it was requested in a later message. The records-breakdown summary was previously split across a `<p>` and a `<ul>` with a somewhat roundabout "enough for up to N partnerships (breakdown)" phrasing — simplified to two plain sentences that state exactly how many records each partnership gets: e.g. "9 approved records available: 1 partnership with 6 records and 1 partnership with 3 records." The shortfall warning (`insufficientForHeadcount`) — same exact wording, not changed — moved out of the blue summary box into its own amber-bordered/backed caution box with a lucide `AlertTriangle` icon, so it reads as a distinct alert rather than an amber sentence buried inside the summary. Verified live via a scratch route: confirmed the simplified summary text and confirmed the caution box + icon render correctly when triggering a real headcount shortfall (5 publishers in groups of 2 against 9 records at 6-per-partnership → "Only 2 of 3 partnerships..." in its own bordered box).
