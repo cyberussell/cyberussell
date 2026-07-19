@@ -8,10 +8,10 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 // Lets a publisher pass an unfinished record to a different Ministry Partner working under the
 // same Group Leader today — their own batch or any overflow batch (see
 // getGroupLeaderPartnershipsForDate) — e.g. it's on the other pair's way home, or this pair is
-// running out of time. Each option shows its batchLabel ("Assignment"/"Overflow"/"Overflow 2"…)
-// since the list can now span more than one batch. Hidden entirely when there's no other
-// partnership to pass to (a single-partnership day, or every sibling has already ended their
-// ministry for the day).
+// running out of time. Shows just the partner's own saved name, not which batch they belong to
+// (Russell's call — the receiving publisher needs to recognize whose person they're getting, not
+// batch bookkeeping). Hidden entirely when there's no other partnership to pass to (a
+// single-partnership day, or every sibling has already ended their ministry for the day).
 export default function MoveRecordForm({
   siblingPartnerships,
   moving,
@@ -42,7 +42,7 @@ export default function MoveRecordForm({
               </option>
               {siblingPartnerships.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name} — {p.batchLabel}
+                  {p.name}
                 </option>
               ))}
             </select>

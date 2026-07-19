@@ -90,6 +90,31 @@ export function isDoNotCallLocked(doNotCall: boolean, doNotCallAt: string | null
   return doNotCallUnlockDate(doNotCallAt).getTime() > Date.now()
 }
 
+// Whether a publisher's assigned records are all genuinely "handled" for the day — the gate for
+// showing "Sync & Finish" instead of the assigned-records list. Grouped by Plus Code first: a
+// multi-record household only ever gets completed_at stamped on whichever single record the
+// visit was actually logged against (markPartnershipRecordCompleted never touches its household
+// siblings), so checking every record individually could never reach "done" for a household even
+// after the whole address was genuinely visited — the same household-counts-as-one-unit rule
+// getBatchSummary's recordCount/completedCount already apply, just also needed here so the
+// publisher's own device agrees with what the Group Leader's dashboard already shows. A locked
+// Do Not Call record excuses its whole group the same way a completed visit does — there's
+// structurally no visit a publisher can log against it. Empty input is never "done" — a
+// zero-record ("searching a fresh territory") partnership only finishes via End Ministry Early.
+export function isPartnershipAllDone(
+  records: { id: string; plusCode: string | null; completedAt: string | null; doNotCall: boolean; doNotCallAt: string | null }[]
+): boolean {
+  if (records.length === 0) return false
+  const groups = new Map<string, typeof records>()
+  for (const r of records) {
+    const key = r.plusCode || r.id
+    const group = groups.get(key)
+    if (group) group.push(r)
+    else groups.set(key, [r])
+  }
+  return Array.from(groups.values()).every((group) => group.some((r) => r.completedAt || isDoNotCallLocked(r.doNotCall, r.doNotCallAt)))
+}
+
 // Returns the empty array while a Do Not Call record is still within its lock window — callers
 // (VisitLogForm/PublisherVisitLogForm and whatever renders around them) treat zero options as
 // "no visit can be logged right now" and show a locked notice instead of a dropdown.

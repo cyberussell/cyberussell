@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { CheckCircle2, ClipboardCopy, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
 import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
-import { isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
+import { isPartnershipAllDone, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import type { RecordLocation } from '@/lib/territory-management-system/modules/reports/queries'
@@ -707,13 +707,20 @@ export default function PublisherWorkspaceApp({
   // partnership (zero assigned records) should NOT auto-surface "All assigned records are
   // done! Sync & Finish" the instant it's claimed, since the whole point is spending the
   // allotted time adding new contact records, which can keep happening throughout the session.
-  // "End My Ministry Early" is the only way that kind of partnership finishes for the day.
-  // A record still locked under the Do Not Call cooldown can never get a completed_at — there's
-  // structurally no visit a publisher can log against it — so it doesn't count against "done"
-  // either, the same way it never blocked completion before the lock existed.
-  const allDone =
-    workspace.records.length > 0 &&
-    workspace.records.every((r) => r.completed_at || isDoNotCallLocked(r.record.do_not_call, r.record.do_not_call_at))
+  // "End My Ministry Early" is the only way that kind of partnership finishes for the day. See
+  // isPartnershipAllDone for the household/Do-Not-Call grouping rules (real bug found live: a
+  // multi-record household only ever gets completed_at stamped on whichever single record the
+  // visit was logged against, so an un-grouped every-record check could never reach "done" for a
+  // household even after the whole address was genuinely visited).
+  const allDone = isPartnershipAllDone(
+    workspace.records.map((r) => ({
+      id: r.record.id,
+      plusCode: r.record.plus_code,
+      completedAt: r.completed_at,
+      doNotCall: r.record.do_not_call,
+      doNotCallAt: r.record.do_not_call_at,
+    }))
+  )
   // Only hide a territory's map when it genuinely has no section/block structure at all — a
   // defensive guard, not the normal zero-records case (a fresh territory still has real
   // sections/blocks from the moment it's created; TerritoryMapViewer just has nothing useful to
