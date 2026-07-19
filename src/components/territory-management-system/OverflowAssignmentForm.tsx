@@ -74,7 +74,7 @@ export default function OverflowAssignmentForm({ territories }: { territories: {
           disabled={pending || selected.length === 0}
           className="w-full rounded-lg border border-[#2563EB] bg-white py-2.5 font-semibold text-[#2563EB] transition hover:bg-blue-50 disabled:opacity-50"
         >
-          {pending ? 'Generating…' : 'Generate Overflow QR Code'}
+          {pending ? 'Generating…' : 'Create Auxiliary Groups'}
         </button>
       </form>
     </Card>

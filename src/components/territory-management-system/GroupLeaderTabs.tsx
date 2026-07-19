@@ -243,6 +243,13 @@ export default function GroupLeaderTabs({
               <div className="mt-6">
                 <VisitResultBarChart resultCounts={stats.resultCounts} />
               </div>
+              <button
+                type="button"
+                onClick={() => setAssignmentAction((a) => (a === 'regenerate' ? null : 'regenerate'))}
+                className="mt-6 w-full rounded-lg bg-[#2563EB] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+              >
+                Generate New
+              </button>
             </Card>
           ) : (
             <Card
@@ -269,6 +276,9 @@ export default function GroupLeaderTabs({
                   {batchBarangays.join(', ')}
                 </p>
               )}
+              <p className={`text-[11px] ${isOverflow ? 'text-white/70' : 'text-slate-400'}`}>
+                Valid for today only — a new one is needed tomorrow.
+              </p>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={qrDataUrl} alt="Assignment QR code" className="h-80 w-80 sm:h-40 sm:w-40" />
               <a
@@ -279,50 +289,44 @@ export default function GroupLeaderTabs({
               >
                 {publicUrl}
               </a>
-              <p className={`text-xs ${isOverflow ? 'text-white' : 'text-slate-600'}`}>
-                Valid for today only — a new one is needed tomorrow.
-              </p>
+              <button
+                type="button"
+                onClick={() => setAssignmentAction((a) => (a === 'regenerate' ? null : 'regenerate'))}
+                className={`w-full rounded-lg py-2.5 text-sm font-semibold transition hover:brightness-110 ${
+                  isOverflow ? 'bg-white text-black' : 'bg-[#2563EB] text-white'
+                }`}
+              >
+                Generate New
+              </button>
             </Card>
           )}
 
           {shortfallPartnerships > 0 && (
             <div className="mx-auto max-w-md rounded-lg border border-amber-200 bg-amber-50 p-4 text-center text-sm text-amber-700">
-              {shortfallPartnerships} fewer partnership{shortfallPartnerships === 1 ? '' : 's'} were created than requested —
-              there weren&apos;t enough approved records in the selected territories. Generate an overflow assignment below if
-              more publishers than expected showed up.
+              {shortfallPartnerships} fewer partnership{shortfallPartnerships === 1 ? '' : 's'}{' '}
+              were created than requested — there weren&apos;t enough approved records in the selected territories. Create
+              Auxiliary Groups below if more publishers than expected showed up.
             </div>
           )}
 
           <div className="mx-auto max-w-md text-center">
-            {/* Simple view: a toggle instead of always stacking both forms — neither is shown
-                until the Group Leader deliberately picks one, including right after a refresh
-                (no default selection), so the Home tab stays uncluttered day to day. */}
-            <div className="inline-flex rounded-full bg-blue-50 p-1">
+            {/* "Generate New" now lives as a solid button inside whichever QR/summary panel is
+                showing above — only "Create Auxiliary Groups" remains a standalone toggle here. */}
+            {todaysTerritories.length > 0 && (
               <button
                 type="button"
-                onClick={() => setAssignmentAction((a) => (a === 'regenerate' ? null : 'regenerate'))}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                  assignmentAction === 'regenerate' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
+                onClick={() => setAssignmentAction((a) => (a === 'generate' ? null : 'generate'))}
+                className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
+                  assignmentAction === 'generate' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
                 }`}
               >
-                Regenerate
+                Create Auxiliary Groups
               </button>
-              {todaysTerritories.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setAssignmentAction((a) => (a === 'generate' ? null : 'generate'))}
-                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                    assignmentAction === 'generate' ? 'bg-[#2563EB] text-white' : 'text-[#2563EB] hover:bg-blue-100'
-                  }`}
-                >
-                  Generate Overflow
-                </button>
-              )}
-            </div>
+            )}
 
             {assignmentAction === 'generate' && todaysTerritories.length > 0 && (
               <div className="mt-4">
-                <h2 className="mb-1 font-semibold text-[#0B1B33]">Generate Overflow Assignment</h2>
+                <h2 className="mb-1 font-semibold text-[#0B1B33]">Create Auxiliary Groups</h2>
                 <p className="mb-4 text-xs text-slate-500">
                   For extra publishers when a territory has more people than the original assignment had room for. Adds a new,
                   separate QR code — today&apos;s existing assignment(s) are untouched.
@@ -333,7 +337,7 @@ export default function GroupLeaderTabs({
 
             {assignmentAction === 'regenerate' && (
               <div className="mt-4">
-                <h2 className="mb-4 font-semibold text-[#0B1B33]">Regenerate Assignment</h2>
+                <h2 className="mb-4 font-semibold text-[#0B1B33]">Generate New Assignment</h2>
                 <p className="mb-4 text-xs text-slate-500">
                   Replaces every one of today&apos;s assignments (all batches) with a brand new one.
                 </p>
