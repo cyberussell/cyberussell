@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Branded confirm/prompt modals everywhere + assignment-panel scroll-into-view (2026-07-19) — code done, tsc + vitest (56/56) + next build clean, live-verified via a temporary scratch route, committed and pushed, no migration needed — see checkpoint `territory-management-branded-modals-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked for the GL Home tab's "Generate New" click to scroll its panel into view (it rendered well below the fold with no scroll), and for every native `window.confirm()`/`window.prompt()` popup in TMS to be replaced with a TMS-branded modal — an icon of caution or info depending on the action. A publisher-only `ConfirmModal` already existed for this exact reason; generalized it (new `variant: 'caution' | 'info'` prop) into a shared `ConfirmModal.tsx`, added a `PromptModal.tsx` for the one text-input popup (Group Leader password reset), and built `useConfirm()`/`usePrompt()` Promise-based hooks matching `window.confirm`/`window.prompt`'s own call shape so every call site only needed `await` added. Wired into: `ConfirmDeleteButton` (the single biggest lever — used by territory/section/block/record deletes across 7 files), `PartnershipList`'s End Ministry, `RecordApprovalActions`' Reject, `GroupLeadersManager`'s Restore (info)/Revoke (caution)/Delete (caution)/Reset Password (prompt), and `AssignmentForm`'s existing-assignment-replace confirm (restructured since `window.confirm`'s synchronous gating doesn't translate directly to an async modal — now always preventDefaults, awaits the modal, then calls `dispatch(formData)` directly). `GroupLeaderTabs.tsx` also got a ref + `scrollIntoView` effect for both assignment toggles.
+
+Current Status: Code done, committed and pushed to `main`. `npx tsc --noEmit`, `npx vitest run` (56/56), and `npx next build` all clean. Live-verified via a temporary scratch route (removed before finishing) — every modal variant confirmed (caution amber AlertTriangle, info blue Info, the prompt's text input), AssignmentForm's modal correctly gates the real submit, and the scroll fix confirmed via `window.scrollY` moving from 0 to 744 after clicking "Generate New." Confirmed zero remaining `window.confirm`/`window.prompt` calls anywhere in TMS via full-codebase grep.
+
+**Next recommended task:** Russell spot-checks live: every delete button, Reject on a pending record, End Ministry, generating a new assignment over an existing one, and the three Group Leader row actions all show the branded modal; "Generate New"/"Create Auxiliary Groups" scroll their panel into view.
+
+----------------------------------------
+
 **Territory Management System — Assignment summary reformat + DNC/Bible Study card indicators (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, NOT YET committed, no migration needed — see checkpoint `territory-management-assignment-summary-dnc-bible-study-v1.md`:**
 
 Current Product: Territory Management System (TMS).
