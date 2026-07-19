@@ -15,6 +15,13 @@ function formatWeekLabel(start: string, end: string): string {
   return `${fmt(start)} – ${fmt(end)}, ${year}`
 }
 
+// Weekday + date + time, e.g. "Mon, Jul 13, 2026 · 2:34 PM" — deliberately more detail than
+// VisitHistoryList's own date line (which omits the weekday) since this page's whole point is
+// scanning many records at once to decide who to consult, not reading one record's timeline.
+function formatVisitedAt(visitedAt: string): string {
+  return new Date(visitedAt).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+}
+
 // Admin-only. Every record whose current latest logged visit has a note AND falls within this
 // week's Monday–Sunday window — see notesWeekRange for the "still shows last week through
 // Monday, only rolls over on Tuesday" rule. Each row reuses VisitHistoryList exactly as the
@@ -40,17 +47,27 @@ export default async function WeeklyNotesPage() {
         <div className="space-y-6">
           {rows.map(({ record, visit }) => (
             <div key={record.id}>
-              <Link
-                href={`/territory-management-system/dashboard/records/${record.id}`}
-                className="text-sm font-medium text-[#0B1B33] hover:underline"
-              >
-                {record.address || record.plus_code || 'Unlabeled record'}
-                {record.unit ? `, ${record.unit}` : ''}
-              </Link>
-              <p className="mb-2 text-xs text-slate-400">
-                {record.territory?.name ?? '—'} / Sec {record.section?.label ?? '—'} / Blk {record.block?.label ?? '—'}
-                {record.resident_name ? ` · ${record.resident_name}` : ''}
-              </p>
+              <div className="mb-2 flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+                <div>
+                  <Link
+                    href={`/territory-management-system/dashboard/records/${record.id}`}
+                    className="text-sm font-medium text-[#0B1B33] hover:underline"
+                  >
+                    {record.address || record.plus_code || 'Unlabeled record'}
+                    {record.unit ? `, ${record.unit}` : ''}
+                  </Link>
+                  <p className="text-xs text-slate-400">
+                    {record.territory?.name ?? '—'} / Sec {record.section?.label ?? '—'} / Blk {record.block?.label ?? '—'}
+                    {record.resident_name ? ` · ${record.resident_name}` : ''}
+                  </p>
+                </div>
+                {/* Ministry Partner name + full visit day/time, up front so an admin scanning a
+                    long list can spot who to consult without reading every note first. */}
+                <div className="text-right">
+                  <p className="text-xs font-semibold text-[#2563EB]">{visit.created_by_name ?? visit.partner_name ?? 'Unknown'}</p>
+                  <p className="text-xs text-slate-400">{formatVisitedAt(visit.visited_at)}</p>
+                </div>
+              </div>
               <VisitHistoryList
                 visits={[visit]}
                 onUndoLast={undoLastVisitAction.bind(null, record.id)}
