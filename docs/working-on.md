@@ -18,6 +18,10 @@ Current Status: Code done, committed and pushed to `main`. `npx tsc --noEmit`, `
 
 **Next recommended task:** Russell spot-checks live: the summary never shows more records-to-work-on than the territory's approved total, and an odd publisher/group-size combination shows the correct floored partner count plus the red leftover-publisher row.
 
+**Follow-up (same session, next commit `044692d`):** Russell caught one more real distribution issue live (8 publishers/group 2/10 per publisher against 33 approved → correctly capped at "33 Records to be worked on," but with no indication that 3 partners get 10 each and the 4th only gets 3). Added `fullyLoadedPartnerships`/`partialRecords`/`hasPartialPartnership` (mirrors engine.ts's sequential-fill math exactly) and a new amber row — "1 Ministry Partner will only get N Records (not M)" — that only appears when the numbers actually produce an uneven last partnership. Verified live: the 8/2/10 case shows the new row correctly; a clean 3-partner/11-records-each case (33 total) correctly shows nothing extra. `tsc`/`vitest`/`next build` clean, live-verified via a scratch route (removed). Committed and pushed.
+
+**Next recommended task:** Russell spot-checks live: the new amber row appears exactly when one Ministry Partner would get fewer records than the others, and stays silent when the split is even.
+
 ----------------------------------------
 
 **Territory Management System — Assignment summary reformat + DNC/Bible Study card indicators (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, NOT YET committed, no migration needed — see checkpoint `territory-management-assignment-summary-dnc-bible-study-v1.md`:**
