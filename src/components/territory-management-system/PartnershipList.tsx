@@ -13,9 +13,13 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 export default function PartnershipList({
   partnerships,
   onEndPartnership,
+  // Only worth showing per-card when the batch itself covers more than one territory — with a
+  // single territory it'd just repeat what the page/tab already says elsewhere.
+  multiTerritoryBatch = false,
 }: {
   partnerships: PartnershipWithProgress[]
   onEndPartnership?: (partnershipId: string) => Promise<void>
+  multiTerritoryBatch?: boolean
 }) {
   const [pending, startTransition] = useTransition()
 
@@ -63,6 +67,9 @@ export default function PartnershipList({
               {p.completedCount} of {p.recordCount} contact records completed
               {p.recordCount - p.completedCount > 0 ? ` · ${p.recordCount - p.completedCount} remaining` : ''}
             </p>
+            {multiTerritoryBatch && p.territories.length > 0 && (
+              <p className="mt-0.5 text-xs text-slate-400">{p.territories.map((t) => `${t.name} — ${t.description}`).join(', ')}</p>
+            )}
             {endedEarly && (
               <p className="mt-1 text-xs text-amber-600">Ended early — the remaining records weren&apos;t visited this session.</p>
             )}

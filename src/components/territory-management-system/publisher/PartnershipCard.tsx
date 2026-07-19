@@ -1,7 +1,17 @@
 import Link from 'next/link'
 import type { PartnershipWithProgress } from '@/lib/territory-management-system/modules/assignment/types'
 
-export default function PartnershipCard({ partnership, batchToken }: { partnership: PartnershipWithProgress; batchToken: string }) {
+export default function PartnershipCard({
+  partnership,
+  batchToken,
+  // Only worth showing per-card when the batch itself covers more than one territory — with a
+  // single territory it'd just repeat what the page header above the whole list already says.
+  multiTerritoryBatch,
+}: {
+  partnership: PartnershipWithProgress
+  batchToken: string
+  multiTerritoryBatch: boolean
+}) {
   const pct = partnership.recordCount > 0 ? Math.round((partnership.completedCount / partnership.recordCount) * 100) : 0
   // finished_at/ended_early_at (see 018_partnership_finished_at.sql) are the real "genuinely
   // done" signal — completedCount >= recordCount alone can't be trusted (vacuously true for a
@@ -33,6 +43,11 @@ export default function PartnershipCard({ partnership, batchToken }: { partnersh
       <p className="mt-1.5 text-xs text-slate-600">
         {partnership.completedCount} of {partnership.recordCount} contact records completed
       </p>
+      {multiTerritoryBatch && partnership.territories.length > 0 && (
+        <p className="mt-0.5 text-xs text-slate-400">
+          {partnership.territories.map((t) => `${t.name} — ${t.description}`).join(', ')}
+        </p>
+      )}
       {endedEarly && (
         <p className="mt-1 text-xs text-amber-600">Ended early — the remaining records weren&apos;t visited this session.</p>
       )}

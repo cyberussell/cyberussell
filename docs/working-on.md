@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Ministry Partner cards show territory/barangay for multi-territory batches (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, committed and pushed, no migration needed — see checkpoint `territory-management-partner-card-territory-label-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked for a small territory/barangay identifier on each Ministry Partner card when a batch covers multiple territories (screenshots: public partner-selection page + Group Leader's Partners tab, both plain "0 of 6 contact records completed" with no location context). Researched first (background agent) whether a single partnership's records can span more than one territory — confirmed yes, `calculateAssignment` slices the flat eligible-record pool with zero territory-boundary awareness, so a boundary partnership can get records from two territories. `getBatchSummary` now computes each partnership's distinct touched-territories list (from the already-fetched batch-wide territories, no new query) and exposes it as `PartnershipWithProgress.territories`. Both card components (`PartnershipCard.tsx` for the public selection page, `PartnershipList.tsx` shared by the public progress page and the Group Leader's Partners tab) render `{name} — {barangay}` fine print (comma-joined if a partner spans more than one), only when the batch itself has more than one territory selected.
+
+Current Status: Code done, committed and pushed to `main`. `npx tsc --noEmit`, `npx next build`, and `npx vitest run` (56/56) all clean. Live-verified via a temporary scratch route (removed before finishing) across single-territory (hidden), multi-territory single-territory-partner, multi-territory partner-spanning-2-territories, and zero-record-partner scenarios — all rendered correctly. No migration needed (pure read/display change). **Not live-tested against a real Supabase database.**
+
+**Next recommended task:** Russell spot-checks live once migrations 032–034 are applied (from the prior batch) and a real multi-territory assignment is generated: confirm the barangay fine print shows correctly on both the public and Group Leader partner cards, especially for any partnership that happens to straddle two territories.
+
+----------------------------------------
+
 **Territory Management System — Barangay/Section/Block on the Correction recommendation, hide "Records per publisher" when 0 approved records selected (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, committed and pushed, migrations 032/033/034 NOT yet applied — see checkpoint `territory-management-correction-barangay-v1.md`:**
 
 Current Product: Territory Management System (TMS).

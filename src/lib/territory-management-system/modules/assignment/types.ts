@@ -38,6 +38,10 @@ export interface Partnership {
 export interface PartnershipWithProgress extends Partnership {
   recordCount: number
   completedCount: number
+  // Distinct territories this partnership's own assigned records fall in — usually one, but see
+  // getBatchSummary's comment: a partnership can span more than one when a territory's record
+  // count isn't an exact multiple of maxPerPartnership. Empty for a zero-record partnership.
+  territories: { id: string; name: string; description: string }[]
 }
 
 export interface BatchSummary extends AssignmentBatch {

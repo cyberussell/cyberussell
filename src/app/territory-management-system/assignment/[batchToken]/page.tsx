@@ -25,7 +25,7 @@ export default async function BatchLandingPage({ params }: { params: Promise<{ b
         <p className="mt-4 text-center text-sm text-slate-700">Select your Partner below.</p>
         <div className="mt-4 space-y-3">
           {batch.partnerships.map((p) => (
-            <PartnershipCard key={p.id} partnership={p} batchToken={batchToken} />
+            <PartnershipCard key={p.id} partnership={p} batchToken={batchToken} multiTerritoryBatch={batch.territories.length > 1} />
           ))}
         </div>
 

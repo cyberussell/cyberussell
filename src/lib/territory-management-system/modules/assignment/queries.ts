@@ -308,21 +308,40 @@ export async function getBatchSummary(
     supabase.from('congregations').select('timezone').eq('id', congregationId).maybeSingle(),
   ])
 
+  // territory_id is a plain scalar column on the embedded record, not a relational embed — no
+  // !territory_id disambiguation hint needed here (that's only required for an actual
+  // `territories(...)`/`territory_sections(...)`/`territory_blocks(...)` join, see
+  // RECORD_WITH_LOCATION_SELECT's comment). Used below to label each partnership's card with
+  // which of the batch's territories its records actually fall in — a partnership's records can
+  // span more than one territory when a territory's count isn't an exact multiple of
+  // maxPerPartnership (see engine.ts's calculateAssignment, which slices the flat eligible-record
+  // pool with no territory-boundary awareness).
   const partnershipIds = (partnerships ?? []).map((p) => p.id)
   const { data: allRecords } =
     partnershipIds.length > 0
       ? await supabase
           .from('partnership_records')
-          .select('partnership_id, record_id, completed_at, record:territory_records(plus_code, do_not_call, do_not_call_at)')
+          .select('partnership_id, record_id, completed_at, record:territory_records(plus_code, do_not_call, do_not_call_at, territory_id)')
           .in('partnership_id', partnershipIds)
       : {
           data: [] as {
             partnership_id: string
             record_id: string
             completed_at: string | null
-            record: { plus_code: string | null; do_not_call: boolean; do_not_call_at: string | null } | null
+            record: { plus_code: string | null; do_not_call: boolean; do_not_call_at: string | null; territory_id: string | null } | null
           }[],
         }
+
+  // Batch-wide territory id -> {id, name, description} lookup — every record assigned to any
+  // partnership in this batch necessarily belongs to one of these (fetchEligibleRecordIds only
+  // ever pulls from the batch's own selected territoryIds), so this reuses the already-fetched
+  // territoryLinks instead of a second query.
+  const territoryById = new Map(
+    ((territoryLinks ?? []) as unknown as { territory: { id: string; name: string; description: string } }[]).map((t) => [
+      t.territory.id,
+      t.territory,
+    ])
+  )
 
   const partnershipsWithProgress: PartnershipWithProgress[] = (partnerships ?? []).map((p) => {
     const records = (
@@ -330,9 +349,21 @@ export async function getBatchSummary(
         partnership_id: string
         record_id: string
         completed_at: string | null
-        record: { plus_code: string | null; do_not_call: boolean; do_not_call_at: string | null } | null
+        record: { plus_code: string | null; do_not_call: boolean; do_not_call_at: string | null; territory_id: string | null } | null
       }[]
     ).filter((r) => r.partnership_id === p.id)
+
+    // Distinct territories this partnership's own records fall in, in first-appearance order
+    // (Map preserves insertion order) — usually just one, but see the comment above allRecords.
+    const territoryIds = new Set<string>()
+    const territories: { id: string; name: string; description: string }[] = []
+    for (const r of records) {
+      const territoryId = r.record?.territory_id
+      if (!territoryId || territoryIds.has(territoryId)) continue
+      territoryIds.add(territoryId)
+      const territory = territoryById.get(territoryId)
+      if (territory) territories.push(territory)
+    }
     // A record still locked under the Do Not Call cooldown can never be completed this session —
     // there's structurally no visit a publisher can log against it (see isDoNotCallLocked) — so
     // it's excluded from both sides of the count entirely, not just from blocking "done". Without
@@ -359,6 +390,7 @@ export async function getBatchSummary(
       ...(p as Partnership),
       recordCount: groups.size,
       completedCount: Array.from(groups.values()).filter((group) => group.some((r) => r.completed_at !== null)).length,
+      territories,
     }
   })
 
