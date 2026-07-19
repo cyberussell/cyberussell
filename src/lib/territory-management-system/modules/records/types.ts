@@ -59,6 +59,10 @@ export interface TerritoryRecord {
   // Household Members half of the same correction recommendation — see
   // 031_correction_household_members.sql.
   correction_recommended_household_members: number | null
+  // Territory (barangay) half of the same correction recommendation — see
+  // 034_correction_recommendation_territory.sql. A record can be filed under the wrong barangay
+  // entirely, not just the wrong Section/Block within the right one.
+  correction_recommended_territory_id: string | null
   // Publisher-facing "Unlocated" -> "They Moved, New Location Known" recommendation — see
   // 032_move_recommendation.sql. Same review-gated shape as removal/correction above: the
   // record's real address/unit/plus_code/household_members stay untouched until the Admin
@@ -87,6 +91,7 @@ export interface TerritoryRecordWithLocation extends TerritoryRecord {
   block: { id: string; label: string } | null
   correction_section: { id: string; label: string } | null
   correction_block: { id: string; label: string } | null
+  correction_territory: { id: string; name: string; description: string } | null
   move_territory: { id: string; name: string; description: string } | null
   move_section: { id: string; label: string } | null
   move_block: { id: string; label: string } | null

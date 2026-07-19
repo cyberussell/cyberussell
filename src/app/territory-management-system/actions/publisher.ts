@@ -50,7 +50,6 @@ import {
   recommendRecordForRemoval,
   recommendRecordMove,
   recordAddedByPartnership,
-  sectionBlockBelongsToTerritory,
   territorySectionBlockBelongsToCongregation,
   updateRecord,
 } from '@/lib/territory-management-system/modules/records/queries'
@@ -579,6 +578,7 @@ export async function recommendCorrectionAction(_prev: ActionResult, formData: F
     plusCode: formData.get('plusCode'),
     householdMembers: formData.get('householdMembers'),
     reason: formData.get('reason'),
+    territoryId: formData.get('territoryId'),
     sectionId: formData.get('sectionId'),
     blockId: formData.get('blockId'),
   })
@@ -595,19 +595,31 @@ export async function recommendCorrectionAction(_prev: ActionResult, formData: F
 
   const record = await getRecordById(supabase, partnership.congregation_id, parsed.data.recordId)
   if (!record) return { error: 'This contact record no longer exists.' }
-  const validScope = await sectionBlockBelongsToTerritory(supabase, record.territory_id, parsed.data.sectionId, parsed.data.blockId)
-  if (!validScope) return { error: 'Choose a valid Section and Block.' }
+  // territoryId is client-supplied here (a correction can move a record into a different
+  // barangay entirely, not just a different Section/Block within its own) — needs the same
+  // congregation-ownership check as recommendMoveAction, not just sectionBlockBelongsToTerritory.
+  const validScope = await territorySectionBlockBelongsToCongregation(
+    supabase,
+    partnership.congregation_id,
+    parsed.data.territoryId,
+    parsed.data.sectionId,
+    parsed.data.blockId
+  )
+  if (!validScope) return { error: 'Choose a valid Barangay, Section, and Block.' }
 
   try {
     await recommendRecordCorrection(
       supabase,
       parsed.data.recordId,
-      parsed.data.plusCode,
-      parsed.data.reason,
-      partnership.name || 'Unnamed partnership',
-      parsed.data.sectionId,
-      parsed.data.blockId,
-      parsed.data.householdMembers
+      {
+        plusCode: parsed.data.plusCode,
+        reason: parsed.data.reason,
+        territoryId: parsed.data.territoryId,
+        sectionId: parsed.data.sectionId,
+        blockId: parsed.data.blockId,
+        householdMembers: parsed.data.householdMembers,
+      },
+      partnership.name || 'Unnamed partnership'
     )
   } catch (e) {
     await logError(partnership.congregation_id, 'recommendCorrectionAction', e)
@@ -740,6 +752,7 @@ export async function recommendSearchScopeCorrectionAction(_prev: ActionResult, 
     plusCode: formData.get('plusCode'),
     householdMembers: formData.get('householdMembers'),
     reason: formData.get('reason'),
+    territoryId: formData.get('territoryId'),
     sectionId: formData.get('sectionId'),
     blockId: formData.get('blockId'),
   })
@@ -757,19 +770,28 @@ export async function recommendSearchScopeCorrectionAction(_prev: ActionResult, 
   if (!scope) return { error: 'This assignment has no search area to correct records in.' }
   const record = await getRecordById(supabase, partnership.congregation_id, parsed.data.recordId)
   if (!record || !scope.blocks.some((b) => b.id === record.block_id)) return { error: 'This contact record is not in your search area.' }
-  const validScope = await sectionBlockBelongsToTerritory(supabase, record.territory_id, parsed.data.sectionId, parsed.data.blockId)
-  if (!validScope) return { error: 'Choose a valid Section and Block.' }
+  const validScope = await territorySectionBlockBelongsToCongregation(
+    supabase,
+    partnership.congregation_id,
+    parsed.data.territoryId,
+    parsed.data.sectionId,
+    parsed.data.blockId
+  )
+  if (!validScope) return { error: 'Choose a valid Barangay, Section, and Block.' }
 
   try {
     await recommendRecordCorrection(
       supabase,
       parsed.data.recordId,
-      parsed.data.plusCode,
-      parsed.data.reason,
-      partnership.name || 'Unnamed partnership',
-      parsed.data.sectionId,
-      parsed.data.blockId,
-      parsed.data.householdMembers
+      {
+        plusCode: parsed.data.plusCode,
+        reason: parsed.data.reason,
+        territoryId: parsed.data.territoryId,
+        sectionId: parsed.data.sectionId,
+        blockId: parsed.data.blockId,
+        householdMembers: parsed.data.householdMembers,
+      },
+      partnership.name || 'Unnamed partnership'
     )
   } catch (e) {
     await logError(partnership.congregation_id, 'recommendSearchScopeCorrectionAction', e)

@@ -62,6 +62,9 @@ export interface PartnershipRecordDetail {
     territory: { id: string; name: string; description: string; map_image_url: string | null } | null
     section: { id: string; label: string } | null
     block: { id: string; label: string } | null
+    correction_territory: { id: string; name: string; description: string } | null
+    correction_section: { id: string; label: string } | null
+    correction_block: { id: string; label: string } | null
     move_territory: { id: string; name: string; description: string } | null
     move_section: { id: string; label: string } | null
     move_block: { id: string; label: string } | null

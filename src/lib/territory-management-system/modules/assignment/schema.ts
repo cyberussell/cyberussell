@@ -177,9 +177,11 @@ export const recommendMoveSchema = z.object({
   notes: z.string().max(500).optional().default(''),
   // The new location's Territory (Barangay)/Section/Block — always submitted together as a full
   // location (the dropdown always has a real selection, defaulting to the record's own current
-  // territory), unlike recommendCorrectionSchema below where territoryId is never client-
-  // supplied at all. See recommendMoveAction for the extra congregation-ownership check this
-  // needs that Correction doesn't.
+  // territory). Both this and recommendCorrectionSchema below now take a client-supplied
+  // territoryId (034_correction_recommendation_territory.sql added the same capability to
+  // Correction) — see recommendMoveAction/recommendCorrectionAction for the shared
+  // congregation-ownership check this needs, since a client-supplied territoryId can't be
+  // trusted outright.
   territoryId: z.string().uuid(),
   sectionId: z.string().uuid(),
   blockId: z.string().uuid(),
@@ -197,13 +199,16 @@ export type RecommendRemovalInput = z.input<typeof recommendRemovalSchema>
 
 // The "Update" button — recommends a corrected Plus Code (the most common wrong-data case)
 // plus a required reason, without editing the record directly (same review-gated shape as
-// recommendRemovalSchema above — the Admin applies or dismisses it).
+// recommendRemovalSchema above — the Admin applies or dismisses it). territoryId lets a record
+// be recommended into a different barangay entirely, not just a different Section/Block within
+// its own — same client-supplied-territoryId shape as recommendMoveSchema above.
 export const recommendCorrectionSchema = z.object({
   partnershipToken: z.string().min(1),
   recordId: z.string().uuid(),
   plusCode: plusCodeField,
   householdMembers: householdMembersField,
   reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
+  territoryId: z.string().uuid(),
   sectionId: z.string().uuid(),
   blockId: z.string().uuid(),
 })
@@ -217,6 +222,7 @@ export const recommendSearchScopeCorrectionSchema = z.object({
   plusCode: plusCodeField,
   householdMembers: householdMembersField,
   reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
+  territoryId: z.string().uuid(),
   sectionId: z.string().uuid(),
   blockId: z.string().uuid(),
 })

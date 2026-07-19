@@ -414,6 +414,7 @@ export default function PublisherWorkspaceApp({
         plusCode: fields.plusCode,
         householdMembers: fields.householdMembers,
         reason: fields.reason,
+        territoryId: fields.territoryId,
         sectionId: fields.sectionId,
         blockId: fields.blockId,
       })
@@ -445,6 +446,7 @@ export default function PublisherWorkspaceApp({
         plusCode: fields.plusCode,
         householdMembers: fields.householdMembers,
         reason: fields.reason,
+        territoryId: fields.territoryId,
         sectionId: fields.sectionId,
         blockId: fields.blockId,
       })
@@ -536,6 +538,7 @@ export default function PublisherWorkspaceApp({
       correction_recommended_plus_code: null,
       correction_recommended_reason: null,
       correction_recommended_by: null,
+      correction_recommended_territory_id: null,
       correction_recommended_section_id: null,
       correction_recommended_block_id: null,
       correction_recommended_household_members: null,
@@ -555,6 +558,7 @@ export default function PublisherWorkspaceApp({
       territory: territory ? { id: territory.id, name: territory.name, description: territory.description } : null,
       section: section ? { id: section.id, label: section.label } : null,
       block: block ? { id: block.id, label: block.label } : null,
+      correction_territory: null,
       correction_section: null,
       correction_block: null,
       move_territory: null,
@@ -1048,7 +1052,6 @@ export default function PublisherWorkspaceApp({
             moving={movingRecord}
             markingMoved={markingMoved}
             recommendingCorrection={recommendingCorrection}
-            sections={territoryStructures.find((t) => t.id === selected.record.territory_id)?.sections ?? []}
             territories={territoryStructures}
             mapUrl={selected.record.territory ? mapUrls[selected.record.territory.id] : undefined}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
@@ -1186,7 +1189,7 @@ export default function PublisherWorkspaceApp({
             return (
               <SearchScopeRecordDetailView
                 record={record}
-                sections={territoryStructures.find((t) => t.id === record.territory_id)?.sections ?? []}
+                territories={territoryStructures}
                 editable={editable}
                 submitting={recommendingSearchScopeCorrection}
                 onRecommendCorrection={(fields) => handleRecommendSearchScopeCorrection(record.id, fields)}

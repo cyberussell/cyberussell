@@ -2,24 +2,26 @@
 
 import { MapPin } from 'lucide-react'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
+import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import RecommendCorrectionForm, { type CorrectionFields } from './RecommendCorrectionForm'
 
 // Read-only detail for a record found in an overflow batch's search area (see
 // SearchScopeRecordsList) — deliberately narrower than PublisherRecordDetailView: no visit
 // logging, no Pass/Mark as Moved, since this record was never assigned to this partnership.
-// The only action is recommending a Plus Code correction if the pin is in the wrong place,
-// which is the one thing that actually prevents a duplicate entry for the same household.
+// The only action is recommending a correction (Plus Code, or now Barangay/Section/Block too) if
+// the pin/location is wrong, which is the one thing that actually prevents a duplicate entry for
+// the same household.
 export default function SearchScopeRecordDetailView({
   record,
-  sections,
+  territories,
   editable,
   submitting,
   onRecommendCorrection,
 }: {
   record: TerritoryRecordWithLocation
-  // The record's own territory's Section/Block structure, for RecommendCorrectionForm's
-  // dropdowns — same as PublisherRecordDetailView's own `sections` prop.
-  sections: { id: string; label: string; blocks: { id: string; label: string }[] }[]
+  // Every congregation territory, for RecommendCorrectionForm's Barangay picker — same as
+  // PublisherRecordDetailView's own `territories` prop.
+  territories: TerritoryStructure[]
   // False while viewing another Ministry Partner's assignment (readOnly) or after this
   // partnership's own ministry session has ended — same gating PublisherRecordDetailView
   // applies to its own editing controls.
@@ -59,10 +61,11 @@ export default function SearchScopeRecordDetailView({
         <>
           <RecommendCorrectionForm
             currentPlusCode={record.plus_code ?? ''}
+            currentTerritoryId={record.territory_id}
             currentSectionId={record.section_id}
             currentBlockId={record.block_id}
             currentHouseholdMembers={record.household_members}
-            sections={sections}
+            territories={territories}
             submitting={submitting}
             onSubmit={onRecommendCorrection}
             initialOpen

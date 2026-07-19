@@ -202,13 +202,15 @@ export default async function FlaggedForRemovalPage() {
                       <span className="font-medium text-[#0B1B33]">{r.correction_recommended_plus_code}</span>
                     </p>
                     <p className="mt-1 text-sm text-slate-600">
-                      Current Section/Block:{' '}
+                      Current Barangay/Section/Block:{' '}
                       <span className="font-medium text-[#0B1B33]">
-                        Section {r.section?.label ?? '—'} / Block {r.block?.label ?? '—'}
+                        {r.territory?.description ?? r.territory?.name ?? '—'} / Section {r.section?.label ?? '—'} / Block{' '}
+                        {r.block?.label ?? '—'}
                       </span>
                       {' → Recommended: '}
                       <span className="font-medium text-[#0B1B33]">
-                        Section {r.correction_section?.label ?? '—'} / Block {r.correction_block?.label ?? '—'}
+                        {r.correction_territory?.description ?? r.correction_territory?.name ?? '—'} / Section{' '}
+                        {r.correction_section?.label ?? '—'} / Block {r.correction_block?.label ?? '—'}
                       </span>
                     </p>
                     {r.correction_recommended_household_members != null && (

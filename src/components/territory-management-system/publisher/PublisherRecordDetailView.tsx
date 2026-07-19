@@ -87,7 +87,6 @@ export default function PublisherRecordDetailView({
   moving,
   markingMoved,
   recommendingCorrection,
-  sections,
   territories,
   mapUrl,
   onLogVisit,
@@ -131,13 +130,9 @@ export default function PublisherRecordDetailView({
   markingMoved: boolean
   // True while the "Correction" (Recommend a Correction) form is being saved/synced.
   recommendingCorrection: boolean
-  // The record's own territory's Section/Block structure, for RecommendCorrectionForm's
-  // dropdowns — resolved by the parent from the full territoryStructures prop, keyed off
-  // assigned.record.territory_id.
-  sections: { id: string; label: string; blocks: { id: string; label: string }[] }[]
-  // Every congregation territory, for MarkMovedForm's "Recommend New Location" Barangay picker —
-  // unlike sections above, deliberately not narrowed to the record's own territory, since the
-  // moved person may now live in a different barangay entirely.
+  // Every congregation territory (not just this record's own), for RecommendCorrectionForm's and
+  // MarkMovedForm's Barangay pickers — a correction or a move recommendation can both relocate a
+  // record into a different barangay entirely, not just a different Section/Block within its own.
   territories: TerritoryStructure[]
   // The record's own territory map — resolved by the parent (preferring an offline-cached
   // blob over the live URL, same as the workspace list view's Territory Map(s) section).
@@ -328,10 +323,11 @@ export default function PublisherRecordDetailView({
             />
             <RecommendCorrectionForm
               currentPlusCode={assigned.record.plus_code ?? ''}
+              currentTerritoryId={assigned.record.territory_id}
               currentSectionId={assigned.record.section_id}
               currentBlockId={assigned.record.block_id}
               currentHouseholdMembers={assigned.record.household_members}
-              sections={sections}
+              territories={territories}
               submitting={recommendingCorrection}
               onSubmit={onRecommendCorrection}
             />
@@ -408,10 +404,11 @@ export default function PublisherRecordDetailView({
                 <CloseMobileActionButton onClick={() => setMobileAction('none')} />
                 <RecommendCorrectionForm
                   currentPlusCode={assigned.record.plus_code ?? ''}
+                  currentTerritoryId={assigned.record.territory_id}
                   currentSectionId={assigned.record.section_id}
                   currentBlockId={assigned.record.block_id}
                   currentHouseholdMembers={assigned.record.household_members}
-                  sections={sections}
+                  territories={territories}
                   submitting={recommendingCorrection}
                   onSubmit={onRecommendCorrection}
                   initialOpen
@@ -506,6 +503,16 @@ export default function PublisherRecordDetailView({
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                 <div className="min-w-0 text-sm">
                   <p className="font-medium text-amber-700">Correction recommended — pending Admin approval</p>
+                  {assigned.record.correction_territory && (
+                    <p className="mt-0.5 text-slate-600">
+                      New barangay:{' '}
+                      <span className="font-medium text-[#0B1B33]">
+                        {assigned.record.correction_territory.description || assigned.record.correction_territory.name}
+                        {assigned.record.correction_section ? ` / Section ${assigned.record.correction_section.label}` : ''}
+                        {assigned.record.correction_block ? ` / Block ${assigned.record.correction_block.label}` : ''}
+                      </span>
+                    </p>
+                  )}
                   {assigned.record.correction_recommended_reason && (
                     <p className="mt-0.5 text-slate-600">{assigned.record.correction_recommended_reason}</p>
                   )}

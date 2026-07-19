@@ -2,8 +2,8 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { RecordStatus, RecordVisitWithAuthor, TerritoryRecord, TerritoryRecordWithLocation } from './types'
 
-// The !territory_id/!section_id/!block_id hints are required, not cosmetic: migrations 030 and
-// 033 gave territory_records a second and third FK to territories/territory_sections/
+// The !territory_id/!section_id/!block_id hints are required, not cosmetic: migrations 030, 033,
+// and 034 gave territory_records a second, third, and fourth FK to territories/territory_sections/
 // territory_blocks (the correction_recommended_*/move_recommended_* columns below), so an
 // unqualified `territories(...)`/`territory_sections(...)`/`territory_blocks(...)` embed is
 // ambiguous to PostgREST and the whole query silently returns zero rows instead of erroring —
@@ -14,6 +14,7 @@ const RECORD_WITH_LOCATION_SELECT =
   '*, territory:territories!territory_id(id, name, description), section:territory_sections!section_id(id, label), block:territory_blocks!block_id(id, label), ' +
   'correction_section:territory_sections!correction_recommended_section_id(id, label), ' +
   'correction_block:territory_blocks!correction_recommended_block_id(id, label), ' +
+  'correction_territory:territories!correction_recommended_territory_id(id, name, description), ' +
   'move_territory:territories!move_recommended_territory_id(id, name, description), ' +
   'move_section:territory_sections!move_recommended_section_id(id, label), ' +
   'move_block:territory_blocks!move_recommended_block_id(id, label)'
@@ -276,32 +277,40 @@ export async function territorySectionBlockBelongsToCongregation(
   return sectionBlockBelongsToTerritory(supabase, territoryId, sectionId, blockId)
 }
 
+// territoryId added alongside sectionId/blockId (034_correction_recommendation_territory.sql) —
+// a record can be filed under the wrong barangay entirely, not just the wrong Section/Block
+// within the right one. Object param (not positional) specifically so this addition couldn't
+// silently reorder either of the two call sites' existing positional args.
 export async function recommendRecordCorrection(
   supabase: SupabaseClient,
   recordId: string,
-  plusCode: string,
-  reason: string,
-  recommendedBy: string,
-  sectionId: string,
-  blockId: string,
-  // Optional — see 031_correction_household_members.sql. undefined means "not recommending a
-  // change to this field," left out of the update entirely rather than written as null, so a
-  // second correction that only touches the Plus Code can't accidentally wipe out a still-open
-  // household-members recommendation from create time (this function always fires on submit,
-  // there's only ever one recommendation in flight per record at a time, so this mostly guards
-  // against a caller forgetting to pass it rather than a real concurrent-edit scenario).
-  householdMembers?: number
+  fields: {
+    plusCode: string
+    reason: string
+    territoryId: string
+    sectionId: string
+    blockId: string
+    // Optional — see 031_correction_household_members.sql. undefined means "not recommending a
+    // change to this field," left out of the update entirely rather than written as null, so a
+    // second correction that only touches the Plus Code can't accidentally wipe out a still-open
+    // household-members recommendation from create time (this function always fires on submit,
+    // there's only ever one recommendation in flight per record at a time, so this mostly guards
+    // against a caller forgetting to pass it rather than a real concurrent-edit scenario).
+    householdMembers?: number
+  },
+  recommendedBy: string
 ): Promise<void> {
   const { error } = await supabase
     .from('territory_records')
     .update({
       correction_recommended_at: new Date().toISOString(),
-      correction_recommended_plus_code: plusCode,
-      correction_recommended_reason: reason,
+      correction_recommended_plus_code: fields.plusCode,
+      correction_recommended_reason: fields.reason,
       correction_recommended_by: recommendedBy,
-      correction_recommended_section_id: sectionId,
-      correction_recommended_block_id: blockId,
-      correction_recommended_household_members: householdMembers ?? null,
+      correction_recommended_territory_id: fields.territoryId,
+      correction_recommended_section_id: fields.sectionId,
+      correction_recommended_block_id: fields.blockId,
+      correction_recommended_household_members: fields.householdMembers ?? null,
     })
     .eq('id', recordId)
   if (error) throw error
@@ -317,6 +326,7 @@ export async function dismissCorrectionRecommendation(supabase: SupabaseClient, 
       correction_recommended_plus_code: null,
       correction_recommended_reason: null,
       correction_recommended_by: null,
+      correction_recommended_territory_id: null,
       correction_recommended_section_id: null,
       correction_recommended_block_id: null,
       correction_recommended_household_members: null,
@@ -325,18 +335,21 @@ export async function dismissCorrectionRecommendation(supabase: SupabaseClient, 
   if (error) throw error
 }
 
-// Admin applies a correction recommendation — writes the recommended Plus Code/Section/Block/
-// Household Members onto the record's real columns and clears the recommendation flag in the
-// same update. Reads the recommended values first since Supabase's update() can't copy one
-// column's value into another server-side without a raw SQL/RPC call.
+// Admin applies a correction recommendation — writes the recommended Plus Code/Territory/
+// Section/Block/Household Members onto the record's real columns and clears the recommendation
+// flag in the same update. Reads the recommended values first since Supabase's update() can't
+// copy one column's value into another server-side without a raw SQL/RPC call.
 export async function applyRecordCorrection(supabase: SupabaseClient, recordId: string): Promise<void> {
   const { data: existing } = await supabase
     .from('territory_records')
-    .select('correction_recommended_plus_code, correction_recommended_section_id, correction_recommended_block_id, correction_recommended_household_members')
+    .select(
+      'correction_recommended_plus_code, correction_recommended_territory_id, correction_recommended_section_id, correction_recommended_block_id, correction_recommended_household_members'
+    )
     .eq('id', recordId)
     .maybeSingle()
   if (
     !existing?.correction_recommended_plus_code &&
+    !existing?.correction_recommended_territory_id &&
     !existing?.correction_recommended_section_id &&
     !existing?.correction_recommended_block_id &&
     existing?.correction_recommended_household_members == null
@@ -348,12 +361,14 @@ export async function applyRecordCorrection(supabase: SupabaseClient, recordId: 
     correction_recommended_plus_code: null,
     correction_recommended_reason: null,
     correction_recommended_by: null,
+    correction_recommended_territory_id: null,
     correction_recommended_section_id: null,
     correction_recommended_block_id: null,
     correction_recommended_household_members: null,
     updated_at: new Date().toISOString(),
   }
   if (existing.correction_recommended_plus_code) update.plus_code = existing.correction_recommended_plus_code
+  if (existing.correction_recommended_territory_id) update.territory_id = existing.correction_recommended_territory_id
   if (existing.correction_recommended_section_id) update.section_id = existing.correction_recommended_section_id
   if (existing.correction_recommended_block_id) update.block_id = existing.correction_recommended_block_id
   if (existing.correction_recommended_household_members != null) update.household_members = existing.correction_recommended_household_members

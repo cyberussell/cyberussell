@@ -485,10 +485,10 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     .from('partnership_records')
     .select(
       // !territory_id/!section_id/!block_id required — same ambiguous-embed hazard as
-      // fetchEligibleRecordIds above (territory_records has had two/three FKs to each of
-      // territories/territory_sections/territory_blocks since migrations 030/033); without the
-      // hint this silently returned every publisher's assigned records as an empty list.
-      'id, sequence, completed_at, passed_from_name, passed_from_at, record:territory_records(*, territory:territories!territory_id(id, name, description, map_image_url), section:territory_sections!section_id(id, label), block:territory_blocks!block_id(id, label), move_territory:territories!move_recommended_territory_id(id, name, description), move_section:territory_sections!move_recommended_section_id(id, label), move_block:territory_blocks!move_recommended_block_id(id, label))'
+      // fetchEligibleRecordIds above (territory_records has had two/three/four FKs to each of
+      // territories/territory_sections/territory_blocks since migrations 030/033/034); without
+      // the hint this silently returned every publisher's assigned records as an empty list.
+      'id, sequence, completed_at, passed_from_name, passed_from_at, record:territory_records(*, territory:territories!territory_id(id, name, description, map_image_url), section:territory_sections!section_id(id, label), block:territory_blocks!block_id(id, label), correction_territory:territories!correction_recommended_territory_id(id, name, description), correction_section:territory_sections!correction_recommended_section_id(id, label), correction_block:territory_blocks!correction_recommended_block_id(id, label), move_territory:territories!move_recommended_territory_id(id, name, description), move_section:territory_sections!move_recommended_section_id(id, label), move_block:territory_blocks!move_recommended_block_id(id, label))'
     )
     .eq('partnership_id', partnership.id)
     .order('sequence')

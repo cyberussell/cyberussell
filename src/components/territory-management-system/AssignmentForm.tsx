@@ -164,7 +164,13 @@ export default function AssignmentForm({
           <NumberStepper label="Publishers going out" value={publisherCount} onChange={setPublisherCount} min={1} max={999} />
           <NumberStepper label="Group size" value={groupSize} onChange={setGroupSize} min={1} max={10} />
         </div>
-        <NumberStepper label="Records per publisher" value={maxPerPartnership} onChange={setMaxPerPartnership} min={1} max={30} />
+        {/* Meaningless with zero approved records selected — there's nothing for a per-partnership
+            cap to act on, every partnership starts empty regardless of this value. Still submitted
+            via the hidden field below at whatever it's currently set to (harmless — calculateAssignment
+            has nothing to cap either way), just not shown as a choice the Group Leader needs to make. */}
+        {eligibleTotal > 0 && (
+          <NumberStepper label="Records per publisher" value={maxPerPartnership} onChange={setMaxPerPartnership} min={1} max={30} />
+        )}
         <input type="hidden" name="partnershipCount" value={partnershipCount} />
         <input type="hidden" name="maxPerPartnership" value={maxPerPartnership} />
         <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">
@@ -173,7 +179,7 @@ export default function AssignmentForm({
             {partnershipCount === 1 ? '' : 's'}.
           </p>
           <ul className="mt-1 list-disc space-y-1 pl-4">
-            <li>Each partnership can hold up to {maxPerPartnership} approved records.</li>
+            {eligibleTotal > 0 && <li>Each partnership can hold up to {maxPerPartnership} approved records.</li>}
             <li>
               {eligibleTotal === 0
                 ? 'No approved contact records yet in the selected territories — every partnership will start empty.'

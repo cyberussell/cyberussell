@@ -1,5 +1,19 @@
 # Current Work
 
+**Territory Management System — Barangay/Section/Block on the Correction recommendation, hide "Records per publisher" when 0 approved records selected (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, committed and pushed, migrations 032/033/034 NOT yet applied — see checkpoint `territory-management-correction-barangay-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Two things. (1) Extended "Recommend a Correction" (already had Section/Block since migration 030, before this session) with the same Barangay picker just built for the Move recommendation — a correction can now relocate a record into a different barangay entirely. Migration 034 adds `correction_recommended_territory_id` (territory_records' fourth FK to territories). `RecommendCorrectionForm.tsx` dropped its old `sections`-only prop in favor of `territories`/`currentTerritoryId` (matching MarkMovedForm), updated across all 3 call sites (PublisherRecordDetailView desktop+mobile, SearchScopeRecordDetailView). `recommendRecordCorrection()` refactored from positional args to an object param so the new field couldn't silently reorder its two existing call sites. Both correction actions now validate the client-supplied territoryId via the `territorySectionBlockBelongsToCongregation()` check built for Move. Admin's Flagged for Correction page and the publisher's pending-recommendation banner both show the barangay diff now too. (2) Russell caught via a real screenshot that `AssignmentForm.tsx`'s new "Records per publisher" stepper (from the prior batch) is meaningless when the selected territories have 0 approved records — every partnership starts empty regardless of the cap. Now hidden (along with its "Each partnership can hold up to N" bullet) whenever `eligibleTotal === 0`, leaving just the "every partnership will start empty" message. The hidden `maxPerPartnership` form field still submits at its last value either way — harmless, since `calculateAssignment` has nothing to cap with zero eligible records.
+
+Current Status: Code done, committed and pushed to `main`. `npx tsc --noEmit`, `npx next build`, and `npx vitest run` (56/56) all clean. Live-verified via a temporary scratch route (removed before finishing): Correction's Barangay dropdown defaults to current territory, cascades Section/Block correctly on change, and submit fires with the correct territoryId/sectionId/blockId alongside Plus Code and reason. The "Records per publisher" stepper correctly hides for a 0-approved territory (matching Russell's exact screenshot scenario) and still shows for one with records. **Not live-tested against a real Supabase database.**
+
+**Blocking on Russell:** migrations 032, 033, AND 034 all still need to be applied to the live Supabase project before the Move and Correction recommendation flows work in production. The "Records per publisher" visibility fix has no migration dependency and works immediately.
+
+**Next recommended task:** Russell reviews the diff, says the word to commit/deploy, applies migrations 032–034, then live-verifies a real cross-barangay correction end-to-end.
+
+----------------------------------------
+
 **Territory Management System — TGL-configurable records-per-publisher, Barangay/Section/Block on the Move recommendation (2026-07-19) — code done, tsc + next build + vitest (56/56) clean, live-verified via a temporary scratch route, committed and pushed, migrations 032 AND 033 NOT yet applied — see checkpoint `territory-management-records-per-publisher-move-barangay-v1.md`:**
 
 Current Product: Territory Management System (TMS).

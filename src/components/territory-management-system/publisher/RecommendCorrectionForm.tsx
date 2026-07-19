@@ -7,6 +7,7 @@ import { LocateFixed, PencilLine, RefreshCw } from 'lucide-react'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import { locatePlusCode } from '@/lib/territory-management-system/plusCode'
+import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 
 const openLocationCode = new OpenLocationCode()
 
@@ -14,22 +15,24 @@ export interface CorrectionFields {
   plusCode: string
   householdMembers: string
   reason: string
+  territoryId: string
   sectionId: string
   blockId: string
 }
 
 // Lets a publisher recommend a correction to a record's info (most commonly a wrong Plus Code,
-// now also Section/Block and Household Members — see 030_correction_section_block.sql,
-// 031_correction_household_members.sql) without editing it directly — the Admin reviews and
-// applies or dismisses it from the Flagged for Correction list, same review-gated pattern as
-// "Recommend for Admin Removal". Collapsed behind a trigger button by default, same convention
-// as MarkMovedForm.
+// now also Territory/Section/Block and Household Members — see 030_correction_section_block.sql,
+// 031_correction_household_members.sql, 034_correction_recommendation_territory.sql) without
+// editing it directly — the Admin reviews and applies or dismisses it from the Flagged for
+// Correction list, same review-gated pattern as "Recommend for Admin Removal". Collapsed behind
+// a trigger button by default, same convention as MarkMovedForm.
 export default function RecommendCorrectionForm({
   currentPlusCode,
+  currentTerritoryId,
   currentSectionId,
   currentBlockId,
   currentHouseholdMembers,
-  sections,
+  territories,
   submitting,
   onSubmit,
   // Lets a parent skip straight past the trigger button — used by the mobile "Pass / Unlocated /
@@ -38,13 +41,16 @@ export default function RecommendCorrectionForm({
   initialOpen = false,
 }: {
   currentPlusCode: string
-  // The record's own territory's Section/Block structure — always known since this form is only
-  // ever opened from an actual Contact Record (assigned or search-scope), never a bare location.
-  // Section/Block start prefilled to the record's current values rather than blank.
+  // The record's own current Territory/Section/Block — always known since this form is only ever
+  // opened from an actual Contact Record (assigned or search-scope), never a bare location.
+  // Territory/Section/Block all start prefilled to the record's current values rather than blank.
+  currentTerritoryId: string
   currentSectionId: string
   currentBlockId: string
   currentHouseholdMembers: number | null
-  sections: { id: string; label: string; blocks: { id: string; label: string }[] }[]
+  // Every congregation territory (not just this record's own) — a correction can move a record
+  // into a different barangay entirely, not just a different Section/Block within its own.
+  territories: TerritoryStructure[]
   submitting: boolean
   onSubmit: (fields: CorrectionFields) => void
   initialOpen?: boolean
@@ -55,9 +61,11 @@ export default function RecommendCorrectionForm({
   const [householdMembers, setHouseholdMembers] = useState(initialHouseholdMembers)
   const [reason, setReason] = useState('')
   const [locating, setLocating] = useState(false)
+  const [territoryId, setTerritoryId] = useState(currentTerritoryId)
+  const territory = territories.find((t) => t.id === territoryId)
   const [sectionId, setSectionId] = useState(currentSectionId)
   const [blockId, setBlockId] = useState(currentBlockId)
-  const blockOptions = sections.find((s) => s.id === sectionId)?.blocks ?? []
+  const blockOptions = territory?.sections.find((s) => s.id === sectionId)?.blocks ?? []
 
   const trimmedPlusCode = plusCode.trim()
   const plusCodeValid = trimmedPlusCode.length > 0 && openLocationCode.isValid(trimmedPlusCode)
@@ -65,13 +73,22 @@ export default function RecommendCorrectionForm({
   // text alone isn't a "change" the Admin can act on.
   const isDirty =
     trimmedPlusCode !== currentPlusCode ||
+    territoryId !== currentTerritoryId ||
     sectionId !== currentSectionId ||
     blockId !== currentBlockId ||
     householdMembers.trim() !== initialHouseholdMembers
 
+  function handleTerritoryChange(id: string) {
+    setTerritoryId(id)
+    const t = territories.find((x) => x.id === id)
+    const firstSection = t?.sections[0]
+    setSectionId(firstSection?.id ?? '')
+    setBlockId(firstSection?.blocks[0]?.id ?? '')
+  }
+
   function handleSectionChange(id: string) {
     setSectionId(id)
-    const s = sections.find((x) => x.id === id)
+    const s = territory?.sections.find((x) => x.id === id)
     setBlockId(s?.blocks[0]?.id ?? '')
   }
 
@@ -129,10 +146,24 @@ export default function RecommendCorrectionForm({
             </button>
           </div>
         </FormField>
+        <FormField label="Barangay">
+          <select value={territoryId} onChange={(e) => handleTerritoryChange(e.target.value)} disabled={submitting} className={inputClass}>
+            {territories.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.description || t.name}
+              </option>
+            ))}
+          </select>
+        </FormField>
         <div className="grid grid-cols-2 gap-3">
           <FormField label="Section">
-            <select value={sectionId} onChange={(e) => handleSectionChange(e.target.value)} disabled={submitting} className={inputClass}>
-              {sections.map((s) => (
+            <select
+              value={sectionId}
+              onChange={(e) => handleSectionChange(e.target.value)}
+              disabled={submitting || !territory?.sections.length}
+              className={inputClass}
+            >
+              {territory?.sections.map((s) => (
                 <option key={s.id} value={s.id}>
                   Section {s.label}
                 </option>
@@ -188,8 +219,17 @@ export default function RecommendCorrectionForm({
         </button>
         <button
           type="button"
-          onClick={() => onSubmit({ plusCode: trimmedPlusCode, householdMembers: householdMembers.trim(), reason: reason.trim(), sectionId, blockId })}
-          disabled={submitting || !plusCodeValid || !reason.trim() || !sectionId || !blockId || !isDirty}
+          onClick={() =>
+            onSubmit({
+              plusCode: trimmedPlusCode,
+              householdMembers: householdMembers.trim(),
+              reason: reason.trim(),
+              territoryId,
+              sectionId,
+              blockId,
+            })
+          }
+          disabled={submitting || !plusCodeValid || !reason.trim() || !territoryId || !sectionId || !blockId || !isDirty}
           className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {submitting ? (
