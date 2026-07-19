@@ -316,7 +316,7 @@ export default function GroupLeaderTabs({
               <button
                 type="button"
                 onClick={() => setAssignmentAction((a) => (a === 'generate' ? null : 'generate'))}
-                className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
+                className={`rounded-full px-6 py-3 text-sm font-semibold transition ${
                   assignmentAction === 'generate' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
                 }`}
               >

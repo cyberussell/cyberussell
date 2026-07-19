@@ -5,8 +5,11 @@ import QRCode from 'qrcode'
 // orders/qr.ts, staff-invite emails) — no env-based base URL exists yet.
 const APP_ORIGIN = 'https://www.cyberussell.com'
 
+// Uses the /tms short-URL prefix (see next.config.ts's permanent redirect to
+// /territory-management-system/:path*) instead of the full product path — shorter for both the
+// QR code itself and the plain-text link shown underneath it.
 export function getAssignmentBatchUrl(accessToken: string): string {
-  return `${APP_ORIGIN}/territory-management-system/assignment/${accessToken}`
+  return `${APP_ORIGIN}/tms/assignment/${accessToken}`
 }
 
 // Scanning this with an ordinary phone camera opens the batch's public partnership list
