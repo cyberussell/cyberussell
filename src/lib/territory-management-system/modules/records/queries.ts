@@ -225,6 +225,30 @@ export async function listFlaggedForRemoval(supabase: SupabaseClient, congregati
 // case) plus a reason, without editing the record directly. Overwrites any prior
 // recommendation on this record rather than accumulating a history — same "latest wins" shape
 // as recommendRecordForRemoval above.
+// Confirms a publisher-submitted Section/Block correction actually belongs to the record's own
+// territory before it's ever written — never trust a client-supplied parent id outright, same
+// rule this codebase applies everywhere else a client picks from a constrained list (e.g.
+// createAssignment's territory check, lockPartnershipSearchBlocks' block check). Two plain
+// queries rather than a nested embed — territory_records/territory_sections/territory_blocks
+// each only have one relevant FK path here, but a nested embed was exactly what broke silently
+// elsewhere in this product once a table gained a second FK, so this stays deliberately simple.
+export async function sectionBlockBelongsToTerritory(
+  supabase: SupabaseClient,
+  territoryId: string,
+  sectionId: string,
+  blockId: string
+): Promise<boolean> {
+  const { data: section } = await supabase
+    .from('territory_sections')
+    .select('id')
+    .eq('id', sectionId)
+    .eq('territory_id', territoryId)
+    .maybeSingle()
+  if (!section) return false
+  const { data: block } = await supabase.from('territory_blocks').select('id').eq('id', blockId).eq('section_id', sectionId).maybeSingle()
+  return !!block
+}
+
 export async function recommendRecordCorrection(
   supabase: SupabaseClient,
   recordId: string,
@@ -232,7 +256,14 @@ export async function recommendRecordCorrection(
   reason: string,
   recommendedBy: string,
   sectionId: string,
-  blockId: string
+  blockId: string,
+  // Optional — see 031_correction_household_members.sql. undefined means "not recommending a
+  // change to this field," left out of the update entirely rather than written as null, so a
+  // second correction that only touches the Plus Code can't accidentally wipe out a still-open
+  // household-members recommendation from create time (this function always fires on submit,
+  // there's only ever one recommendation in flight per record at a time, so this mostly guards
+  // against a caller forgetting to pass it rather than a real concurrent-edit scenario).
+  householdMembers?: number
 ): Promise<void> {
   const { error } = await supabase
     .from('territory_records')
@@ -243,6 +274,7 @@ export async function recommendRecordCorrection(
       correction_recommended_by: recommendedBy,
       correction_recommended_section_id: sectionId,
       correction_recommended_block_id: blockId,
+      correction_recommended_household_members: householdMembers ?? null,
     })
     .eq('id', recordId)
   if (error) throw error
@@ -260,22 +292,30 @@ export async function dismissCorrectionRecommendation(supabase: SupabaseClient, 
       correction_recommended_by: null,
       correction_recommended_section_id: null,
       correction_recommended_block_id: null,
+      correction_recommended_household_members: null,
     })
     .eq('id', recordId)
   if (error) throw error
 }
 
-// Admin applies a correction recommendation — writes the recommended Plus Code/Section/Block
-// onto the record's real columns and clears the recommendation flag in the same update. Reads
-// the recommended values first since Supabase's update() can't copy one column's value into
-// another server-side without a raw SQL/RPC call.
+// Admin applies a correction recommendation — writes the recommended Plus Code/Section/Block/
+// Household Members onto the record's real columns and clears the recommendation flag in the
+// same update. Reads the recommended values first since Supabase's update() can't copy one
+// column's value into another server-side without a raw SQL/RPC call.
 export async function applyRecordCorrection(supabase: SupabaseClient, recordId: string): Promise<void> {
   const { data: existing } = await supabase
     .from('territory_records')
-    .select('correction_recommended_plus_code, correction_recommended_section_id, correction_recommended_block_id')
+    .select('correction_recommended_plus_code, correction_recommended_section_id, correction_recommended_block_id, correction_recommended_household_members')
     .eq('id', recordId)
     .maybeSingle()
-  if (!existing?.correction_recommended_plus_code && !existing?.correction_recommended_section_id && !existing?.correction_recommended_block_id) return
+  if (
+    !existing?.correction_recommended_plus_code &&
+    !existing?.correction_recommended_section_id &&
+    !existing?.correction_recommended_block_id &&
+    existing?.correction_recommended_household_members == null
+  ) {
+    return
+  }
   const update: Record<string, unknown> = {
     correction_recommended_at: null,
     correction_recommended_plus_code: null,
@@ -283,11 +323,13 @@ export async function applyRecordCorrection(supabase: SupabaseClient, recordId: 
     correction_recommended_by: null,
     correction_recommended_section_id: null,
     correction_recommended_block_id: null,
+    correction_recommended_household_members: null,
     updated_at: new Date().toISOString(),
   }
   if (existing.correction_recommended_plus_code) update.plus_code = existing.correction_recommended_plus_code
   if (existing.correction_recommended_section_id) update.section_id = existing.correction_recommended_section_id
   if (existing.correction_recommended_block_id) update.block_id = existing.correction_recommended_block_id
+  if (existing.correction_recommended_household_members != null) update.household_members = existing.correction_recommended_household_members
   const { error } = await supabase.from('territory_records').update(update).eq('id', recordId)
   if (error) throw error
 }

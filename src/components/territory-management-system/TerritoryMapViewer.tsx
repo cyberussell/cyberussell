@@ -8,9 +8,10 @@ import { Map, X, ZoomIn } from 'lucide-react'
 // canvas/drawing dependency.
 //
 // 'thumbnail' (default) renders the full-width image preview used on the workspace's list
-// view. 'button' renders a small labeled button instead — used from the record detail card,
-// where a full-width image preview would be too much next to the other action buttons — both
-// variants open the exact same lightbox.
+// view. 'button' renders a small labeled button instead. 'icon' renders a larger, label-less
+// circular button — used in the record detail card's bottom-right action corner, deliberately
+// bigger than a normal icon button so it's an easy tap target for less phone-dexterous users.
+// All three variants open the exact same lightbox.
 export default function TerritoryMapViewer({
   mapImageUrl,
   territoryName,
@@ -18,7 +19,7 @@ export default function TerritoryMapViewer({
 }: {
   mapImageUrl: string
   territoryName: string
-  variant?: 'thumbnail' | 'button'
+  variant?: 'thumbnail' | 'button' | 'icon'
 }) {
   const [open, setOpen] = useState(false)
 
@@ -42,6 +43,16 @@ export default function TerritoryMapViewer({
         >
           <Map className="h-4 w-4" />
           View Territory Map
+        </button>
+      ) : variant === 'icon' ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={`View ${territoryName} map`}
+          title="View Territory Map"
+          className="flex h-14 w-14 items-center justify-center rounded-full border border-blue-100 bg-white text-[#2563EB] shadow-sm transition hover:border-[#38BDF8]/40 hover:bg-blue-50"
+        >
+          <Map className="h-6 w-6" />
         </button>
       ) : (
         <button

@@ -1,6 +1,30 @@
 # Current Work
 
-**Territory Management System — iOS viewport fixes: min-h-screen mis-centering, persistent input-zoom (2026-07-19) — code done, tsc + vitest (56/56) clean, live-verified what's provable without a real iOS device, not committed — see checkpoint `territory-management-mobile-viewport-fixes-v1.md`:**
+**Territory Management System — Correction form Household Members + validation/prefill/dirty-check, record detail card redesign (2026-07-19) — code done, tsc + vitest (56/56) clean, live-verified via a temporary scratch route, not committed — see checkpoint `territory-management-correction-household-members-record-card-redesign-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Two requests in one message. (1) "Recommend a Correction" gained a Household Members field — new migration 031 (`correction_recommended_household_members`), threaded through `recommendRecordCorrection`/`applyRecordCorrection`/`dismissCorrectionRecommendation`, the Admin's Flagged for Correction page, and both publisher call sites. Also closed 2 real validation gaps while at it: the Plus Code field now runs through real `open-location-code` format validation (client + server), and the Section/Block ownership was never re-verified server-side before this — new `sectionBlockBelongsToTerritory()` check added to both correction actions, same "don't trust a client-supplied parent id" rule this codebase applies elsewhere. The form now prefills every field from the record's current values and disables Send until something real actually changed (a reason alone no longer counts). (2) Redesigned the record detail card's header per Russell's reference mockup: back arrow + title + result badge above the card, home-icon + address as the lead line, Section/Block/resident-name and household-count/linked-contacts each combined onto one line, `notes` removed from this card (still visible per-visit in Visit History below), and the two map buttons replaced with larger icon-only circular buttons in the bottom-right corner. One flagged judgment call: a prior session made this card the *only* place status coloring shows in the workspace — kept that signal but rescoped it from the whole card to just the icon badge, since the mockup itself was plain white; flagged in case the intent was to drop status coloring entirely.
+
+Current Status: Code done, not yet committed. `npx tsc --noEmit` and `npx vitest run` (56/56) clean. Live-verified via a temporary scratch route: the redesigned card matches the mockup closely, back arrow fires correctly, Household Members prefills and the dirty-check correctly keeps Send disabled until a real field changes, and the live Plus Code validation error shows/hides correctly. **Not verified**: the actual database round-trip (migration 031 not yet applied anywhere, no live Supabase credentials in this sandbox) and the Admin Flagged-for-Correction page's new line (code-reviewed only).
+
+**Next recommended task:** Russell runs migration 031, then live-verifies a real Household Members correction end-to-end (recommend → Flagged for Correction → Apply Correction), and confirms the status-coloring judgment call (icon-badge-only tint vs. fully removing it) matches what he actually wanted.
+
+----------------------------------------
+
+**Territory Management System — Mobile record-detail action row: grouped 4-button panel (2026-07-19) — code done, tsc + vitest (56/56) clean, live-verified via a temporary scratch route, not committed — see checkpoint `territory-management-record-detail-action-panel-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked for "Add Another Person Here" to move into the mobile Pass/Unlocated/Correction row as a 4th "Add Person" button (icon on top, label below, matching the other three), all grouped into one visual panel rather than a separate floating button above three separate ones. `PublisherRecordDetailView.tsx`'s mobile-only collapsed action row went from a bare `grid-cols-3` of individually-bordered buttons to one `Card` containing a `grid-cols-4 divide-x` of plain (hover-only) buttons — Pass, Unlocated, Correction, Add Person. Add Person still calls `onAddSibling` directly (jumps straight to the add-record view), same behavior as before, just relocated. Desktop/tablet is unaffected — "Add Another Person Here" (full label) still shows above the always-expanded forms there, just switched from unconditional to `hidden sm:flex` so it doesn't double up with the new mobile panel.
+
+Current Status: Code done, not yet committed. `npx tsc --noEmit` and `npx vitest run` (56/56) clean. Live-verified via a temporary scratch route: the 4-button panel renders correctly at 375px width, and Pass still correctly opens the inline Move form with the red-X close button from the prior session intact.
+
+**Next recommended task:** Russell reviews the diff, deploys, then spot-checks live: the 4-button panel matches what he asked for, and Add Person still opens the add-record form.
+
+----------------------------------------
+
+**Territory Management System — iOS viewport fixes: min-h-screen mis-centering, persistent input-zoom (2026-07-19) — code done, tsc + vitest (56/56) clean, live-verified what's provable without a real iOS device, committed and pushed (`77d8d27`), deployed via Vercel auto-deploy on push — see checkpoint `territory-management-mobile-viewport-fixes-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 

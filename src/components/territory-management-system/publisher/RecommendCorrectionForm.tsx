@@ -2,27 +2,33 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { OpenLocationCode } from 'open-location-code'
 import { LocateFixed, PencilLine, RefreshCw } from 'lucide-react'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import { locatePlusCode } from '@/lib/territory-management-system/plusCode'
 
+const openLocationCode = new OpenLocationCode()
+
 export interface CorrectionFields {
   plusCode: string
+  householdMembers: string
   reason: string
   sectionId: string
   blockId: string
 }
 
 // Lets a publisher recommend a correction to a record's info (most commonly a wrong Plus Code,
-// now also Section/Block — see 030_correction_section_block.sql) without editing it directly —
-// the Admin reviews and applies or dismisses it from the Flagged for Correction list, same
-// review-gated pattern as "Recommend for Admin Removal". Collapsed behind a trigger button by
-// default, same convention as MarkMovedForm.
+// now also Section/Block and Household Members — see 030_correction_section_block.sql,
+// 031_correction_household_members.sql) without editing it directly — the Admin reviews and
+// applies or dismisses it from the Flagged for Correction list, same review-gated pattern as
+// "Recommend for Admin Removal". Collapsed behind a trigger button by default, same convention
+// as MarkMovedForm.
 export default function RecommendCorrectionForm({
   currentPlusCode,
   currentSectionId,
   currentBlockId,
+  currentHouseholdMembers,
   sections,
   submitting,
   onSubmit,
@@ -37,6 +43,7 @@ export default function RecommendCorrectionForm({
   // Section/Block start prefilled to the record's current values rather than blank.
   currentSectionId: string
   currentBlockId: string
+  currentHouseholdMembers: number | null
   sections: { id: string; label: string; blocks: { id: string; label: string }[] }[]
   submitting: boolean
   onSubmit: (fields: CorrectionFields) => void
@@ -44,11 +51,23 @@ export default function RecommendCorrectionForm({
 }) {
   const [open, setOpen] = useState(initialOpen)
   const [plusCode, setPlusCode] = useState(currentPlusCode)
+  const initialHouseholdMembers = currentHouseholdMembers != null ? String(currentHouseholdMembers) : ''
+  const [householdMembers, setHouseholdMembers] = useState(initialHouseholdMembers)
   const [reason, setReason] = useState('')
   const [locating, setLocating] = useState(false)
   const [sectionId, setSectionId] = useState(currentSectionId)
   const [blockId, setBlockId] = useState(currentBlockId)
   const blockOptions = sections.find((s) => s.id === sectionId)?.blocks ?? []
+
+  const trimmedPlusCode = plusCode.trim()
+  const plusCodeValid = trimmedPlusCode.length > 0 && openLocationCode.isValid(trimmedPlusCode)
+  // Nothing to recommend if every field still matches what the record already has — the reason
+  // text alone isn't a "change" the Admin can act on.
+  const isDirty =
+    trimmedPlusCode !== currentPlusCode ||
+    sectionId !== currentSectionId ||
+    blockId !== currentBlockId ||
+    householdMembers.trim() !== initialHouseholdMembers
 
   function handleSectionChange(id: string) {
     setSectionId(id)
@@ -88,7 +107,7 @@ export default function RecommendCorrectionForm({
       <h2 className="font-semibold text-[#0B1B33]">Recommend a Correction</h2>
       <p className="mt-1 text-sm text-slate-500">Wrong Plus Code or other info? Let the Admin know what it should be.</p>
       <div className="mt-4 space-y-4">
-        <FormField label="Correct Plus Code">
+        <FormField label="Correct Plus Code" error={trimmedPlusCode && !plusCodeValid ? 'Enter a valid Plus Code (e.g. 7FG8+4V).' : undefined}>
           <div className="flex gap-2">
             <input
               value={plusCode}
@@ -135,6 +154,17 @@ export default function RecommendCorrectionForm({
             </select>
           </FormField>
         </div>
+        <FormField label="Household Members" optional>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            value={householdMembers}
+            onChange={(e) => setHouseholdMembers(e.target.value)}
+            disabled={submitting}
+            className={inputClass}
+          />
+        </FormField>
         <FormField label="Note to Admin">
           <textarea
             value={reason}
@@ -158,8 +188,8 @@ export default function RecommendCorrectionForm({
         </button>
         <button
           type="button"
-          onClick={() => onSubmit({ plusCode: plusCode.trim(), reason: reason.trim(), sectionId, blockId })}
-          disabled={submitting || !plusCode.trim() || !reason.trim() || !sectionId || !blockId}
+          onClick={() => onSubmit({ plusCode: trimmedPlusCode, householdMembers: householdMembers.trim(), reason: reason.trim(), sectionId, blockId })}
+          disabled={submitting || !plusCodeValid || !reason.trim() || !sectionId || !blockId || !isDirty}
           className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {submitting ? (

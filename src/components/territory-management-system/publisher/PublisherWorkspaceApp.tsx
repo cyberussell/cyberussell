@@ -375,6 +375,7 @@ export default function PublisherWorkspaceApp({
         partnershipToken,
         recordId,
         plusCode: fields.plusCode,
+        householdMembers: fields.householdMembers,
         reason: fields.reason,
         sectionId: fields.sectionId,
         blockId: fields.blockId,
@@ -405,6 +406,7 @@ export default function PublisherWorkspaceApp({
         partnershipToken,
         recordId,
         plusCode: fields.plusCode,
+        householdMembers: fields.householdMembers,
         reason: fields.reason,
         sectionId: fields.sectionId,
         blockId: fields.blockId,
@@ -499,6 +501,7 @@ export default function PublisherWorkspaceApp({
       correction_recommended_by: null,
       correction_recommended_section_id: null,
       correction_recommended_block_id: null,
+      correction_recommended_household_members: null,
       created_by_partnership_id: workspace.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -984,6 +987,7 @@ export default function PublisherWorkspaceApp({
             // record you just left.
             key={selected.record.id}
             assigned={selected}
+            onBack={returnToList}
             pendingVisits={pendingVisitsForSelected}
             readOnly={readOnly}
             sessionEnded={sessionEnded}

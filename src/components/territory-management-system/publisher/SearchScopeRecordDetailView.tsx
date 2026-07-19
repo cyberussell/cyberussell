@@ -61,6 +61,7 @@ export default function SearchScopeRecordDetailView({
             currentPlusCode={record.plus_code ?? ''}
             currentSectionId={record.section_id}
             currentBlockId={record.block_id}
+            currentHouseholdMembers={record.household_members}
             sections={sections}
             submitting={submitting}
             onSubmit={onRecommendCorrection}

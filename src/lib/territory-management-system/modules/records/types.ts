@@ -56,6 +56,9 @@ export interface TerritoryRecord {
   // touch either or both.
   correction_recommended_section_id: string | null
   correction_recommended_block_id: string | null
+  // Household Members half of the same correction recommendation — see
+  // 031_correction_household_members.sql.
+  correction_recommended_household_members: number | null
   created_at: string
   updated_at: string
 }

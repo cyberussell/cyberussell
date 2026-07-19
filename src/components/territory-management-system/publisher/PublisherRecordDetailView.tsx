@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Anton } from 'next/font/google'
-import { ArrowRightLeft, ChevronDown, ChevronRight, MapPin, PencilLine, Truck, UserPlus, Users, X } from 'lucide-react'
+import { ArrowLeft, ArrowRightLeft, ChevronDown, ChevronRight, Home, MapPin, PencilLine, Truck, UserPlus, Users, X } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { VisitResult } from '@/lib/territory-management-system/modules/records/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
@@ -32,11 +31,6 @@ function CloseMobileActionButton({ onClick }: { onClick: () => void }) {
   )
 }
 
-// A heavy, condensed display face just for the "Nth Record to Visit" header — deliberately not
-// mixed into the site's normal Syne/Inter body faces (see root layout.tsx), since this is a
-// one-off, one-line label rather than running text.
-const anton = Anton({ subsets: ['latin'], weight: '400', display: 'swap' })
-
 // 1 -> "1st", 2 -> "2nd", 3 -> "3rd", 4 -> "4th", 11-13 -> "11th"/"12th"/"13th" (the standard
 // English ordinal-suffix exception for the teens).
 function ordinal(n: number): string {
@@ -54,13 +48,15 @@ function ordinal(n: number): string {
   }
 }
 
-// Full-card tone — this is the ONLY place status coloring shows now (Russell: card list stays
+// Status tone — this is the ONLY place status coloring shows now (Russell: card list stays
 // all-white, this single-record detail card is where it "only changes when they are in the
-// actual record card"). Exact hex values from Russell, not Tailwind's palette. Text color per
-// tone picked by actual WCAG contrast ratio against each background, not eyeballed — #4a6da7 is
-// dark enough for white text (5.2:1) but #799fcc/#e59797/#dadad9 are all too light for white text
-// (2.3–2.8:1, fails AA) and need dark navy instead (7.6–15:1). Border is each background darkened
-// ~20% for a bit of edge definition against the page background.
+// actual record card"). Previously tinted the whole detail card; now scoped to just the
+// address icon badge so the redesigned card can stay clean/white overall while keeping that
+// same at-a-glance signal. Exact hex values from Russell, not Tailwind's palette. Text/icon
+// color per tone picked by actual WCAG contrast ratio against each background, not eyeballed —
+// #4a6da7 is dark enough for white (5.2:1) but #799fcc/#e59797/#dadad9 are all too light for
+// white (2.3–2.8:1, fails AA) and need dark navy instead (7.6–15:1). Border is each background
+// darkened ~20% for a bit of edge definition against the page background.
 function cardTone(doNotCall: boolean, latestResult: string | undefined) {
   switch (getRecordCardTone(doNotCall, latestResult)) {
     case 'do_not_call':
@@ -78,6 +74,7 @@ function cardTone(doNotCall: boolean, latestResult: string | undefined) {
 
 export default function PublisherRecordDetailView({
   assigned,
+  onBack,
   pendingVisits,
   readOnly,
   sessionEnded,
@@ -98,6 +95,9 @@ export default function PublisherRecordDetailView({
   onAddSibling,
 }: {
   assigned: PartnershipRecordDetail
+  // The header row's back arrow — always just returns to the assigned-records list, same
+  // destination as returnToList() everywhere else in the workspace.
+  onBack: () => void
   pendingVisits: SyncQueueItem[]
   // True while viewing another Ministry Partner's assignment from this device — address,
   // badges, and full visit history still show, but there's nothing here to log or edit.
@@ -166,42 +166,57 @@ export default function PublisherRecordDetailView({
 
   return (
     <div className="space-y-6">
-      <div
-        className={`rounded-2xl border p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)] ${tone.container}`}
-      >
-        <p className={`${anton.className} mb-2 text-xl uppercase tracking-wide ${tone.primary}`}>
-          {ordinal(assigned.sequence)} Record to Visit
-        </p>
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <h1 className={`font-semibold ${tone.primary}`}>
-            {assigned.record.address || assigned.record.plus_code || 'Unlabeled record'}
-            {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
-          </h1>
-          <VisitResultBadge result={assigned.visits[0]?.result ?? 'initial_visit'} />
-        </div>
-        <p className={`mt-1 text-sm ${tone.secondary}`}>
-          Sec {assigned.record.section?.label ?? '—'} / Blk {assigned.record.block?.label ?? '—'}
-        </p>
-        {assigned.record.resident_name && <p className={`mt-2 text-sm ${tone.secondary}`}>{assigned.record.resident_name}</p>}
-        {assigned.record.household_members != null && (
-          <p className={`mt-2 text-sm ${tone.secondary}`}>
-            Household members: {assigned.record.household_members}
-          </p>
-        )}
-        {householdRecords.length > 0 && (
-          <div className="mt-2">
-            <button
-              type="button"
-              onClick={() => setHouseholdOpen((o) => !o)}
-              aria-expanded={householdOpen}
-              className={`flex items-center gap-1.5 text-sm font-medium ${tone.primary}`}
-            >
-              <Users className="h-4 w-4" />
-              {householdRecords.length + 1} contact records at this address
-              {householdOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-            </button>
-            {householdOpen && (
-              <div className="mt-2 space-y-1 rounded-lg bg-white/80 p-1.5">
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={onBack}
+          aria-label="Back"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#0B1B33] transition hover:bg-black/5"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+        <h1 className="min-w-0 flex-1 truncate font-semibold text-[#0B1B33]">{ordinal(assigned.sequence)} record to visit</h1>
+        <VisitResultBadge result={assigned.visits[0]?.result ?? 'initial_visit'} />
+      </div>
+
+      <Card className="p-5">
+        <div className="flex items-start gap-3">
+          <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${tone.container}`}>
+            <Home className={`h-5 w-5 ${tone.primary}`} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="truncate font-semibold text-[#0B1B33]">
+              {assigned.record.address || assigned.record.plus_code || 'Unlabeled record'}
+              {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
+            </h2>
+            <p className="mt-0.5 truncate text-sm text-slate-500">
+              Sec {assigned.record.section?.label ?? '—'} / Blk {assigned.record.block?.label ?? '—'}
+              {assigned.record.resident_name ? ` · ${assigned.record.resident_name}` : ''}
+            </p>
+            {(assigned.record.household_members != null || householdRecords.length > 0) && (
+              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+                {assigned.record.household_members != null && (
+                  <span className="flex items-center gap-1">
+                    <Users className="h-3.5 w-3.5" />
+                    {assigned.record.household_members} household member{assigned.record.household_members === 1 ? '' : 's'}
+                  </span>
+                )}
+                {householdRecords.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setHouseholdOpen((o) => !o)}
+                    aria-expanded={householdOpen}
+                    className="flex items-center gap-1 font-medium text-[#2563EB]"
+                  >
+                    <Users className="h-3.5 w-3.5" />
+                    {householdRecords.length + 1} linked contacts
+                    {householdOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                  </button>
+                )}
+              </div>
+            )}
+            {householdOpen && householdRecords.length > 0 && (
+              <div className="mt-2 space-y-1 rounded-lg bg-[#F8FBFF] p-1.5">
                 {householdRecords.map((h) => (
                   <button
                     key={h.id}
@@ -215,51 +230,58 @@ export default function PublisherRecordDetailView({
                 ))}
               </div>
             )}
-          </div>
-        )}
-        {assigned.record.notes && <p className={`mt-2 text-sm ${tone.secondary}`}>{assigned.record.notes}</p>}
-        {assigned.record.do_not_call && (
-          <p className={`mt-2 text-sm font-medium ${tone.primary}`}>
-            Do Not Call
-            {isDoNotCallLocked(assigned.record.do_not_call, assigned.record.do_not_call_at) && assigned.record.do_not_call_at && (
-              <span className={`ml-1 font-normal ${tone.secondary}`}>
-                — locked until{' '}
-                {doNotCallUnlockDate(assigned.record.do_not_call_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-              </span>
+            {assigned.record.do_not_call && (
+              <p className="mt-2 text-sm font-medium text-red-600">
+                Do Not Call
+                {isDoNotCallLocked(assigned.record.do_not_call, assigned.record.do_not_call_at) && assigned.record.do_not_call_at && (
+                  <span className="ml-1 font-normal text-red-500/80">
+                    — locked until{' '}
+                    {doNotCallUnlockDate(assigned.record.do_not_call_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                )}
+              </p>
             )}
-          </p>
-        )}
-        {assigned.passed_from_name && (
-          <p className={`mt-2 text-sm font-medium ${tone.primary}`}>
-            Passed by {assigned.passed_from_name}
-            {assigned.passed_from_at ? ` on ${new Date(assigned.passed_from_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}
-          </p>
-        )}
+            {assigned.passed_from_name && (
+              <p className="mt-2 text-sm font-medium text-[#2563EB]">
+                Passed by {assigned.passed_from_name}
+                {assigned.passed_from_at ? ` on ${new Date(assigned.passed_from_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Bigger, well-separated, icon-only touch targets in the corner rather than full-width
+            labeled buttons — easier for a less phone-dexterous publisher to tap accurately.
+            Notes intentionally don't appear on this card anymore — a visit's own notes still
+            show per-entry in Visit History below. */}
         {(mapsUrl || mapUrl) && (
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="mt-4 flex justify-end gap-3">
             {mapsUrl && (
               <a
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] hover:border-[#38BDF8]/40 hover:bg-blue-50"
+                aria-label="Open in Google Maps"
+                title="Open in Google Maps"
+                className="flex h-14 w-14 items-center justify-center rounded-full border border-blue-100 bg-white text-[#2563EB] shadow-sm transition hover:border-[#38BDF8]/40 hover:bg-blue-50"
               >
-                <MapPin className="h-4 w-4" />
-                Open in Google Maps
+                <MapPin className="h-6 w-6" />
               </a>
             )}
             {mapUrl && (
-              <TerritoryMapViewer mapImageUrl={mapUrl} territoryName={assigned.record.territory?.name ?? 'Territory'} variant="button" />
+              <TerritoryMapViewer mapImageUrl={mapUrl} territoryName={assigned.record.territory?.name ?? 'Territory'} variant="icon" />
             )}
           </div>
         )}
-      </div>
+      </Card>
 
+      {/* Desktop/tablet only — on mobile this is folded into the grouped Pass/Unlocated/
+          Correction/Add Person panel below instead of sitting as its own separate button. */}
       {editable && (
         <button
           type="button"
           onClick={onAddSibling}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+          className="hidden w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 sm:flex"
         >
           <UserPlus className="h-4 w-4" />
           Add Another Person Here
@@ -284,41 +306,55 @@ export default function PublisherRecordDetailView({
               currentPlusCode={assigned.record.plus_code ?? ''}
               currentSectionId={assigned.record.section_id}
               currentBlockId={assigned.record.block_id}
+              currentHouseholdMembers={assigned.record.household_members}
               sections={sections}
               submitting={recommendingCorrection}
               onSubmit={onRecommendCorrection}
             />
           </div>
 
-          {/* Mobile: collapsed behind a three-button row until one is tapped */}
+          {/* Mobile: collapsed behind a four-button row (one shared panel, not four separate
+              floating buttons) until one is tapped. Add Person calls onAddSibling directly, same
+              as the desktop button above — it jumps straight to the add-record view rather than
+              toggling mobileAction like the other three, which show an inline form instead. */}
           <div className="sm:hidden">
             {mobileAction === 'none' && (
-              <div className="grid grid-cols-3 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setMobileAction('move')}
-                  className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
-                >
-                  <ArrowRightLeft className="h-4 w-4" />
-                  Pass
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMobileAction('moved')}
-                  className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 py-2.5 text-sm font-semibold text-amber-700 transition hover:border-amber-300"
-                >
-                  <Truck className="h-4 w-4" />
-                  Unlocated
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMobileAction('correction')}
-                  className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
-                >
-                  <PencilLine className="h-4 w-4" />
-                  Correction
-                </button>
-              </div>
+              <Card className="overflow-hidden p-0">
+                <div className="grid grid-cols-4 divide-x divide-gray-100">
+                  <button
+                    type="button"
+                    onClick={() => setMobileAction('move')}
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-[#2563EB] transition hover:bg-blue-50"
+                  >
+                    <ArrowRightLeft className="h-4 w-4" />
+                    Pass
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobileAction('moved')}
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-amber-700 transition hover:bg-amber-50"
+                  >
+                    <Truck className="h-4 w-4" />
+                    Unlocated
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobileAction('correction')}
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-[#2563EB] transition hover:bg-blue-50"
+                  >
+                    <PencilLine className="h-4 w-4" />
+                    Correction
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onAddSibling}
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-[#2563EB] transition hover:bg-blue-50"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    Add Person
+                  </button>
+                </div>
+              </Card>
             )}
             {mobileAction === 'move' && (
               <div className="relative">
@@ -348,6 +384,7 @@ export default function PublisherRecordDetailView({
                   currentPlusCode={assigned.record.plus_code ?? ''}
                   currentSectionId={assigned.record.section_id}
                   currentBlockId={assigned.record.block_id}
+                  currentHouseholdMembers={assigned.record.household_members}
                   sections={sections}
                   submitting={recommendingCorrection}
                   onSubmit={onRecommendCorrection}

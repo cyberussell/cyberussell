@@ -1,7 +1,21 @@
 import { z } from 'zod'
-import { VISIT_RESULT_CONDUCTOR_PROMPT } from '@/lib/territory-management-system/modules/records/schema'
+import { OpenLocationCode } from 'open-location-code'
+import { VISIT_RESULT_CONDUCTOR_PROMPT, householdMembersField } from '@/lib/territory-management-system/modules/records/schema'
 
 // Shared by actions/assignments.ts (admin) and actions/publisher.ts (public, token-gated).
+
+const openLocationCode = new OpenLocationCode()
+
+// Real format validation, not just "is a non-empty string" — a publisher recommending a
+// corrected Plus Code is exactly the case where a typo is likely, and the whole point of the
+// recommendation is that the Admin trusts it enough to apply with one click. Accepts both full
+// ("6PH57VP3+PQ") and short/local ("7FG8+4V") forms, matching how records are actually entered
+// elsewhere in this app (see HouseholdDistributionMap's decodePins).
+const plusCodeField = z
+  .string()
+  .min(1, 'Plus Code is required.')
+  .max(20)
+  .refine((code) => openLocationCode.isValid(code), 'Enter a valid Plus Code (e.g. 7FG8+4V).')
 
 // Unlike records/schema.ts's shared householdMembersField (which leaves a blank value as
 // unset — used by Admin's own Add/Edit Record forms), the publisher's Add/Edit-Added-Record
@@ -151,7 +165,8 @@ export type RecommendRemovalInput = z.input<typeof recommendRemovalSchema>
 export const recommendCorrectionSchema = z.object({
   partnershipToken: z.string().min(1),
   recordId: z.string().uuid(),
-  plusCode: z.string().min(1, 'Plus Code is required.').max(20),
+  plusCode: plusCodeField,
+  householdMembers: householdMembersField,
   reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
   sectionId: z.string().uuid(),
   blockId: z.string().uuid(),
@@ -163,7 +178,8 @@ export type RecommendCorrectionInput = z.input<typeof recommendCorrectionSchema>
 export const recommendSearchScopeCorrectionSchema = z.object({
   partnershipToken: z.string().min(1),
   recordId: z.string().uuid(),
-  plusCode: z.string().min(1, 'Plus Code is required.').max(20),
+  plusCode: plusCodeField,
+  householdMembers: householdMembersField,
   reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
   sectionId: z.string().uuid(),
   blockId: z.string().uuid(),
