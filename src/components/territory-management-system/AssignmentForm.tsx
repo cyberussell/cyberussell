@@ -131,8 +131,12 @@ export default function AssignmentForm({
   const shortfallPublishers = insufficientForHeadcount
     ? Math.max(0, publisherCount - recordsMaxPartnerships * groupSize)
     : 0
-  const fullPartnerships = Math.floor(eligibleTotal / maxPerPartnership)
-  const remainder = eligibleTotal % maxPerPartnership
+  // Plain arithmetic straight off the current inputs, not the engine's actual per-territory
+  // capping — matches how Russell wants the summary to read regardless of whether the territory
+  // truly has that many approved records (the separate insufficientForHeadcount box below still
+  // covers that headcount-vs-records mismatch).
+  const recordsToWork = partnershipCount * maxPerPartnership
+  const recordsRemaining = Math.max(0, eligibleTotal - recordsToWork)
 
   function toggle(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -213,18 +217,15 @@ export default function AssignmentForm({
             ) : (
               <>
                 <p className="text-center font-bold text-[#0B1B33]">
-                  {eligibleTotal} approved record{eligibleTotal === 1 ? '' : 's'} available
+                  {partnershipCount} Ministry Partner{partnershipCount === 1 ? '' : 's'}
                 </p>
-                {fullPartnerships > 0 && (
-                  <p className="mt-1 text-center">
-                    {maxPerPartnership} Record{maxPerPartnership === 1 ? '' : 's'} Per Ministry Partner
-                  </p>
-                )}
-                {remainder > 0 && (
-                  <p className="mt-1 text-center">
-                    1 Ministry Partner will only have {remainder} Record{remainder === 1 ? '' : 's'} to work on
-                  </p>
-                )}
+                <p className="mt-1 text-center">
+                  {recordsToWork} Record{recordsToWork === 1 ? '' : 's'} to be worked on
+                </p>
+                <p className="mt-1 text-center">
+                  {recordsRemaining} Record{recordsRemaining === 1 ? '' : 's'} still {recordsRemaining === 1 ? 'needs' : 'need'} to be
+                  worked on
+                </p>
               </>
             )}
           </div>

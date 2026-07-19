@@ -46,6 +46,7 @@ export default function PartnershipCard({
       {partnership.territories.length > 0 && (
         <p className="mt-0.5 text-xs text-slate-400">
           {partnership.territories.map((t) => `${t.name} — ${t.description}`).join(', ')}
+          {partnership.sections.length > 0 ? ` · Section ${partnership.sections.map((s) => s.label).join(', ')}` : ''}
         </p>
       )}
       {endedEarly && (

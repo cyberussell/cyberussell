@@ -42,6 +42,9 @@ export interface PartnershipWithProgress extends Partnership {
   // getBatchSummary's comment: a partnership can span more than one when a territory's record
   // count isn't an exact multiple of maxPerPartnership. Empty for a zero-record partnership.
   territories: { id: string; name: string; description: string }[]
+  // Distinct sections this partnership's own assigned records fall in, same "usually one, can
+  // span more than one" caveat as territories above. Empty for a zero-record partnership.
+  sections: { id: string; label: string }[]
   // Household-grouped count of this partnership's assigned records flagged Do Not Call (locked
   // or not) — shown on the card so a Ministry Partner/Group Leader knows some of their "N
   // records" aren't actually actionable this session.

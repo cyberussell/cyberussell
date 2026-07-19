@@ -78,7 +78,10 @@ export default function PartnershipList({
                 {p.dncCount > 0 && <span className="text-red-600"> · {p.dncCount} Do Not Call</span>}
               </p>
               {p.territories.length > 0 && (
-                <p className="mt-0.5 text-xs text-slate-400">{p.territories.map((t) => `${t.name} — ${t.description}`).join(', ')}</p>
+                <p className="mt-0.5 text-xs text-slate-400">
+                  {p.territories.map((t) => `${t.name} — ${t.description}`).join(', ')}
+                  {p.sections.length > 0 ? ` · Section ${p.sections.map((s) => s.label).join(', ')}` : ''}
+                </p>
               )}
               {endedEarly && (
                 <p className="mt-1 text-xs text-amber-600">Ended early — the remaining records weren&apos;t visited this session.</p>

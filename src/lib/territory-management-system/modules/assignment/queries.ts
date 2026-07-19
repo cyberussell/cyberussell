@@ -316,19 +316,33 @@ export async function getBatchSummary(
   // span more than one territory when a territory's count isn't an exact multiple of
   // maxPerPartnership (see engine.ts's calculateAssignment, which slices the flat eligible-record
   // pool with no territory-boundary awareness).
+  // section_id needs the !section_id disambiguation hint on its territory_sections embed —
+  // territory_records has had multiple FKs to territory_sections since migration 030
+  // (correction_recommended_section_id, then move_recommended_section_id in 033), so an
+  // unqualified embed is ambiguous to PostgREST and silently returns zero rows (see 033's
+  // comment for the full history of this failure mode).
   const partnershipIds = (partnerships ?? []).map((p) => p.id)
   const { data: allRecords } =
     partnershipIds.length > 0
       ? await supabase
           .from('partnership_records')
-          .select('partnership_id, record_id, completed_at, record:territory_records(plus_code, do_not_call, do_not_call_at, territory_id)')
+          .select(
+            'partnership_id, record_id, completed_at, record:territory_records(plus_code, do_not_call, do_not_call_at, territory_id, section_id, section:territory_sections!section_id(id, label))'
+          )
           .in('partnership_id', partnershipIds)
       : {
           data: [] as {
             partnership_id: string
             record_id: string
             completed_at: string | null
-            record: { plus_code: string | null; do_not_call: boolean; do_not_call_at: string | null; territory_id: string | null } | null
+            record: {
+              plus_code: string | null
+              do_not_call: boolean
+              do_not_call_at: string | null
+              territory_id: string | null
+              section_id: string | null
+              section: { id: string; label: string } | null
+            } | null
           }[],
         }
 
@@ -366,7 +380,14 @@ export async function getBatchSummary(
         partnership_id: string
         record_id: string
         completed_at: string | null
-        record: { plus_code: string | null; do_not_call: boolean; do_not_call_at: string | null; territory_id: string | null } | null
+        record: {
+          plus_code: string | null
+          do_not_call: boolean
+          do_not_call_at: string | null
+          territory_id: string | null
+          section_id: string | null
+          section: { id: string; label: string } | null
+        } | null
       }[]
     ).filter((r) => r.partnership_id === p.id)
 
@@ -380,6 +401,17 @@ export async function getBatchSummary(
       territoryIds.add(territoryId)
       const territory = territoryById.get(territoryId)
       if (territory) territories.push(territory)
+    }
+    // Distinct sections this partnership's own records fall in — same first-appearance-order
+    // pattern as territories above, but the section's own label is already embedded directly on
+    // each record (no separate batch-wide lookup needed, unlike territoryById).
+    const sectionIds = new Set<string>()
+    const sections: { id: string; label: string }[] = []
+    for (const r of records) {
+      const section = r.record?.section
+      if (!section || sectionIds.has(section.id)) continue
+      sectionIds.add(section.id)
+      sections.push(section)
     }
     // A record still locked under the Do Not Call cooldown can never be completed this session —
     // there's structurally no visit a publisher can log against it (see isDoNotCallLocked) — so
@@ -424,6 +456,7 @@ export async function getBatchSummary(
       recordCount: groups.size,
       completedCount: Array.from(groups.values()).filter((group) => group.some((r) => r.completed_at !== null)).length,
       territories,
+      sections,
       dncCount,
       hasBibleStudy,
     }
