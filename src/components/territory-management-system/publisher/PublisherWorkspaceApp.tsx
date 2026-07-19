@@ -32,7 +32,7 @@ import PublisherRecordDetailView from './PublisherRecordDetailView'
 import type { CorrectionFields } from './RecommendCorrectionForm'
 import PublisherAddedRecordDetailView from './PublisherAddedRecordDetailView'
 import PublisherRecordForm, { type NewPublisherRecordPayload } from './PublisherRecordForm'
-import AddHouseholdMemberForm from './AddHouseholdMemberForm'
+import AddHouseholdMemberForm, { type NewHouseholdMemberPayload } from './AddHouseholdMemberForm'
 import PublisherNoteForm from './PublisherNoteForm'
 import SearchScopeRecordsList from './SearchScopeRecordsList'
 import SearchScopeRecordDetailView from './SearchScopeRecordDetailView'
@@ -1018,6 +1018,21 @@ export default function PublisherWorkspaceApp({
                 },
                 returnToRecordId: selected.record.id,
               })
+            }
+            onAddHouseholdMember={(memberPayload: NewHouseholdMemberPayload) =>
+              handleAddRecord(
+                {
+                  territoryId: selected.record.territory_id,
+                  sectionId: selected.record.section_id,
+                  blockId: selected.record.block_id,
+                  address: selected.record.address,
+                  unit: selected.record.unit,
+                  plusCode: selected.record.plus_code ?? '',
+                  householdMembers: '',
+                  ...memberPayload,
+                },
+                { name: 'detail', recordId: selected.record.id }
+              )
             }
           />
         )}

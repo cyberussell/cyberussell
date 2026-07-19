@@ -14,6 +14,7 @@ import PublisherVisitLogForm from './PublisherVisitLogForm'
 import MoveRecordForm from './MoveRecordForm'
 import MarkMovedForm, { type MovedRecordFields } from './MarkMovedForm'
 import RecommendCorrectionForm, { type CorrectionFields } from './RecommendCorrectionForm'
+import AddHouseholdMemberForm, { type NewHouseholdMemberPayload } from './AddHouseholdMemberForm'
 
 // Closes one of the mobile Pass/Unlocated/Correction sub-forms, back to the 3-button row —
 // overlaid on the sub-form's own Card via the parent's `relative` wrapper rather than sitting as
@@ -50,10 +51,10 @@ function ordinal(n: number): string {
 
 // Status tone — this is the ONLY place status coloring shows now (Russell: card list stays
 // all-white, this single-record detail card is where it "only changes when they are in the
-// actual record card"). Previously tinted the whole detail card; now scoped to just the
-// address icon badge so the redesigned card can stay clean/white overall while keeping that
-// same at-a-glance signal. Exact hex values from Russell, not Tailwind's palette. Text/icon
-// color per tone picked by actual WCAG contrast ratio against each background, not eyeballed —
+// actual record card"). Tints the whole detail card (bg + border); the address icon stays a
+// fixed neutral white/blue circle so it doesn't disappear against a same-hue tinted card.
+// Exact hex values from Russell, not Tailwind's palette. Text color per tone picked by actual
+// WCAG contrast ratio against each background, not eyeballed —
 // #4a6da7 is dark enough for white (5.2:1) but #799fcc/#e59797/#dadad9 are all too light for
 // white (2.3–2.8:1, fails AA) and need dark navy instead (7.6–15:1). Border is each background
 // darkened ~20% for a bit of edge definition against the page background.
@@ -93,6 +94,7 @@ export default function PublisherRecordDetailView({
   onRecommendRemoval,
   onRecommendCorrection,
   onAddSibling,
+  onAddHouseholdMember,
 }: {
   assigned: PartnershipRecordDetail
   // The header row's back arrow — always just returns to the assigned-records list, same
@@ -142,6 +144,10 @@ export default function PublisherRecordDetailView({
   onRecommendRemoval: (reason: string, recordId: string) => void
   onRecommendCorrection: (fields: CorrectionFields) => void
   onAddSibling: () => void
+  // Mobile-only inline path for "Add Person" — same underlying add-a-household-member action as
+  // onAddSibling, but submits from right here instead of navigating to a separate view, matching
+  // how Pass/Unlocated/Correction behave on mobile.
+  onAddHouseholdMember: (payload: NewHouseholdMemberPayload) => void
 }) {
   const mapsUrl = assigned.record.plus_code
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assigned.record.plus_code)}`
@@ -152,7 +158,7 @@ export default function PublisherRecordDetailView({
   // "Pass to Another Partner" and "Mark as Moved" fully expanded at once, but on a phone that's
   // a lot of scrolling past two big cards to reach Record a Visit. Collapsed behind a two-button
   // row instead; tapping one reveals its panel in place of the row.
-  const [mobileAction, setMobileAction] = useState<'none' | 'move' | 'moved' | 'correction'>('none')
+  const [mobileAction, setMobileAction] = useState<'none' | 'move' | 'moved' | 'correction' | 'addPerson'>('none')
   const [householdOpen, setHouseholdOpen] = useState(false)
   const movedFields = {
     address: assigned.record.address,
@@ -179,34 +185,39 @@ export default function PublisherRecordDetailView({
         <VisitResultBadge result={assigned.visits[0]?.result ?? 'initial_visit'} />
       </div>
 
-      <Card className="p-5">
+      <div
+        className={`rounded-2xl border p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_0_18px_-3px_rgba(148,163,184,0.6)] ${tone.container}`}
+      >
         <div className="flex items-start gap-3">
-          <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${tone.container}`}>
-            <Home className={`h-5 w-5 ${tone.primary}`} />
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/90 shadow-sm">
+            <Home className="h-5 w-5 text-[#2563EB]" />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="truncate font-semibold text-[#0B1B33]">
+            <h2 className={`truncate font-semibold ${tone.primary}`}>
               {assigned.record.address || assigned.record.plus_code || 'Unlabeled record'}
               {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
             </h2>
-            <p className="mt-0.5 truncate text-sm text-slate-500">
+            <p className={`mt-0.5 truncate text-sm ${tone.secondary}`}>
               Sec {assigned.record.section?.label ?? '—'} / Blk {assigned.record.block?.label ?? '—'}
               {assigned.record.resident_name ? ` · ${assigned.record.resident_name}` : ''}
             </p>
             {(assigned.record.household_members != null || householdRecords.length > 0) && (
-              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+              <div className={`mt-1.5 flex flex-nowrap items-center gap-1.5 text-sm ${tone.secondary}`}>
                 {assigned.record.household_members != null && (
-                  <span className="flex items-center gap-1">
+                  <span className="flex shrink-0 items-center gap-1">
                     <Users className="h-3.5 w-3.5" />
-                    {assigned.record.household_members} household member{assigned.record.household_members === 1 ? '' : 's'}
+                    {assigned.record.household_members} household{assigned.record.household_members === 1 ? '' : 's'}
                   </span>
+                )}
+                {assigned.record.household_members != null && householdRecords.length > 0 && (
+                  <span aria-hidden="true">·</span>
                 )}
                 {householdRecords.length > 0 && (
                   <button
                     type="button"
                     onClick={() => setHouseholdOpen((o) => !o)}
                     aria-expanded={householdOpen}
-                    className="flex items-center gap-1 font-medium text-[#2563EB]"
+                    className={`flex shrink-0 items-center gap-1 font-medium underline-offset-2 hover:underline ${tone.primary}`}
                   >
                     <Users className="h-3.5 w-3.5" />
                     {householdRecords.length + 1} linked contacts
@@ -273,7 +284,7 @@ export default function PublisherRecordDetailView({
             )}
           </div>
         )}
-      </Card>
+      </div>
 
       {/* Desktop/tablet only — on mobile this is folded into the grouped Pass/Unlocated/
           Correction/Add Person panel below instead of sitting as its own separate button. */}
@@ -314,9 +325,8 @@ export default function PublisherRecordDetailView({
           </div>
 
           {/* Mobile: collapsed behind a four-button row (one shared panel, not four separate
-              floating buttons) until one is tapped. Add Person calls onAddSibling directly, same
-              as the desktop button above — it jumps straight to the add-record view rather than
-              toggling mobileAction like the other three, which show an inline form instead. */}
+              floating buttons) until one is tapped — all four, including Add Person, show an
+              inline form here instead of navigating away. */}
           <div className="sm:hidden">
             {mobileAction === 'none' && (
               <Card className="overflow-hidden p-0">
@@ -347,7 +357,7 @@ export default function PublisherRecordDetailView({
                   </button>
                   <button
                     type="button"
-                    onClick={onAddSibling}
+                    onClick={() => setMobileAction('addPerson')}
                     className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-[#2563EB] transition hover:bg-blue-50"
                   >
                     <UserPlus className="h-4 w-4" />
@@ -389,6 +399,19 @@ export default function PublisherRecordDetailView({
                   submitting={recommendingCorrection}
                   onSubmit={onRecommendCorrection}
                   initialOpen
+                />
+              </div>
+            )}
+            {mobileAction === 'addPerson' && (
+              <div className="relative">
+                <CloseMobileActionButton onClick={() => setMobileAction('none')} />
+                <AddHouseholdMemberForm
+                  address={assigned.record.address || assigned.record.plus_code || 'this address'}
+                  onSubmit={(payload) => {
+                    onAddHouseholdMember(payload)
+                    setMobileAction('none')
+                  }}
+                  onCancel={() => setMobileAction('none')}
                 />
               </div>
             )}
