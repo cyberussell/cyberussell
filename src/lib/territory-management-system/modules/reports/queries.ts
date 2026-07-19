@@ -331,7 +331,10 @@ export interface RecordLocation {
 export async function getApprovedRecordLocations(supabase: SupabaseClient, congregationId: string): Promise<RecordLocation[]> {
   const { data } = await supabase
     .from('territory_records')
-    .select('id, address, resident_name, plus_code, territory:territories(name)')
+    // !territory_id required — territory_records now has three FKs to territories (its own
+    // territory_id, plus move_recommended_territory_id from 033) so an unqualified embed is
+    // ambiguous to PostgREST (same hazard documented on RECORD_WITH_LOCATION_SELECT).
+    .select('id, address, resident_name, plus_code, territory:territories!territory_id(name)')
     .eq('congregation_id', congregationId)
     .eq('status', 'approved')
     .not('plus_code', 'is', null)

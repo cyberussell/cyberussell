@@ -29,6 +29,11 @@ const publisherHouseholdMembersField = z.preprocess(
 export const createAssignmentSchema = z.object({
   territoryIds: z.array(z.string().uuid()).min(1, 'Select at least one territory.'),
   partnershipCount: z.coerce.number().int().min(1).max(50),
+  // How many approved records each partnership can get, capped — the Group Leader's own call on
+  // a campaign day rather than a fixed number. Optional: falls back to
+  // engine.ts's DEFAULT_MAX_PER_PARTNERSHIP when omitted (e.g. the overflow-assignment form,
+  // which never assigns existing records at all — see forceZeroRecords).
+  maxPerPartnership: z.coerce.number().int().min(1).max(30).optional(),
 })
 export type CreateAssignmentInput = z.input<typeof createAssignmentSchema>
 
@@ -137,8 +142,9 @@ export const submitPartnershipNoteSchema = z.object({
 })
 export type SubmitPartnershipNoteInput = z.input<typeof submitPartnershipNoteSchema>
 
-// "Mark as Moved" → "Update Contact Record" path — territory/section/block never change here,
-// only the contact details (same resident-facing fields as addPublisherRecordSchema).
+// "Mark as Moved" → "Update Current Resident" path — a different person now lives at this same
+// address (location itself hasn't changed, so no Plus Code field), territory/section/block
+// never change here either. Instant, no Admin review — same trust level as logging a visit.
 export const updatePublisherRecordSchema = z.object({
   partnershipToken: z.string().min(1),
   recordId: z.string().uuid(),
@@ -146,9 +152,39 @@ export const updatePublisherRecordSchema = z.object({
   unit: z.string().max(40).optional().default(''),
   residentName: z.string().max(120).optional().default(''),
   plusCode: z.string().max(20).optional().default(''),
+  householdMembers: householdMembersField,
   notes: z.string().max(500).optional().default(''),
 })
 export type UpdatePublisherRecordInput = z.input<typeof updatePublisherRecordSchema>
+
+// "Mark as Moved" → "Recommend New Location" path — the current resident here knows where the
+// person who used to live here moved to. Unlike updatePublisherRecordSchema above, resident_name
+// isn't part of this at all (same person, only the location changes) and Plus Code is optional
+// (the new resident may only know the general area). Review-gated like recommendCorrectionSchema
+// below — nothing on the real record changes until the Admin applies it.
+export const recommendMoveSchema = z.object({
+  partnershipToken: z.string().min(1),
+  recordId: z.string().uuid(),
+  address: z.string().min(1, 'Address is required.').max(200),
+  unit: z.string().max(40).optional().default(''),
+  plusCode: z
+    .string()
+    .max(20)
+    .optional()
+    .default('')
+    .refine((code) => code === '' || openLocationCode.isValid(code), 'Enter a valid Plus Code (e.g. 7FG8+4V).'),
+  householdMembers: householdMembersField,
+  notes: z.string().max(500).optional().default(''),
+  // The new location's Territory (Barangay)/Section/Block — always submitted together as a full
+  // location (the dropdown always has a real selection, defaulting to the record's own current
+  // territory), unlike recommendCorrectionSchema below where territoryId is never client-
+  // supplied at all. See recommendMoveAction for the extra congregation-ownership check this
+  // needs that Correction doesn't.
+  territoryId: z.string().uuid(),
+  sectionId: z.string().uuid(),
+  blockId: z.string().uuid(),
+})
+export type RecommendMoveInput = z.input<typeof recommendMoveSchema>
 
 // "Mark as Moved" → "Recommend for Admin Removal" path — the reason is required, never an
 // optional note, per Russell's explicit instruction.

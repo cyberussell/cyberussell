@@ -35,6 +35,7 @@ export async function createGroupLeaderAssignmentAction(_prev: ActionResult, for
   const parsed = createAssignmentSchema.safeParse({
     territoryIds: formData.getAll('territoryIds'),
     partnershipCount: formData.get('partnershipCount'),
+    maxPerPartnership: formData.get('maxPerPartnership') || undefined,
   })
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in the form correctly.' }
 
@@ -47,6 +48,7 @@ export async function createGroupLeaderAssignmentAction(_prev: ActionResult, for
   const result = await createAssignment(supabase, congregation.id, {
     territoryIds: parsed.data.territoryIds,
     partnershipCount: parsed.data.partnershipCount,
+    maxPerPartnership: parsed.data.maxPerPartnership,
     assignmentDate,
     createdBy: userId,
   })

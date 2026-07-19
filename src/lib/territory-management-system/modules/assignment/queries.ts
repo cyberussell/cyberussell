@@ -152,6 +152,10 @@ export async function createAssignment(
   input: {
     territoryIds: string[]
     partnershipCount: number
+    // How many approved records each partnership can get — the Group Leader's own suggestion for
+    // this batch, falling back to calculateAssignment's own DEFAULT_MAX_PER_PARTNERSHIP when
+    // omitted.
+    maxPerPartnership?: number
     assignmentDate: string
     createdBy: string
     // Overflow-assignment path only (see createOverflowAssignmentAction): every partnership is
@@ -194,7 +198,7 @@ export async function createAssignment(
   }
 
   const eligibleRecords = input.forceZeroRecords ? [] : await fetchEligibleRecordIds(supabase, congregationId, territoryIds)
-  const plan = calculateAssignment(eligibleRecords, input.partnershipCount)
+  const plan = calculateAssignment(eligibleRecords, input.partnershipCount, input.maxPerPartnership)
   if (isAssignmentError(plan)) return plan
 
   const { data: batch, error: batchError } = await supabase
@@ -480,11 +484,11 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   const { data: partnershipRecords } = await supabase
     .from('partnership_records')
     .select(
-      // !section_id/!block_id required — same ambiguous-embed hazard as fetchEligibleRecordIds
-      // above (territory_records has had two FKs to each of territory_sections/territory_blocks
-      // since migration 030); without the hint this silently returned every publisher's assigned
-      // records as an empty list.
-      'id, sequence, completed_at, passed_from_name, passed_from_at, record:territory_records(*, territory:territories(id, name, description, map_image_url), section:territory_sections!section_id(id, label), block:territory_blocks!block_id(id, label))'
+      // !territory_id/!section_id/!block_id required — same ambiguous-embed hazard as
+      // fetchEligibleRecordIds above (territory_records has had two/three FKs to each of
+      // territories/territory_sections/territory_blocks since migrations 030/033); without the
+      // hint this silently returned every publisher's assigned records as an empty list.
+      'id, sequence, completed_at, passed_from_name, passed_from_at, record:territory_records(*, territory:territories!territory_id(id, name, description, map_image_url), section:territory_sections!section_id(id, label), block:territory_blocks!block_id(id, label), move_territory:territories!move_recommended_territory_id(id, name, description), move_section:territory_sections!move_recommended_section_id(id, label), move_block:territory_blocks!move_recommended_block_id(id, label))'
     )
     .eq('partnership_id', partnership.id)
     .order('sequence')

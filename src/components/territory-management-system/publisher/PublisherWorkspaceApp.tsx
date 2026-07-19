@@ -64,6 +64,7 @@ const QUEUE_ITEM_TYPE_LABELS: Record<SyncQueueItem['type'], string> = {
   editAddedRecord: 'Edit added record',
   recommendCorrection: 'Recommend a correction',
   recommendSearchScopeCorrection: 'Recommend a correction',
+  recommendMove: 'Recommend new location',
 }
 
 function describeQueueItem(item: SyncQueueItem): string {
@@ -327,11 +328,14 @@ export default function PublisherWorkspaceApp({
     }
   }
 
-  // Both "Mark as Moved" paths behave like logging a visit (completes the record, advances to
-  // the next one) — they just route through updatePublisherRecordAction/recommendRemovalAction
-  // instead of logPublisherVisitAction directly (those two also log the underlying 'moved'
-  // visit themselves, server-side).
-  async function handleUpdateMoved(recordId: string, fields: { address: string; unit: string; residentName: string; plusCode: string; notes: string }) {
+  // All three "Mark as Moved" paths behave like logging a visit (completes the record, advances
+  // to the next one) — they just route through updatePublisherRecordAction/recommendMoveAction/
+  // recommendRemovalAction instead of logPublisherVisitAction directly (those three also log the
+  // underlying 'moved' visit themselves, server-side).
+  async function handleUpdateMoved(
+    recordId: string,
+    fields: { address: string; unit: string; residentName: string; plusCode: string; householdMembers: string; notes: string }
+  ) {
     setMarkingMoved(true)
     try {
       const updatedRecords = workspace.records.map((r) =>
@@ -342,6 +346,39 @@ export default function PublisherWorkspaceApp({
       await refreshQueue()
       if (online) await handleSync()
       toast.success('Contact record updated.')
+      returnToList()
+    } finally {
+      setMarkingMoved(false)
+    }
+  }
+
+  // "Recommend New Location" — unlike Update Current Resident above, this doesn't write to the
+  // record directly (see recommendMoveAction), but it's still a real ministry-visit outcome
+  // (the household situation changed — the old resident moved), so it completes the record and
+  // advances the list same as the other two "Mark as Moved" paths.
+  async function handleRecommendMove(
+    recordId: string,
+    fields: {
+      address: string
+      unit: string
+      plusCode: string
+      householdMembers: string
+      notes: string
+      territoryId: string
+      sectionId: string
+      blockId: string
+    }
+  ) {
+    setMarkingMoved(true)
+    try {
+      const updatedRecords = workspace.records.map((r) =>
+        r.record.id === recordId ? { ...r, completed_at: r.completed_at ?? new Date().toISOString() } : r
+      )
+      setWorkspace((w) => ({ ...w, records: updatedRecords }))
+      await enqueue(partnershipToken, 'recommendMove', { partnershipToken, recordId, ...fields })
+      await refreshQueue()
+      if (online) await handleSync()
+      toast.success('New location recommendation sent to the Admin.')
       returnToList()
     } finally {
       setMarkingMoved(false)
@@ -502,14 +539,27 @@ export default function PublisherWorkspaceApp({
       correction_recommended_section_id: null,
       correction_recommended_block_id: null,
       correction_recommended_household_members: null,
+      move_recommended_at: null,
+      move_recommended_address: null,
+      move_recommended_unit: null,
+      move_recommended_plus_code: null,
+      move_recommended_household_members: null,
+      move_recommended_notes: null,
+      move_recommended_by: null,
+      move_recommended_territory_id: null,
+      move_recommended_section_id: null,
+      move_recommended_block_id: null,
       created_by_partnership_id: workspace.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      territory: territory ? { id: territory.id, name: territory.name } : null,
+      territory: territory ? { id: territory.id, name: territory.name, description: territory.description } : null,
       section: section ? { id: section.id, label: section.label } : null,
       block: block ? { id: block.id, label: block.label } : null,
       correction_section: null,
       correction_block: null,
+      move_territory: null,
+      move_section: null,
+      move_block: null,
     }
     setWorkspace((w) => ({ ...w, addedRecords: [optimisticRecord, ...w.addedRecords] }))
     await enqueue(partnershipToken, 'addRecord', { partnershipToken, recordId, ...payload })
@@ -538,7 +588,7 @@ export default function PublisherWorkspaceApp({
               plus_code: payload.plusCode || null,
               household_members: payload.householdMembers ? Number(payload.householdMembers) : null,
               notes: payload.notes,
-              territory: territory ? { id: territory.id, name: territory.name } : r.territory,
+              territory: territory ? { id: territory.id, name: territory.name, description: territory.description } : r.territory,
               section: section ? { id: section.id, label: section.label } : r.section,
               block: block ? { id: block.id, label: block.label } : r.block,
             }
@@ -999,10 +1049,12 @@ export default function PublisherWorkspaceApp({
             markingMoved={markingMoved}
             recommendingCorrection={recommendingCorrection}
             sections={territoryStructures.find((t) => t.id === selected.record.territory_id)?.sections ?? []}
+            territories={territoryStructures}
             mapUrl={selected.record.territory ? mapUrls[selected.record.territory.id] : undefined}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
             onMoveRecord={(destinationPartnershipId) => handleMoveRecord(selected.record.id, destinationPartnershipId)}
             onUpdateMoved={(fields) => handleUpdateMoved(selected.record.id, fields)}
+            onRecommendMove={(fields) => handleRecommendMove(selected.record.id, fields)}
             onRecommendRemoval={(reason, recordId) => handleRecommendRemoval(recordId, reason)}
             onRecommendCorrection={(fields) => handleRecommendCorrection(selected.record.id, fields)}
             onAddSibling={() =>

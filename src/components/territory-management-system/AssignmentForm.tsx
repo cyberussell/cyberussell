@@ -81,31 +81,36 @@ export default function AssignmentForm({
   const [selected, setSelected] = useState<string[]>([])
   const [publisherCount, setPublisherCount] = useState(4)
   const [groupSize, setGroupSize] = useState(2)
+  // The Group Leader's own suggestion for how many records each publisher/pair takes today,
+  // instead of always the fixed DEFAULT_MAX_PER_PARTNERSHIP — still just a per-partnership cap
+  // once submitted (calculateAssignment fills each partnership up to this many records, in
+  // order), not a soft hint.
+  const [maxPerPartnership, setMaxPerPartnership] = useState(DEFAULT_MAX_PER_PARTNERSHIP)
   const partnershipCount = Math.max(1, Math.ceil((publisherCount || 1) / (groupSize || 1)))
 
   const eligibleTotal = useMemo(
     () => territories.filter((t) => selected.includes(t.id)).reduce((sum, t) => sum + t.approvedCount, 0),
     [territories, selected]
   )
-  // Mirrors engine.ts's calculateAssignment: records fill sequentially up to
-  // DEFAULT_MAX_PER_PARTNERSHIP per partnership, so at most ceil(eligibleTotal / max) partnerships
-  // can end up with any records at all. Requesting more than that is no longer blocked — the
-  // engine caps the actual partnership count at what the records support and leaves the rest
-  // uncreated, since a territory legitimately having fewer approved records than publishers who
-  // showed up is a normal day, not a mistake to correct before generating.
-  const recordsMaxPartnerships = eligibleTotal > 0 ? Math.ceil(eligibleTotal / DEFAULT_MAX_PER_PARTNERSHIP) : 0
+  // Mirrors engine.ts's calculateAssignment: records fill sequentially up to maxPerPartnership
+  // per partnership, so at most ceil(eligibleTotal / max) partnerships can end up with any
+  // records at all. Requesting more than that is no longer blocked — the engine caps the actual
+  // partnership count at what the records support and leaves the rest uncreated, since a
+  // territory legitimately having fewer approved records than publishers who showed up is a
+  // normal day, not a mistake to correct before generating.
+  const recordsMaxPartnerships = eligibleTotal > 0 ? Math.ceil(eligibleTotal / maxPerPartnership) : 0
   const insufficientForHeadcount = eligibleTotal > 0 && partnershipCount > recordsMaxPartnerships
   const shortfallPublishers = insufficientForHeadcount
     ? Math.max(0, publisherCount - recordsMaxPartnerships * groupSize)
     : 0
-  const fullPartnerships = Math.floor(eligibleTotal / DEFAULT_MAX_PER_PARTNERSHIP)
-  const remainder = eligibleTotal % DEFAULT_MAX_PER_PARTNERSHIP
+  const fullPartnerships = Math.floor(eligibleTotal / maxPerPartnership)
+  const remainder = eligibleTotal % maxPerPartnership
   const breakdownText =
     remainder === 0
-      ? `${fullPartnerships} partnership${fullPartnerships === 1 ? '' : 's'} with ${DEFAULT_MAX_PER_PARTNERSHIP} records each`
+      ? `${fullPartnerships} partnership${fullPartnerships === 1 ? '' : 's'} with ${maxPerPartnership} records each`
       : fullPartnerships === 0
         ? `1 partnership with ${remainder} record${remainder === 1 ? '' : 's'}`
-        : `${fullPartnerships} partnership${fullPartnerships === 1 ? '' : 's'} with ${DEFAULT_MAX_PER_PARTNERSHIP} records and 1 partnership with ${remainder} record${remainder === 1 ? '' : 's'}`
+        : `${fullPartnerships} partnership${fullPartnerships === 1 ? '' : 's'} with ${maxPerPartnership} records and 1 partnership with ${remainder} record${remainder === 1 ? '' : 's'}`
 
   function toggle(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -159,14 +164,16 @@ export default function AssignmentForm({
           <NumberStepper label="Publishers going out" value={publisherCount} onChange={setPublisherCount} min={1} max={999} />
           <NumberStepper label="Group size" value={groupSize} onChange={setGroupSize} min={1} max={10} />
         </div>
+        <NumberStepper label="Records per publisher" value={maxPerPartnership} onChange={setMaxPerPartnership} min={1} max={30} />
         <input type="hidden" name="partnershipCount" value={partnershipCount} />
+        <input type="hidden" name="maxPerPartnership" value={maxPerPartnership} />
         <div className="rounded-lg border border-blue-100 bg-[#F8FBFF] p-3 text-sm text-slate-500">
           <p>
             {publisherCount} publisher{publisherCount === 1 ? '' : 's'} in groups of {groupSize} → {partnershipCount} partnership
             {partnershipCount === 1 ? '' : 's'}.
           </p>
           <ul className="mt-1 list-disc space-y-1 pl-4">
-            <li>Each partnership can hold up to {DEFAULT_MAX_PER_PARTNERSHIP} approved records.</li>
+            <li>Each partnership can hold up to {maxPerPartnership} approved records.</li>
             <li>
               {eligibleTotal === 0
                 ? 'No approved contact records yet in the selected territories — every partnership will start empty.'

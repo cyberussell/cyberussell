@@ -59,16 +59,37 @@ export interface TerritoryRecord {
   // Household Members half of the same correction recommendation — see
   // 031_correction_household_members.sql.
   correction_recommended_household_members: number | null
+  // Publisher-facing "Unlocated" -> "They Moved, New Location Known" recommendation — see
+  // 032_move_recommendation.sql. Same review-gated shape as removal/correction above: the
+  // record's real address/unit/plus_code/household_members stay untouched until the Admin
+  // applies it. resident_name is deliberately not part of this — same person, new location.
+  move_recommended_at: string | null
+  move_recommended_address: string | null
+  move_recommended_unit: string | null
+  move_recommended_plus_code: string | null
+  move_recommended_household_members: number | null
+  move_recommended_notes: string | null
+  move_recommended_by: string | null
+  // Territory (barangay)/Section/Block half of the same move recommendation — see
+  // 033_move_recommendation_location.sql. Independent columns from the address/plus_code fields
+  // above; a move recommendation always carries a full new location (address + territory +
+  // section + block together), not a partial one.
+  move_recommended_territory_id: string | null
+  move_recommended_section_id: string | null
+  move_recommended_block_id: string | null
   created_at: string
   updated_at: string
 }
 
 export interface TerritoryRecordWithLocation extends TerritoryRecord {
-  territory: { id: string; name: string } | null
+  territory: { id: string; name: string; description: string } | null
   section: { id: string; label: string } | null
   block: { id: string; label: string } | null
   correction_section: { id: string; label: string } | null
   correction_block: { id: string; label: string } | null
+  move_territory: { id: string; name: string; description: string } | null
+  move_section: { id: string; label: string } | null
+  move_block: { id: string; label: string } | null
 }
 
 export interface RecordVisit {

@@ -14,6 +14,7 @@ import {
   logPublisherVisitSchema,
   movePartnershipRecordSchema,
   recommendCorrectionSchema,
+  recommendMoveSchema,
   recommendRemovalSchema,
   recommendSearchScopeCorrectionSchema,
   releasePartnershipSchema,
@@ -47,8 +48,10 @@ import {
   logVisit,
   recommendRecordCorrection,
   recommendRecordForRemoval,
+  recommendRecordMove,
   recordAddedByPartnership,
   sectionBlockBelongsToTerritory,
+  territorySectionBlockBelongsToCongregation,
   updateRecord,
 } from '@/lib/territory-management-system/modules/records/queries'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
@@ -391,11 +394,11 @@ export async function submitPartnershipNoteAction(_prev: ActionResult, formData:
   return { error: 'SAVED' }
 }
 
-// "Mark as Moved" → "Update Contact Record" path — territory/section/block are never touched
-// (same location, corrected contact info), and household_members/do_not_call are read from the
-// existing row and passed straight through so this narrower form can't accidentally clear them.
-// Still logs a real 'moved' visit underneath so the card tone/stats stay consistent with the
-// other "Mark as Moved" path.
+// "Mark as Moved" → "Update Current Resident" path — territory/section/block are never touched
+// (same location, a different person now lives here), and do_not_call is read from the existing
+// row and passed straight through so this narrower form can't accidentally clear it. Still logs
+// a real 'moved' visit underneath so the card tone/stats stay consistent with the other "Mark as
+// Moved" paths.
 export async function updatePublisherRecordAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = updatePublisherRecordSchema.safeParse({
     partnershipToken: formData.get('partnershipToken'),
@@ -404,6 +407,7 @@ export async function updatePublisherRecordAction(_prev: ActionResult, formData:
     unit: formData.get('unit'),
     residentName: formData.get('residentName'),
     plusCode: formData.get('plusCode'),
+    householdMembers: formData.get('householdMembers'),
     notes: formData.get('notes'),
   })
   if (!parsed.success) return { error: 'Please fill in the required fields.' }
@@ -426,7 +430,7 @@ export async function updatePublisherRecordAction(_prev: ActionResult, formData:
       unit: parsed.data.unit,
       residentName: parsed.data.residentName,
       plusCode: parsed.data.plusCode,
-      householdMembers: existing.household_members ?? undefined,
+      householdMembers: parsed.data.householdMembers ?? existing.household_members ?? undefined,
       notes: parsed.data.notes,
       doNotCall: existing.do_not_call,
     })
@@ -442,6 +446,81 @@ export async function updatePublisherRecordAction(_prev: ActionResult, formData:
   } catch (e) {
     await logError(partnership.congregation_id, 'updatePublisherRecordAction', e)
     return { error: e instanceof Error ? e.message : 'Could not update the contact record.' }
+  }
+
+  revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)
+  return { error: 'SAVED' }
+}
+
+// "Mark as Moved" → "Recommend New Location" path — the current resident here knows where the
+// person who used to live here moved to. Unlike Update Current Resident above, this doesn't
+// touch the record directly — it's review-gated like recommendCorrectionAction below, so the
+// Admin applies or dismisses it. Still logs a real 'moved' visit and marks the assignment
+// completed, same as the other two "Mark as Moved" paths, since a real visit did happen.
+export async function recommendMoveAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = recommendMoveSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    recordId: formData.get('recordId'),
+    address: formData.get('address'),
+    unit: formData.get('unit'),
+    plusCode: formData.get('plusCode'),
+    householdMembers: formData.get('householdMembers'),
+    notes: formData.get('notes'),
+    territoryId: formData.get('territoryId'),
+    sectionId: formData.get('sectionId'),
+    blockId: formData.get('blockId'),
+  })
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in the required fields.' }
+  if (!(await checkRateLimit(`tms-recommend-move:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+
+  const owns = await partnershipHasRecord(supabase, partnership.id, parsed.data.recordId)
+  if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
+
+  // Unlike Correction (territoryId always the record's own, server-derived), a Move
+  // recommendation lets the publisher pick a different territory/barangay entirely — territoryId
+  // is client input here, so it needs its own congregation-ownership check before trusting it.
+  const validScope = await territorySectionBlockBelongsToCongregation(
+    supabase,
+    partnership.congregation_id,
+    parsed.data.territoryId,
+    parsed.data.sectionId,
+    parsed.data.blockId
+  )
+  if (!validScope) return { error: 'Choose a valid Barangay, Section, and Block.' }
+
+  try {
+    await recommendRecordMove(
+      supabase,
+      parsed.data.recordId,
+      {
+        address: parsed.data.address,
+        unit: parsed.data.unit,
+        plusCode: parsed.data.plusCode,
+        householdMembers: parsed.data.householdMembers,
+        notes: parsed.data.notes,
+        territoryId: parsed.data.territoryId,
+        sectionId: parsed.data.sectionId,
+        blockId: parsed.data.blockId,
+      },
+      partnership.name || 'Unnamed partnership'
+    )
+    await logVisit(supabase, partnership.congregation_id, {
+      recordId: parsed.data.recordId,
+      visitedAt: new Date().toISOString(),
+      result: 'moved',
+      notes: 'New location recommended after move.',
+      createdBy: null,
+      partnerName: partnership.name || null,
+    })
+    await markPartnershipRecordCompleted(supabase, partnership.id, parsed.data.recordId)
+  } catch (e) {
+    await logError(partnership.congregation_id, 'recommendMoveAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not submit the recommendation.' }
   }
 
   revalidatePath(`/territory-management-system/assignment/${partnership.batch.access_token}/${partnership.claim_token}`)

@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, ArrowRightLeft, ChevronDown, ChevronRight, Home, MapPin, PencilLine, Truck, UserPlus, Users, X } from 'lucide-react'
+import { ArrowLeft, ArrowRightLeft, ChevronDown, ChevronRight, Clock, Home, MapPin, PencilLine, Truck, UserPlus, Users, X } from 'lucide-react'
 import type { PartnershipRecordDetail } from '@/lib/territory-management-system/modules/assignment/types'
 import type { VisitResult } from '@/lib/territory-management-system/modules/records/types'
+import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import type { SyncQueueItem } from '@/lib/territory-management-system/modules/offline/db'
 import { doNotCallUnlockDate, getRecordCardTone, isDoNotCallLocked, VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import VisitHistoryList from '@/components/territory-management-system/VisitHistoryList'
@@ -12,7 +13,7 @@ import TerritoryMapViewer from '@/components/territory-management-system/Territo
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherVisitLogForm from './PublisherVisitLogForm'
 import MoveRecordForm from './MoveRecordForm'
-import MarkMovedForm, { type MovedRecordFields } from './MarkMovedForm'
+import MarkMovedForm, { type MoveRecommendFields, type MovedRecordFields } from './MarkMovedForm'
 import RecommendCorrectionForm, { type CorrectionFields } from './RecommendCorrectionForm'
 import AddHouseholdMemberForm, { type NewHouseholdMemberPayload } from './AddHouseholdMemberForm'
 
@@ -87,10 +88,12 @@ export default function PublisherRecordDetailView({
   markingMoved,
   recommendingCorrection,
   sections,
+  territories,
   mapUrl,
   onLogVisit,
   onMoveRecord,
   onUpdateMoved,
+  onRecommendMove,
   onRecommendRemoval,
   onRecommendCorrection,
   onAddSibling,
@@ -132,6 +135,10 @@ export default function PublisherRecordDetailView({
   // dropdowns — resolved by the parent from the full territoryStructures prop, keyed off
   // assigned.record.territory_id.
   sections: { id: string; label: string; blocks: { id: string; label: string }[] }[]
+  // Every congregation territory, for MarkMovedForm's "Recommend New Location" Barangay picker —
+  // unlike sections above, deliberately not narrowed to the record's own territory, since the
+  // moved person may now live in a different barangay entirely.
+  territories: TerritoryStructure[]
   // The record's own territory map — resolved by the parent (preferring an offline-cached
   // blob over the live URL, same as the workspace list view's Territory Map(s) section).
   // Undefined/empty when the territory has no map uploaded, or hasn't been resolved yet.
@@ -139,6 +146,8 @@ export default function PublisherRecordDetailView({
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
   onMoveRecord: (destinationPartnershipId: string) => void
   onUpdateMoved: (fields: MovedRecordFields) => void
+  // "Recommend New Location" — review-gated, see MarkMovedForm.
+  onRecommendMove: (fields: MoveRecommendFields) => void
   // recordId defaults to this record's own id, but can be any entry from householdRecords —
   // see MarkMovedForm's record picker.
   onRecommendRemoval: (reason: string, recordId: string) => void
@@ -165,6 +174,7 @@ export default function PublisherRecordDetailView({
     unit: assigned.record.unit,
     residentName: assigned.record.resident_name,
     plusCode: assigned.record.plus_code ?? '',
+    householdMembers: assigned.record.household_members != null ? String(assigned.record.household_members) : '',
     notes: assigned.record.notes,
   }
 
@@ -308,10 +318,13 @@ export default function PublisherRecordDetailView({
               initial={movedFields}
               submitting={markingMoved}
               onUpdate={onUpdateMoved}
+              onRecommendMove={onRecommendMove}
               onRecommend={onRecommendRemoval}
               currentRecordId={assigned.record.id}
               currentRecordLabel={assigned.record.resident_name || assigned.record.address || 'this record'}
               householdRecords={householdRecords}
+              territories={territories}
+              currentTerritoryId={assigned.record.territory_id}
             />
             <RecommendCorrectionForm
               currentPlusCode={assigned.record.plus_code ?? ''}
@@ -380,10 +393,13 @@ export default function PublisherRecordDetailView({
                   initial={movedFields}
                   submitting={markingMoved}
                   onUpdate={onUpdateMoved}
+                  onRecommendMove={onRecommendMove}
                   onRecommend={onRecommendRemoval}
                   currentRecordId={assigned.record.id}
                   currentRecordLabel={assigned.record.resident_name || assigned.record.address || 'this record'}
                   householdRecords={householdRecords}
+                  territories={territories}
+                  currentTerritoryId={assigned.record.territory_id}
                 />
               </div>
             )}
@@ -455,6 +471,61 @@ export default function PublisherRecordDetailView({
               </Card>
             ))}
           </div>
+        </div>
+      )}
+
+      {(assigned.record.move_recommended_at || assigned.record.correction_recommended_at || assigned.record.removal_recommended_at) && (
+        <div className="space-y-2">
+          {assigned.record.move_recommended_at && (
+            <Card className="border-amber-200 bg-amber-50 p-3">
+              <div className="flex items-start gap-2">
+                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <div className="min-w-0 text-sm">
+                  <p className="font-medium text-amber-700">Move recommended — pending Admin approval</p>
+                  <p className="mt-0.5 text-slate-600">
+                    New address: <span className="font-medium text-[#0B1B33]">{assigned.record.move_recommended_address}</span>
+                    {assigned.record.move_recommended_plus_code && ` · ${assigned.record.move_recommended_plus_code}`}
+                  </p>
+                  {assigned.record.move_territory && (
+                    <p className="mt-0.5 text-slate-600">
+                      New barangay:{' '}
+                      <span className="font-medium text-[#0B1B33]">
+                        {assigned.record.move_territory.description || assigned.record.move_territory.name}
+                        {assigned.record.move_section ? ` / Section ${assigned.record.move_section.label}` : ''}
+                        {assigned.record.move_block ? ` / Block ${assigned.record.move_block.label}` : ''}
+                      </span>
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Card>
+          )}
+          {assigned.record.correction_recommended_at && (
+            <Card className="border-amber-200 bg-amber-50 p-3">
+              <div className="flex items-start gap-2">
+                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <div className="min-w-0 text-sm">
+                  <p className="font-medium text-amber-700">Correction recommended — pending Admin approval</p>
+                  {assigned.record.correction_recommended_reason && (
+                    <p className="mt-0.5 text-slate-600">{assigned.record.correction_recommended_reason}</p>
+                  )}
+                </div>
+              </div>
+            </Card>
+          )}
+          {assigned.record.removal_recommended_at && (
+            <Card className="border-red-200 bg-red-50 p-3">
+              <div className="flex items-start gap-2">
+                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
+                <div className="min-w-0 text-sm">
+                  <p className="font-medium text-red-600">Removal recommended — pending Admin approval</p>
+                  {assigned.record.removal_recommended_reason && (
+                    <p className="mt-0.5 text-slate-600">{assigned.record.removal_recommended_reason}</p>
+                  )}
+                </div>
+              </div>
+            </Card>
+          )}
         </div>
       )}
 

@@ -2,16 +2,21 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { RecordStatus, RecordVisitWithAuthor, TerritoryRecord, TerritoryRecordWithLocation } from './types'
 
-// The !section_id/!block_id hints are required, not cosmetic: migration 030 added a second FK
-// from territory_records to each of territory_sections/territory_blocks (the
-// correction_recommended_* columns below), so an unqualified `territory_sections(...)`/
-// `territory_blocks(...)` embed is ambiguous to PostgREST and the whole query silently returns
-// zero rows instead of erroring — every embed of these two tables needs a hint, not just the
-// newer correction_* ones.
+// The !territory_id/!section_id/!block_id hints are required, not cosmetic: migrations 030 and
+// 033 gave territory_records a second and third FK to territories/territory_sections/
+// territory_blocks (the correction_recommended_*/move_recommended_* columns below), so an
+// unqualified `territories(...)`/`territory_sections(...)`/`territory_blocks(...)` embed is
+// ambiguous to PostgREST and the whole query silently returns zero rows instead of erroring —
+// every embed of these three tables needs a hint, not just the newer correction_*/move_* ones
+// (this exact failure mode already happened once from 030, see
+// territory-management-ambiguous-fk-embed-fix-v1).
 const RECORD_WITH_LOCATION_SELECT =
-  '*, territory:territories(id, name), section:territory_sections!section_id(id, label), block:territory_blocks!block_id(id, label), ' +
+  '*, territory:territories!territory_id(id, name, description), section:territory_sections!section_id(id, label), block:territory_blocks!block_id(id, label), ' +
   'correction_section:territory_sections!correction_recommended_section_id(id, label), ' +
-  'correction_block:territory_blocks!correction_recommended_block_id(id, label)'
+  'correction_block:territory_blocks!correction_recommended_block_id(id, label), ' +
+  'move_territory:territories!move_recommended_territory_id(id, name, description), ' +
+  'move_section:territory_sections!move_recommended_section_id(id, label), ' +
+  'move_block:territory_blocks!move_recommended_block_id(id, label)'
 
 export async function listRecords(
   supabase: SupabaseClient,
@@ -249,6 +254,28 @@ export async function sectionBlockBelongsToTerritory(
   return !!block
 }
 
+// Same idea as sectionBlockBelongsToTerritory above, but for the Move recommendation flow —
+// unlike Correction (where territoryId is always the record's own, server-derived, never client-
+// supplied), a Move recommendation lets the publisher pick a *different* territory/barangay
+// entirely, so territoryId itself is client input here and needs its own ownership check before
+// trusting it — same "don't trust a client-supplied parent id" rule, just one level up.
+export async function territorySectionBlockBelongsToCongregation(
+  supabase: SupabaseClient,
+  congregationId: string,
+  territoryId: string,
+  sectionId: string,
+  blockId: string
+): Promise<boolean> {
+  const { data: territory } = await supabase
+    .from('territories')
+    .select('id')
+    .eq('id', territoryId)
+    .eq('congregation_id', congregationId)
+    .maybeSingle()
+  if (!territory) return false
+  return sectionBlockBelongsToTerritory(supabase, territoryId, sectionId, blockId)
+}
+
 export async function recommendRecordCorrection(
   supabase: SupabaseClient,
   recordId: string,
@@ -341,6 +368,115 @@ export async function listFlaggedForCorrection(supabase: SupabaseClient, congreg
     .eq('congregation_id', congregationId)
     .not('correction_recommended_at', 'is', null)
     .order('correction_recommended_at', { ascending: false })
+  return (data ?? []) as unknown as TerritoryRecordWithLocation[]
+}
+
+// Publisher-facing "Unlocated" -> "They Moved, New Location Known" path — the current resident
+// at this address knows where the person who used to live here moved to. Same review-gated
+// shape as recommendRecordForRemoval/recommendRecordCorrection above: nothing on the real
+// record changes until the Admin applies it. resident_name is deliberately never touched here —
+// same person, just a new location.
+export async function recommendRecordMove(
+  supabase: SupabaseClient,
+  recordId: string,
+  fields: {
+    address: string
+    unit: string
+    plusCode: string
+    householdMembers?: number
+    notes: string
+    territoryId: string
+    sectionId: string
+    blockId: string
+  },
+  recommendedBy: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('territory_records')
+    .update({
+      move_recommended_at: new Date().toISOString(),
+      move_recommended_address: fields.address,
+      move_recommended_unit: fields.unit,
+      move_recommended_plus_code: fields.plusCode || null,
+      move_recommended_household_members: fields.householdMembers ?? null,
+      move_recommended_notes: fields.notes,
+      move_recommended_by: recommendedBy,
+      move_recommended_territory_id: fields.territoryId,
+      move_recommended_section_id: fields.sectionId,
+      move_recommended_block_id: fields.blockId,
+    })
+    .eq('id', recordId)
+  if (error) throw error
+}
+
+// Admin dismisses a move recommendation without applying it — clears the flag, leaves the
+// record's own address/unit/plus_code/household_members/territory/section/block untouched.
+export async function dismissMoveRecommendation(supabase: SupabaseClient, recordId: string): Promise<void> {
+  const { error } = await supabase
+    .from('territory_records')
+    .update({
+      move_recommended_at: null,
+      move_recommended_address: null,
+      move_recommended_unit: null,
+      move_recommended_plus_code: null,
+      move_recommended_household_members: null,
+      move_recommended_notes: null,
+      move_recommended_by: null,
+      move_recommended_territory_id: null,
+      move_recommended_section_id: null,
+      move_recommended_block_id: null,
+    })
+    .eq('id', recordId)
+  if (error) throw error
+}
+
+// Admin applies a move recommendation — writes the recommended address/unit/plus_code/household
+// members/territory/section/block onto the record's real columns (resident_name untouched, same
+// as the recommendation itself never carrying one) and clears the recommendation flag in the
+// same update. Territory/Section/Block always travel together (the form always submits a full
+// location, never a partial one), so they're applied unconditionally alongside address/unit —
+// unlike Correction's applyRecordCorrection, there's no "only touch what was recommended" partial
+// case here.
+export async function applyRecordMove(supabase: SupabaseClient, recordId: string): Promise<void> {
+  const { data: existing } = await supabase
+    .from('territory_records')
+    .select(
+      'move_recommended_address, move_recommended_unit, move_recommended_plus_code, move_recommended_household_members, move_recommended_territory_id, move_recommended_section_id, move_recommended_block_id'
+    )
+    .eq('id', recordId)
+    .maybeSingle()
+  if (!existing?.move_recommended_address) return
+  const update: Record<string, unknown> = {
+    move_recommended_at: null,
+    move_recommended_address: null,
+    move_recommended_unit: null,
+    move_recommended_plus_code: null,
+    move_recommended_household_members: null,
+    move_recommended_notes: null,
+    move_recommended_by: null,
+    move_recommended_territory_id: null,
+    move_recommended_section_id: null,
+    move_recommended_block_id: null,
+    address: existing.move_recommended_address,
+    unit: existing.move_recommended_unit ?? '',
+    plus_code: existing.move_recommended_plus_code,
+    updated_at: new Date().toISOString(),
+  }
+  if (existing.move_recommended_household_members != null) update.household_members = existing.move_recommended_household_members
+  if (existing.move_recommended_territory_id) update.territory_id = existing.move_recommended_territory_id
+  if (existing.move_recommended_section_id) update.section_id = existing.move_recommended_section_id
+  if (existing.move_recommended_block_id) update.block_id = existing.move_recommended_block_id
+  const { error } = await supabase.from('territory_records').update(update).eq('id', recordId)
+  if (error) throw error
+}
+
+export async function listFlaggedForMove(supabase: SupabaseClient, congregationId: string): Promise<TerritoryRecordWithLocation[]> {
+  const { data } = await supabase
+    .from('territory_records')
+    .select(RECORD_WITH_LOCATION_SELECT)
+    .eq('congregation_id', congregationId)
+    .not('move_recommended_at', 'is', null)
+    .order('move_recommended_at', { ascending: false })
   return (data ?? []) as unknown as TerritoryRecordWithLocation[]
 }
 

@@ -172,6 +172,35 @@ export async function dismissCorrectionRecommendationAction(recordId: string): P
   revalidatePath('/territory-management-system/dashboard/records/flagged')
 }
 
+// Admin applies a publisher's "Recommend New Location" (move) recommendation — writes the
+// recommended address/unit/plus_code/household_members onto the record and clears the flag.
+export async function applyRecordMoveAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.applyRecordMove(supabase, recordId)
+  revalidatePath('/territory-management-system/dashboard/records/flagged')
+  revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
+}
+
+// Admin dismisses a move recommendation without applying it — clears the flag, leaves the
+// record's own address/unit/plus_code/household_members untouched.
+export async function dismissMoveRecommendationAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.dismissMoveRecommendation(supabase, recordId)
+  revalidatePath('/territory-management-system/dashboard/records/flagged')
+}
+
+// Pulls a record out of assignment-generation eligibility (fetchEligibleRecordIds only selects
+// status = 'approved') while the Admin investigates a flagged recommendation — independent of
+// applying/dismissing the recommendation itself. Same status field/flip as approveRecordAction
+// above, just the other direction.
+export async function markRecordPendingAction(recordId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.setRecordStatus(supabase, recordId, 'pending')
+  revalidatePath('/territory-management-system/dashboard/records/flagged')
+  revalidatePath('/territory-management-system/dashboard/records')
+  revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
+}
+
 export async function logVisitAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = logVisitSchema.safeParse({
     recordId: formData.get('recordId'),
