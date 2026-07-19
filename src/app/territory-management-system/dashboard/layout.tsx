@@ -8,7 +8,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { congregation } = await requireAdmin()
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#C9D8EE] lg:flex-row">
+    <div className="flex min-h-dvh flex-col bg-[#C9D8EE] lg:flex-row">
       <DashboardSidebar congregationName={congregation.name} />
       <main className="flex-1 overflow-x-hidden px-4 py-6 sm:px-8 sm:py-8">{children}</main>
       <Toaster position="bottom-right" richColors />

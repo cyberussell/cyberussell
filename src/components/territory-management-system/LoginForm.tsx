@@ -10,7 +10,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(signIn, {})
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#C9D8EE] px-4 py-12">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#C9D8EE] px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
           <Image src="/tms-logo.png" alt="Territory Management System" width={56} height={56} className="mb-3 rounded-2xl" priority />
@@ -39,7 +39,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
               name="email"
               type="email"
               required
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-base text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
             />
           </label>
           <label className="block">
@@ -48,7 +48,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
               name="password"
               type="password"
               required
-              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-base text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
             />
           </label>
           <Link href="/territory-management-system/forgot-password" className="block text-right text-sm text-[#2563EB] hover:underline">

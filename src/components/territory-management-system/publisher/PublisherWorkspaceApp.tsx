@@ -727,7 +727,7 @@ export default function PublisherWorkspaceApp({
   })()
 
   return (
-    <div className="min-h-screen bg-[#C9D8EE] px-4 pb-24 pt-8">
+    <div className="min-h-dvh bg-[#C9D8EE] px-4 pb-24 pt-8">
       {/* Saving indicator lives here, floating at the top of the screen — not on the "Log
           Visit" button itself — so it's visible the instant the view jumps to the next record. */}
       {savingVisit && (

@@ -9,7 +9,7 @@ export default async function GroupLeaderLayout({ children }: { children: React.
   const { congregation } = await requireGroupLeader()
 
   return (
-    <div className="min-h-screen bg-[#C9D8EE]">
+    <div className="min-h-dvh bg-[#C9D8EE]">
       <header className="flex items-center gap-3 border-b border-blue-100/60 bg-white px-4 py-4 sm:px-8">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#38BDF8] text-sm font-bold text-white">
           {congregation.name.charAt(0).toUpperCase()}

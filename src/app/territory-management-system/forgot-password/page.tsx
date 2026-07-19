@@ -11,7 +11,7 @@ export default function ForgotPasswordPage() {
   const sent = state.error === 'SAVED'
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#C9D8EE] px-4 py-12">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#C9D8EE] px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
           <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#38BDF8] text-2xl font-bold text-white">
@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
                 name="email"
                 type="email"
                 required
-                className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
+                className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-base text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
               />
             </label>
             {state.error && !sent && <p className="text-sm text-red-500">{state.error}</p>}

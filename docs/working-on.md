@@ -1,6 +1,18 @@
 # Current Work
 
-**Territory Management System — QR barangay label bug fix + iOS input-zoom fix (2026-07-18) — code done, tsc + vitest (56/56) clean, live-verified via a temporary scratch route, not committed — see checkpoint `territory-management-qr-barangay-fix-ios-zoom-fix-v1.md`:**
+**Territory Management System — iOS viewport fixes: min-h-screen mis-centering, persistent input-zoom (2026-07-19) — code done, tsc + vitest (56/56) clean, live-verified what's provable without a real iOS device, not committed — see checkpoint `territory-management-mobile-viewport-fixes-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: 2 more mobile bugs Russell hit live, on top of the previous (deployed, confirmed-live) round. (1) The login page (and every other full-height TMS screen) wasn't vertically centered on a real phone — `min-h-screen` (100vh) computes against iOS Safari's collapsed-toolbar height, taller than what's actually visible while the address bar shows, pushing centered content down with a lopsided gap. Fixed by switching all 12 TMS files using `min-h-screen` to `min-h-dvh` (dynamic viewport height), not just the login screen he screenshotted. (2) iOS was still auto-zooming on input focus even after the prior 16px `inputClass` fix — that fix was necessary but not sufficient alone. Added the standard second half: a new `src/app/territory-management-system/layout.tsx` exporting `viewport = { maximumScale: 1 }`, scoped to TMS only (confirmed via dev server that `/` keeps Next's default viewport unaffected). Also found and fixed 3 auth-flow screens (LoginForm, ChangePasswordForm, forgot-password, set-password) whose inputs predated the shared `inputClass` and never got the 16px fix at all.
+
+Current Status: Code done, not yet committed. `npx tsc --noEmit` and `npx vitest run` (56/56) clean. Live-verified via the dev server: TMS routes now serve `maximum-scale=1` in their viewport meta while `/` doesn't; the previously-unfixed auth inputs now compute to 16px. Neither the mis-centering nor the zoom-on-focus behavior itself can be reproduced in this sandbox (no real dynamic toolbar, no real iOS zoom heuristic) — both need Russell's actual device to confirm fully resolved. Trade-off flagged: `maximum-scale=1` also disables intentional pinch-zoom across all of TMS for low-vision users, deliberate for this app-like tool but worth knowing.
+
+**Next recommended task:** Russell reviews the diff, deploys, then confirms on a real iPhone: the login page and a couple of other full-height screens sit properly centered with the address bar visible, and tapping any text field no longer zooms the page at all.
+
+----------------------------------------
+
+**Territory Management System — QR barangay label bug fix + iOS input-zoom fix (2026-07-18) — code done, tsc + vitest (56/56) clean, live-verified via a temporary scratch route, committed and pushed (`ec84f20`), deployed via Vercel auto-deploy on push — see checkpoint `territory-management-qr-barangay-fix-ios-zoom-fix-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 
