@@ -21,17 +21,15 @@ const RESULT_COLORS: Record<VisitResult, string> = {
 
 // Horizontal bars, highest count first — reads faster than a donut at a glance (especially on
 // mobile, per Russell's feedback replacing the original pie chart) and every category stays
-// individually readable regardless of how many statuses are in play.
+// individually readable regardless of how many statuses are in play. Every result type shows
+// (even at 0), not just ones with activity — a single lonely bar for whatever's nonzero didn't
+// read as "a graph" to Russell when most categories were still empty.
 export default function VisitResultBarChart({ resultCounts }: { resultCounts: Record<VisitResult, number> }) {
-  const entries = VISIT_RESULTS.map((r) => ({ result: r, count: resultCounts[r] ?? 0 }))
-    .filter((e) => e.count > 0)
+  const entries = VISIT_RESULTS.filter((r) => r !== 'undone')
+    .map((r) => ({ result: r, count: resultCounts[r] ?? 0 }))
     .sort((a, b) => b.count - a.count)
 
-  if (entries.length === 0) {
-    return <p className="text-center text-sm text-slate-600">No visits were logged today.</p>
-  }
-
-  const max = entries[0].count
+  const max = Math.max(entries[0]?.count ?? 0, 1)
 
   return (
     <div className="space-y-3">

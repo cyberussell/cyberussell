@@ -250,13 +250,6 @@ export default function GroupLeaderTabs({
               <div className="mt-6">
                 <VisitResultBarChart resultCounts={stats.resultCounts} />
               </div>
-              <button
-                type="button"
-                onClick={() => setAssignmentAction((a) => (a === 'regenerate' ? null : 'regenerate'))}
-                className="mt-6 w-full rounded-lg bg-[#2563EB] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
-              >
-                Generate New
-              </button>
             </Card>
           ) : (
             <Card
@@ -317,19 +310,33 @@ export default function GroupLeaderTabs({
           )}
 
           <div className="mx-auto max-w-md text-center">
-            {/* "Generate New" now lives as a solid button inside whichever QR/summary panel is
-                showing above — only "Create Auxiliary Groups" remains a standalone toggle here. */}
-            {todaysTerritories.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setAssignmentAction((a) => (a === 'generate' ? null : 'generate'))}
-                className={`rounded-full px-6 py-3 text-sm font-semibold transition ${
-                  assignmentAction === 'generate' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
-                }`}
-              >
-                Create Auxiliary Groups
-              </button>
-            )}
+            {/* "Generate New" lives as a solid button inside the QR panel above while it's showing
+                (not-done state); once the results summary/graph takes over, it moves down here
+                instead of sitting inside that card. */}
+            <div className="flex flex-wrap justify-center gap-3">
+              {allPartnersDone && (
+                <button
+                  type="button"
+                  onClick={() => setAssignmentAction((a) => (a === 'regenerate' ? null : 'regenerate'))}
+                  className={`rounded-full px-6 py-3 text-sm font-semibold transition ${
+                    assignmentAction === 'regenerate' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
+                  }`}
+                >
+                  Generate New
+                </button>
+              )}
+              {todaysTerritories.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setAssignmentAction((a) => (a === 'generate' ? null : 'generate'))}
+                  className={`rounded-full px-6 py-3 text-sm font-semibold transition ${
+                    assignmentAction === 'generate' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] hover:bg-blue-100'
+                  }`}
+                >
+                  Create Auxiliary Groups
+                </button>
+              )}
+            </div>
 
             {assignmentAction === 'generate' && todaysTerritories.length > 0 && (
               <div ref={assignmentPanelRef} className="mt-4 scroll-mt-4">
@@ -387,7 +394,7 @@ export default function GroupLeaderTabs({
               key={key}
               icon={Icon}
               label={VISIT_RESULT_LABELS[key]}
-              value={resultBaseline[key]}
+              value={stats.resultCounts[key]}
               delta={stats.resultCounts[key] - resultBaseline[key]}
             />
           ))}
