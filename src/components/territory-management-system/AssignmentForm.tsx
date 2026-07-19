@@ -114,7 +114,11 @@ export default function AssignmentForm({
   // once submitted (calculateAssignment fills each partnership up to this many records, in
   // order), not a soft hint.
   const [maxPerPartnership, setMaxPerPartnership] = useState(DEFAULT_MAX_PER_PARTNERSHIP)
-  const partnershipCount = Math.max(1, Math.ceil((publisherCount || 1) / (groupSize || 1)))
+  // Only a full group of `groupSize` counts as a real Ministry Partner — a leftover publisher who
+  // doesn't fill one out isn't given their own partnership (they'd need to join an existing pair
+  // or do another form of ministry). Floor, not ceil — see leftoverPublishers below for the rest.
+  const partnershipCount = Math.floor((publisherCount || 0) / (groupSize || 1))
+  const leftoverPublishers = (publisherCount || 0) - partnershipCount * (groupSize || 1)
 
   const eligibleTotal = useMemo(
     () => territories.filter((t) => selected.includes(t.id)).reduce((sum, t) => sum + t.approvedCount, 0),
@@ -134,8 +138,9 @@ export default function AssignmentForm({
   // Plain arithmetic straight off the current inputs, not the engine's actual per-territory
   // capping — matches how Russell wants the summary to read regardless of whether the territory
   // truly has that many approved records (the separate insufficientForHeadcount box below still
-  // covers that headcount-vs-records mismatch).
-  const recordsToWork = partnershipCount * maxPerPartnership
+  // covers that headcount-vs-records mismatch). Capped at eligibleTotal — there's never more to
+  // work on than the territory actually has approved, however high the requested capacity is.
+  const recordsToWork = Math.min(partnershipCount * maxPerPartnership, eligibleTotal)
   const recordsRemaining = Math.max(0, eligibleTotal - recordsToWork)
 
   function toggle(id: string) {
@@ -219,6 +224,11 @@ export default function AssignmentForm({
                 <p className="text-center font-bold text-[#0B1B33]">
                   {partnershipCount} Ministry Partner{partnershipCount === 1 ? '' : 's'}
                 </p>
+                {leftoverPublishers > 0 && (
+                  <p className="mt-1 text-center text-red-600">
+                    {leftoverPublishers} publisher{leftoverPublishers === 1 ? '' : 's'} without a Ministry Partner
+                  </p>
+                )}
                 <p className="mt-1 text-center">
                   {recordsToWork} Record{recordsToWork === 1 ? '' : 's'} to be worked on
                 </p>
@@ -242,10 +252,10 @@ export default function AssignmentForm({
           {error && <p className="text-sm text-red-500">{error}</p>}
           <button
             type="submit"
-            disabled={pending}
+            disabled={pending || partnershipCount < 1}
             className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
           >
-            {pending ? 'Generating…' : 'Generate Assignment'}
+            {pending ? 'Generating…' : partnershipCount < 1 ? 'Not enough publishers for one Ministry Partner' : 'Generate Assignment'}
           </button>
         </Card>
       )}
