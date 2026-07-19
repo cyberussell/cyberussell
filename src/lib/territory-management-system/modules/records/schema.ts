@@ -27,35 +27,43 @@ export const VISIT_RESULTS = [
 // 'started_bible_study' is excluded from the default pool too — it's now only reachable as a
 // locked follow-up once a record is already 'potential_bible_study' (see
 // POTENTIAL_BIBLE_STUDY_RESULTS below), not something a publisher can pick from a cold start.
+// 'bible_study' is excluded as of 2026-07-20 (Russell's request) — the funnel used to require a
+// separate "confirm it's now Bible Study" step between Started Bible Study and Progressive BS;
+// it's now a direct Potential BS -> Started Bible Study -> Progressive BS -> Discontinued/Moved
+// flow with 'bible_study' skipped entirely going forward. Kept in VISIT_RESULTS itself (not
+// deleted) purely so already-logged historical visits with this result still render a correct
+// label/color/badge — same treatment as 'undone'/'initial_visit'/'progressing'/'discontinued'.
 export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter(
   (r) =>
     r !== 'undone' &&
     r !== 'initial_visit' &&
     r !== 'progressing' &&
     r !== 'discontinued' &&
-    r !== 'started_bible_study'
+    r !== 'started_bible_study' &&
+    r !== 'bible_study'
 )
 
-// Once a record's most recent visit is 'bible_study' (confirmed ongoing — not the first-time
-// 'started_bible_study'), the next visit's Status choices narrow to just these three follow-up
-// outcomes instead of the full list — 'progressing' keeps counting as "ongoing" for this check,
-// so the narrowed list stays in place across every subsequent visit until the study ends one way
-// or the other.
-export const BIBLE_STUDY_ONGOING_RESULTS = ['bible_study', 'progressing'] as const
+// Once a record's most recent visit means a study is already confirmed underway, the next
+// visit's Status choices narrow to just these three follow-up outcomes instead of the full list.
+// 'started_bible_study' is included here (not just its own separate branch) precisely because
+// the funnel no longer has a distinct "confirm it's now Bible Study" step in between — the very
+// next visit after Started Bible Study already offers Progressive BS / No Positive Response /
+// Unlocated. 'bible_study' stays in this set too, but only so an already-existing historical
+// record (logged before this change) still narrows correctly instead of falling through to the
+// full default pool — it can never be the CURRENT selection going forward (see
+// SELECTABLE_VISIT_RESULTS above), only ever a past latestResult this check is matching against.
+export const BIBLE_STUDY_ONGOING_RESULTS = ['started_bible_study', 'bible_study', 'progressing'] as const
 export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'moved'] as const
 
-// The Bible Study funnel's two earlier stages, each with their own narrowed follow-up choices —
-// evaluated in getSelectableResults() before the BIBLE_STUDY_ONGOING_RESULTS check above:
+// The Bible Study funnel's entry stage, with its own narrowed follow-up choices — evaluated in
+// getSelectableResults() before the BIBLE_STUDY_ONGOING_RESULTS check above:
 //   'potential_bible_study' ("Potential BS", the default-pool entry point) -> locks to
 //     [started_bible_study, potential_bible_study, discontinued] ("Started Bible Study" confirms
 //     a real study began, "Potential BS" re-confirms still-just-potential, "No Positive Response"
 //     — discontinued's display label — returns the record to the regular/default pool).
-//   'started_bible_study' (confirmed a real study began) -> locks to [bible_study, discontinued],
-//     matching BIBLE_STUDY_FOLLOWUP_RESULTS' own choice of "No Positive Response" for a dead end.
-// From 'bible_study' onward the existing BIBLE_STUDY_ONGOING_RESULTS/BIBLE_STUDY_FOLLOWUP_RESULTS
-// narrowing above takes over unchanged.
+// From 'started_bible_study' onward, BIBLE_STUDY_ONGOING_RESULTS/BIBLE_STUDY_FOLLOWUP_RESULTS
+// above take over directly — see the removed STARTED_BIBLE_STUDY_RESULTS note above.
 export const POTENTIAL_BIBLE_STUDY_RESULTS = ['started_bible_study', 'potential_bible_study', 'discontinued'] as const
-export const STARTED_BIBLE_STUDY_RESULTS = ['bible_study', 'discontinued'] as const
 
 // Any visit result that should read as "there's an active Bible Study interest here" for
 // card-tone purposes (see getRecordCardTone below) — a superset of the funnel/follow-up
@@ -136,7 +144,6 @@ export function getSelectableResults(
       return DO_NOT_CALL_RESULTS
     }
     if (latestResult === 'potential_bible_study') return POTENTIAL_BIBLE_STUDY_RESULTS
-    if (latestResult === 'started_bible_study') return STARTED_BIBLE_STUDY_RESULTS
     if (latestResult && (BIBLE_STUDY_ONGOING_RESULTS as readonly string[]).includes(latestResult)) {
       return BIBLE_STUDY_FOLLOWUP_RESULTS
     }

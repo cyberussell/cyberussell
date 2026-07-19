@@ -619,6 +619,52 @@ export async function listVisits(supabase: SupabaseClient, recordId: string): Pr
   )
 }
 
+// Admin's Weekly Notes menu (dashboard/weekly-notes) — one row per record whose CURRENT latest
+// visit (not just any visit logged this week) falls within [rangeStartIso, rangeEndIso) and has
+// a non-empty note, so Override/Undo (both of which always act on a record's true latest visit,
+// see overrideLatestVisit/deleteLatestVisit below) apply correctly to every row shown here.
+// Fetches visits from rangeStartIso onward with no upper bound so the "first row per record_id,
+// ordered newest first" dedup below reliably lands on each record's true latest visit rather
+// than an older one that happens to fall in range while an even newer one (possibly past
+// rangeEndIso) exists — only then is the deduped set filtered down to the actual window. Both
+// bounds are expected to already be full UTC ISO instants (see reports/date.ts's
+// startOfDayUtc/endOfDayUtcExclusive), not plain calendar-date strings.
+export async function listWeeklyVisitNotes(
+  supabase: SupabaseClient,
+  congregationId: string,
+  rangeStartIso: string,
+  rangeEndIso: string
+): Promise<{ record: TerritoryRecordWithLocation; visit: RecordVisitWithAuthor }[]> {
+  const { data } = await supabase
+    .from('territory_record_visits')
+    .select('*, creator:profiles(full_name)')
+    .eq('congregation_id', congregationId)
+    .gte('visited_at', rangeStartIso)
+    .order('visited_at', { ascending: false })
+
+  const seenRecordIds = new Set<string>()
+  const latestPerRecord: RecordVisitWithAuthor[] = []
+  for (const row of (data ?? []) as unknown as Array<Record<string, unknown> & { record_id: string; creator: { full_name: string } | null }>) {
+    if (seenRecordIds.has(row.record_id)) continue
+    seenRecordIds.add(row.record_id)
+    latestPerRecord.push({ ...(row as unknown as RecordVisitWithAuthor), created_by_name: row.creator?.full_name ?? null })
+  }
+
+  const inWindowWithNotes = latestPerRecord.filter((v) => v.visited_at < rangeEndIso && v.notes.trim().length > 0)
+  if (inWindowWithNotes.length === 0) return []
+
+  const recordIds = inWindowWithNotes.map((v) => v.record_id)
+  const { data: records } = await supabase.from('territory_records').select(RECORD_WITH_LOCATION_SELECT).in('id', recordIds)
+  const recordById = new Map(((records ?? []) as unknown as TerritoryRecordWithLocation[]).map((r) => [r.id, r]))
+
+  return inWindowWithNotes
+    .map((visit) => {
+      const record = recordById.get(visit.record_id)
+      return record ? { record, visit } : null
+    })
+    .filter((row): row is { record: TerritoryRecordWithLocation; visit: RecordVisitWithAuthor } => row !== null)
+}
+
 // Logging a 'do_not_call' result also flips the record's own flag — one action instead of
 // the admin/publisher having to separately toggle it after the fact.
 //

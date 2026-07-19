@@ -20,12 +20,7 @@ const STATUS_HELP: { status: string; description: string }[] = [
   {
     status: 'Started Bible Study',
     description:
-      'Kakasimula lang ng unang regular na pag-aaral gamit ang Bibliya o anumang aklat na ginagamit sa pag-aaral. Sa susunod na pagbisita, magiging Bible Study (kung tuloy-tuloy) o No Positive Response ang status.',
-  },
-  {
-    status: 'Bible Study',
-    description:
-      'Maaring na-ireport na ito bilang Bible Study sa kongregasiyon. Sa mga susunod na pagbisita, magiging Progressive BS o No Positive Response. (May hiwalay na paraan kung lumipat na sila — tingnan ang Unlocated sa ibaba.)',
+      'Kakasimula lang ng unang regular na pag-aaral gamit ang Bibliya o anumang aklat na ginagamit sa pag-aaral. Sa susunod na pagbisita, magiging Progressive BS (kung tuloy-tuloy) o No Positive Response ang status.',
   },
   {
     status: 'Progressive BS',

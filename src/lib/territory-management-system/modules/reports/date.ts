@@ -28,6 +28,28 @@ export function weeklyRange(timezone: string): DateRange {
   return { start: toIsoDate(monday), end: toIsoDate(sunday) }
 }
 
+// The admin's Weekly Notes menu (dashboard/weekly-notes) shows a Monday-Sunday window that does
+// NOT advance to the new week the instant Monday begins — it keeps showing the just-finished
+// week through all of Monday, only flipping over on Tuesday (Russell: admins review the past
+// week's notes at their Tuesday meeting, so Monday should still show the just-finished week's
+// complete notes rather than an empty new one that only just started). Deliberately a separate
+// function from weeklyRange above (used by the existing Reports Daily/Weekly/Monthly toggle,
+// whose "this week" meaning is unrelated and must stay untouched) — same Monday-Sunday math,
+// just evaluated against "yesterday" instead of "today" whenever today is a Monday.
+export function notesWeekRange(timezone: string): DateRange {
+  const today = todayInTimezone(timezone)
+  const [y, m, d] = today.split('-').map(Number)
+  const asDate = new Date(Date.UTC(y, m - 1, d))
+  if (asDate.getUTCDay() === 1) asDate.setUTCDate(asDate.getUTCDate() - 1)
+  const dayOfWeek = asDate.getUTCDay()
+  const diffToMonday = (dayOfWeek + 6) % 7
+  const monday = new Date(asDate)
+  monday.setUTCDate(asDate.getUTCDate() - diffToMonday)
+  const sunday = new Date(monday)
+  sunday.setUTCDate(monday.getUTCDate() + 6)
+  return { start: toIsoDate(monday), end: toIsoDate(sunday) }
+}
+
 export function monthlyRange(timezone: string): DateRange {
   const today = todayInTimezone(timezone)
   const [y, m] = today.split('-').map(Number)

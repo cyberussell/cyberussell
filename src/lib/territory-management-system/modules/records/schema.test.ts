@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { isDoNotCallLocked, isPartnershipAllDone } from './schema'
+import { getSelectableResults, isDoNotCallLocked, isPartnershipAllDone } from './schema'
 
 function record(overrides: Partial<Parameters<typeof isPartnershipAllDone>[0][number]> = {}) {
   return {
@@ -96,5 +96,38 @@ describe('isPartnershipAllDone', () => {
         record({ id: 'b', plusCode: null, completedAt: null }),
       ])
     ).toBe(false)
+  })
+})
+
+// Funnel as of 2026-07-20: Potential BS -> Started Bible Study -> Progressive BS ->
+// Discontinued/Unlocated, with the old intermediate "Bible Study" confirmation step removed.
+describe('getSelectableResults', () => {
+  it('never offers "Bible Study" as a choice, from any starting state', () => {
+    for (const latest of [null, 'return_visit', 'potential_bible_study', 'started_bible_study', 'progressing', 'bible_study']) {
+      expect(getSelectableResults(latest)).not.toContain('bible_study')
+    }
+  })
+
+  it('a cold start (no prior visit) does not offer Started Bible Study either', () => {
+    expect(getSelectableResults(null)).not.toContain('started_bible_study')
+    expect(getSelectableResults(null)).toContain('potential_bible_study')
+  })
+
+  it('Potential BS narrows to Started Bible Study / Potential BS / No Positive Response', () => {
+    expect([...getSelectableResults('potential_bible_study')].sort()).toEqual(
+      ['discontinued', 'potential_bible_study', 'started_bible_study'].sort()
+    )
+  })
+
+  it('Started Bible Study narrows directly to Progressive BS / No Positive Response (skips Bible Study)', () => {
+    expect([...getSelectableResults('started_bible_study')].sort()).toEqual(['discontinued', 'progressing'].sort())
+  })
+
+  it('Progressive BS keeps narrowing to the same follow-up set', () => {
+    expect([...getSelectableResults('progressing')].sort()).toEqual(['discontinued', 'progressing'].sort())
+  })
+
+  it('a legacy record whose latest result is already "bible_study" still narrows to the follow-up set', () => {
+    expect([...getSelectableResults('bible_study')].sort()).toEqual(['discontinued', 'progressing'].sort())
   })
 })

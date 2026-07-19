@@ -1,6 +1,6 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { isDoNotCallLocked, VISIT_RESULTS } from '../records/schema'
+import { BIBLE_STUDY_ONGOING_RESULTS, isDoNotCallLocked, VISIT_RESULTS } from '../records/schema'
 import type { VisitResult } from '../records/types'
 import { getBatchSummary } from '../assignment/queries'
 import type { PartnershipWithProgress } from '../assignment/types'
@@ -91,9 +91,12 @@ async function countNewPublisherRecords(
 }
 
 // "Bible Studies in the Area" (Group Leader Dashboard tab only, confirmed with Russell): a
-// record counts if its most recent visit ever — not just one logged today — is 'bible_study'.
-// A study runs over weeks, so unlike getVisitResultCounts this deliberately has no date range;
-// scoped to today's batch's territories (also confirmed), same as the tab's other stats.
+// record counts if its most recent visit ever — not just one logged today — is anywhere in the
+// "ongoing study" family (BIBLE_STUDY_ONGOING_RESULTS: started_bible_study/progressing, plus the
+// legacy-only 'bible_study' for records logged before that intermediate step was removed from
+// the funnel on 2026-07-20). A study runs over weeks, so unlike getVisitResultCounts this
+// deliberately has no date range; scoped to today's batch's territories (also confirmed), same
+// as the tab's other stats.
 async function countActiveBibleStudies(supabase: SupabaseClient, congregationId: string, territoryIds: string[]): Promise<number> {
   const recordIds = await recordIdsForTerritories(supabase, congregationId, territoryIds)
   if (recordIds.length === 0) return 0
@@ -107,12 +110,13 @@ async function countActiveBibleStudies(supabase: SupabaseClient, congregationId:
 
   // Same "rows ordered newest-first, first time we see a record_id is its latest result"
   // de-dup pattern as getVisitResultCounts.
+  const ongoing = BIBLE_STUDY_ONGOING_RESULTS as readonly string[]
   const seenRecordIds = new Set<string>()
   let count = 0
   for (const row of (data ?? []) as { record_id: string; result: VisitResult }[]) {
     if (seenRecordIds.has(row.record_id)) continue
     seenRecordIds.add(row.record_id)
-    if (row.result === 'bible_study') count++
+    if (ongoing.includes(row.result)) count++
   }
   return count
 }
@@ -237,19 +241,23 @@ export interface TerritoryReportRow {
   name: string
   barangayName: string
   startedBibleStudy: number
-  bibleStudy: number
+  progressiveBibleStudy: number
   totalHouseholds: number
   totalRecords: number
 }
 
 // Per-territory snapshot for the admin Reports table (confirmed with Russell via 3 scope
-// questions before building): Started Bible Study / Bible Study reflect each record's current
+// questions before building): Started Bible Study / Progressive BS reflect each record's current
 // (most-recent-ever) visit result — no date range — same "active" definition
 // countActiveBibleStudies already uses for the Group Leader Dashboard's single stat, just broken
-// out per-territory and split into the two distinct results instead of one. Total Households
-// sums household_members only for approved records; Total Records counts every record
-// regardless of status, matching territory/queries.ts's existing record_count meaning. Sorted by
-// Total Households descending, per Russell's request.
+// out per-territory and split into the two distinct results instead of one. Progressive BS was
+// "Bible Study" (matched only latestResult === 'bible_study') until 2026-07-20, when that
+// intermediate funnel step was removed — it now matches 'progressing' (the funnel's real ongoing
+// stage past Started Bible Study), plus the legacy 'bible_study' result for records logged
+// before the change, so historical data doesn't just disappear from this column. Total
+// Households sums household_members only for approved records; Total Records counts every
+// record regardless of status, matching territory/queries.ts's existing record_count meaning.
+// Sorted by Total Households descending, per Russell's request.
 export async function getTerritoryReportRows(supabase: SupabaseClient, congregationId: string): Promise<TerritoryReportRow[]> {
   const { data: territories } = await supabase
     .from('territories')
@@ -273,8 +281,8 @@ export async function getTerritoryReportRows(supabase: SupabaseClient, congregat
     if (r.status === 'approved') bucket.totalHouseholds += r.household_members ?? 0
   }
 
-  const bibleStudyCounts = new Map<string, { startedBibleStudy: number; bibleStudy: number }>()
-  for (const t of territories) bibleStudyCounts.set(t.id, { startedBibleStudy: 0, bibleStudy: 0 })
+  const bibleStudyCounts = new Map<string, { startedBibleStudy: number; progressiveBibleStudy: number }>()
+  for (const t of territories) bibleStudyCounts.set(t.id, { startedBibleStudy: 0, progressiveBibleStudy: 0 })
 
   const recordIds = [...recordTerritoryById.keys()]
   if (recordIds.length > 0) {
@@ -291,12 +299,12 @@ export async function getTerritoryReportRows(supabase: SupabaseClient, congregat
     for (const row of (visits ?? []) as { record_id: string; result: VisitResult }[]) {
       if (seenRecordIds.has(row.record_id)) continue
       seenRecordIds.add(row.record_id)
-      if (row.result !== 'started_bible_study' && row.result !== 'bible_study') continue
+      if (row.result !== 'started_bible_study' && row.result !== 'progressing' && row.result !== 'bible_study') continue
       const territoryId = recordTerritoryById.get(row.record_id)
       const bucket = territoryId ? bibleStudyCounts.get(territoryId) : undefined
       if (!bucket) continue
       if (row.result === 'started_bible_study') bucket.startedBibleStudy += 1
-      else bucket.bibleStudy += 1
+      else bucket.progressiveBibleStudy += 1
     }
   }
 
@@ -306,7 +314,7 @@ export async function getTerritoryReportRows(supabase: SupabaseClient, congregat
       name: t.name as string,
       barangayName: (t.description as string) || '—',
       startedBibleStudy: bibleStudyCounts.get(t.id)?.startedBibleStudy ?? 0,
-      bibleStudy: bibleStudyCounts.get(t.id)?.bibleStudy ?? 0,
+      progressiveBibleStudy: bibleStudyCounts.get(t.id)?.progressiveBibleStudy ?? 0,
       totalHouseholds: totals.get(t.id)?.totalHouseholds ?? 0,
       totalRecords: totals.get(t.id)?.totalRecords ?? 0,
     }))

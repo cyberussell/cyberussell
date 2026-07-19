@@ -23,7 +23,7 @@ export default function TerritoryReportTable({ rows }: { rows: TerritoryReportRo
           <tr className="border-b border-gray-200">
             <th className={thClass}>Barangay Name</th>
             <th className={thClass}>Started Bible Study</th>
-            <th className={thClass}>Bible Study</th>
+            <th className={thClass}>Progressive BS</th>
             <th className={thClass}>Total Households</th>
             <th className={thClass}>Total Records</th>
           </tr>
@@ -33,7 +33,7 @@ export default function TerritoryReportTable({ rows }: { rows: TerritoryReportRo
             <tr key={r.id} className="border-b border-gray-200 last:border-0">
               <td className={`${tdClass} font-medium`}>{r.barangayName}</td>
               <td className={tdClass}>{r.startedBibleStudy}</td>
-              <td className={tdClass}>{r.bibleStudy}</td>
+              <td className={tdClass}>{r.progressiveBibleStudy}</td>
               <td className={tdClass}>{r.totalHouseholds}</td>
               <td className={tdClass}>{r.totalRecords}</td>
             </tr>
