@@ -142,6 +142,14 @@ export default function AssignmentForm({
   // work on than the territory actually has approved, however high the requested capacity is.
   const recordsToWork = Math.min(partnershipCount * maxPerPartnership, eligibleTotal)
   const recordsRemaining = Math.max(0, eligibleTotal - recordsToWork)
+  // Records fill sequentially, one partnership at a time, up to maxPerPartnership each (mirrors
+  // engine.ts's calculateAssignment) — so when the records don't divide evenly, exactly one
+  // partnership (the last one to receive any) ends up with fewer than everyone else, not an even
+  // split across all of them. Surfaced so the Group Leader can adjust publisher/group-size/
+  // records-per-publisher instead of being surprised by an uneven partner later.
+  const fullyLoadedPartnerships = Math.min(partnershipCount, Math.floor(eligibleTotal / maxPerPartnership))
+  const partialRecords = eligibleTotal - fullyLoadedPartnerships * maxPerPartnership
+  const hasPartialPartnership = fullyLoadedPartnerships < partnershipCount && partialRecords > 0
 
   function toggle(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -232,6 +240,11 @@ export default function AssignmentForm({
                 <p className="mt-1 text-center">
                   {recordsToWork} Record{recordsToWork === 1 ? '' : 's'} to be worked on
                 </p>
+                {hasPartialPartnership && (
+                  <p className="mt-1 text-center text-amber-700">
+                    1 Ministry Partner will only get {partialRecords} Record{partialRecords === 1 ? '' : 's'} (not {maxPerPartnership})
+                  </p>
+                )}
                 <p className="mt-1 text-center">
                   {recordsRemaining} Record{recordsRemaining === 1 ? '' : 's'} still {recordsRemaining === 1 ? 'needs' : 'need'} to be
                   worked on
