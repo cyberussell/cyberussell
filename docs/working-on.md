@@ -1,6 +1,6 @@
 # Current Work
 
-**Territory Management System — Discontinued status, Potential BS narrowing, Other→Busy (2026-07-20) — code done, tsc + vitest (87/87) + next build clean, migration NOT yet applied live — see checkpoint `territory-management-funnel-discontinued-busy-relabel-v1.md`:**
+**Territory Management System — Discontinued status, Potential BS narrowing, Other→Busy (2026-07-20) — code done, tsc + vitest (87/87) + next build clean, migration applied live, committed and pushed (`cb9b6fa`), deployed via Vercel auto-deploy on push — see checkpoint `territory-management-funnel-discontinued-busy-relabel-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 
@@ -18,16 +18,16 @@ descriptions, Other→Busy) — checked the dashboard FAQ, no references found, 
 a `study_discontinued` StatCard to both `ReportsView.tsx` and `GroupLeaderTabs.tsx` for parity
 with `discontinued`. `schema.test.ts` rewritten for the new funnel shapes plus new label tests.
 
-Current Status: Code complete, `npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build`
-all clean. **Migration 036 has NOT been applied to the live TMS Supabase project** — same standing
-`supabase-ldc` "Unauthorized" limitation as every prior TMS session in this sandbox.
+Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build`
+all clean. Russell applied migration 036 to the live TMS Supabase project himself (the
+`supabase-ldc` MCP server was unauthenticated in this sandbox, the standing limitation for this
+product). Committed (`cb9b6fa`) and pushed; Vercel auto-deploys on push.
 
-**Next recommended task:** Russell applies migration 036 to the live TMS Supabase project himself,
-then reviews the diff and commits/pushes/deploys if it looks good. After that: spot-check live —
-Potential BS offers only Started Bible Study/No Positive Response; Started Bible Study/Progressive
-BS offer Progressive BS/No Positive Response/Discontinued; logging Discontinued is accepted and
-shows in Visit History + the new Reports/Group Leader stat card; "Busy" shows everywhere "Other"
-used to, notes-required behavior intact.
+**Next recommended task:** Russell spot-checks live — Potential BS offers only Started Bible
+Study/No Positive Response; Started Bible Study/Progressive BS offer Progressive BS/No Positive
+Response/Discontinued; logging Discontinued is accepted and shows in Visit History + the new
+Reports/Group Leader stat card; "Busy" shows everywhere "Other" used to, notes-required behavior
+intact.
 
 ----------------------------------------
 
