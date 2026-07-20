@@ -20,32 +20,56 @@ const RESULT_COLORS: Record<VisitResult, string> = {
   undone: '#D1D5DB',
 }
 
-// Horizontal bars, highest count first — reads faster than a donut at a glance (especially on
-// mobile, per Russell's feedback replacing the original pie chart) and every category stays
-// individually readable regardless of how many statuses are in play. Every result type shows
-// (even at 0), not just ones with activity — a single lonely bar for whatever's nonzero didn't
-// read as "a graph" to Russell when most categories were still empty.
+// Rounds a chart's highest value up to a "nice" 1/2/5-times-a-power-of-ten number (89 -> 100,
+// 37 -> 50, 6 -> 10, ...) so the axis reads as a real scale with headroom, matching Russell's
+// reference chart (Depict Data Studio) where the top bar doesn't quite reach the right edge.
+function niceMax(max: number): number {
+  if (max <= 0) return 10
+  const magnitude = 10 ** Math.floor(Math.log10(max))
+  const residual = max / magnitude
+  const step = residual <= 1 ? 1 : residual <= 2 ? 2 : residual <= 5 ? 5 : 10
+  return step * magnitude
+}
+
+// Horizontal bars, highest count first, category names on the left / values on the right —
+// reads faster than a donut at a glance (especially on mobile, per Russell's feedback) and every
+// category stays individually readable regardless of how many statuses are in play. Every result
+// type shows (even at 0), not just ones with activity — a single lonely bar for whatever's
+// nonzero didn't read as "a graph" to Russell when most categories were still empty. Layout
+// (axis line with 0/max ticks, flat-left rounded-right bars, bold value colored to match its
+// bar) matches a reference screenshot Russell shared rather than any chart library.
 export default function VisitResultBarChart({ resultCounts }: { resultCounts: Record<VisitResult, number> }) {
   const entries = VISIT_RESULTS.filter((r) => r !== 'undone')
     .map((r) => ({ result: r, count: resultCounts[r] ?? 0 }))
     .sort((a, b) => b.count - a.count)
 
-  const max = Math.max(entries[0]?.count ?? 0, 1)
+  const scaleMax = niceMax(entries[0]?.count ?? 0)
 
   return (
-    <div className="space-y-3">
-      {entries.map((e) => (
-        <div key={e.result} className="flex items-center gap-3">
-          <span className="w-32 shrink-0 truncate text-sm text-slate-600 sm:w-36">{VISIT_RESULT_LABELS[e.result]}</span>
-          <div className="h-4 flex-1 overflow-hidden rounded-full bg-slate-100">
-            <div
-              className="h-full rounded-full"
-              style={{ width: `${(e.count / max) * 100}%`, backgroundColor: RESULT_COLORS[e.result] }}
-            />
+    <div>
+      <div className="space-y-3.5">
+        {entries.map((e) => (
+          <div key={e.result} className="flex items-center gap-3">
+            <span className="w-32 shrink-0 truncate text-sm text-slate-600 sm:w-36">{VISIT_RESULT_LABELS[e.result]}</span>
+            <div className="flex flex-1 items-center gap-2">
+              <div
+                className="h-3.5 rounded-r-full"
+                style={{ width: `${(e.count / scaleMax) * 100}%`, backgroundColor: RESULT_COLORS[e.result] }}
+              />
+              <span className="text-sm font-bold" style={{ color: RESULT_COLORS[e.result] }}>
+                {e.count}
+              </span>
+            </div>
           </div>
-          <span className="w-6 shrink-0 text-right text-sm font-semibold text-[#0B1B33]">{e.count}</span>
+        ))}
+      </div>
+      <div className="mt-2 flex items-center gap-3">
+        <span aria-hidden="true" className="w-32 shrink-0 sm:w-36" />
+        <div className="flex flex-1 justify-between border-t border-slate-200 pt-1 text-xs text-slate-400">
+          <span>0</span>
+          <span>{scaleMax}</span>
         </div>
-      ))}
+      </div>
     </div>
   )
 }
