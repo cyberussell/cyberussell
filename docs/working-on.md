@@ -14,19 +14,30 @@ scale). (3) New stat row below the chart: Publishers Participated, Records Distr
 Untouched, Ended Ministry Early, Partners Finished, First/Last Logged Visit — the last two
 required extending `getBatchVisitResultCounts` (reports/queries.ts) to also surface the
 earliest/latest `visited_at` from the same visit rows it already fetches, threaded through
-`BatchStats` as `firstVisitedAt`/`lastVisitedAt`.
+`BatchStats` as `firstVisitedAt`/`lastVisitedAt`. (4) Follow-up from a real mobile screenshot:
+reworked the stat row into two explicit columns (Records Distributed → Partners Finished → First
+Logged Visit / Records Untouched → Ended Ministry Early → Last Logged Visit), removed "Publishers
+Participated" entirely (and its now-unused `publishersParticipated` computation), centered every
+stat's label+value, and made `formatVisitTime` always render in Philippine time (`Asia/Manila`
+explicitly passed to `toLocaleTimeString`) instead of the viewer's own device timezone — this app
+only ever serves PH-based congregations, so a GL viewing from a non-PH device timezone was
+previously seeing wrong-looking visit times.
 
 Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build`
 all clean throughout. Every round live-verified via temporary scratch routes with mock data
-(screenshotted at mobile + desktop, removed before finishing). Could not live-verify against the
-real TMS Supabase project (no `supabase-ldc` credentials in this sandbox, the standing limitation
-for this product). Committed and pushed each round at Russell's request; Vercel auto-deploys on
+(screenshotted at mobile + desktop, removed before finishing) — the timezone fix specifically
+verified by feeding a known UTC `firstVisitedAt`/`lastVisitedAt` through the scratch route and
+confirming the displayed time was exactly +8 hours (Asia/Manila), matching the exact 5:10 AM /
+7:19 PM times from Russell's own reference screenshot. Could not live-verify against the real TMS
+Supabase project (no `supabase-ldc` credentials in this sandbox, the standing limitation for this
+product). Committed (`d15a654`) and pushed each round at Russell's request; Vercel auto-deploys on
 push.
 
 **Next recommended task:** Russell spot-checks live on a real batch with actual publisher
 activity — confirms the new stat row's numbers (participants, distributed/untouched records,
 ended-early/finished counts, first/last visit time) match what's countable from the Partners tab
-and Visit History.
+and Visit History, and that visit times now read correctly in Philippine time regardless of his
+device's own timezone.
 
 ---
 

@@ -46,23 +46,43 @@ bottom-of-summary stat row, across several follow-up requests in one session.
    own browser timezone, matching `VisitHistoryList`'s existing per-entry timestamp convention
    elsewhere in TMS (congregation timezone isn't currently plumbed down to this client component).
 
+4. **Follow-up round (commit `d15a654`): mobile stat-row layout + PH timezone.** From a real
+   mobile screenshot of the "N ministry partners completed today" card, Russell asked for the stat
+   row to read as two explicit columns rather than a plain 2-col grid whose row-pairing was
+   incidental: **column 1** Records Distributed → Partners Finished → First Logged Visit,
+   **column 2** Records Untouched → Ended Ministry Early → Last Logged Visit. Since a CSS grid with
+   `grid-cols-2` lays items out row-major, this only required reordering the six `<SummaryStat>`
+   elements (Distributed, Untouched, Finished, Ended Early, First Visit, Last Visit) — no new
+   markup. Also: removed "Publishers Participated" entirely (including the now-unused
+   `publishersParticipated` local + its explanatory comment), added `text-center` to
+   `SummaryStat`'s wrapper div so every label/value pair is centered instead of left-aligned, and
+   changed `formatVisitTime` to always pass `timeZone: 'Asia/Manila'` to `toLocaleTimeString`
+   instead of the viewer's own device timezone — resolves the "Known Issues" caveat from the
+   original round below, since every TMS congregation this app serves is PH-based and a GL viewing
+   from a non-PH device timezone was previously seeing visit times shifted off by their own UTC
+   offset.
+
 ## Remaining Work
-None outstanding — all requested items implemented and verified.
+None outstanding — all requested items implemented and verified, including the follow-up round.
 
 ## Known Issues
-None found. First/Last Logged Visit render in the viewer's local timezone rather than the
-congregation's — consistent with existing TMS convention (`VisitHistoryList`), not a new
-inconsistency, but worth knowing if a Group Leader views the dashboard from a different timezone
-than their congregation.
+None currently outstanding. (Previously: First/Last Logged Visit rendered in the viewer's own
+device timezone rather than Philippine time — fixed in the follow-up round above, `formatVisitTime`
+now always uses `Asia/Manila` explicitly.)
 
 ## Next Recommended Task
-`npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build` all clean throughout. Every
-round live-verified via temporary scratch routes with mock data (screenshotted at both mobile and
-desktop widths, removed before finishing) — confirmed grid/label rendering, wrapping, and all
-seven new summary stats computing and displaying correctly against a mocked batch with a mix of
-claimed/unclaimed, finished/ended-early partnerships. Could not live-verify against the real TMS
-Supabase project (no `supabase-ldc` credentials in this sandbox, the standing limitation for this
-product). All changes committed and pushed per Russell's "deploy" request each round; Vercel
-auto-deploys on push. Russell should spot-check live on an actual batch with real publisher
-activity: the new stat row's numbers should match what's visually countable from the Partners tab
-and Visit History.
+`npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build` all clean throughout, including
+after the follow-up round. Every round live-verified via temporary scratch routes with mock data
+(screenshotted at mobile and desktop widths, removed before finishing) — confirmed grid/label
+rendering, wrapping, and all summary stats computing and displaying correctly against a mocked
+batch with a mix of claimed/unclaimed, finished/ended-early partnerships. The follow-up round's
+timezone fix was specifically verified by feeding a known UTC `firstVisitedAt`/`lastVisitedAt`
+through the scratch route and confirming the rendered time was exactly +8 hours — matching the
+5:10 AM / 7:19 PM shown in Russell's own reference screenshot exactly. Could not live-verify
+against the real TMS Supabase project (no `supabase-ldc` credentials in this sandbox, the standing
+limitation for this product). All changes committed and pushed per Russell's "deploy" request each
+round (latest: `d15a654`); Vercel auto-deploys on push. Russell should spot-check live on an actual
+batch with real publisher activity: the stat row's numbers should match what's visually countable
+from the Partners tab and Visit History, the two-column mobile layout should match his reference
+screenshot, and visit times should read correctly in Philippine time regardless of his own device's
+timezone.
