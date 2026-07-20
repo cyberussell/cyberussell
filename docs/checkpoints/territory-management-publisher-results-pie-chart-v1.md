@@ -27,6 +27,14 @@ global revert.
 `npx tsc --noEmit`, `npx vitest run` (84/84), and `npx next build` all clean. No migration
 needed — pure client-side state/UI change.
 
+**Follow-up (same session, next commit):** Russell noted the Summary tab was reachable from the
+Home toggle at any time, mid-session — he wants it hidden until ministry has actually ended (a
+partial-day view would be misleading). Changed the Summary tab's `available` flag in the same
+tabs array (`PublisherWorkspaceApp.tsx`) from unconditional `true` to `sessionEnded` — it now
+only appears in the Map/Pins/Search Area/Summary/Share/Status/FAQ toggle once
+`workspace.finished_at || workspace.ended_early_at` is set, same as the "View My Results" button
+already only being reachable post-finish. `tsc`/`vitest` (84/84)/`next build` clean.
+
 ## Remaining Work
 None for this pass.
 

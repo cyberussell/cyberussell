@@ -8,7 +8,9 @@ Current Feature: Russell asked that once a publisher ends ministry (Sync & Finis
 
 Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (84/84), and `npx next build` all clean. No migration needed — pure client-side change. Not live click-tested (no live Supabase credentials in this sandbox, a standing limitation for this product).
 
-**Next recommended task:** Russell spot-checks live: finish a partnership's ministry either way, confirm "View My Results" appears on the Thank You screen, tap it, and confirm it lands on Home > Summary with a pie chart of that partnership's own logged results.
+**Follow-up (same session, next commit):** Russell asked for the Summary tab to stay hidden until ministry has actually ended, rather than being reachable from the Home toggle mid-session. Changed the Summary tab's `available` flag in the same tabs array (`PublisherWorkspaceApp.tsx`) from unconditional `true` to `sessionEnded` (`workspace.finished_at || workspace.ended_early_at`). `tsc`/`vitest` (84/84)/`next build` clean.
+
+**Next recommended task:** Russell spot-checks live: while ministry is still active, confirm the Home toggle has no Summary option; finish a partnership's ministry either way, confirm Summary now appears in the toggle AND the "View My Results" button on the Thank You screen still lands there with a pie chart of that partnership's own logged results.
 
 ----------------------------------------
 
