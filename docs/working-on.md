@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Publisher done screen links to results pie chart (2026-07-20) — code done, tsc + vitest (84/84) + next build clean, no migration needed, committed and pushed, deployed via Vercel auto-deploy on push — see checkpoint `territory-management-publisher-results-pie-chart-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked that once a publisher ends ministry (Sync & Finish or End My Ministry Early), they get taken to Home > Summary so they can see that day's results, and that the graph there be a pie chart instead of the current bar chart. Confirmed via `AskUserQuestion` that the existing "Thank you for your service today!" Bible-verse done screen should stay, not be replaced outright. Added a "View My Results" button to that done screen (`PublisherWorkspaceApp.tsx`) that jumps to Home > Summary. Restored `VisitResultPieChart.tsx` (a plain SVG donut, git-archaeology'd from before it was swapped for a bar chart in commit `6555c56`, plus the `potential_bible_study` color the bar chart gained since) and swapped it in for that Summary tab specifically — the Group Leader's own Home tab (`GroupLeaderTabs.tsx`) was deliberately left on `VisitResultBarChart`, since Russell had explicitly asked for that swap there before for mobile readability; this request was scoped to the publisher's own results view, not a global revert.
+
+Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (84/84), and `npx next build` all clean. No migration needed — pure client-side change. Not live click-tested (no live Supabase credentials in this sandbox, a standing limitation for this product).
+
+**Next recommended task:** Russell spot-checks live: finish a partnership's ministry either way, confirm "View My Results" appears on the Thank You screen, tap it, and confirm it lands on Home > Summary with a pie chart of that partnership's own logged results.
+
+----------------------------------------
+
 **Territory Management System — Remove Bible Study as a selectable status, add admin Weekly Notes menu (2026-07-20) — code done, tsc + vitest (84/84) + next build clean, live-verified via temporary scratch routes, committed and pushed (`c5b3048`), deployed via Vercel auto-deploy on push, no migration needed — see checkpoint `territory-management-bible-study-removal-weekly-notes-v1.md`:**
 
 Current Product: Territory Management System (TMS).

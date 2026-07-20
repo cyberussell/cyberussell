@@ -18,7 +18,7 @@ import { useOnlineStatus } from '@/lib/territory-management-system/modules/offli
 import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
 import { chooseSearchScopeAction, getSearchScopeRecordsAction } from '@/app/territory-management-system/actions/publisher'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
-import VisitResultBarChart from '@/components/territory-management-system/VisitResultBarChart'
+import VisitResultPieChart from '@/components/territory-management-system/VisitResultPieChart'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherBottomMenu from './PublisherBottomMenu'
 import PublisherStatusHelp from './PublisherStatusHelp'
@@ -723,11 +723,12 @@ export default function PublisherWorkspaceApp({
       doNotCallAt: r.record.do_not_call_at,
     }))
   )
-  // This partnership's own results breakdown — same shape/component as the Group Leader's Home
-  // tab graph (VisitResultBarChart), but counting only records THIS partnership has actually
-  // logged a visit against, not the congregation-wide totals. A record with zero logged visits
-  // is skipped entirely rather than counted as 'initial_visit' — that's the implicit "not yet
-  // visited" default, never a result a publisher actually chose (see records/schema.ts).
+  // This partnership's own results breakdown, shown as VisitResultPieChart on the Home > Summary
+  // tab (and linked to from the "Thank you" done screen below) — counting only records THIS
+  // partnership has actually logged a visit against, not the congregation-wide totals. A record
+  // with zero logged visits is skipped entirely rather than counted as 'initial_visit' — that's
+  // the implicit "not yet visited" default, never a result a publisher actually chose (see
+  // records/schema.ts).
   const myResultCounts = ((): Record<VisitResult, number> => {
     const counts = Object.fromEntries(VISIT_RESULTS.map((r) => [r, 0])) as Record<VisitResult, number>
     for (const r of workspace.records) {
@@ -959,7 +960,7 @@ export default function PublisherWorkspaceApp({
                     <div className="space-y-3">
                       {!showToggle && <h2 className="font-semibold text-[#0B1B33]">Your Results</h2>}
                       <Card className="p-4">
-                        <VisitResultBarChart resultCounts={myResultCounts} />
+                        <VisitResultPieChart resultCounts={myResultCounts} />
                       </Card>
                     </div>
                   )}
@@ -1299,6 +1300,19 @@ export default function PublisherWorkspaceApp({
             {workspace.congregationName && (
               <p className="mt-6 text-sm font-semibold text-[#2563EB]">{workspace.congregationName}</p>
             )}
+            {/* Takes the publisher straight to their own results pie chart (Home > Summary,
+                VisitResultPieChart) — the same tab reachable manually via the Home toggle, just
+                surfaced here so today's outcome is one tap away from the finish screen. */}
+            <button
+              type="button"
+              onClick={() => {
+                setMapView('summary')
+                setView({ name: 'home' })
+              }}
+              className="mt-6 w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+            >
+              View My Results
+            </button>
           </div>
         )}
       </div>
