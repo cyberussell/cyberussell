@@ -31,45 +31,69 @@ function niceMax(max: number): number {
   return step * magnitude
 }
 
-// Horizontal bars, highest count first, category names on the left / values on the right —
-// reads faster than a donut at a glance (especially on mobile, per Russell's feedback) and every
-// category stays individually readable regardless of how many statuses are in play. Every result
-// type shows (even at 0), not just ones with activity — a single lonely bar for whatever's
-// nonzero didn't read as "a graph" to Russell when most categories were still empty. Layout
-// (axis line with 0/max ticks, flat-left rounded-right bars, bold value colored to match its
-// bar) matches a reference screenshot Russell shared rather than any chart library.
+// The 0..scaleMax axis split into evenly spaced tick marks — 10 segments for a bigger scale
+// (fine enough steps to stay readable, e.g. 0/10/20.../100), 5 for a smaller one (10 segments
+// on a max of 10 would just be "0,1,2,3...", too fussy to be useful).
+function ticksFor(scaleMax: number): number[] {
+  const divisions = scaleMax >= 50 ? 10 : 5
+  const step = scaleMax / divisions
+  return Array.from({ length: divisions + 1 }, (_, i) => Math.round(i * step))
+}
+
+// Horizontal bars, highest count first, category names right-aligned against the bars / values
+// bold and colored to the right — reads faster than a donut at a glance (especially on mobile,
+// per Russell's feedback) and every category stays individually readable regardless of how many
+// statuses are in play. Every result type shows (even at 0), not just ones with activity — a
+// single lonely bar for whatever's nonzero didn't read as "a graph" to Russell when most
+// categories were still empty. Layout matches a reference screenshot Russell shared (Depict Data
+// Studio) rather than any chart library — including the vertical/horizontal gridline overlay
+// below, which is positioned to line up with the bar track (offset past the label column) using
+// matching Tailwind arbitrary values rather than JS measurement.
 export default function VisitResultBarChart({ resultCounts }: { resultCounts: Record<VisitResult, number> }) {
   const entries = VISIT_RESULTS.filter((r) => r !== 'undone')
     .map((r) => ({ result: r, count: resultCounts[r] ?? 0 }))
     .sort((a, b) => b.count - a.count)
 
   const scaleMax = niceMax(entries[0]?.count ?? 0)
+  const ticks = ticksFor(scaleMax)
 
   return (
     <div>
-      <div className="space-y-3.5">
-        {entries.map((e) => (
-          <div key={e.result} className="flex items-center gap-3">
-            <span className="w-24 shrink-0 text-right text-sm leading-tight text-slate-600 sm:w-36 sm:truncate">
-              {VISIT_RESULT_LABELS[e.result]}
-            </span>
-            <div className="flex flex-1 items-center gap-2">
-              <div
-                className="h-3.5 rounded-r-full"
-                style={{ width: `${(e.count / scaleMax) * 100}%`, backgroundColor: RESULT_COLORS[e.result] }}
-              />
-              <span className="text-sm font-bold" style={{ color: RESULT_COLORS[e.result] }}>
-                {e.count}
+      <div className="relative">
+        {/* Vertical gridlines, one per tick — positioned by percentage against the same track the
+            bars themselves grow across, so a gridline at "50%" always lines up with where a bar
+            reaching half of scaleMax actually ends. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-24 right-0 sm:left-36">
+          {ticks.map((t) => (
+            <div key={t} className="absolute inset-y-0 border-l border-slate-100" style={{ left: `${(t / scaleMax) * 100}%` }} />
+          ))}
+        </div>
+
+        <div>
+          {entries.map((e) => (
+            <div key={e.result} className="flex items-center gap-3 border-b border-slate-100 pb-3.5 last:border-b-0 last:pb-0">
+              <span className="w-24 shrink-0 text-right text-sm leading-tight text-slate-600 sm:w-36 sm:truncate">
+                {VISIT_RESULT_LABELS[e.result]}
               </span>
+              <div className="flex flex-1 items-center gap-2">
+                <div
+                  className="h-3.5 rounded-r-full"
+                  style={{ width: `${(e.count / scaleMax) * 100}%`, backgroundColor: RESULT_COLORS[e.result] }}
+                />
+                <span className="text-sm font-bold" style={{ color: RESULT_COLORS[e.result] }}>
+                  {e.count}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-      <div className="mt-2 flex items-center gap-3">
+      <div className="mt-1 flex items-center gap-3">
         <span aria-hidden="true" className="w-24 shrink-0 sm:w-36" />
         <div className="flex flex-1 justify-between border-t border-slate-200 pt-1 text-xs text-slate-400">
-          <span>0</span>
-          <span>{scaleMax}</span>
+          {ticks.map((t) => (
+            <span key={t}>{t}</span>
+          ))}
         </div>
       </div>
     </div>
