@@ -46,17 +46,16 @@ const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
   { id: 'faq', label: 'FAQ', icon: HelpCircle },
 ]
 
-// Renders in the viewer's own local timezone, same as VisitHistoryList's per-entry timestamps
-// elsewhere in TMS — not the congregation's timezone, which isn't plumbed down to this
-// client component.
+// Always rendered in Philippine time (Asia/Manila), regardless of the viewer's own device
+// timezone — every TMS congregation this app serves is PH-based.
 function formatVisitTime(iso: string | null): string {
   if (!iso) return '—'
-  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Manila' })
 }
 
 function SummaryStat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div>
+    <div className="text-center">
       <p className="text-xs text-slate-500">{label}</p>
       <p className="font-semibold text-[#0B1B33]">{value}</p>
     </div>
@@ -159,11 +158,6 @@ export default function GroupLeaderTabs({
       (p) => Boolean(p.finished_at) || Boolean(p.ended_early_at) || (p.recordCount > 0 && p.completedCount >= p.recordCount)
     )
 
-  // Bottom-of-summary stat row on the Home tab's "completed today" card — claimed_at is "actually
-  // opened the link and saved a name," the same bar PublisherWorkspaceApp itself uses to treat a
-  // partnership as claimed, so an unclaimed slot (nobody scanned that QR position) doesn't count
-  // as a publisher who "participated."
-  const publishersParticipated = stats.partnerships.filter((p) => p.claimed_at).length
   const partnersEndedEarly = stats.partnerships.filter((p) => p.ended_early_at).length
   const partnersFinished = stats.partnerships.filter((p) => p.finished_at).length
 
@@ -277,11 +271,10 @@ export default function GroupLeaderTabs({
                 <VisitResultBarChart resultCounts={stats.resultCounts} />
               </div>
               <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-blue-100 pt-5 sm:grid-cols-4">
-                <SummaryStat label="Publishers Participated" value={publishersParticipated} />
                 <SummaryStat label="Records Distributed" value={stats.totalRecords} />
                 <SummaryStat label="Records Untouched" value={stats.remainingRecords} />
-                <SummaryStat label="Ended Ministry Early" value={partnersEndedEarly} />
                 <SummaryStat label="Partners Finished" value={partnersFinished} />
+                <SummaryStat label="Ended Ministry Early" value={partnersEndedEarly} />
                 <SummaryStat label="First Logged Visit" value={formatVisitTime(stats.firstVisitedAt)} />
                 <SummaryStat label="Last Logged Visit" value={formatVisitTime(stats.lastVisitedAt)} />
               </div>
