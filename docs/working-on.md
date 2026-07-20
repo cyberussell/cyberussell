@@ -14,15 +14,15 @@ Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (84/84),
 
 ----------------------------------------
 
-**Territory Management System — Weekly Notes: dismiss a note (2026-07-20) — code done, tsc + vitest (84/84) + next build clean, migration NOT yet applied live, not committed — see checkpoint `territory-management-weekly-notes-dismiss-v1.md`:**
+**Territory Management System — Weekly Notes: dismiss a note (2026-07-20) — code done, tsc + vitest (84/84) + next build clean, migration applied live, committed and pushed (`a6d2004`), deployed via Vercel auto-deploy on push — see checkpoint `territory-management-weekly-notes-dismiss-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 
 Current Feature: Russell asked for a way to dismiss a Weekly Notes row so it doesn't show again once dismissed. Added `territory_record_visits.weekly_note_dismissed_at` (new migration `035_weekly_note_dismissal.sql`) and `dismissWeeklyNote()` (`records/queries.ts`) which stamps it on a single visit row. `listWeeklyVisitNotes()` now filters out any latest-visit with `weekly_note_dismissed_at` set, alongside its existing window/notes-present checks. New `dismissWeeklyNoteAction(visitId)` server action (`actions/records.ts`) and a plain-form "Dismiss" button per row (`dashboard/weekly-notes/page.tsx`), mirroring the existing one-way `dismissRemovalRecommendationAction` pattern on the Flagged for Removal page — no confirm dialog, since it doesn't touch the record itself (Visit History/Override/Undo untouched). Scoped to the visit row, not the record, so a fresh visit next week isn't pre-dismissed.
 
-Current Status: Code complete, `npx tsc --noEmit`, `npx vitest run` (84/84), and `npx next build` all clean. **Migration 035 has NOT been applied to the live TMS Supabase project** — the `supabase-ldc` MCP server returned "Unauthorized" in this sandbox (no access token configured, a standing limitation for this product). Not yet committed/pushed.
+Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (84/84), and `npx next build` all clean. Russell applied migration 035 to the live TMS Supabase project himself (the `supabase-ldc` MCP server was unauthenticated in this sandbox, a standing limitation for this product). Committed (`a6d2004`) and pushed; Vercel auto-deploys on push.
 
-**Next recommended task:** Russell applies `territory-management-system/migrations/035_weekly_note_dismissal.sql` to the live TMS Supabase project himself, then reviews the diff and commits/pushes if it looks good. After that: spot-check live — dismiss a Weekly Notes row, confirm it disappears from the list, confirm the record's own Visit History/Override/Undo are unaffected, and confirm a fresh visit logged on that record shows up again the following week.
+**Next recommended task:** Russell spot-checks live: dismiss a Weekly Notes row, confirm it disappears from the list, confirm the record's own Visit History/Override/Undo on its detail page are unaffected, and confirm a fresh visit logged on that record shows up again the following week.
 
 ----------------------------------------
 
