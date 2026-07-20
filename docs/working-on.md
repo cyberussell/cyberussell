@@ -1,5 +1,36 @@
 # Current Work
 
+**Territory Management System — Discontinued status, Potential BS narrowing, Other→Busy (2026-07-20) — code done, tsc + vitest (87/87) + next build clean, migration NOT yet applied live — see checkpoint `territory-management-funnel-discontinued-busy-relabel-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Three requests in one message. (1) Add "Discontinued" to Started Bible Study /
+Progressive BS's follow-up choices — confirmed via `AskUserQuestion` this should be a genuinely
+new, distinct status (`study_discontinued`) rather than renaming the existing "No Positive
+Response" (`discontinued`), since the two mean different things (never really interested vs. a
+study that was underway and stopped). New migration `036_study_discontinued_result.sql` widens
+the DB check constraint; `BIBLE_STUDY_FOLLOWUP_RESULTS` now offers 3 outcomes instead of 2. (2)
+Removed "Potential BS" as a re-confirmable choice once a record is already at Potential BS —
+`POTENTIAL_BIBLE_STUDY_RESULTS` narrowed to just `[started_bible_study, discontinued]`. (3)
+Renamed the "Other" status label to "Busy" (value/notes-required behavior unchanged). Updated
+`PublisherStatusHelp.tsx` (new Discontinued entry, updated Potential BS/Started BS/Progressive BS
+descriptions, Other→Busy) — checked the dashboard FAQ, no references found, left untouched. Added
+a `study_discontinued` StatCard to both `ReportsView.tsx` and `GroupLeaderTabs.tsx` for parity
+with `discontinued`. `schema.test.ts` rewritten for the new funnel shapes plus new label tests.
+
+Current Status: Code complete, `npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build`
+all clean. **Migration 036 has NOT been applied to the live TMS Supabase project** — same standing
+`supabase-ldc` "Unauthorized" limitation as every prior TMS session in this sandbox.
+
+**Next recommended task:** Russell applies migration 036 to the live TMS Supabase project himself,
+then reviews the diff and commits/pushes/deploys if it looks good. After that: spot-check live —
+Potential BS offers only Started Bible Study/No Positive Response; Started Bible Study/Progressive
+BS offer Progressive BS/No Positive Response/Discontinued; logging Discontinued is accepted and
+shows in Visit History + the new Reports/Group Leader stat card; "Busy" shows everywhere "Other"
+used to, notes-required behavior intact.
+
+----------------------------------------
+
 **Territory Management System — Publisher done screen links to results pie chart (2026-07-20) — code done, tsc + vitest (84/84) + next build clean, no migration needed, committed and pushed, deployed via Vercel auto-deploy on push — see checkpoint `territory-management-publisher-results-pie-chart-v1.md`:**
 
 Current Product: Territory Management System (TMS).

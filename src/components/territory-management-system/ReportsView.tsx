@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import {
   BookMarked,
   BookOpen,
+  BookX,
   CheckCircle2,
   ClipboardList,
   Clock,
@@ -82,6 +83,7 @@ export default function ReportsView({
           <StatCard icon={BookOpen} label={VISIT_RESULT_LABELS.bible_study} value={stats.resultCounts.bible_study} />
           <StatCard icon={TrendingUp} label={VISIT_RESULT_LABELS.progressing} value={stats.resultCounts.progressing} />
           <StatCard icon={XCircle} label={VISIT_RESULT_LABELS.discontinued} value={stats.resultCounts.discontinued} />
+          <StatCard icon={BookX} label={VISIT_RESULT_LABELS.study_discontinued} value={stats.resultCounts.study_discontinued} />
           <StatCard icon={DoorClosed} label={VISIT_RESULT_LABELS.not_home} value={stats.resultCounts.not_home} />
           <StatCard icon={PhoneOff} label={VISIT_RESULT_LABELS.do_not_call} value={stats.resultCounts.do_not_call} />
           <StatCard icon={Truck} label={VISIT_RESULT_LABELS.moved} value={stats.resultCounts.moved} />

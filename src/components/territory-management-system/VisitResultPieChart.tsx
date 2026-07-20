@@ -13,6 +13,7 @@ const RESULT_COLORS: Record<VisitResult, string> = {
   bible_study: '#8B5CF6',
   progressing: '#10B981',
   discontinued: '#9CA3AF',
+  study_discontinued: '#78716C',
   not_home: '#64748B',
   do_not_call: '#EF4444',
   moved: '#F59E0B',

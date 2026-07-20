@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getSelectableResults, isDoNotCallLocked, isPartnershipAllDone } from './schema'
+import { getSelectableResults, isDoNotCallLocked, isPartnershipAllDone, VISIT_RESULT_LABELS } from './schema'
 
 function record(overrides: Partial<Parameters<typeof isPartnershipAllDone>[0][number]> = {}) {
   return {
@@ -100,7 +100,10 @@ describe('isPartnershipAllDone', () => {
 })
 
 // Funnel as of 2026-07-20: Potential BS -> Started Bible Study -> Progressive BS ->
-// Discontinued/Unlocated, with the old intermediate "Bible Study" confirmation step removed.
+// Discontinued/No Positive Response/Unlocated, with the old intermediate "Bible Study"
+// confirmation step removed. Follow-up updated same-day: Potential BS no longer offers
+// re-confirming itself, and Started Bible Study/Progressive BS gained a third "Discontinued"
+// outcome distinct from "No Positive Response".
 describe('getSelectableResults', () => {
   it('never offers "Bible Study" as a choice, from any starting state', () => {
     for (const latest of [null, 'return_visit', 'potential_bible_study', 'started_bible_study', 'progressing', 'bible_study']) {
@@ -113,21 +116,36 @@ describe('getSelectableResults', () => {
     expect(getSelectableResults(null)).toContain('potential_bible_study')
   })
 
-  it('Potential BS narrows to Started Bible Study / Potential BS / No Positive Response', () => {
-    expect([...getSelectableResults('potential_bible_study')].sort()).toEqual(
-      ['discontinued', 'potential_bible_study', 'started_bible_study'].sort()
+  it('a cold start does not offer "Discontinued" (study_discontinued) — only reachable as a follow-up', () => {
+    expect(getSelectableResults(null)).not.toContain('study_discontinued')
+  })
+
+  it('Potential BS narrows to Started Bible Study / No Positive Response, no longer re-offering Potential BS itself', () => {
+    expect([...getSelectableResults('potential_bible_study')].sort()).toEqual(['discontinued', 'started_bible_study'].sort())
+  })
+
+  it('Started Bible Study narrows to Progressive BS / No Positive Response / Discontinued (skips Bible Study)', () => {
+    expect([...getSelectableResults('started_bible_study')].sort()).toEqual(
+      ['discontinued', 'progressing', 'study_discontinued'].sort()
     )
   })
 
-  it('Started Bible Study narrows directly to Progressive BS / No Positive Response (skips Bible Study)', () => {
-    expect([...getSelectableResults('started_bible_study')].sort()).toEqual(['discontinued', 'progressing'].sort())
-  })
-
   it('Progressive BS keeps narrowing to the same follow-up set', () => {
-    expect([...getSelectableResults('progressing')].sort()).toEqual(['discontinued', 'progressing'].sort())
+    expect([...getSelectableResults('progressing')].sort()).toEqual(['discontinued', 'progressing', 'study_discontinued'].sort())
   })
 
   it('a legacy record whose latest result is already "bible_study" still narrows to the follow-up set', () => {
-    expect([...getSelectableResults('bible_study')].sort()).toEqual(['discontinued', 'progressing'].sort())
+    expect([...getSelectableResults('bible_study')].sort()).toEqual(['discontinued', 'progressing', 'study_discontinued'].sort())
+  })
+})
+
+describe('VISIT_RESULT_LABELS', () => {
+  it('labels "other" as "Busy"', () => {
+    expect(VISIT_RESULT_LABELS.other).toBe('Busy')
+  })
+
+  it('labels "study_discontinued" as "Discontinued", distinct from "discontinued"\'s "No Positive Response"', () => {
+    expect(VISIT_RESULT_LABELS.study_discontinued).toBe('Discontinued')
+    expect(VISIT_RESULT_LABELS.discontinued).toBe('No Positive Response')
   })
 })

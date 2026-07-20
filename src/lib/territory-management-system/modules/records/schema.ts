@@ -10,6 +10,11 @@ export const VISIT_RESULTS = [
   'bible_study',
   'progressing',
   'discontinued',
+  // Distinct from 'discontinued' ("No Positive Response") as of 2026-07-20 — that one is the
+  // dead-end from Potential BS (interest never really took), this one is a study that was
+  // genuinely underway (Started Bible Study / Progressive BS) and then stopped. See
+  // BIBLE_STUDY_FOLLOWUP_RESULTS below for where it's offered.
+  'study_discontinued',
   'not_home',
   'do_not_call',
   'moved',
@@ -40,7 +45,11 @@ export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter(
     r !== 'progressing' &&
     r !== 'discontinued' &&
     r !== 'started_bible_study' &&
-    r !== 'bible_study'
+    r !== 'bible_study' &&
+    // 'study_discontinued' is excluded from the cold-start pool for the same reason — only ever
+    // reachable as a follow-up once a study was already underway (BIBLE_STUDY_FOLLOWUP_RESULTS),
+    // never a result a publisher picks on a record with no study history.
+    r !== 'study_discontinued'
 )
 
 // Once a record's most recent visit means a study is already confirmed underway, the next
@@ -53,17 +62,22 @@ export const SELECTABLE_VISIT_RESULTS = VISIT_RESULTS.filter(
 // full default pool — it can never be the CURRENT selection going forward (see
 // SELECTABLE_VISIT_RESULTS above), only ever a past latestResult this check is matching against.
 export const BIBLE_STUDY_ONGOING_RESULTS = ['started_bible_study', 'bible_study', 'progressing'] as const
-export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'moved'] as const
+// 'study_discontinued' added 2026-07-20 (Russell's request) alongside the existing
+// 'discontinued' — Started Bible Study / Progressive BS's follow-up choices are now Progressive
+// BS / No Positive Response / Discontinued, three distinct outcomes rather than two.
+export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'study_discontinued', 'moved'] as const
 
 // The Bible Study funnel's entry stage, with its own narrowed follow-up choices — evaluated in
 // getSelectableResults() before the BIBLE_STUDY_ONGOING_RESULTS check above:
 //   'potential_bible_study' ("Potential BS", the default-pool entry point) -> locks to
-//     [started_bible_study, potential_bible_study, discontinued] ("Started Bible Study" confirms
-//     a real study began, "Potential BS" re-confirms still-just-potential, "No Positive Response"
-//     — discontinued's display label — returns the record to the regular/default pool).
+//     [started_bible_study, discontinued] ("Started Bible Study" confirms a real study began,
+//     "No Positive Response" — discontinued's display label — returns the record to the
+//     regular/default pool). Re-confirming "Potential BS" itself was removed 2026-07-20
+//     (Russell's request) — a record already at Potential BS must move forward or dead-end, not
+//     loop back onto its own current status.
 // From 'started_bible_study' onward, BIBLE_STUDY_ONGOING_RESULTS/BIBLE_STUDY_FOLLOWUP_RESULTS
 // above take over directly — see the removed STARTED_BIBLE_STUDY_RESULTS note above.
-export const POTENTIAL_BIBLE_STUDY_RESULTS = ['started_bible_study', 'potential_bible_study', 'discontinued'] as const
+export const POTENTIAL_BIBLE_STUDY_RESULTS = ['started_bible_study', 'discontinued'] as const
 
 // Any visit result that should read as "there's an active Bible Study interest here" for
 // card-tone purposes (see getRecordCardTone below) — a superset of the funnel/follow-up
@@ -163,10 +177,14 @@ export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string>
   // including as the funnel's dead-end/no-interest outcome from Potential BS and Started Bible
   // Study, and as the existing ongoing-study follow-up in BIBLE_STUDY_FOLLOWUP_RESULTS.
   discontinued: 'No Positive Response',
+  // Added 2026-07-20 — distinct from 'discontinued' above, see BIBLE_STUDY_FOLLOWUP_RESULTS.
+  study_discontinued: 'Discontinued',
   not_home: 'Not At Home',
   do_not_call: 'Do Not Call',
   moved: 'Unlocated',
-  other: 'Other',
+  // Renamed from "Other" 2026-07-20 (Russell's request) — same underlying 'other' value/notes
+  // requirement, just a clearer label for "the person is busy right now."
+  other: 'Busy',
   undone: 'Undone',
 }
 
@@ -181,6 +199,7 @@ export const VISIT_RESULT_STYLES: Record<(typeof VISIT_RESULTS)[number], string>
   bible_study: 'bg-violet-50 text-violet-600',
   progressing: 'bg-emerald-50 text-emerald-600',
   discontinued: 'bg-gray-100 text-gray-500',
+  study_discontinued: 'bg-stone-100 text-stone-600',
   not_home: 'bg-slate-100 text-slate-600',
   do_not_call: 'bg-red-50 text-red-600',
   moved: 'bg-amber-50 text-amber-600',
@@ -292,7 +311,7 @@ export const createRecordSchema = z
     initialNotes: optionalString(500),
   })
   .refine((data) => !data.initialResult || data.initialResult !== 'other' || data.initialNotes.trim().length > 0, {
-    message: 'Notes are required when the initial status is "Other".',
+    message: 'Notes are required when the initial status is "Busy".',
     path: ['initialNotes'],
   })
   .refine(
@@ -327,7 +346,7 @@ export const logVisitSchema = z
     notes: z.string().max(500).optional().default(''),
   })
   .refine((data) => data.result !== 'other' || data.notes.trim().length > 0, {
-    message: 'Notes are required when the result is "Other".',
+    message: 'Notes are required when the result is "Busy".',
     path: ['notes'],
   })
   .refine((data) => !VISIT_RESULT_CONDUCTOR_PROMPT[data.result] || data.conductorName.trim().length > 0, {

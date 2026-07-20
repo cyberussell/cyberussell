@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import {
   BookMarked,
   BookOpen,
+  BookX,
   CheckCircle2,
   ClipboardList,
   Clock,
@@ -384,6 +385,7 @@ export default function GroupLeaderTabs({
               ['bible_study', BookOpen],
               ['progressing', TrendingUp],
               ['discontinued', XCircle],
+              ['study_discontinued', BookX],
               ['not_home', DoorClosed],
               ['do_not_call', PhoneOff],
               ['moved', Truck],

@@ -15,21 +15,26 @@ const STATUS_HELP: { status: string; description: string }[] = [
   {
     status: 'Potential BS',
     description:
-      'Nagpakita sila ng kahit kauting interes sa Bibliya, pero wala pang regular na pag-aaral ang napasimulan. Sa susunod na pagbisita, maaari mo ng piliin ang Started Bible Study, o kaya ulitin ang Potential BS, o No Positive Response.',
+      'Nagpakita sila ng kahit kauting interes sa Bibliya, pero wala pang regular na pag-aaral ang napasimulan. Sa susunod na pagbisita, maaari mo ng piliin ang Started Bible Study o No Positive Response.',
   },
   {
     status: 'Started Bible Study',
     description:
-      'Kakasimula lang ng unang regular na pag-aaral gamit ang Bibliya o anumang aklat na ginagamit sa pag-aaral. Sa susunod na pagbisita, magiging Progressive BS (kung tuloy-tuloy) o No Positive Response ang status.',
+      'Kakasimula lang ng unang regular na pag-aaral gamit ang Bibliya o anumang aklat na ginagamit sa pag-aaral. Sa susunod na pagbisita, magiging Progressive BS (kung tuloy-tuloy), Discontinued (kung tumigil sa pag-aaral), o No Positive Response ang status.',
   },
   {
     status: 'Progressive BS',
     description:
-      'Sumusulong ang Bible Study. Huwag palitan ng iyong pangalan ang pangalan ng nagko-conduct ng Bible Study malibang pormal na inilipat ito sa iyo.',
+      'Sumusulong ang Bible Study. Huwag palitan ng iyong pangalan ang pangalan ng nagko-conduct ng Bible Study malibang pormal na inilipat ito sa iyo. Sa susunod na pagbisita, magiging Progressive BS pa rin (kung tuloy-tuloy), Discontinued (kung tumigil sa pag-aaral), o No Positive Response ang status.',
   },
   {
     status: 'No Positive Response',
     description: 'Walang positibong pagtugon sa kasalukuyan pero hindi naman Do Not Call.',
+  },
+  {
+    status: 'Discontinued',
+    description:
+      'May regular nang pag-aaral (Started Bible Study o Progressive BS) pero tumigil na. Iba ito sa No Positive Response, na para sa records na hindi pa naman talaga nagsimula ng regular na pag-aaral.',
   },
   {
     status: 'Do Not Call',
@@ -41,7 +46,10 @@ const STATUS_HELP: { status: string; description: string }[] = [
     description:
       'Hindi na sila nakatira doon. May sariling button ito (hindi bahagi ng Status dropdown) — hihilingin sa iyo na itama ang address/contact info o irekomenda ang record para tanggalin ng admin.',
   },
-  { status: 'Other', description: 'Default status para sa mga hindi sakop ng ibang status — kailangan ito ng notes.' },
+  {
+    status: 'Busy',
+    description: 'Abala o walang oras ang kausap ngayon, o anumang hindi sakop ng ibang status — kailangan ito ng notes.',
+  },
 ]
 
 export default function PublisherStatusHelp() {

@@ -8,6 +8,7 @@ export type VisitResult =
   | 'bible_study'
   | 'progressing'
   | 'discontinued'
+  | 'study_discontinued'
   | 'not_home'
   | 'do_not_call'
   | 'moved'
