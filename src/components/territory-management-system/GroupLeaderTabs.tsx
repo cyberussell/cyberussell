@@ -46,6 +46,23 @@ const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
   { id: 'faq', label: 'FAQ', icon: HelpCircle },
 ]
 
+// Renders in the viewer's own local timezone, same as VisitHistoryList's per-entry timestamps
+// elsewhere in TMS — not the congregation's timezone, which isn't plumbed down to this
+// client component.
+function formatVisitTime(iso: string | null): string {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+}
+
+function SummaryStat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div>
+      <p className="text-xs text-slate-500">{label}</p>
+      <p className="font-semibold text-[#0B1B33]">{value}</p>
+    </div>
+  )
+}
+
 // One entry per batch this Group Leader owns today — a Group Leader can now have more than one
 // (see 023_multiple_batches_per_group_leader.sql), e.g. an original batch plus one or more
 // overflow batches generated for extra publishers later the same day.
@@ -141,6 +158,14 @@ export default function GroupLeaderTabs({
     stats.partnerships.every(
       (p) => Boolean(p.finished_at) || Boolean(p.ended_early_at) || (p.recordCount > 0 && p.completedCount >= p.recordCount)
     )
+
+  // Bottom-of-summary stat row on the Home tab's "completed today" card — claimed_at is "actually
+  // opened the link and saved a name," the same bar PublisherWorkspaceApp itself uses to treat a
+  // partnership as claimed, so an unclaimed slot (nobody scanned that QR position) doesn't count
+  // as a publisher who "participated."
+  const publishersParticipated = stats.partnerships.filter((p) => p.claimed_at).length
+  const partnersEndedEarly = stats.partnerships.filter((p) => p.ended_early_at).length
+  const partnersFinished = stats.partnerships.filter((p) => p.finished_at).length
 
   // Label for the batch switcher — "Assignment" for the original, "Overflow" for an overflow
   // batch (numbered "Overflow 2", "Overflow 3"... only once there's more than one, since a
@@ -250,6 +275,15 @@ export default function GroupLeaderTabs({
               )}
               <div className="mt-6">
                 <VisitResultBarChart resultCounts={stats.resultCounts} />
+              </div>
+              <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-blue-100 pt-5 sm:grid-cols-4">
+                <SummaryStat label="Publishers Participated" value={publishersParticipated} />
+                <SummaryStat label="Records Distributed" value={stats.totalRecords} />
+                <SummaryStat label="Records Untouched" value={stats.remainingRecords} />
+                <SummaryStat label="Ended Ministry Early" value={partnersEndedEarly} />
+                <SummaryStat label="Partners Finished" value={partnersFinished} />
+                <SummaryStat label="First Logged Visit" value={formatVisitTime(stats.firstVisitedAt)} />
+                <SummaryStat label="Last Logged Visit" value={formatVisitTime(stats.lastVisitedAt)} />
               </div>
             </Card>
           ) : (

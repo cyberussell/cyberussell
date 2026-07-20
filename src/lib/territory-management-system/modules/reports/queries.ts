@@ -21,6 +21,11 @@ export interface BatchStats extends ReportStats {
   // Today's assigned territories, for the Home tab's "territories worked today" summary once
   // every partner is done, and the QR card's barangay-name heading before that.
   territories: { id: string; name: string; description: string }[]
+  // Earliest/latest territory_record_visits.visited_at among this batch's own assigned records
+  // today — null when nobody has logged a visit yet. Derived from the same visit rows
+  // getBatchVisitResultCounts already fetches (ordered newest-first), not a separate query.
+  firstVisitedAt: string | null
+  lastVisitedAt: string | null
 }
 
 function emptyResultCounts(): Record<VisitResult, number> {
@@ -137,25 +142,34 @@ async function countActiveBibleStudies(supabase: SupabaseClient, congregationId:
 // A record with neither an actual visit, an ended-early partnership, nor an active lock simply
 // isn't counted in any bucket — it's still in progress, which the separate remainingRecords
 // stat already covers.
+interface BatchVisitBreakdown {
+  counts: Record<VisitResult, number>
+  // Earliest/latest visited_at among this batch's own visit rows today — derived from the same
+  // fetch below (already ordered newest-first) rather than a separate query.
+  firstVisitedAt: string | null
+  lastVisitedAt: string | null
+}
+
 async function getBatchVisitResultCounts(
   supabase: SupabaseClient,
   congregationId: string,
   batchId: string,
   rangeStart: string,
   rangeEnd: string
-): Promise<Record<VisitResult, number>> {
+): Promise<BatchVisitBreakdown> {
   const counts = emptyResultCounts()
+  const empty: BatchVisitBreakdown = { counts, firstVisitedAt: null, lastVisitedAt: null }
 
   const { data: partnerships } = await supabase.from('partnerships').select('id, ended_early_at').eq('batch_id', batchId)
   const endedEarlyByPartnership = new Map(
     ((partnerships ?? []) as { id: string; ended_early_at: string | null }[]).map((p) => [p.id, Boolean(p.ended_early_at)])
   )
   const partnershipIds = [...endedEarlyByPartnership.keys()]
-  if (partnershipIds.length === 0) return counts
+  if (partnershipIds.length === 0) return empty
 
   const { data: assigned } = await supabase.from('partnership_records').select('partnership_id, record_id').in('partnership_id', partnershipIds)
   const assignedRows = (assigned ?? []) as { partnership_id: string; record_id: string }[]
-  if (assignedRows.length === 0) return counts
+  if (assignedRows.length === 0) return empty
 
   const recordIds = assignedRows.map((r) => r.record_id)
 
@@ -171,10 +185,12 @@ async function getBatchVisitResultCounts(
     supabase.from('territory_records').select('id, do_not_call, do_not_call_at').in('id', recordIds),
   ])
 
+  const visitRows = (visits ?? []) as { record_id: string; result: VisitResult; visited_at: string }[]
+
   // Same "rows ordered newest-first, first time we see a record_id is its latest result"
   // de-dup pattern as getVisitResultCounts.
   const latestResultByRecord = new Map<string, VisitResult>()
-  for (const row of (visits ?? []) as { record_id: string; result: VisitResult }[]) {
+  for (const row of visitRows) {
     if (!latestResultByRecord.has(row.record_id)) latestResultByRecord.set(row.record_id, row.result)
   }
   const lockedByRecord = new Map(
@@ -195,7 +211,11 @@ async function getBatchVisitResultCounts(
     }
   }
 
-  return counts
+  return {
+    counts,
+    lastVisitedAt: visitRows[0]?.visited_at ?? null,
+    firstVisitedAt: visitRows.length > 0 ? visitRows[visitRows.length - 1].visited_at : null,
+  }
 }
 
 // Backs the Group Leader Dashboard (always today's own batch) — Reports (getReportStats below)
@@ -217,7 +237,7 @@ export async function getBatchStats(
   const rangeStart = startOfDayUtc(batch.assignment_date, timezone)
   const rangeEnd = endOfDayUtcExclusive(batch.assignment_date, timezone)
 
-  const [resultCounts, newRecordsSubmitted, activeBibleStudies] = await Promise.all([
+  const [{ counts: resultCounts, firstVisitedAt, lastVisitedAt }, newRecordsSubmitted, activeBibleStudies] = await Promise.all([
     getBatchVisitResultCounts(supabase, congregationId, batchId, rangeStart, rangeEnd),
     countNewPublisherRecords(supabase, congregationId, territoryIds, rangeStart, rangeEnd),
     countActiveBibleStudies(supabase, congregationId, territoryIds),
@@ -233,6 +253,8 @@ export async function getBatchStats(
     activeBibleStudies,
     partnerships: batch.partnerships,
     territories: batch.territories,
+    firstVisitedAt,
+    lastVisitedAt,
   }
 }
 
