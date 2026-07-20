@@ -1,5 +1,35 @@
 # Current Work
 
+**Territory Management System — Group Leader bar chart redesign + Home summary stats (2026-07-20) — code done, tsc + vitest (87/87) + next build clean, live-verified via scratch routes, committed and pushed, Vercel auto-deploy triggered — see checkpoint `territory-management-gl-chart-redesign-summary-stats-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: A run of follow-up requests, all on the Group Leader Home tab's "N ministry
+partners completed today" card. (1) Relabeled `study_discontinued` from "Discontinued" to
+"Discontinued BS". (2) `VisitResultBarChart.tsx` redesigned in stages to match a reference
+screenshot Russell shared: nice-rounded axis max, flat-left/rounded-right bars, bold
+color-matched values, right-aligned labels that wrap to 2 lines on mobile instead of truncating,
+and a full vertical+horizontal gridline overlay (10 or 5 evenly spaced ticks depending on the
+scale). (3) New stat row below the chart: Publishers Participated, Records Distributed, Records
+Untouched, Ended Ministry Early, Partners Finished, First/Last Logged Visit — the last two
+required extending `getBatchVisitResultCounts` (reports/queries.ts) to also surface the
+earliest/latest `visited_at` from the same visit rows it already fetches, threaded through
+`BatchStats` as `firstVisitedAt`/`lastVisitedAt`.
+
+Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build`
+all clean throughout. Every round live-verified via temporary scratch routes with mock data
+(screenshotted at mobile + desktop, removed before finishing). Could not live-verify against the
+real TMS Supabase project (no `supabase-ldc` credentials in this sandbox, the standing limitation
+for this product). Committed and pushed each round at Russell's request; Vercel auto-deploys on
+push.
+
+**Next recommended task:** Russell spot-checks live on a real batch with actual publisher
+activity — confirms the new stat row's numbers (participants, distributed/untouched records,
+ended-early/finished counts, first/last visit time) match what's countable from the Partners tab
+and Visit History.
+
+---
+
 **Territory Management System — Admin partner attribution, optimistic Summary chart fix, publisher status panel (2026-07-20) — code done, tsc + vitest (87/87) + next build clean, live-verified via scratch route, committed and pushed, Vercel auto-deploy triggered — see checkpoint `territory-management-partner-attribution-optimistic-summary-pie-panel-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
