@@ -50,7 +50,9 @@ export default function VisitResultBarChart({ resultCounts }: { resultCounts: Re
       <div className="space-y-3.5">
         {entries.map((e) => (
           <div key={e.result} className="flex items-center gap-3">
-            <span className="w-32 shrink-0 truncate text-sm text-slate-600 sm:w-36">{VISIT_RESULT_LABELS[e.result]}</span>
+            <span className="w-24 shrink-0 text-right text-sm leading-tight text-slate-600 sm:w-36 sm:truncate">
+              {VISIT_RESULT_LABELS[e.result]}
+            </span>
             <div className="flex flex-1 items-center gap-2">
               <div
                 className="h-3.5 rounded-r-full"
@@ -64,7 +66,7 @@ export default function VisitResultBarChart({ resultCounts }: { resultCounts: Re
         ))}
       </div>
       <div className="mt-2 flex items-center gap-3">
-        <span aria-hidden="true" className="w-32 shrink-0 sm:w-36" />
+        <span aria-hidden="true" className="w-24 shrink-0 sm:w-36" />
         <div className="flex flex-1 justify-between border-t border-slate-200 pt-1 text-xs text-slate-400">
           <span>0</span>
           <span>{scaleMax}</span>
