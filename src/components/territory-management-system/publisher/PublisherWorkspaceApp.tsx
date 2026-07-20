@@ -298,8 +298,29 @@ export default function PublisherWorkspaceApp({
   async function handleLogVisit(recordId: string, visitedAt: string, result: string, notes: string) {
     setSavingVisit(true)
     try {
+      // Prepends an optimistic visit row (not just completed_at) — myResultCounts below and
+      // VisitHistoryList both read r.visits[0], and handleSync never refetches the workspace
+      // from the server, so without this the just-logged result (e.g. "Busy") silently stayed
+      // missing from this partnership's own Summary chart until a full page reload, even though
+      // it was already correctly saved and visible in the Group Leader's dashboard.
+      const optimisticVisit = {
+        id: `optimistic-${Date.now()}`,
+        congregation_id: workspace.congregation_id,
+        record_id: recordId,
+        visited_at: visitedAt,
+        result: result as VisitResult,
+        notes,
+        created_by: null,
+        partner_name: workspace.name || null,
+        created_at: new Date().toISOString(),
+        overridden_by_admin_at: null,
+        weekly_note_dismissed_at: null,
+        created_by_name: null,
+      }
       const updatedRecords = workspace.records.map((r) =>
-        r.record.id === recordId ? { ...r, completed_at: r.completed_at ?? new Date().toISOString() } : r
+        r.record.id === recordId
+          ? { ...r, completed_at: r.completed_at ?? new Date().toISOString(), visits: [optimisticVisit, ...r.visits] }
+          : r
       )
       setWorkspace((w) => ({ ...w, records: updatedRecords }))
       await enqueue(partnershipToken, 'visit', { partnershipToken, recordId, visitedAt, result, notes })

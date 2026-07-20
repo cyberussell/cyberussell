@@ -120,8 +120,8 @@ export default function VisitHistoryList({
                 </div>
               </div>
               {visit.notes && <p className="mt-2 text-sm text-slate-600">{visit.notes}</p>}
-              {(visit.created_by_name || visit.partner_name) && (
-                <p className="mt-2 text-xs text-slate-600">Visited by {visit.created_by_name ?? visit.partner_name}</p>
+              {(visit.partner_name || visit.created_by_name) && (
+                <p className="mt-2 text-xs text-slate-600">Visited by {visit.partner_name ?? visit.created_by_name}</p>
               )}
               {visit.overridden_by_admin_at && (
                 <p className="mt-1 flex items-center gap-1 text-xs font-medium text-amber-600">

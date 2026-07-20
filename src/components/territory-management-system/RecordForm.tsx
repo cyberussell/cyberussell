@@ -24,6 +24,7 @@ interface RecordFields {
   blockId: string
   initialConductorName: string
   initialNotes: string
+  initialPartnerName: string
 }
 
 function emptyFields(firstBlockId: string): RecordFields {
@@ -38,6 +39,7 @@ function emptyFields(firstBlockId: string): RecordFields {
     blockId: firstBlockId,
     initialConductorName: '',
     initialNotes: '',
+    initialPartnerName: '',
   }
 }
 
@@ -210,6 +212,18 @@ export default function RecordForm({ territory }: { territory: TerritoryStructur
               value={fields.initialConductorName}
               onChange={(e) => setFields((f) => ({ ...f, initialConductorName: e.target.value }))}
               required
+              maxLength={80}
+              className={inputClass}
+            />
+          </FormField>
+        )}
+        {initialResult && (
+          <FormField label="Ministry Partner" optional>
+            <input
+              name="initialPartnerName"
+              value={fields.initialPartnerName}
+              onChange={(e) => setFields((f) => ({ ...f, initialPartnerName: e.target.value }))}
+              placeholder="Who actually made this visit?"
               maxLength={80}
               className={inputClass}
             />

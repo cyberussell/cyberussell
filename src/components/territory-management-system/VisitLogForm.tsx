@@ -64,6 +64,9 @@ export default function VisitLogForm({
             <input name="conductorName" required maxLength={80} className={inputClass} />
           </FormField>
         )}
+        <FormField label="Ministry Partner" optional>
+          <input name="partnerName" maxLength={80} placeholder="Who actually made this visit?" className={inputClass} />
+        </FormField>
         <FormField label="Notes" optional={!notesRequired}>
           <textarea name="notes" maxLength={500} rows={2} required={notesRequired} className={inputClass} />
         </FormField>

@@ -309,6 +309,9 @@ export const createRecordSchema = z
     initialResult: z.string().optional().default(''),
     initialConductorName: optionalString(CONDUCTOR_NAME_MAX),
     initialNotes: optionalString(500),
+    // Lets the Admin record which Ministry Partner actually made the visit, instead of the visit
+    // always being attributed to whichever Admin happened to type it in — see partnerName below.
+    initialPartnerName: optionalString(CONDUCTOR_NAME_MAX),
   })
   .refine((data) => !data.initialResult || data.initialResult !== 'other' || data.initialNotes.trim().length > 0, {
     message: 'Notes are required when the initial status is "Busy".',
@@ -344,6 +347,10 @@ export const logVisitSchema = z
     // result needs one) — same null-vs-undefined gap optionalString() guards against above.
     conductorName: optionalString(CONDUCTOR_NAME_MAX),
     notes: z.string().max(500).optional().default(''),
+    // Same purpose as createRecordSchema's initialPartnerName above — optional, always shown
+    // (not conditional like conductorName), since the Admin may be logging on behalf of any
+    // Ministry Partner regardless of which status is picked.
+    partnerName: optionalString(CONDUCTOR_NAME_MAX),
   })
   .refine((data) => data.result !== 'other' || data.notes.trim().length > 0, {
     message: 'Notes are required when the result is "Busy".',

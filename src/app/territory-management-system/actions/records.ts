@@ -32,6 +32,7 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
     initialResult: formData.get('initialResult'),
     initialConductorName: formData.get('initialConductorName'),
     initialNotes: formData.get('initialNotes'),
+    initialPartnerName: formData.get('initialPartnerName'),
   })
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in the required fields.' }
 
@@ -63,7 +64,7 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
         result: parsed.data.initialResult,
         notes: mergeConductorIntoNotes(parsed.data.initialConductorName, parsed.data.initialNotes),
         createdBy: userId,
-        partnerName: null,
+        partnerName: parsed.data.initialPartnerName.trim() || null,
       })
     }
   } catch (e) {
@@ -218,6 +219,7 @@ export async function logVisitAction(_prev: ActionResult, formData: FormData): P
     result: formData.get('result'),
     conductorName: formData.get('conductorName'),
     notes: formData.get('notes'),
+    partnerName: formData.get('partnerName'),
   })
   if (!parsed.success) {
     const notesIssue = parsed.error.issues.find((i) => i.path.includes('notes'))
@@ -244,7 +246,7 @@ export async function logVisitAction(_prev: ActionResult, formData: FormData): P
       result: parsed.data.result,
       notes: mergeConductorIntoNotes(parsed.data.conductorName, parsed.data.notes),
       createdBy: userId,
-      partnerName: null,
+      partnerName: parsed.data.partnerName.trim() || null,
     })
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Could not log the visit.' }

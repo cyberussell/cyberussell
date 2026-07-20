@@ -1,5 +1,40 @@
 # Current Work
 
+**Territory Management System — Admin partner attribution, optimistic Summary chart fix, publisher status panel (2026-07-20) — code done, tsc + vitest (87/87) + next build clean, live-verified via scratch route, committed and pushed, Vercel auto-deploy triggered — see checkpoint `territory-management-partner-attribution-optimistic-summary-pie-panel-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Four requests from screenshots, one declined after discussion. (1) Admin's Log
+Visit / add-record forms couldn't attribute a visit to the actual Ministry Partner who made it —
+it always showed the logged-in Admin's own name in Visit History ("Visited by Manoah Lance Rojo").
+Added an optional "Ministry Partner" field to both forms; `VisitHistoryList.tsx` now prefers
+`partner_name` over `created_by_name`. (2) Found and fixed a real bug: the publisher's own Home >
+Summary donut chart didn't reflect a just-logged "Busy" result (though the Group Leader's
+dashboard correctly showed it) — `handleLogVisit` in `PublisherWorkspaceApp.tsx` only updated
+`completed_at` locally, never pushed the new visit into `r.visits`, and `handleSync` never
+refetches the workspace from the server. Fixed by optimistically prepending the new visit locally.
+(3) Added a read-only yellow "What you submitted" panel above Visit History on the publisher's
+record detail page. (4) Declined: Russell initially asked to change the Group Leader dashboard's
+Home chart from a bar chart to a solid pie — flagged via `AskUserQuestion` that the bar chart was
+specifically introduced to replace an earlier donut per his own past feedback (hard to read on
+mobile with many zero-count categories); he confirmed he wants to keep the bar chart as-is. No
+change made there.
+
+Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build`
+all clean. Live-verified via a temporary scratch route (mock data, removed before finishing) —
+both the admin "Ministry Partner" field and the yellow status panel confirmed rendering correctly,
+zero console errors. Could not live-verify against the real TMS Supabase project (no `supabase-ldc`
+credentials in this sandbox, the standing limitation for this product). Committed and pushed;
+Vercel auto-deploys on push.
+
+**Next recommended task:** Russell spot-checks live — logs a visit as Admin with a Ministry
+Partner name filled in and confirms Visit History shows that name instead of his own; logs a
+"Busy" result as a publisher and confirms it appears in the Home > Summary donut immediately
+without a page reload; opens a completed record from the Assigned Records list and confirms the
+new yellow panel shows the correct status/notes above Visit History.
+
+---
+
 **Territory Management System — Discontinued status, Potential BS narrowing, Other→Busy (2026-07-20) — code done, tsc + vitest (87/87) + next build clean, migration applied live, committed and pushed (`cb9b6fa`), deployed via Vercel auto-deploy on push — see checkpoint `territory-management-funnel-discontinued-busy-relabel-v1.md`:**
 
 Current Product: Territory Management System (TMS).

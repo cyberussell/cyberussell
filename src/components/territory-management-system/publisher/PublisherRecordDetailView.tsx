@@ -536,6 +536,14 @@ export default function PublisherRecordDetailView({
         </div>
       )}
 
+      {assigned.visits[0] && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">What you submitted</p>
+          <p className="mt-1 text-sm font-medium text-[#0B1B33]">{VISIT_RESULT_LABELS[assigned.visits[0].result]}</p>
+          {assigned.visits[0].notes && <p className="mt-1 text-sm text-[#0B1B33]/80">{assigned.visits[0].notes}</p>}
+        </div>
+      )}
+
       <div>
         <h2 className="mb-3 font-semibold text-[#0B1B33]">Visit History</h2>
         <VisitHistoryList visits={assigned.visits} />
