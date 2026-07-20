@@ -144,8 +144,8 @@ describe('VISIT_RESULT_LABELS', () => {
     expect(VISIT_RESULT_LABELS.other).toBe('Busy')
   })
 
-  it('labels "study_discontinued" as "Discontinued", distinct from "discontinued"\'s "No Positive Response"', () => {
-    expect(VISIT_RESULT_LABELS.study_discontinued).toBe('Discontinued')
+  it('labels "study_discontinued" as "Discontinued BS", distinct from "discontinued"\'s "No Positive Response"', () => {
+    expect(VISIT_RESULT_LABELS.study_discontinued).toBe('Discontinued BS')
     expect(VISIT_RESULT_LABELS.discontinued).toBe('No Positive Response')
   })
 })

@@ -178,7 +178,7 @@ export const VISIT_RESULT_LABELS: Record<(typeof VISIT_RESULTS)[number], string>
   // Study, and as the existing ongoing-study follow-up in BIBLE_STUDY_FOLLOWUP_RESULTS.
   discontinued: 'No Positive Response',
   // Added 2026-07-20 — distinct from 'discontinued' above, see BIBLE_STUDY_FOLLOWUP_RESULTS.
-  study_discontinued: 'Discontinued',
+  study_discontinued: 'Discontinued BS',
   not_home: 'Not At Home',
   do_not_call: 'Do Not Call',
   moved: 'Unlocated',

@@ -25,14 +25,14 @@ const STATUS_HELP: { status: string; description: string }[] = [
   {
     status: 'Progressive BS',
     description:
-      'Sumusulong ang Bible Study. Huwag palitan ng iyong pangalan ang pangalan ng nagko-conduct ng Bible Study malibang pormal na inilipat ito sa iyo. Sa susunod na pagbisita, magiging Progressive BS pa rin (kung tuloy-tuloy), Discontinued (kung tumigil sa pag-aaral), o No Positive Response ang status.',
+      'Sumusulong ang Bible Study. Huwag palitan ng iyong pangalan ang pangalan ng nagko-conduct ng Bible Study malibang pormal na inilipat ito sa iyo. Sa susunod na pagbisita, magiging Progressive BS pa rin (kung tuloy-tuloy), Discontinued BS (kung tumigil sa pag-aaral), o No Positive Response ang status.',
   },
   {
     status: 'No Positive Response',
     description: 'Walang positibong pagtugon sa kasalukuyan pero hindi naman Do Not Call.',
   },
   {
-    status: 'Discontinued',
+    status: 'Discontinued BS',
     description:
       'May regular nang pag-aaral (Started Bible Study o Progressive BS) pero tumigil na. Iba ito sa No Positive Response, na para sa records na hindi pa naman talaga nagsimula ng regular na pag-aaral.',
   },
