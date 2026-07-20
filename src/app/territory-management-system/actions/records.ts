@@ -156,6 +156,15 @@ export async function dismissRemovalRecommendationAction(recordId: string): Prom
   revalidatePath('/territory-management-system/dashboard/records/flagged')
 }
 
+// Admin dismisses a single visit's note off the Weekly Notes list — see dismissWeeklyNote
+// (records/queries.ts) for why this only hides the note there and leaves the record's actual
+// Visit History/Override/Undo untouched.
+export async function dismissWeeklyNoteAction(visitId: string): Promise<void> {
+  const { supabase } = await requireAdmin()
+  await recordQueries.dismissWeeklyNote(supabase, visitId)
+  revalidatePath('/territory-management-system/dashboard/weekly-notes')
+}
+
 // Admin applies a publisher's "Update" (correction) recommendation — writes the recommended
 // Plus Code onto the record and clears the flag.
 export async function applyRecordCorrectionAction(recordId: string): Promise<void> {

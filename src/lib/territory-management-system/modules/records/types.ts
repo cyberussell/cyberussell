@@ -111,6 +111,9 @@ export interface RecordVisit {
   // overrideLatestVisitAction, migration 029) — null for a visit that's never been touched by
   // an Admin. visited_at/created_by/partner_name stay as the original submission's.
   overridden_by_admin_at: string | null
+  // Set when an Admin dismisses this visit's note off the Weekly Notes list (migration 035) —
+  // does not affect Visit History, Override, or Undo, which all still act on this same row.
+  weekly_note_dismissed_at: string | null
 }
 
 export interface RecordVisitWithAuthor extends RecordVisit {

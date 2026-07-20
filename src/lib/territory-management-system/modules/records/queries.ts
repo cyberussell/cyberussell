@@ -650,7 +650,12 @@ export async function listWeeklyVisitNotes(
     latestPerRecord.push({ ...(row as unknown as RecordVisitWithAuthor), created_by_name: row.creator?.full_name ?? null })
   }
 
-  const inWindowWithNotes = latestPerRecord.filter((v) => v.visited_at < rangeEndIso && v.notes.trim().length > 0)
+  // Dismissed (migration 035) is checked against each record's true latest visit, same as the
+  // window/notes checks above — so a dismissal only ever hides the note it was dismissed for,
+  // and a record naturally reappears once a fresh visit is logged on top of it.
+  const inWindowWithNotes = latestPerRecord.filter(
+    (v) => v.visited_at < rangeEndIso && v.notes.trim().length > 0 && !v.weekly_note_dismissed_at
+  )
   if (inWindowWithNotes.length === 0) return []
 
   const recordIds = inWindowWithNotes.map((v) => v.record_id)
@@ -663,6 +668,16 @@ export async function listWeeklyVisitNotes(
       return record ? { record, visit } : null
     })
     .filter((row): row is { record: TerritoryRecordWithLocation; visit: RecordVisitWithAuthor } => row !== null)
+}
+
+// Admin dismisses one visit's note off the Weekly Notes list without touching the visit itself —
+// Visit History, Override, and Undo on the record's detail page are all unaffected.
+export async function dismissWeeklyNote(supabase: SupabaseClient, visitId: string): Promise<void> {
+  const { error } = await supabase
+    .from('territory_record_visits')
+    .update({ weekly_note_dismissed_at: new Date().toISOString() })
+    .eq('id', visitId)
+  if (error) throw error
 }
 
 // Logging a 'do_not_call' result also flips the record's own flag — one action instead of

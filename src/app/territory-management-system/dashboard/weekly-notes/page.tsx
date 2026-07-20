@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { requireAdmin } from '@/lib/territory-management-system/modules/auth/queries'
 import { listWeeklyVisitNotes } from '@/lib/territory-management-system/modules/records/queries'
 import { endOfDayUtcExclusive, notesWeekRange, startOfDayUtc } from '@/lib/territory-management-system/modules/reports/date'
-import { overrideLatestVisitAction, undoLastVisitAction } from '@/app/territory-management-system/actions/records'
+import { dismissWeeklyNoteAction, overrideLatestVisitAction, undoLastVisitAction } from '@/app/territory-management-system/actions/records'
 import PageHeader from '@/components/territory-management-system/dashboard/PageHeader'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import VisitHistoryList from '@/components/territory-management-system/VisitHistoryList'
@@ -73,6 +73,13 @@ export default async function WeeklyNotesPage() {
                 onUndoLast={undoLastVisitAction.bind(null, record.id)}
                 onOverride={overrideLatestVisitAction.bind(null, record.id)}
               />
+              {/* Only hides this note from this list (dismissWeeklyNote) — the record's actual
+                  Visit History, Override, and Undo above are unaffected. */}
+              <form action={dismissWeeklyNoteAction.bind(null, visit.id)} className="mt-2 flex justify-end">
+                <button type="submit" className="text-xs font-medium text-slate-400 hover:text-slate-600 hover:underline">
+                  Dismiss
+                </button>
+              </form>
             </div>
           ))}
         </div>
