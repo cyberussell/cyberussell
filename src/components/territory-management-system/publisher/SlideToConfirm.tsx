@@ -85,8 +85,8 @@ export default function SlideToConfirm({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        style={{ transform: `translateX(${dragX}px)`, transition: dragging ? 'none' : 'transform 0.25s ease' }}
-        className={`absolute left-1 top-1 flex h-12 w-12 items-center justify-center rounded-full text-white shadow-md ${handleTone} ${
+        style={{ transform: `translate(${dragX}px, -50%)`, transition: dragging ? 'none' : 'transform 0.25s ease' }}
+        className={`absolute left-1 top-1/2 flex h-12 w-12 items-center justify-center rounded-full text-white shadow-md ${handleTone} ${
           locked ? '' : 'cursor-grab touch-none active:cursor-grabbing'
         }`}
       >
