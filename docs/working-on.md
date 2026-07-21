@@ -1,5 +1,31 @@
 # Current Work
 
+**Territory Management System — "What you submitted" box: date/time + today-only visibility (2026-07-21) — code done, tsc clean, committed and pushed, see checkpoint `territory-management-what-you-submitted-datetime-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell flagged two screenshots of the publisher record detail view
+(`PublisherRecordDetailView.tsx`). The amber "What you submitted" box (shows the latest logged
+visit's result/notes) had no date/time, so a publisher couldn't tell if it was today's submission
+or an old one. Worse, on a locked Do Not Call record it still showed a stale visit from 3 days
+earlier as if it were "what you submitted" even though the record can't be visited while locked
+and nothing happened that day.
+
+Current Status: Done. Added `isSameCalendarDay()` (device-local `toDateString()` comparison, same
+convention every other date in this file already uses — no congregation timezone is plumbed into
+the publisher workspace). The box now only renders when `assigned.visits[0].visited_at` is today,
+and shows that visit's date/time next to the label when it does. A locked/no-visit-today record
+now shows no box at all, matching Russell's requirement. `npm install` was needed first
+(node_modules was missing at session start); `npx tsc --noEmit` clean across the whole project
+afterward. Not live-clicked in a browser (no TMS credentials in this session) — verified by direct
+comparison against the two screenshots Russell provided. Committed and pushed to
+`claude/tms-visit-datetime-display-o1hknh`.
+
+**Next recommended task:** Russell spot-checks live — a record with today's visit should show the
+box with its timestamp; the locked DNC record should show no box.
+
+---
+
 **Territory Management System — Close (X) button on the FAQ/All Statuses panels (2026-07-21) — code done, tsc + vitest (87/87) + next build clean, live-verified via a temporary scratch route (removed before finishing), committed and pushed, Vercel auto-deploy triggered:**
 
 Current Product: Territory Management System (TMS).
