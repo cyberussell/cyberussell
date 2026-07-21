@@ -27,6 +27,7 @@ import {
 import {
   finishPartnership,
   getBatchById,
+  getBatchSummary,
   getPartnershipById,
   getPartnershipByToken,
   getSearchScopeForPartnership,
@@ -39,6 +40,7 @@ import {
   submitPartnershipNote,
   terminatePartnershipEarly,
 } from '@/lib/territory-management-system/modules/assignment/queries'
+import type { PartnershipWithProgress } from '@/lib/territory-management-system/modules/assignment/types'
 import {
   createRecord,
   deleteRecord,
@@ -737,6 +739,17 @@ export async function getSearchScopeRecordsAction(partnershipToken: string): Pro
   const scope = await getSearchScopeForPartnership(supabase, partnership.id)
   if (!scope) return []
   return getRecordsInBlocks(supabase, partnership.congregation_id, scope.blocks.map((b) => b.id))
+}
+
+// Manual "Refresh" for the in-workspace "All Partners" tab — same "plain read, not queued
+// through the offline sync system" reasoning as getSearchScopeRecordsAction above. Re-derives
+// the batch from the partnership's own token rather than trusting a client-supplied batch id.
+export async function getBatchPartnersAction(partnershipToken: string): Promise<PartnershipWithProgress[]> {
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, partnershipToken)
+  if (!partnership) return []
+  const batchSummary = await getBatchSummary(supabase, partnership.congregation_id, partnership.batch_id)
+  return batchSummary?.partnerships ?? []
 }
 
 // Recommends a Plus Code correction on a record the publisher found while searching their own

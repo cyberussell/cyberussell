@@ -124,4 +124,10 @@ export interface PartnershipWorkspace extends Partnership {
   // (and only meaningful) for an overflow partnership that hasn't chosen a scope yet, to feed
   // ChooseSearchScopeForm's disabled/"Already claimed" state. Always empty otherwise.
   takenBlockIds: string[]
+  // Every partnership in THIS batch (including this one), with live progress — the same data
+  // the pre-claim "Today's Assignment" batch-landing page shows, fetched up front so the
+  // in-workspace "All Partners" tab never needs a real page navigation to render (that
+  // navigation used to hard-fail offline — see PublisherBottomMenu). Manually refreshable
+  // (see getBatchPartnersAction) but otherwise just a snapshot from initial load.
+  batchPartnerships: PartnershipWithProgress[]
 }

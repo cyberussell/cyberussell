@@ -1,24 +1,26 @@
 'use client'
 
-import Link from 'next/link'
 import { ClipboardList, ClipboardPlus, Home, Users, type LucideIcon } from 'lucide-react'
 
 // Fixed bottom navigation for the publisher workspace, like a native app tab bar — easier to
 // reach one-handed than a top bar while out in ministry. Download/Sync live in a top bar
 // instead (see PublisherWorkspaceApp) — every other action lives here. No contextual "Record a
 // Visit" item on a record's detail view — that form is already directly on the page, a
-// dedicated nav icon just for jumping to it was redundant.
+// dedicated nav icon just for jumping to it was redundant. Every item here is an in-memory view
+// change (onClick), never a real page navigation — "All Partners" used to link back to the
+// server-rendered batch-landing page, which hard-failed with a blank browser page the moment a
+// publisher tapped it while offline (see PartnerStatusList).
 export default function PublisherBottomMenu({
-  batchToken,
   view,
   onGoToHome,
+  onGoToPartners,
   onGoToRecords,
   onGoToAddedRecords,
   showAddedRecords,
 }: {
-  batchToken: string
-  view: 'home' | 'list' | 'detail' | 'addRecord' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord'
+  view: 'home' | 'list' | 'detail' | 'addRecord' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord' | 'partners'
   onGoToHome: () => void
+  onGoToPartners: () => void
   onGoToRecords: () => void
   // Hidden while readOnly (viewing another Ministry Partner's assignment) — a publisher-added
   // record only ever belongs to the partnership that added it, same as "Add a New Contact
@@ -35,12 +37,11 @@ export default function PublisherBottomMenu({
     spin?: boolean
     badge?: number | null
     onClick?: () => void
-    href?: string
   }[] = []
 
   items.push(
     { key: 'home', label: 'Home', icon: Home, active: view === 'home', onClick: onGoToHome },
-    { key: 'partners', label: 'All Partners', icon: Users, active: false, href: `/territory-management-system/assignment/${batchToken}` },
+    { key: 'partners', label: 'All Partners', icon: Users, active: view === 'partners', onClick: onGoToPartners },
     { key: 'records', label: 'Assigned Records', icon: ClipboardList, active: view === 'list', onClick: onGoToRecords }
   )
   if (showAddedRecords) {
@@ -81,11 +82,7 @@ export default function PublisherBottomMenu({
         const className = `flex flex-1 items-center justify-center py-3.5 transition disabled:opacity-40 ${
           item.active ? 'text-[#2563EB]' : 'text-slate-400'
         }`
-        return item.href ? (
-          <Link key={item.key} href={item.href} className={className} aria-label={item.label} title={item.label}>
-            {content}
-          </Link>
-        ) : (
+        return (
           <button
             key={item.key}
             type="button"

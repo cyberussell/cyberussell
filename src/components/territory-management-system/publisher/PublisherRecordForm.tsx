@@ -151,26 +151,26 @@ export default function PublisherRecordForm({
             : "You'll see it under My Added Records right away — still pending Admin review before it's used in a future assignment."}
       </p>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {lockedScope ? (
+        {lockedScope ? (
+          <FormField label="Territory">
+            <p className="mt-1 rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-sm text-[#0B1B33]">
+              {lockedScope.territoryName}
+            </p>
+          </FormField>
+        ) : (
+          territories.length > 1 && (
             <FormField label="Territory">
-              <p className="mt-1 rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-sm text-[#0B1B33]">
-                {lockedScope.territoryName}
-              </p>
+              <select value={territoryId} onChange={(e) => handleTerritoryChange(e.target.value)} className={inputClass}>
+                {territories.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
             </FormField>
-          ) : (
-            territories.length > 1 && (
-              <FormField label="Territory">
-                <select value={territoryId} onChange={(e) => handleTerritoryChange(e.target.value)} className={inputClass}>
-                  {territories.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name}
-                    </option>
-                  ))}
-                </select>
-              </FormField>
-            )
-          )}
+          )
+        )}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {lockedScope ? (
             <FormField label="Section">
               <p className="mt-1 rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-sm text-[#0B1B33]">
@@ -188,21 +188,21 @@ export default function PublisherRecordForm({
               </select>
             </FormField>
           )}
+          <FormField label="Block">
+            <select
+              value={blockId}
+              onChange={(e) => setBlockId(e.target.value)}
+              className={inputClass}
+              disabled={blockOptions.length === 0}
+            >
+              {blockOptions.map((b) => (
+                <option key={b.id} value={b.id}>
+                  Block {b.label}
+                </option>
+              ))}
+            </select>
+          </FormField>
         </div>
-        <FormField label="Block">
-          <select
-            value={blockId}
-            onChange={(e) => setBlockId(e.target.value)}
-            className={inputClass}
-            disabled={blockOptions.length === 0}
-          >
-            {blockOptions.map((b) => (
-              <option key={b.id} value={b.id}>
-                Block {b.label}
-              </option>
-            ))}
-          </select>
-        </FormField>
         <FormField label="Unit" optional>
           <input value={unit} onChange={(e) => setUnit(e.target.value)} maxLength={40} className={inputClass} />
         </FormField>

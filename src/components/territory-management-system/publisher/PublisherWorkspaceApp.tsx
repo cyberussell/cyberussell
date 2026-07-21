@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { toast } from 'sonner'
 import { CheckCircle2, ClipboardCopy, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
-import type { PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
+import type { PartnershipWithProgress, PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 import { isPartnershipAllDone, VISIT_RESULT_LABELS, VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
 import type { VisitResult } from '@/lib/territory-management-system/modules/records/types'
@@ -16,7 +16,7 @@ import { enqueue, listQueue } from '@/lib/territory-management-system/modules/of
 import { flushQueue } from '@/lib/territory-management-system/modules/offline/sync'
 import { useOnlineStatus } from '@/lib/territory-management-system/modules/offline/useOnlineStatus'
 import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
-import { chooseSearchScopeAction, getSearchScopeRecordsAction } from '@/app/territory-management-system/actions/publisher'
+import { chooseSearchScopeAction, getBatchPartnersAction, getSearchScopeRecordsAction } from '@/app/territory-management-system/actions/publisher'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
 import VisitResultPieChart from '@/components/territory-management-system/VisitResultPieChart'
 import Card from '@/components/territory-management-system/dashboard/Card'
@@ -38,6 +38,8 @@ import AddHouseholdMemberForm, { type NewHouseholdMemberPayload } from './AddHou
 import PublisherNoteForm from './PublisherNoteForm'
 import SearchScopeRecordsList from './SearchScopeRecordsList'
 import SearchScopeRecordDetailView from './SearchScopeRecordDetailView'
+import PartnerStatusList from './PartnerStatusList'
+import SearchScopeSummaryCard from './SearchScopeSummaryCard'
 
 // Leaflet touches `window`/`document` on import — client-only, same pattern as the Admin
 // Reports page's own use of this same component.
@@ -95,6 +97,7 @@ function buildFailedSyncReport(items: SyncQueueItem[], partnerName: string): str
 
 type View =
   | { name: 'home' }
+  | { name: 'partners' }
   | { name: 'list' }
   | { name: 'detail'; recordId: string }
   // prefill + returnToRecordId are both set when reached via "+ Add Another Person Here" on a
@@ -143,6 +146,7 @@ export default function PublisherWorkspaceApp({
   const [recommendingCorrection, setRecommendingCorrection] = useState(false)
   const [recommendingSearchScopeCorrection, setRecommendingSearchScopeCorrection] = useState(false)
   const [refreshingSearchScope, setRefreshingSearchScope] = useState(false)
+  const [refreshingPartners, setRefreshingPartners] = useState(false)
   const [choosingSearchScope, setChoosingSearchScope] = useState(false)
   const [searchScopeChoiceError, setSearchScopeChoiceError] = useState('')
   const [deletingAddedRecord, setDeletingAddedRecord] = useState(false)
@@ -496,6 +500,19 @@ export default function PublisherWorkspaceApp({
     }
   }
 
+  // Manual re-fetch for the "All Partners" tab — same reasoning as handleRefreshSearchScope
+  // above (other partners' progress changes throughout the day, and this tab otherwise only
+  // ever shows whatever was fetched at initial page load).
+  async function handleRefreshPartners() {
+    setRefreshingPartners(true)
+    try {
+      const batchPartnerships = await getBatchPartnersAction(partnershipToken)
+      setWorkspace((w) => ({ ...w, batchPartnerships }))
+    } finally {
+      setRefreshingPartners(false)
+    }
+  }
+
   // The one-time, locked-in search-area choice — called directly (not through the offline sync
   // queue) since it needs a live, real-time answer about whether these blocks are still
   // available, same reasoning as handleRefreshSearchScope's direct call. On success, sets
@@ -821,11 +838,16 @@ export default function PublisherWorkspaceApp({
     return {
       territoryId: scopeTerritory.id,
       territoryName: scopeTerritory.name,
+      territoryDescription: scopeTerritory.description,
       sectionId: workspace.searchScope.sectionId,
       sectionLabel: workspace.searchScope.sectionLabel,
       blocks: workspace.searchScope.blocks,
     }
   })()
+  // A partnership with zero assigned records only ever gets there by searching a fresh
+  // area (see needsSearchScope above) — there's no fixed quota of incomplete records to leave
+  // behind, so "Early Out" doesn't really describe what ending the session means for them.
+  const isSearchOnlyPartnership = workspace.records.length === 0
 
   return (
     <div className="min-h-dvh bg-[#C9D8EE] px-4 pb-24 pt-8">
@@ -982,9 +1004,19 @@ export default function PublisherWorkspaceApp({
                   {activeView === 'summary' && (
                     <div className="space-y-3">
                       {!showToggle && <h2 className="font-semibold text-[#0B1B33]">Your Results</h2>}
-                      <Card className="p-4">
-                        <VisitResultPieChart resultCounts={myResultCounts} />
-                      </Card>
+                      {workspace.searchScope ? (
+                        <SearchScopeSummaryCard
+                          addedRecords={workspace.addedRecords}
+                          territoryName={addRecordLockedScope?.territoryName}
+                          territoryDescription={addRecordLockedScope?.territoryDescription}
+                          sectionLabel={workspace.searchScope.sectionLabel}
+                          blockLabels={workspace.searchScope.blocks.map((b) => b.label)}
+                        />
+                      ) : (
+                        <Card className="p-4">
+                          <VisitResultPieChart resultCounts={myResultCounts} />
+                        </Card>
+                      )}
                     </div>
                   )}
 
@@ -1004,7 +1036,12 @@ export default function PublisherWorkspaceApp({
                 disappears once the session has already ended (whether via this same slide or a
                 normal Sync & Finish) — there's nothing left to end. */}
             {!readOnly && !sessionEnded && (
-              <SlideToConfirm label="Slide for Early Out" confirmingLabel="Ending…" tone="danger" onConfirm={handleTerminate} />
+              <SlideToConfirm
+                label={isSearchOnlyPartnership ? 'Slide to End My Ministry' : 'Slide for Early Out'}
+                confirmingLabel="Ending…"
+                tone="danger"
+                onConfirm={handleTerminate}
+              />
             )}
           </>
         )}
@@ -1090,7 +1127,28 @@ export default function PublisherWorkspaceApp({
                 <p className="mt-1 text-sm text-slate-500">Add any new contact records you find via My Added Records.</p>
               </div>
             )}
+
+            {/* Same control as the Home tab (see below) — surfaced here too since a partner
+                searching an area spends most of their time on this tab, not Home, and
+                previously had no way to end their ministry without switching tabs first. */}
+            {!readOnly && !sessionEnded && (
+              <SlideToConfirm
+                label={isSearchOnlyPartnership ? 'Slide to End My Ministry' : 'Slide for Early Out'}
+                confirmingLabel="Ending…"
+                tone="danger"
+                onConfirm={handleTerminate}
+              />
+            )}
           </>
+        )}
+
+        {view.name === 'partners' && (
+          <PartnerStatusList
+            partnerships={workspace.batchPartnerships}
+            refreshing={refreshingPartners}
+            canRefresh={online}
+            onRefresh={handleRefreshPartners}
+          />
         )}
 
         {view.name === 'detail' && selected && (
@@ -1341,7 +1399,6 @@ export default function PublisherWorkspaceApp({
       </div>
 
       <PublisherBottomMenu
-        batchToken={batchToken}
         view={
           view.name === 'note' ||
           view.name === 'sync' ||
@@ -1352,6 +1409,7 @@ export default function PublisherWorkspaceApp({
             : view.name
         }
         onGoToHome={() => setView({ name: 'home' })}
+        onGoToPartners={() => setView({ name: 'partners' })}
         onGoToRecords={() => setView({ name: 'list' })}
         onGoToAddedRecords={() => setView({ name: 'addedRecords' })}
         showAddedRecords={!readOnly}

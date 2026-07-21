@@ -66,10 +66,14 @@ export default function SearchScopeRecordsList({
             >
               <div className="min-w-0">
                 <p className="truncate font-medium text-[#0B1B33]">
-                  {r.address || r.resident_name || r.plus_code || 'Unlabeled record'}
+                  {r.address || r.plus_code || 'Unlabeled record'}
                   {r.unit ? `, ${r.unit}` : ''}
                 </p>
-                <p className="truncate text-xs text-slate-400">Blk {r.block?.label ?? '—'}</p>
+                {r.resident_name && <p className="truncate text-xs text-slate-600">{r.resident_name}</p>}
+                <p className="truncate text-xs text-slate-400">
+                  Sec {r.section?.label ?? '—'} / Blk {r.block?.label ?? '—'}
+                </p>
+                {r.plus_code && <p className="truncate text-xs text-slate-400">{r.plus_code}</p>}
               </div>
             </button>
           ))}

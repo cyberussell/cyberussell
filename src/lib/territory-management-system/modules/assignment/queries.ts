@@ -646,6 +646,12 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
       ? [...(await getTakenBlockIdsForDate(supabase, (batch as AssignmentBatch).assignment_date))]
       : []
 
+  // Same data the pre-claim batch-landing page shows (see getBatchByToken) — fetched here too
+  // so the workspace's own "All Partners" tab can render it from the initial load, offline and
+  // all, instead of navigating back to that server-rendered page.
+  const batchSummary = await getBatchSummary(supabase, partnership.congregation_id, partnership.batch_id)
+  const batchPartnerships = batchSummary?.partnerships ?? []
+
   return {
     ...(partnership as Partnership),
     batch: batch as AssignmentBatch,
@@ -659,6 +665,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     searchScope,
     searchScopeRecords,
     takenBlockIds,
+    batchPartnerships,
   }
 }
 

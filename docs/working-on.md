@@ -1,5 +1,38 @@
 # Current Work
 
+**Territory Management System — Publisher workspace offline-nav fix + search-area UX batch (2026-07-21) — code done, tsc + vitest (87/87) + next build clean, live-verified via scratch route, committed and pushed, Vercel auto-deploy triggered — see checkpoint `territory-management-publisher-offline-nav-search-ux-v1.md` for full detail:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Five follow-ups from screenshots Russell shared of the publisher workspace.
+(1) Fixed a real offline bug: the workspace's "All Partners" bottom-nav icon was a real page
+navigation back to the server-rendered batch-landing page, which hard-failed with a blank
+browser page once offline, stranding the publisher mid-ministry. Converted it to an in-memory
+view (`PartnerStatusList.tsx`) fed from data fetched once at initial load, matching this app's
+offline-first pattern everywhere else. (2) Added the "Slide to end ministry" control to the
+Area-To-Search (List) tab too, not just Home, and relabeled it "Slide to End My Ministry" (no
+"Early") for a zero-assigned-record ("searching a fresh area") partnership; `SearchScopeRecordsList`
+cards now show resident name, Section/Block, and Plus Code. (3) `PublisherRecordForm.tsx`:
+Section moved onto the same row as Block. (4) `AddedRecordsList.tsx` cards now show resident name
+and household number. (5) New `SearchScopeSummaryCard.tsx` replaces the always-empty
+visit-result pie chart on Home > Summary for a search-scope partnership once finished: records
+added, households, territory, section, blocks worked.
+
+Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build`
+all clean. Live-verified all five items via a temporary scratch route with mock data (screenshotted,
+removed before finishing) — All Partners tab renders read-only with correct status/progress and no
+navigation, Area To Search cards show all four fields plus the relabeled slider, Add Record form's
+Section+Block share a row, Added Records cards show name+household count, and the Summary tab shows
+the new stats card once finished. Zero console errors. No DB migrations needed. Could not
+live-verify against the real TMS Supabase project (no `supabase-ldc` credentials in this sandbox,
+the standing limitation for this product). Committed and pushed; Vercel auto-deploys on push.
+
+**Next recommended task:** Russell spot-checks live — confirms "All Partners" no longer blanks out
+offline (the original bug report), and clicks through a real search-scope partnership to confirm
+the relabeled slider and new Search Summary stats match what's in My Added Records.
+
+---
+
 **Territory Management System — Group Leader bar chart redesign + Home summary stats (2026-07-20) — code done, tsc + vitest (87/87) + next build clean, live-verified via scratch routes, committed and pushed, Vercel auto-deploy triggered — see checkpoint `territory-management-gl-chart-redesign-summary-stats-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).

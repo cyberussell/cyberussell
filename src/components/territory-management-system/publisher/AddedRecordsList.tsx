@@ -31,9 +31,15 @@ export default function AddedRecordsList({
               {r.address || r.plus_code || 'Unlabeled record'}
               {r.unit ? `, ${r.unit}` : ''}
             </p>
+            {r.resident_name && <p className="truncate text-xs text-slate-600">{r.resident_name}</p>}
             <p className="truncate text-xs text-slate-400">
               Sec {r.section?.label ?? '—'} / Blk {r.block?.label ?? '—'}
             </p>
+            {r.household_members != null && (
+              <p className="truncate text-xs text-slate-400">
+                {r.household_members} household{r.household_members === 1 ? '' : 's'}
+              </p>
+            )}
           </div>
           <span
             className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600"
