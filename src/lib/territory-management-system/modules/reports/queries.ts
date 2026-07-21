@@ -231,7 +231,16 @@ export async function getBatchStats(
   const batch = await getBatchSummary(supabase, congregationId, batchId)
   if (!batch) return null
 
-  const totalRecords = batch.partnerships.reduce((sum, p) => sum + p.recordCount, 0)
+  // p.recordCount deliberately excludes locked Do Not Call records (see getBatchSummary's
+  // `countable` filter) so a partnership's own progress card can read "2 of 2 completed" instead
+  // of a confusing "2 of 4" for records nothing could be logged against today — dncCount is
+  // shown alongside it there instead. This batch-wide total is a different question ("how many
+  // records did today's assignment actually cover") where a locked record is still a real
+  // distributed record, just one that's structurally untouched — so it's added back in here, and
+  // deliberately left out of completedRecords, so remainingRecords below counts it correctly as
+  // still-untouched rather than silently vanishing from both totals (Russell: DNC records must
+  // stay part of "Records Untouched" so the batch total matches records actually assigned).
+  const totalRecords = batch.partnerships.reduce((sum, p) => sum + p.recordCount + p.dncCount, 0)
   const completedRecords = batch.partnerships.reduce((sum, p) => sum + p.completedCount, 0)
   const territoryIds = batch.territories.map((t) => t.id)
   const rangeStart = startOfDayUtc(batch.assignment_date, timezone)
