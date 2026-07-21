@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { toast } from 'sonner'
-import { CheckCircle2, ClipboardCopy, CloudOff, Download, PartyPopper, Plus, RefreshCw } from 'lucide-react'
+import { CheckCircle2, ClipboardCopy, CloudOff, Download, PartyPopper, Plus, RefreshCw, X } from 'lucide-react'
 import type { PartnershipWithProgress, PartnershipWorkspace } from '@/lib/territory-management-system/modules/assignment/types'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 import { isPartnershipAllDone, VISIT_RESULT_LABELS, VISIT_RESULTS } from '@/lib/territory-management-system/modules/records/schema'
@@ -1042,8 +1042,20 @@ export default function PublisherWorkspaceApp({
                     <SharePartnershipCard batchToken={batchToken} partnershipToken={partnershipToken} />
                   )}
 
-                  {activeView === 'help' && <PublisherStatusHelp />}
-                  {activeView === 'faq' && <PublisherFAQ />}
+                  {(activeView === 'help' || activeView === 'faq') && (
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setMapView(availablePanelTabs[0]?.key ?? 'territory')}
+                        aria-label="Close"
+                        className="absolute right-2 top-2 z-10 rounded-full bg-white/90 p-1.5 text-slate-500 shadow-sm transition hover:bg-slate-100 hover:text-slate-700"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                      {activeView === 'help' && <PublisherStatusHelp />}
+                      {activeView === 'faq' && <PublisherFAQ />}
+                    </div>
+                  )}
 
                   <div className="flex justify-center gap-4 pt-1 text-xs font-semibold">
                     <button

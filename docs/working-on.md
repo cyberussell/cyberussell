@@ -1,6 +1,33 @@
 # Current Work
 
-**Territory Management System — Publisher workspace Status/FAQ text links + "All Partners" self-status staleness fix (2026-07-21) — code done, tsc + vitest (87/87) + next build clean, live-verified via a temporary scratch route (removed before finishing), NOT YET committed:**
+**Territory Management System — Close (X) button on the FAQ/All Statuses panels (2026-07-21) — code done, tsc + vitest (87/87) + next build clean, live-verified via a temporary scratch route (removed before finishing), committed and pushed, Vercel auto-deploy triggered:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Follow-up to the Status/FAQ text-link move below — Russell asked for an X/close
+control on the "All Statuses" and "FAQ" panels themselves for easy dismissal, rather than only
+being able to switch away via the pill row or the text links again. Added a small `X` icon button
+(lucide-react), absolutely positioned top-right over whichever of the two panels is open, in
+`PublisherWorkspaceApp.tsx`. Clicking it calls `setMapView(availablePanelTabs[0]?.key ??
+'territory')` — the same "first real panel, else fall back" logic already used elsewhere in this
+block — returning to whichever panel (Map/Pins/Search Area/Summary/Share) would otherwise be
+showing.
+
+Current Status: Done and deployed. `npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next
+build` all clean. Live-verified via a temporary scratch route (mock `PartnershipWorkspace`,
+removed before finishing): confirmed the X renders cleanly in the top-right corner of both
+`PublisherStatusHelp` and `PublisherFAQ` without overlapping their content, and clicking it closes
+back to the Share panel (the only other available panel tab in the mock). No DB migration needed.
+Committed and pushed; Vercel auto-deploys on push.
+
+**Next recommended task:** Russell spot-checks live that the close button behaves the same on a
+real assignment with multiple panel tabs available (Map/Pins/Search Area all present) — confirms
+it returns to whichever panel was last active rather than always defaulting to the first one, if
+that distinction matters to him.
+
+---
+
+**Territory Management System — Publisher workspace Status/FAQ text links + "All Partners" self-status staleness fix (2026-07-21) — code done, tsc + vitest (87/87) + next build clean, live-verified via a temporary scratch route (removed before finishing), committed and pushed:**
 
 Current Product: Territory Management System (TMS).
 
