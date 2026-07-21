@@ -778,10 +778,20 @@ export default function PublisherWorkspaceApp({
   // partnership has actually logged a visit against, not the congregation-wide totals. A record
   // with zero logged visits is skipped entirely rather than counted as 'initial_visit' — that's
   // the implicit "not yet visited" default, never a result a publisher actually chose (see
-  // records/schema.ts).
+  // records/schema.ts). A currently-flagged Do Not Call record always counts under 'do_not_call'
+  // regardless of its latest logged visit's own result string — e.g. a record locked via an
+  // earlier visit can carry an older 'return_visit'/'moved' result underneath (see
+  // DO_NOT_CALL_RESULTS in records/schema.ts, which lets those be logged without clearing the
+  // flag), and counting it under that stale result instead of Do Not Call both misrepresents a
+  // record nothing could be logged against today and desyncs the chart's total from the assigned
+  // record count.
   const myResultCounts = ((): Record<VisitResult, number> => {
     const counts = Object.fromEntries(VISIT_RESULTS.map((r) => [r, 0])) as Record<VisitResult, number>
     for (const r of workspace.records) {
+      if (r.record.do_not_call) {
+        counts.do_not_call += 1
+        continue
+      }
       const latest = r.visits[0]?.result
       if (latest) counts[latest] += 1
     }
