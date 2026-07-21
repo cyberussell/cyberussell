@@ -689,7 +689,15 @@ export default function PublisherWorkspaceApp({
   // Sync & Finish and End Early route through this same screen.
   async function handleFinish() {
     const now = new Date().toISOString()
-    setWorkspace((w) => ({ ...w, finished_at: w.finished_at ?? now }))
+    setWorkspace((w) => ({
+      ...w,
+      finished_at: w.finished_at ?? now,
+      // Mirrors the same optimistic update onto this partnership's own entry in the "All
+      // Partners" tab snapshot (see PartnerStatusList) — that list is only ever refetched on a
+      // manual Refresh, so without this a publisher who finishes normally (no Early Out) still
+      // reads as "In Progress" to themselves until they hit Refresh, even though they're done.
+      batchPartnerships: w.batchPartnerships.map((p) => (p.id === w.id ? { ...p, finished_at: p.finished_at ?? now } : p)),
+    }))
     await enqueue(partnershipToken, 'finish', { partnershipToken })
     await refreshQueue()
   }
@@ -719,6 +727,10 @@ export default function PublisherWorkspaceApp({
       ...w,
       ended_early_at: w.ended_early_at ?? now,
       records: w.records.map((r) => (r.completed_at ? r : { ...r, completed_at: now })),
+      // Same self-entry mirror as handleFinish above — without it, ending ministry from a
+      // search-area (zero-assigned-record) partnership left that same partner's own card in the
+      // "All Partners" tab stuck on "In Progress" until a manual, online-only Refresh.
+      batchPartnerships: w.batchPartnerships.map((p) => (p.id === w.id ? { ...p, ended_early_at: p.ended_early_at ?? now } : p)),
     }))
     await enqueue(partnershipToken, 'terminate', { partnershipToken })
     await refreshQueue()
@@ -932,7 +944,11 @@ export default function PublisherWorkspaceApp({
 
             {(() => {
               const mappableTerritories = workspace.territories.filter((t) => mapUrls[t.id] && territoriesWithStructure.has(t.id))
-              const tabs: { key: 'territory' | 'records' | 'search' | 'summary' | 'share' | 'help' | 'faq'; label: string; available: boolean }[] = [
+              // "Status" (now labeled "All Statuses") and "FAQ" used to sit in this same pill row
+              // as Map/Pins/Search Area/Summary/Share, crowding it on narrow screens — they're
+              // reference material, not panels a publisher switches between, so they're broken
+              // out below as plain centered text links instead of competing for pill space.
+              const panelTabs: { key: 'territory' | 'records' | 'search' | 'summary' | 'share'; label: string; available: boolean }[] = [
                 { key: 'territory', label: 'Map', available: mappableTerritories.length > 0 },
                 { key: 'records', label: 'Pins', available: assignedRecordLocations.length > 0 },
                 { key: 'search', label: 'Search Area', available: searchScopeLocations.length > 0 },
@@ -940,24 +956,26 @@ export default function PublisherWorkspaceApp({
                 // just show a partial/misleading picture of the day's results.
                 { key: 'summary', label: 'Summary', available: sessionEnded },
                 { key: 'share', label: 'Share', available: !readOnly },
-                { key: 'help', label: 'Status', available: true },
-                { key: 'faq', label: 'FAQ', available: true },
               ]
-              const availableTabs = tabs.filter((t) => t.available)
-              if (availableTabs.length === 0) return null
+              const availablePanelTabs = panelTabs.filter((t) => t.available)
 
-              // A toggle only makes sense once there are genuinely two-or-more maps to switch
-              // between — with just one available, show it directly instead of a one-option
-              // pill row.
-              const showToggle = availableTabs.length > 1
-              const activeView = showToggle && availableTabs.some((t) => t.key === mapView) ? mapView : availableTabs[0].key
+              // A toggle only makes sense once there are genuinely two-or-more panels to switch
+              // between — with just one (or zero, when only Status/FAQ are reachable) available,
+              // show it directly instead of a one-option pill row.
+              const showToggle = availablePanelTabs.length > 1
+              const activeView =
+                mapView === 'help' || mapView === 'faq'
+                  ? mapView
+                  : showToggle && availablePanelTabs.some((t) => t.key === mapView)
+                    ? mapView
+                    : (availablePanelTabs[0]?.key ?? 'help')
 
               return (
                 <div className="space-y-3">
                   {showToggle && (
                     <div className="flex justify-center">
                       <div className="inline-flex flex-wrap justify-center rounded-full bg-blue-50 p-1">
-                        {availableTabs.map((t) => (
+                        {availablePanelTabs.map((t) => (
                           <button
                             key={t.key}
                             type="button"
@@ -1026,6 +1044,23 @@ export default function PublisherWorkspaceApp({
 
                   {activeView === 'help' && <PublisherStatusHelp />}
                   {activeView === 'faq' && <PublisherFAQ />}
+
+                  <div className="flex justify-center gap-4 pt-1 text-xs font-semibold">
+                    <button
+                      type="button"
+                      onClick={() => setMapView('help')}
+                      className={activeView === 'help' ? 'text-[#2563EB] underline' : 'text-slate-500 hover:text-[#2563EB] hover:underline'}
+                    >
+                      All Statuses
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMapView('faq')}
+                      className={activeView === 'faq' ? 'text-[#2563EB] underline' : 'text-slate-500 hover:text-[#2563EB] hover:underline'}
+                    >
+                      FAQ
+                    </button>
+                  </div>
                 </div>
               )
             })()}

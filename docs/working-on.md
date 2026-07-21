@@ -1,5 +1,45 @@
 # Current Work
 
+**Territory Management System — Publisher workspace Status/FAQ text links + "All Partners" self-status staleness fix (2026-07-21) — code done, tsc + vitest (87/87) + next build clean, live-verified via a temporary scratch route (removed before finishing), NOT YET committed:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Two follow-ups from Russell. (1) The Home tab's pill row mixed "Status" and
+"FAQ" in with the real panel tabs (Map/Pins/Search Area/Summary/Share), crowding it on narrow
+screens. Pulled `help`/`faq` out of `PublisherWorkspaceApp.tsx`'s pill-tab logic into a separate
+centered text-link row (not buttons) rendered below the active panel — "Status" relabeled "All
+Statuses". `activeView`'s fallback logic reworked so `mapView === 'help' | 'faq'` is checked
+independently of the panel-tabs availability list (previously `availableTabs` included help/faq,
+so removing them from the pill array would have made clicking either link get silently
+overridden back to the first panel tab). (2) Real bug: a search-only (zero-assigned-record)
+partnership that ends its own ministry (via either "Slide to End My Ministry" tab's slider) had
+its own card in the workspace's own "All Partners" tab (`PartnerStatusList`, fed from
+`workspace.batchPartnerships`, a snapshot fetched once at initial load — see
+`territory-management-publisher-offline-nav-search-ux-v1.md`) stay stuck on "In Progress"
+until a manual, online-only Refresh — `handleTerminate`/`handleFinish` updated the top-level
+`workspace.ended_early_at`/`finished_at` fields but never patched the matching entry inside
+`workspace.batchPartnerships`. Fixed by mirroring the same optimistic update onto the self-entry
+(matched by `p.id === w.id`) in both handlers. Other partners' entries in that same list remain a
+deliberate snapshot (unchanged, by design) — only the viewing partnership's own entry needed
+patching.
+
+Current Status: Code done, not yet committed. `npx tsc --noEmit`, `npx vitest run` (87/87), and
+`npx next build` all clean. Live-verified both fixes via a temporary scratch route
+(`dev-scratch-status-links`, mock `PartnershipWorkspace` with two `batchPartnerships` entries —
+removed before finishing): confirmed "All Statuses"/"FAQ" render as plain centered text links
+below the panel content, correctly highlight when active, and no longer appear in the pill row;
+confirmed sliding "Slide to End My Ministry" on a zero-record partnership immediately flips that
+same partnership's own card in the "All Partners" tab to "Ended Early" with zero Refresh, while
+the other mock partner's card correctly stays independent. No DB migration needed. Could not
+live-verify against the real TMS Supabase project (no `supabase-ldc` credentials in this sandbox,
+the standing limitation for this product).
+
+**Next recommended task:** Russell reviews the diff and, if satisfied, commits and pushes (Vercel
+auto-deploys on push). Live spot-check on a real device: end a search-area ministry, check "All
+Partners" immediately shows "Ended Early" for yourself without hitting Refresh.
+
+---
+
 **Territory Management System — Publisher workspace offline-nav fix + search-area UX batch (2026-07-21) — code done, tsc + vitest (87/87) + next build clean, live-verified via scratch route, committed and pushed, Vercel auto-deploy triggered — see checkpoint `territory-management-publisher-offline-nav-search-ux-v1.md` for full detail:**
 
 Current Product: Territory Management System (TMS).
