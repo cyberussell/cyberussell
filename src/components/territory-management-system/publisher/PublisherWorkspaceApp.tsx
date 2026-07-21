@@ -1070,7 +1070,7 @@ export default function PublisherWorkspaceApp({
                       onClick={() => setMapView('faq')}
                       className={activeView === 'faq' ? 'text-[#2563EB] underline' : 'text-slate-500 hover:text-[#2563EB] hover:underline'}
                     >
-                      FAQ
+                      Frequently Asked Questions
                     </button>
                   </div>
                 </div>
