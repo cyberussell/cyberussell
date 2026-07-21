@@ -1,6 +1,9 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { OpenLocationCode } from 'open-location-code'
 import type { RecordStatus, RecordVisitWithAuthor, TerritoryRecord, TerritoryRecordWithLocation } from './types'
+
+const openLocationCode = new OpenLocationCode()
 
 // The !territory_id/!section_id/!block_id hints are required, not cosmetic: migrations 030, 033,
 // and 034 gave territory_records a second, third, and fourth FK to territories/territory_sections/
@@ -48,6 +51,41 @@ export async function getRecordsInBlocks(supabase: SupabaseClient, congregationI
     .in('block_id', blockIds)
     .order('created_at', { ascending: false })
   return (data ?? []) as unknown as TerritoryRecordWithLocation[]
+}
+
+// One full-form (unshortened) Plus Code anywhere in the congregation, decoded to a lat/lng —
+// used purely as a geographic reference point so HouseholdDistributionMap can recover a
+// short/local-form code (the realistic common case for one typed manually at the door, rather
+// than captured via "Use My Location") even when the specific record set being viewed has no
+// full code of its own to anchor against — e.g. a Ministry Partner's search area with a single
+// freshly-added record and nothing else nearby yet. Bounded to a couple hundred rows rather than
+// every approved record congregation-wide (contrast getApprovedRecordLocations, which the much
+// less frequently loaded Admin Reports map fetches in full) — cheap enough to run on every
+// publisher workspace page load, and virtually certain to find at least one GPS-captured code in
+// any congregation that's used that button even once. Unfiltered by status — an anchor point
+// doesn't need to be an approved record, it's never itself rendered as a pin.
+export async function getCongregationPlusCodeAnchor(
+  supabase: SupabaseClient,
+  congregationId: string
+): Promise<{ lat: number; lng: number } | null> {
+  const { data } = await supabase
+    .from('territory_records')
+    .select('plus_code')
+    .eq('congregation_id', congregationId)
+    .not('plus_code', 'is', null)
+    .limit(200)
+
+  for (const row of (data ?? []) as { plus_code: string | null }[]) {
+    if (!row.plus_code || !openLocationCode.isValid(row.plus_code) || !openLocationCode.isFull(row.plus_code)) continue
+    try {
+      const area = openLocationCode.decode(row.plus_code)
+      return { lat: area.latitudeCenter, lng: area.longitudeCenter }
+    } catch {
+      // Passed isValid/isFull but still failed to decode — keep looking rather than give up.
+      continue
+    }
+  }
+  return null
 }
 
 export async function getRecordById(

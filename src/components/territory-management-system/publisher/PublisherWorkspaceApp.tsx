@@ -990,14 +990,14 @@ export default function PublisherWorkspaceApp({
                   {activeView === 'records' && (
                     <div className="space-y-3">
                       {!showToggle && <h2 className="font-semibold text-[#0B1B33]">Pins</h2>}
-                      <HouseholdDistributionMap records={assignedRecordLocations} />
+                      <HouseholdDistributionMap records={assignedRecordLocations} fallbackAnchor={workspace.congregationAnchor} />
                     </div>
                   )}
 
                   {activeView === 'search' && (
                     <div className="space-y-3">
                       {!showToggle && <h2 className="font-semibold text-[#0B1B33]">Search Area Map</h2>}
-                      <HouseholdDistributionMap records={searchScopeLocations} />
+                      <HouseholdDistributionMap records={searchScopeLocations} fallbackAnchor={workspace.congregationAnchor} />
                     </div>
                   )}
 

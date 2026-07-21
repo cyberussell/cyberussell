@@ -2,7 +2,7 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { calculateAssignment, isAssignmentError, type AssignmentError, type EligibleRecord } from './engine'
 import { isBatchExpired } from './date'
-import { getRecordsInBlocks, listRecordsAddedByPartnership } from '../records/queries'
+import { getCongregationPlusCodeAnchor, getRecordsInBlocks, listRecordsAddedByPartnership } from '../records/queries'
 import { BIBLE_STUDY_FAMILY_RESULTS, isDoNotCallLocked } from '../records/schema'
 import type {
   AssignmentBatch,
@@ -651,6 +651,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   // all, instead of navigating back to that server-rendered page.
   const batchSummary = await getBatchSummary(supabase, partnership.congregation_id, partnership.batch_id)
   const batchPartnerships = batchSummary?.partnerships ?? []
+  const congregationAnchor = await getCongregationPlusCodeAnchor(supabase, partnership.congregation_id)
 
   return {
     ...(partnership as Partnership),
@@ -666,6 +667,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     searchScopeRecords,
     takenBlockIds,
     batchPartnerships,
+    congregationAnchor,
   }
 }
 

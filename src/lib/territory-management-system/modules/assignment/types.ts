@@ -130,4 +130,10 @@ export interface PartnershipWorkspace extends Partnership {
   // navigation used to hard-fail offline — see PublisherBottomMenu). Manually refreshable
   // (see getBatchPartnersAction) but otherwise just a snapshot from initial load.
   batchPartnerships: PartnershipWithProgress[]
+  // A congregation-wide reference point (see getCongregationPlusCodeAnchor) letting
+  // HouseholdDistributionMap recover a short/local-form Plus Code even when this partnership's
+  // own record set (assigned records, or a freshly-chosen search area) has no full-form code of
+  // its own to anchor against. Null only if the whole congregation has never captured a single
+  // full-form code.
+  congregationAnchor: { lat: number; lng: number } | null
 }

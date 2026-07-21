@@ -31,6 +31,25 @@ the standing limitation for this product). Committed and pushed; Vercel auto-dep
 offline (the original bug report), and clicks through a real search-scope partnership to confirm
 the relabeled slider and new Search Summary stats match what's in My Added Records.
 
+**Follow-up (2026-07-21) — short Plus Code map pins + SlideToConfirm centering, both deployed:**
+Russell live-tested the batch above and found two more issues. (1) `SlideToConfirm`'s drag
+handle used a fixed `top-1` offset that didn't account for the track's border, sitting visibly
+closer to the top than the bottom — fixed with `top-1/2` + `translateY(-50%)` combined into the
+existing drag transform. (2) A manually-typed short-form Plus Code (e.g. `6J3J+7W`, no leading
+area digits — the realistic common case for one typed at the door rather than captured via "Use
+My Location") never showed a map pin when the record set being viewed had no full-form code of
+its own to recover against (`HouseholdDistributionMap`'s `decodePins` refused to guess a
+reference point) — a search area with one freshly-added record and nothing else nearby hit this
+every time. Added `getCongregationPlusCodeAnchor` (`records/queries.ts`) — one full-form code
+anywhere in the congregation (bounded to 200 rows), decoded server-side to lat/lng — attached to
+`PartnershipWorkspace` as `congregationAnchor` and threaded into both `HouseholdDistributionMap`
+call sites (Pins, Search Area) as a `fallbackAnchor`, only used when the in-set fullPins list is
+empty. `npx tsc --noEmit`, `npx vitest run` (87/87), and `npx next build` all clean. Live-verified
+both fixes via temporary scratch routes (slider centering on all 3 tone/label variants; map
+fallback-anchor recovery with and without a fallback, confirming the empty-state still shows
+when there's truly no anchor anywhere). No DB migration needed. Committed (`bbc9c1c` for the
+slider) and the anchor fix, pushed to `main`; Vercel auto-deploys on push.
+
 ---
 
 **Territory Management System — Group Leader bar chart redesign + Home summary stats (2026-07-20) — code done, tsc + vitest (87/87) + next build clean, live-verified via scratch routes, committed and pushed, Vercel auto-deploy triggered — see checkpoint `territory-management-gl-chart-redesign-summary-stats-v1.md` for full detail:**

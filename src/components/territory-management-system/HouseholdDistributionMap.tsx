@@ -74,7 +74,14 @@ function toPin(r: RecordLocation & { color?: 'blue' | 'red' }, code: string): Pi
 // then use their average position (any other record in the same congregation is geographically
 // close enough to be a valid reference — recoverNearest only needs to be within ~55km) to
 // recover the short codes too.
-function decodePins(records: (RecordLocation & { color?: 'blue' | 'red' })[]): Pin[] {
+function decodePins(
+  records: (RecordLocation & { color?: 'blue' | 'red' })[],
+  // A congregation-wide reference point (see getCongregationPlusCodeAnchor) used only when this
+  // specific record set has no full-form code of its own to anchor against — e.g. a search area
+  // with a single freshly-added, manually-typed short code and nothing else nearby yet. Never
+  // itself rendered as a pin, only used as a recovery reference.
+  fallbackAnchor?: { lat: number; lng: number } | null
+): Pin[] {
   const fullPins: Pin[] = []
   const shortRecords: (RecordLocation & { color?: 'blue' | 'red' })[] = []
   for (const r of records) {
@@ -91,12 +98,14 @@ function decodePins(records: (RecordLocation & { color?: 'blue' | 'red' })[]): P
     }
   }
 
-  // No full-code anchor to recover short codes against — can't safely guess a reference point
-  // (a wrong guess would silently place a pin in the wrong city, worse than no pin at all).
-  if (shortRecords.length === 0 || fullPins.length === 0) return fullPins
+  if (shortRecords.length === 0) return fullPins
 
-  const refLat = fullPins.reduce((sum, p) => sum + p.lat, 0) / fullPins.length
-  const refLng = fullPins.reduce((sum, p) => sum + p.lng, 0) / fullPins.length
+  // No in-set anchor — fall back to the congregation-wide one if there is one. Still no safe
+  // way to guess without ANY reference point (a wrong guess would silently place a pin in the
+  // wrong city, worse than no pin at all), so this only ever recovers, never invents.
+  const refLat = fullPins.length > 0 ? fullPins.reduce((sum, p) => sum + p.lat, 0) / fullPins.length : fallbackAnchor?.lat
+  const refLng = fullPins.length > 0 ? fullPins.reduce((sum, p) => sum + p.lng, 0) / fullPins.length : fallbackAnchor?.lng
+  if (refLat == null || refLng == null) return fullPins
 
   const recoveredPins: Pin[] = []
   for (const r of shortRecords) {
@@ -113,13 +122,17 @@ function decodePins(records: (RecordLocation & { color?: 'blue' | 'red' })[]): P
 
 export default function HouseholdDistributionMap({
   records,
+  fallbackAnchor,
 }: {
   // color defaults to blue (existing behavior, every current call site) — an overflow
   // partnership's search-area map is the one place that passes 'red' for its own newly-added,
   // still-pending-approval records, to distinguish them from existing/pre-assigned ones.
   records: (RecordLocation & { color?: 'blue' | 'red' })[]
+  // See decodePins — optional, only used to recover a short-form code when this record set has
+  // no full-form code of its own.
+  fallbackAnchor?: { lat: number; lng: number } | null
 }) {
-  const pins = useMemo(() => decodePins(records), [records])
+  const pins = useMemo(() => decodePins(records, fallbackAnchor), [records, fallbackAnchor])
 
   if (pins.length === 0) {
     return (
