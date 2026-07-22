@@ -958,13 +958,13 @@ export default function PublisherWorkspaceApp({
               // reference material, not panels a publisher switches between, so they're broken
               // out below as plain centered text links instead of competing for pill space.
               const panelTabs: { key: 'territory' | 'records' | 'search' | 'summary' | 'share'; label: string; available: boolean }[] = [
-                { key: 'territory', label: 'Map', available: mappableTerritories.length > 0 },
+                { key: 'territory', label: 'Territory Map', available: mappableTerritories.length > 0 },
                 { key: 'records', label: 'Pins', available: assignedRecordLocations.length > 0 },
                 { key: 'search', label: 'Search Area', available: searchScopeLocations.length > 0 },
                 // Only revealed once ministry has actually ended — a mid-session Summary would
                 // just show a partial/misleading picture of the day's results.
                 { key: 'summary', label: 'Summary', available: sessionEnded },
-                { key: 'share', label: 'Share', available: !readOnly },
+                { key: 'share', label: 'Share QR', available: !readOnly },
               ]
               const availablePanelTabs = panelTabs.filter((t) => t.available)
 

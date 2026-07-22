@@ -172,12 +172,12 @@ export default function GroupLeaderTabs({
   const partnersEndedEarly = combinedStats.partnerships.filter((p) => p.ended_early_at).length
   const partnersFinished = combinedStats.partnerships.filter((p) => p.finished_at).length
 
-  // Label for the batch switcher — "Assignment" for the original, "Auxiliary Groups" for an
+  // Label for the batch switcher — "House To House" for the original, "Auxiliary Groups" for an
   // overflow batch (numbered "Auxiliary Groups 2", "Auxiliary Groups 3"... only once there's more
   // than one, since a Group Leader can generate more than one overflow batch the same day).
   let overflowSeen = 0
   const batchLabel = (b: BatchView) => {
-    if (!b.isOverflow) return 'Assignment'
+    if (!b.isOverflow) return 'House To House'
     overflowSeen += 1
     return overflowSeen === 1 ? 'Auxiliary Groups' : `Auxiliary Groups ${overflowSeen}`
   }
@@ -310,7 +310,7 @@ export default function GroupLeaderTabs({
                 className={isOverflow ? 'absolute right-4 top-4 text-red-400 hover:text-red-300' : 'absolute right-4 top-4 text-red-400 hover:text-red-600'}
               />
               <h2 className={`font-semibold ${isOverflow ? 'text-white' : 'text-[#0B1B33]'}`}>
-                {isOverflow ? 'Auxiliary Group QR Code' : 'Assignment QR Code'}
+                {isOverflow ? 'Auxiliary Group QR Code' : 'House To House QR Code'}
               </h2>
               {batchBarangays.length > 0 && (
                 <p className={`-mt-2 text-xs font-medium ${isOverflow ? 'text-[#60A5FA]' : 'text-[#2563EB]'}`}>
