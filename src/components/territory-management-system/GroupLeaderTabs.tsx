@@ -172,15 +172,21 @@ export default function GroupLeaderTabs({
   const partnersEndedEarly = combinedStats.partnerships.filter((p) => p.ended_early_at).length
   const partnersFinished = combinedStats.partnerships.filter((p) => p.finished_at).length
 
-  // Label for the batch switcher — "House To House" for the original, "Auxiliary Groups" for an
-  // overflow batch (numbered "Auxiliary Groups 2", "Auxiliary Groups 3"... only once there's more
-  // than one, since a Group Leader can generate more than one overflow batch the same day).
+  // Label for the batch switcher AND the Partners tab's per-batch section headers below —
+  // "House To House" for the original, "Auxiliary Groups" for an overflow batch (numbered
+  // "Auxiliary Groups 2", "Auxiliary Groups 3"... only once there's more than one, since a Group
+  // Leader can generate more than one overflow batch the same day). Computed once into a map
+  // (rather than a mutable counter read directly in each render site) so calling it from two
+  // separate places in the same render doesn't double-advance the overflow numbering.
   let overflowSeen = 0
-  const batchLabel = (b: BatchView) => {
-    if (!b.isOverflow) return 'House To House'
-    overflowSeen += 1
-    return overflowSeen === 1 ? 'Auxiliary Groups' : `Auxiliary Groups ${overflowSeen}`
-  }
+  const batchLabelById = new Map(
+    batches.map((b) => {
+      if (!b.isOverflow) return [b.batchId, 'House To House'] as const
+      overflowSeen += 1
+      return [b.batchId, overflowSeen === 1 ? 'Auxiliary Groups' : `Auxiliary Groups ${overflowSeen}`] as const
+    })
+  )
+  const batchLabel = (b: BatchView) => batchLabelById.get(b.batchId) ?? 'House To House'
 
   const router = useRouter()
   // `stats` (and everything else here) is fetched once per Server Component render and passed
@@ -444,7 +450,14 @@ export default function GroupLeaderTabs({
       )}
 
       {tab === 'progress' && (
-        <PartnershipList partnerships={combinedStats.partnerships} onEndPartnership={endPartnershipAction} />
+        <div className="space-y-8">
+          {batches.map((b) => (
+            <div key={b.batchId}>
+              <h3 className="mb-3 text-sm font-semibold text-[#0B1B33]">{batchLabel(b)}</h3>
+              <PartnershipList partnerships={b.stats.partnerships} onEndPartnership={endPartnershipAction} />
+            </div>
+          ))}
+        </div>
       )}
 
       {tab === 'faq' && <PublisherFAQ />}

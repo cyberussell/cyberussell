@@ -40,7 +40,9 @@ export default function PartnershipCard({
         <div className="h-full rounded-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8]" style={{ width: `${pct}%` }} />
       </div>
       <p className="mt-1.5 text-xs text-slate-600">
-        {partnership.completedCount} of {partnership.recordCount} contact records completed
+        {partnership.recordCount > 0
+          ? `${partnership.completedCount} of ${partnership.recordCount} contact records completed`
+          : 'No Added Records Yet'}
         {partnership.dncCount > 0 && <span className="text-red-600"> · {partnership.dncCount} Do Not Call</span>}
       </p>
       {partnership.territories.length > 0 && (
