@@ -33,6 +33,13 @@ function CloseMobileActionButton({ onClick }: { onClick: () => void }) {
   )
 }
 
+// Device-local calendar-day comparison (matches how every date in this component and
+// VisitHistoryList is already displayed — no server/congregation timezone is plumbed through
+// to the publisher workspace). Used to decide whether the latest visit is "today's" submission.
+function isSameCalendarDay(a: Date, b: Date): boolean {
+  return a.toDateString() === b.toDateString()
+}
+
 // 1 -> "1st", 2 -> "2nd", 3 -> "3rd", 4 -> "4th", 11-13 -> "11th"/"12th"/"13th" (the standard
 // English ordinal-suffix exception for the teens).
 function ordinal(n: number): string {
@@ -536,9 +543,14 @@ export default function PublisherRecordDetailView({
         </div>
       )}
 
-      {assigned.visits[0] && (
+      {assigned.visits[0] && isSameCalendarDay(new Date(assigned.visits[0].visited_at), new Date()) && (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">What you submitted</p>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">What you submitted</p>
+            <p className="text-xs text-amber-700/80">
+              {new Date(assigned.visits[0].visited_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+            </p>
+          </div>
           <p className="mt-1 text-sm font-medium text-[#0B1B33]">{VISIT_RESULT_LABELS[assigned.visits[0].result]}</p>
           {assigned.visits[0].notes && <p className="mt-1 text-sm text-[#0B1B33]/80">{assigned.visits[0].notes}</p>}
         </div>

@@ -496,17 +496,6 @@ export async function getSearchScopeForPartnership(supabase: SupabaseClient, par
   }
 }
 
-// Every block already locked in by ANY partnership congregation-wide today — feeds
-// ChooseSearchScopeForm's disabled/"Already claimed" state. The real enforcement is the DB's
-// own unique(block_id, assignment_date) constraint on partnership_search_blocks (a race between
-// two partnerships submitting at nearly the same instant is caught there, not here) — this is
-// just what makes the picker itself show accurate options rather than a client having to
-// discover the conflict only after submitting.
-export async function getTakenBlockIdsForDate(supabase: SupabaseClient, assignmentDate: string): Promise<Set<string>> {
-  const { data } = await supabase.from('partnership_search_blocks').select('block_id').eq('assignment_date', assignmentDate)
-  return new Set((data ?? []).map((r) => r.block_id as string))
-}
-
 export interface LockSearchBlocksResult {
   ok: boolean
   error?: string
@@ -515,10 +504,10 @@ export interface LockSearchBlocksResult {
 // Locks in a partnership's one-time search-area choice — the caller (chooseSearchScopeAction)
 // has already verified the section belongs to one of the batch's territories; this re-verifies
 // every submitted block actually belongs to that section (never trusting the client) before
-// inserting. The DB's own unique(block_id, assignment_date) constraint is the real
-// race-condition safety net — two partnerships could both pass an app-level availability check
-// an instant apart, so a unique-violation on insert is caught here and turned into a friendly
-// message instead of a raw DB error.
+// inserting. Blocks are shareable — multiple partnerships can lock the same block on the same
+// day (see 037_partnership_search_blocks_shareable.sql, which dropped the old
+// unique(block_id, assignment_date) constraint) — only the section is a one-time, single choice
+// per partnership.
 export async function lockPartnershipSearchBlocks(
   supabase: SupabaseClient,
   congregationId: string,
@@ -540,14 +529,7 @@ export async function lockPartnershipSearchBlocks(
       assignment_date: assignmentDate,
     }))
   )
-  if (error) {
-    // Postgres unique_violation — someone else locked one of these blocks between the picker
-    // loading takenBlockIds and this submission landing.
-    if (error.code === '23505') {
-      return { ok: false, error: 'One or more of these blocks were just claimed by another partner — please pick different ones.' }
-    }
-    return { ok: false, error: error.message }
-  }
+  if (error) return { ok: false, error: error.message }
   return { ok: true }
 }
 
@@ -636,16 +618,6 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   const searchScopeRecords = searchScope
     ? await getRecordsInBlocks(supabase, partnership.congregation_id, searchScope.blocks.map((b) => b.id))
     : []
-  // Only meaningful (and only fetched) for an overflow partnership — or a zero-record
-  // partnership, same "needs to pick a search area" case as PublisherWorkspaceApp's
-  // needsSearchScope — that hasn't picked a scope yet; feeds ChooseSearchScopeForm's disabled
-  // state. Every other partnership never renders that form, so there's nothing for this to do
-  // for them.
-  const takenBlockIds =
-    ((batch as AssignmentBatch).is_overflow || records.length === 0) && !searchScope
-      ? [...(await getTakenBlockIdsForDate(supabase, (batch as AssignmentBatch).assignment_date))]
-      : []
-
   // Same data the pre-claim batch-landing page shows (see getBatchByToken) — fetched here too
   // so the workspace's own "All Partners" tab can render it from the initial load, offline and
   // all, instead of navigating back to that server-rendered page.
@@ -665,7 +637,6 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     addedRecords,
     searchScope,
     searchScopeRecords,
-    takenBlockIds,
     batchPartnerships,
     congregationAnchor,
   }

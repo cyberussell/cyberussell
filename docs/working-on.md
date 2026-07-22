@@ -1,5 +1,92 @@
 # Current Work
 
+**Territory Management System — Publisher bottom nav: bigger icons + text labels (2026-07-22) — code done, tsc + vitest (79/79) clean, live-verified via a temporary scratch route (removed before finishing), committed:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell shared a screenshot of the publisher workspace's fixed bottom nav
+(`PublisherBottomMenu.tsx` — Home/Partners/Assigned Records/My Added Records) and asked for
+bigger icons with text labels underneath, publisher-workspace only.
+
+Current Status: Done. Icons grew from `h-5 w-5`/`h-6 w-6` (inactive/active) to `h-7 w-7`/`h-8 w-8`;
+each button switched from icon-only (`flex items-center justify-center`) to a stacked
+`flex-col` layout with an 11px label below the icon. Renamed the visible labels to Russell's
+exact wording — "Partners" (was "All Partners"), "List" (was "Assigned Records"), "Record" (was
+"My Added Records") — used for both the visible text and the `aria-label`/`title`. `PublisherBottomMenu`
+is only rendered from `PublisherWorkspaceApp.tsx` (the claimed workspace), so no other nav
+(`BatchLandingBottomMenu`, the pre-claim landing page) was touched. `npx tsc --noEmit` clean,
+`npx vitest run` 79/79 (same unrelated pre-existing Appointment System env-var failure). Live-verified
+via a temporary scratch route (`dev-scratch-bottom-nav`, mock props, screenshotted with a
+locally-installed `playwright-core` against the pre-installed Chromium — removed before finishing,
+`playwright-core` installed with `--no-save` so `package.json`/lockfile are untouched) — confirmed
+both the default and an active-tab (List) state render cleanly at a 390px mobile width, all four
+labels fit without wrapping or overlap.
+
+**Next recommended task:** Russell reviews the diff and, if satisfied, this is ready to push
+(nothing blocking — no migration, no live TMS credentials needed since it's a pure UI change).
+
+---
+
+**Territory Management System — Search-area blocks made shareable (drop block exclusivity) (2026-07-22) — code done, tsc + vitest (79/79) + next build clean, committed and pushed, migration 037 applied live by Russell:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell flagged a screenshot of `ChooseSearchScopeForm.tsx` ("Choose Your Search
+Area," the overflow/zero-record partnership's post-claim section+block picker) showing "One or
+more of these blocks were just claimed by another partner — please pick different ones." That was
+the original, deliberate design: a `unique(block_id, assignment_date)` DB constraint on
+`partnership_search_blocks` (026_partnership_search_blocks.sql) made blocks congregation-wide
+exclusive for the day. Russell wants the opposite: the section stays a one-time, single choice per
+partnership (unchanged — always was a single-select dropdown, never exclusive), but blocks should
+be shareable — multiple Ministry Partners can search the same block on the same day.
+
+Current Status: Done and live. New migration `037_partnership_search_blocks_shareable.sql` drops
+the `unique(block_id, assignment_date)` constraint — Russell applied it himself directly against
+the live Supabase project (no `supabase-ldc` credentials in this sandbox, the standing limitation
+for this product; SQL provided directly and confirmed run). Removed the now-dead
+`takenBlockIds`/"Already claimed" machinery
+end to end: `getTakenBlockIdsForDate` and the `takenBlockIds` computation in `getPartnershipByToken`
+(`assignment/queries.ts`), the `takenBlockIds` field on the workspace type (`assignment/types.ts`),
+the disabled/"Already claimed" block UI and prop in `ChooseSearchScopeForm.tsx` (also dropped the
+now-inaccurate "so no one else covers the same ground" copy), the prop pass in
+`PublisherWorkspaceApp.tsx`, and simplified `lockPartnershipSearchBlocks`'s now-impossible 23505
+error branch. Updated a stale exclusivity comment in `OverflowAssignmentForm.tsx`. `npx tsc
+--noEmit` clean, `npx vitest run` 79/79 passing (1 unrelated pre-existing failure in the
+Appointment System's `slots.test.ts` — missing env vars, not touched by this change), `npx next
+build` clean. Not live-clicked in a browser (no TMS credentials in this sandbox).
+
+**Next recommended task:** Russell spot-checks live — two different Ministry Partners should both
+be able to lock in the same block for the same section on the same day without any "claimed by
+another partner" error.
+
+---
+
+**Territory Management System — "What you submitted" box: date/time + today-only visibility (2026-07-21) — code done, tsc clean, committed and pushed, see checkpoint `territory-management-what-you-submitted-datetime-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell flagged two screenshots of the publisher record detail view
+(`PublisherRecordDetailView.tsx`). The amber "What you submitted" box (shows the latest logged
+visit's result/notes) had no date/time, so a publisher couldn't tell if it was today's submission
+or an old one. Worse, on a locked Do Not Call record it still showed a stale visit from 3 days
+earlier as if it were "what you submitted" even though the record can't be visited while locked
+and nothing happened that day.
+
+Current Status: Done. Added `isSameCalendarDay()` (device-local `toDateString()` comparison, same
+convention every other date in this file already uses — no congregation timezone is plumbed into
+the publisher workspace). The box now only renders when `assigned.visits[0].visited_at` is today,
+and shows that visit's date/time next to the label when it does. A locked/no-visit-today record
+now shows no box at all, matching Russell's requirement. `npm install` was needed first
+(node_modules was missing at session start); `npx tsc --noEmit` clean across the whole project
+afterward. Not live-clicked in a browser (no TMS credentials in this session) — verified by direct
+comparison against the two screenshots Russell provided. Committed and pushed to
+`claude/tms-visit-datetime-display-o1hknh`.
+
+**Next recommended task:** Russell spot-checks live — a record with today's visit should show the
+box with its timestamp; the locked DNC record should show no box.
+
+---
+
 **Territory Management System — Close (X) button on the FAQ/All Statuses panels (2026-07-21) — code done, tsc + vitest (87/87) + next build clean, live-verified via a temporary scratch route (removed before finishing), committed and pushed, Vercel auto-deploy triggered:**
 
 Current Product: Territory Management System (TMS).
