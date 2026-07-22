@@ -449,16 +449,9 @@ export default function GroupLeaderTabs({
         </div>
       )}
 
-      {tab === 'progress' && (
-        <div className="space-y-8">
-          {batches.map((b) => (
-            <div key={b.batchId}>
-              <h3 className="mb-3 text-sm font-semibold text-[#0B1B33]">{batchLabel(b)}</h3>
-              <PartnershipList partnerships={b.stats.partnerships} onEndPartnership={endPartnershipAction} />
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Follows the batch switcher above (House To House / Auxiliary Groups) — only the
+          currently selected batch's own partners, not every batch stacked on one page. */}
+      {tab === 'progress' && <PartnershipList partnerships={stats.partnerships} onEndPartnership={endPartnershipAction} />}
 
       {tab === 'faq' && <PublisherFAQ />}
     </div>
