@@ -1,5 +1,32 @@
 # Current Work
 
+**Territory Management System — Publisher bottom nav: bigger icons + text labels (2026-07-22) — code done, tsc + vitest (79/79) clean, live-verified via a temporary scratch route (removed before finishing), committed:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell shared a screenshot of the publisher workspace's fixed bottom nav
+(`PublisherBottomMenu.tsx` — Home/Partners/Assigned Records/My Added Records) and asked for
+bigger icons with text labels underneath, publisher-workspace only.
+
+Current Status: Done. Icons grew from `h-5 w-5`/`h-6 w-6` (inactive/active) to `h-7 w-7`/`h-8 w-8`;
+each button switched from icon-only (`flex items-center justify-center`) to a stacked
+`flex-col` layout with an 11px label below the icon. Renamed the visible labels to Russell's
+exact wording — "Partners" (was "All Partners"), "List" (was "Assigned Records"), "Record" (was
+"My Added Records") — used for both the visible text and the `aria-label`/`title`. `PublisherBottomMenu`
+is only rendered from `PublisherWorkspaceApp.tsx` (the claimed workspace), so no other nav
+(`BatchLandingBottomMenu`, the pre-claim landing page) was touched. `npx tsc --noEmit` clean,
+`npx vitest run` 79/79 (same unrelated pre-existing Appointment System env-var failure). Live-verified
+via a temporary scratch route (`dev-scratch-bottom-nav`, mock props, screenshotted with a
+locally-installed `playwright-core` against the pre-installed Chromium — removed before finishing,
+`playwright-core` installed with `--no-save` so `package.json`/lockfile are untouched) — confirmed
+both the default and an active-tab (List) state render cleanly at a 390px mobile width, all four
+labels fit without wrapping or overlap.
+
+**Next recommended task:** Russell reviews the diff and, if satisfied, this is ready to push
+(nothing blocking — no migration, no live TMS credentials needed since it's a pure UI change).
+
+---
+
 **Territory Management System — Search-area blocks made shareable (drop block exclusivity) (2026-07-22) — code done, tsc + vitest (79/79) + next build clean, committed, migration written but NOT yet applied:**
 
 Current Product: Territory Management System (TMS).

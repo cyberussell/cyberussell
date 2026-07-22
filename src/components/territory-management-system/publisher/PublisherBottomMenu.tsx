@@ -41,13 +41,13 @@ export default function PublisherBottomMenu({
 
   items.push(
     { key: 'home', label: 'Home', icon: Home, active: view === 'home', onClick: onGoToHome },
-    { key: 'partners', label: 'All Partners', icon: Users, active: view === 'partners', onClick: onGoToPartners },
-    { key: 'records', label: 'Assigned Records', icon: ClipboardList, active: view === 'list', onClick: onGoToRecords }
+    { key: 'partners', label: 'Partners', icon: Users, active: view === 'partners', onClick: onGoToPartners },
+    { key: 'records', label: 'List', icon: ClipboardList, active: view === 'list', onClick: onGoToRecords }
   )
   if (showAddedRecords) {
     items.push({
       key: 'addedRecords',
-      label: 'My Added Records',
+      label: 'Record',
       icon: ClipboardPlus,
       active: view === 'addedRecords' || view === 'addedRecordDetail' || view === 'editAddedRecord',
       onClick: onGoToAddedRecords,
@@ -64,9 +64,9 @@ export default function PublisherBottomMenu({
         // color change below — so the current section reads at a glance on a one-handed,
         // out-in-ministry tap target, not just a subtle color shift.
         const content = (
-          <span className={`relative flex items-center justify-center rounded-full p-1.5 transition ${item.active ? 'bg-blue-50' : ''}`}>
+          <span className={`relative flex items-center justify-center rounded-full p-1 transition ${item.active ? 'bg-blue-50' : ''}`}>
             <Icon
-              className={`${item.active ? 'h-6 w-6' : 'h-5 w-5'} ${item.spin ? 'animate-spin' : ''}`}
+              className={`${item.active ? 'h-8 w-8' : 'h-7 w-7'} ${item.spin ? 'animate-spin' : ''}`}
               strokeWidth={item.active ? 2.75 : 2}
               aria-hidden
             />
@@ -77,9 +77,7 @@ export default function PublisherBottomMenu({
             )}
           </span>
         )
-        // Icon-only — no visible label text below the icon. aria-label/title keep it
-        // identifiable for screen readers and on long-press/hover.
-        const className = `flex flex-1 items-center justify-center py-3.5 transition disabled:opacity-40 ${
+        const className = `flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 transition disabled:opacity-40 ${
           item.active ? 'text-[#2563EB]' : 'text-slate-400'
         }`
         return (
@@ -94,6 +92,7 @@ export default function PublisherBottomMenu({
             aria-current={item.active ? 'page' : undefined}
           >
             {content}
+            <span className={`text-[11px] leading-none ${item.active ? 'font-semibold' : 'font-medium'}`}>{item.label}</span>
           </button>
         )
       })}
