@@ -454,7 +454,32 @@
       "Bash(git -c gc.auto=0 push origin main)",
       "Bash(xargs -I{} basename {})",
       "Bash(vercel alias *)",
-      "Bash(grep -rn \"dashboard/records/\\\\${\" src/)"
+      "Bash(grep -rn \"dashboard/records/\\\\${\" src/)",
+      "Bash(SCRATCH=\"/private/tmp/claude-501/-Users-russellparayno-Documents-Business-cyberussell-com/2cd5fb72-c6ad-4876-8831-1d7496b22005/scratchpad\" && mkdir -p \"$SCRATCH/corrupt-object-backup\" && cp \"/Users/russellparayno/Documents/Business/cyberussell.com/.git/objects/43/b454bd740612dccc6a9b604b5a4afa39d7d36c\" \"$SCRATCH/corrupt-object-backup/43b454bd740612dccc6a9b604b5a4afa39d7d36c.bak\" && ls -la \"$SCRATCH/corrupt-object-backup/\")",
+      "Bash(git gc *)",
+      "Bash(grep -n \"workspace.records.length\\\\|records.length\\\\|filter\\(\\(r\\) => r.completed_at\\)\\\\|completed_at\\).length\\\\|\\\\bof \\\\$\\\\|progress\" /Users/russellparayno/Documents/Business/cyberussell.com/src/components/territory-management-system/publisher/PublisherWorkspaceApp.tsx /Users/russellparayno/Documents/Business/cyberussell.com/src/components/territory-management-system/publisher/AssignedRecordsList.tsx)",
+      "Bash(grep \" 2$\")",
+      "Bash(cat > *)",
+      "Bash(cat territory-management-system/migrations/012_removal_recommendation.sql)",
+      "Bash(cat territory-management-system/migrations/020_correction_recommendation.sql)",
+      "Bash(grep -n \"territory: territory ? { id: territory.id, name: territory.name }\" src/components/territory-management-system/publisher/PublisherWorkspaceApp.tsx)",
+      "Bash(pkill -f \"http.server 8934\")",
+      "mcp__claude-in-chrome__resize_window",
+      "mcp__claude-in-chrome__computer",
+      "mcp__claude-in-chrome__read_page",
+      "mcp__claude-in-chrome__find",
+      "mcp__claude-in-chrome__read_console_messages",
+      "mcp__claude-in-chrome__browser_batch",
+      "Bash(find ~ -iname \"*.png\" -newer /Users/russellparayno/Documents/Business/cyberussell.com/AGENTS.md -mmin -15 2>/dev/null | grep -iv node_modules | head -20 *)",
+      "Bash(cp '/Users/russellparayno/Downloads/Cyberussell — Your Skills. Your Income.png' /private/tmp/claude-501/-Users-russellparayno-Documents-Business-cyberussell-com/d7ba3f9d-9378-4404-af6e-634be477a470/scratchpad/shots/gl-generate-form.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight /private/tmp/claude-501/-Users-russellparayno-Documents-Business-cyberussell-com/d7ba3f9d-9378-4404-af6e-634be477a470/scratchpad/shots/gl-generate-form.png)",
+      "Bash(grep -n \"territories,$\\\\|dncCount,\\\\|hasBibleStudy,$\" src/lib/territory-management-system/modules/assignment/queries.ts)",
+      "Bash(node -e \"const icons = require\\('/Users/russellparayno/Documents/Business/cyberussell.com/node_modules/lucide-react'\\); console.log\\(Object.keys\\(icons\\).filter\\(k => /book/i.test\\(k\\)\\)\\);\")",
+      "Bash(git -C /Users/russellparayno/Documents/Business/cyberussell.com show --stat e96d164)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(Object.keys\\(p.dependencies\\).length, 'deps'\\)\")",
+      "Bash(git -C \"/Users/russellparayno/Documents/Business/cyberussell.com\" mv \"src/app/territory-management-system/_scratch-test/page.tsx\" \"src/app/territory-management-system/scratch-test-pw9k2/page.tsx\")",
+      "Bash(find \"/Users/russellparayno/Documents/Business/cyberussell.com\" -maxdepth 1 -iname \".mcp.json\" 2>&1; find ~/.claude -maxdepth 2 -iname \"*.json\" 2>&1 | grep -i mcp; echo \"---claude config---\"; cat ~/.claude.json 2>/dev/null | head -c 500)",
+      "Bash(echo \"EXIT: $?\")"
     ]
   }
 }
