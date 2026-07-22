@@ -44,19 +44,16 @@ export default function PartnershipList({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {partnerships.map((p) => {
           const pct = p.recordCount > 0 ? Math.round((p.completedCount / p.recordCount) * 100) : 0
-          // finished_at/ended_early_at are the real "genuinely done" signal (see
-          // 018_partnership_finished_at.sql) — this badge previously only ever distinguished
-          // Claimed/Unclaimed, so a finished or early-ended partnership stayed "Claimed" forever.
-          const endedEarly = Boolean(p.ended_early_at)
-          const done = Boolean(p.finished_at || endedEarly)
-          const status = endedEarly ? 'Ended Early' : done ? 'Done' : p.claimed_at ? 'Claimed' : 'Unclaimed'
-          const statusClass = endedEarly
-            ? 'bg-amber-50 text-amber-600'
-            : done
-              ? 'bg-emerald-50 text-emerald-600'
-              : p.claimed_at
-                ? 'bg-blue-50 text-[#2563EB]'
-                : 'bg-slate-100 text-slate-500'
+          // finished_at/ended_early_at (see 018_partnership_finished_at.sql) both mean "genuinely
+          // done" — a publisher can end their ministry any time, whether they've searched zero or
+          // many records, so ending early isn't a distinct/lesser status worth flagging on its own.
+          const done = Boolean(p.finished_at || p.ended_early_at)
+          const status = done ? 'Done' : p.claimed_at ? 'Claimed' : 'Unclaimed'
+          const statusClass = done
+            ? 'bg-emerald-50 text-emerald-600'
+            : p.claimed_at
+              ? 'bg-blue-50 text-[#2563EB]'
+              : 'bg-slate-100 text-slate-500'
           return (
             <Card key={p.id} className="relative overflow-hidden p-4">
               {p.hasBibleStudy && (
@@ -73,7 +70,9 @@ export default function PartnershipList({
                 />
               </div>
               <p className="mt-2 text-xs text-slate-600">
-                {p.completedCount} of {p.recordCount} contact records completed
+                {p.completedCount > 0
+                  ? `${p.completedCount} contact recorded. Note: For admin's approval`
+                  : 'No contact record has been added'}
                 {p.recordCount - p.completedCount > 0 ? ` · ${p.recordCount - p.completedCount} remaining` : ''}
                 {p.dncCount > 0 && <span className="text-red-600"> · {p.dncCount} Do Not Call</span>}
               </p>
@@ -82,9 +81,6 @@ export default function PartnershipList({
                   {p.territories.map((t) => `${t.name} — ${t.description}`).join(', ')}
                   {p.sections.length > 0 ? ` · Section ${p.sections.map((s) => s.label).join(', ')}` : ''}
                 </p>
-              )}
-              {endedEarly && (
-                <p className="mt-1 text-xs text-amber-600">Ended early — the remaining records weren&apos;t visited this session.</p>
               )}
               {onEndPartnership && !done && (
                 <button

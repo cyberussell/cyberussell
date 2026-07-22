@@ -80,10 +80,16 @@ export default function GroupLeaderTabs({
   batches,
   activeTerritories,
   todaysTerritories,
+  combinedStats,
 }: {
   batches: BatchView[]
   activeTerritories: { id: string; name: string; barangayName: string; approvedCount: number }[]
   todaysTerritories: { id: string; name: string; barangayName: string }[]
+  // Regular assignment + every auxiliary/overflow batch owned today, summed/deduped (see
+  // getCombinedBatchStats) — what the Dashboard/Visits/Partners tabs and the post-completion Home
+  // tab summary display, instead of forcing a per-batch view. The batch switcher below still picks
+  // which single batch the QR/generate/regenerate/delete controls on the Home tab act on.
+  combinedStats: BatchStats
 }) {
   const [tab, setTab] = useState<Tab>('home')
   // Home tab's Generate/Regenerate toggle — deliberately starts at null (neither shown), even
@@ -108,14 +114,17 @@ export default function GroupLeaderTabs({
   // piggybacked on and could silently miss).
   const batchBarangays = stats.territories.map((t) => t.description).filter((d): d is string => Boolean(d && d.trim()))
 
-  // The "Visits" tab shows each result's count as of when this device first opened this batch's
-  // dashboard, plus a live delta badge (see StatCard) for whatever's changed since then. Kept in
-  // localStorage (not just component state) keyed by batchId — a batch is a new one every day,
-  // so this naturally resets each morning with no extra logic — because relying on component
-  // state alone meant a plain page reload (as opposed to the in-place router.refresh() poll)
-  // silently reset the baseline to the just-loaded numbers, making the delta permanently read 0.
-  const baselineStorageKey = `tms_gl_result_baseline_${batchId}`
-  const [resultBaseline, setResultBaseline] = useState(stats.resultCounts)
+  // The "Visits" tab shows each result's count as of when this device first opened today's
+  // combined batches, plus a live delta badge (see StatCard) for whatever's changed since then.
+  // Kept in localStorage (not just component state) keyed by the combined set of today's batch
+  // ids (sorted, so it's stable regardless of fetch order) — a new auxiliary batch showing up
+  // changes the key, naturally re-seeding the baseline, and this resets every morning with no
+  // extra logic — because relying on component state alone meant a plain page reload (as opposed
+  // to the in-place router.refresh() poll) silently reset the baseline to the just-loaded
+  // numbers, making the delta permanently read 0.
+  const combinedBatchKey = [...batches].map((b) => b.batchId).sort().join('_')
+  const baselineStorageKey = `tms_gl_result_baseline_combined_${combinedBatchKey}`
+  const [resultBaseline, setResultBaseline] = useState(combinedStats.resultCounts)
   useEffect(() => {
     if (typeof window === 'undefined') return
     const stored = window.localStorage.getItem(baselineStorageKey)
@@ -127,10 +136,10 @@ export default function GroupLeaderTabs({
         // Falls through to re-seed below if the stored value was somehow corrupt.
       }
     }
-    setResultBaseline(stats.resultCounts)
-    window.localStorage.setItem(baselineStorageKey, JSON.stringify(stats.resultCounts))
+    setResultBaseline(combinedStats.resultCounts)
+    window.localStorage.setItem(baselineStorageKey, JSON.stringify(combinedStats.resultCounts))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [batchId])
+  }, [combinedBatchKey])
 
   // Records fill sequentially, so a shortfall of approved records caps the actual partnership
   // count below what was requested (see engine.ts's calculateAssignment) instead of blocking
@@ -158,17 +167,19 @@ export default function GroupLeaderTabs({
       (p) => Boolean(p.finished_at) || Boolean(p.ended_early_at) || (p.recordCount > 0 && p.completedCount >= p.recordCount)
     )
 
-  const partnersEndedEarly = stats.partnerships.filter((p) => p.ended_early_at).length
-  const partnersFinished = stats.partnerships.filter((p) => p.finished_at).length
+  // Combined across every batch owned today, same as the rest of the completed-summary card
+  // below — not just the currently selected/switcher batch.
+  const partnersEndedEarly = combinedStats.partnerships.filter((p) => p.ended_early_at).length
+  const partnersFinished = combinedStats.partnerships.filter((p) => p.finished_at).length
 
-  // Label for the batch switcher — "Assignment" for the original, "Overflow" for an overflow
-  // batch (numbered "Overflow 2", "Overflow 3"... only once there's more than one, since a
-  // Group Leader can generate more than one overflow batch the same day).
+  // Label for the batch switcher — "Assignment" for the original, "Auxiliary Groups" for an
+  // overflow batch (numbered "Auxiliary Groups 2", "Auxiliary Groups 3"... only once there's more
+  // than one, since a Group Leader can generate more than one overflow batch the same day).
   let overflowSeen = 0
   const batchLabel = (b: BatchView) => {
     if (!b.isOverflow) return 'Assignment'
     overflowSeen += 1
-    return overflowSeen === 1 ? 'Overflow' : `Overflow ${overflowSeen}`
+    return overflowSeen === 1 ? 'Auxiliary Groups' : `Auxiliary Groups ${overflowSeen}`
   }
 
   const router = useRouter()
@@ -260,23 +271,25 @@ export default function GroupLeaderTabs({
                 className="absolute right-4 top-4 text-red-400 hover:text-red-600"
               />
               <h2 className="text-center font-semibold text-[#0B1B33]">
-                {stats.partnerships.length} ministry partner{stats.partnerships.length === 1 ? '' : 's'} completed today
+                {combinedStats.partnerships.length} ministry partner{combinedStats.partnerships.length === 1 ? '' : 's'} completed
+                today
               </h2>
-              {stats.territories.length > 0 && (
+              {combinedStats.territories.length > 0 && (
                 <p className="mt-1 text-center text-xs text-slate-600">
-                  Territories worked: {stats.territories.map((t) => t.name).join(', ')}
+                  Territories worked: {combinedStats.territories.map((t) => t.name).join(', ')}
                 </p>
               )}
               <div className="mt-6">
-                <VisitResultBarChart resultCounts={stats.resultCounts} />
+                <VisitResultBarChart resultCounts={combinedStats.resultCounts} />
               </div>
               <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-blue-100 pt-5 sm:grid-cols-4">
-                <SummaryStat label="Records Distributed" value={stats.totalRecords} />
-                <SummaryStat label="Records Untouched" value={stats.remainingRecords} />
+                <SummaryStat label="Records Distributed" value={combinedStats.totalRecords} />
+                <SummaryStat label="Records Untouched" value={combinedStats.remainingRecords} />
+                <SummaryStat label="Records Added" value={combinedStats.newRecordsSubmitted} />
                 <SummaryStat label="Partners Finished" value={partnersFinished} />
                 <SummaryStat label="Ended Ministry Early" value={partnersEndedEarly} />
-                <SummaryStat label="First Logged Visit" value={formatVisitTime(stats.firstVisitedAt)} />
-                <SummaryStat label="Last Logged Visit" value={formatVisitTime(stats.lastVisitedAt)} />
+                <SummaryStat label="First Logged Visit" value={formatVisitTime(combinedStats.firstVisitedAt)} />
+                <SummaryStat label="Last Logged Visit" value={formatVisitTime(combinedStats.lastVisitedAt)} />
               </div>
             </Card>
           ) : (
@@ -297,7 +310,7 @@ export default function GroupLeaderTabs({
                 className={isOverflow ? 'absolute right-4 top-4 text-red-400 hover:text-red-300' : 'absolute right-4 top-4 text-red-400 hover:text-red-600'}
               />
               <h2 className={`font-semibold ${isOverflow ? 'text-white' : 'text-[#0B1B33]'}`}>
-                {isOverflow ? 'Overflow QR Code' : 'Assignment QR Code'}
+                {isOverflow ? 'Auxiliary Group QR Code' : 'Assignment QR Code'}
               </h2>
               {batchBarangays.length > 0 && (
                 <p className={`-mt-2 text-xs font-medium ${isOverflow ? 'text-[#60A5FA]' : 'text-[#2563EB]'}`}>
@@ -392,12 +405,12 @@ export default function GroupLeaderTabs({
 
       {tab === 'dashboard' && (
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-          <StatCard icon={ClipboardList} label="Total Contact Records" value={stats.totalRecords} />
-          <StatCard icon={CheckCircle2} label="Contact Records Completed" value={stats.completedRecords} />
-          <StatCard icon={Clock} label="Remaining Contact Records" value={stats.remainingRecords} />
-          <StatCard icon={Percent} label="Completion" value={`${stats.completionPct}%`} />
-          <StatCard icon={FilePlus} label="New Contact Records Submitted" value={stats.newRecordsSubmitted} />
-          <StatCard icon={BookOpen} label="Bible Studies in the Area" value={stats.activeBibleStudies} />
+          <StatCard icon={ClipboardList} label="Total Contact Records" value={combinedStats.totalRecords} />
+          <StatCard icon={CheckCircle2} label="Contact Records Completed" value={combinedStats.completedRecords} />
+          <StatCard icon={Clock} label="Remaining Contact Records" value={combinedStats.remainingRecords} />
+          <StatCard icon={Percent} label="Completion" value={`${combinedStats.completionPct}%`} />
+          <StatCard icon={FilePlus} label="New Contact Records Submitted" value={combinedStats.newRecordsSubmitted} />
+          <StatCard icon={BookOpen} label="Bible Studies in the Area" value={combinedStats.activeBibleStudies} />
         </div>
       )}
 
@@ -423,15 +436,15 @@ export default function GroupLeaderTabs({
               key={key}
               icon={Icon}
               label={VISIT_RESULT_LABELS[key]}
-              value={stats.resultCounts[key]}
-              delta={stats.resultCounts[key] - resultBaseline[key]}
+              value={combinedStats.resultCounts[key]}
+              delta={combinedStats.resultCounts[key] - resultBaseline[key]}
             />
           ))}
         </div>
       )}
 
       {tab === 'progress' && (
-        <PartnershipList partnerships={stats.partnerships} onEndPartnership={endPartnershipAction} />
+        <PartnershipList partnerships={combinedStats.partnerships} onEndPartnership={endPartnershipAction} />
       )}
 
       {tab === 'faq' && <PublisherFAQ />}

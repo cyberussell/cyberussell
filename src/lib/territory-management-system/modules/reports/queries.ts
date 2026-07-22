@@ -258,6 +258,66 @@ export async function getBatchStats(
   }
 }
 
+// Sums per-batch stats that are safely additive (partnership-scoped: resultCounts, totalRecords,
+// completedRecords — no record is ever assigned to more than one batch, see engine.ts) across
+// every batch a Group Leader owns today (the regular assignment plus any auxiliary/overflow
+// batches), so the Dashboard/Visits/Partners tabs and the post-completion Home tab summary read
+// as one combined "today" total instead of forcing a per-batch view. newRecordsSubmitted and
+// activeBibleStudies are deliberately NOT summed from the per-batch stats, though — both are
+// territory-scoped queries rather than partnership-scoped, and an auxiliary batch can cover
+// territory the regular batch already covers (auxiliary batches only ever extend territory
+// already assigned today, never a brand new one) — summing those two specifically would
+// double-count. Recomputed once here instead, over the deduplicated union of territories.
+export async function getCombinedBatchStats(
+  supabase: SupabaseClient,
+  congregationId: string,
+  batchStats: BatchStats[],
+  today: string,
+  timezone: string
+): Promise<BatchStats> {
+  const territoryById = new Map<string, { id: string; name: string; description: string }>()
+  for (const b of batchStats) for (const t of b.territories) territoryById.set(t.id, t)
+  const territories = [...territoryById.values()]
+  const territoryIds = territories.map((t) => t.id)
+
+  const resultCounts = emptyResultCounts()
+  let totalRecords = 0
+  let completedRecords = 0
+  let firstVisitedAt: string | null = null
+  let lastVisitedAt: string | null = null
+  const partnerships: PartnershipWithProgress[] = []
+
+  for (const b of batchStats) {
+    totalRecords += b.totalRecords
+    completedRecords += b.completedRecords
+    partnerships.push(...b.partnerships)
+    for (const r of VISIT_RESULTS) resultCounts[r] += b.resultCounts[r] ?? 0
+    if (b.firstVisitedAt && (!firstVisitedAt || b.firstVisitedAt < firstVisitedAt)) firstVisitedAt = b.firstVisitedAt
+    if (b.lastVisitedAt && (!lastVisitedAt || b.lastVisitedAt > lastVisitedAt)) lastVisitedAt = b.lastVisitedAt
+  }
+
+  const rangeStart = startOfDayUtc(today, timezone)
+  const rangeEnd = endOfDayUtcExclusive(today, timezone)
+  const [newRecordsSubmitted, activeBibleStudies] = await Promise.all([
+    territoryIds.length > 0 ? countNewPublisherRecords(supabase, congregationId, territoryIds, rangeStart, rangeEnd) : 0,
+    territoryIds.length > 0 ? countActiveBibleStudies(supabase, congregationId, territoryIds) : 0,
+  ])
+
+  return {
+    totalRecords,
+    completedRecords,
+    remainingRecords: totalRecords - completedRecords,
+    completionPct: totalRecords > 0 ? Math.round((completedRecords / totalRecords) * 100) : 0,
+    resultCounts,
+    newRecordsSubmitted,
+    activeBibleStudies,
+    partnerships,
+    territories,
+    firstVisitedAt,
+    lastVisitedAt,
+  }
+}
+
 export interface TerritoryReportRow {
   id: string
   name: string

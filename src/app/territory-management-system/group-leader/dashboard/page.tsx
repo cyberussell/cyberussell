@@ -1,7 +1,7 @@
 import { requireGroupLeader } from '@/lib/territory-management-system/modules/auth/queries'
 import { getApprovedRecordCounts, getBatchesForGroupLeaderAndDate } from '@/lib/territory-management-system/modules/assignment/queries'
 import { listTerritories } from '@/lib/territory-management-system/modules/territory/queries'
-import { getBatchStats } from '@/lib/territory-management-system/modules/reports/queries'
+import { getBatchStats, getCombinedBatchStats } from '@/lib/territory-management-system/modules/reports/queries'
 import { getAssignmentBatchQrDataUrl, getAssignmentBatchUrl } from '@/lib/territory-management-system/modules/assignment/qr'
 import { todayInTimezone } from '@/lib/territory-management-system/modules/assignment/date'
 import PageHeader from '@/components/territory-management-system/dashboard/PageHeader'
@@ -71,5 +71,23 @@ export default async function GroupLeaderDashboardPage() {
   const todaysTerritoryIds = new Set(batchViews.flatMap((v) => v.stats.territories.map((t) => t.id)))
   const todaysTerritories = activeTerritories.filter((t) => todaysTerritoryIds.has(t.id))
 
-  return <GroupLeaderTabs batches={batchViews} activeTerritories={activeTerritories} todaysTerritories={todaysTerritories} />
+  // Combined regular-assignment + auxiliary/overflow-batch totals for today, so the Group
+  // Leader's Dashboard/Visits/Partners tabs (and the post-completion Home tab summary) show one
+  // "today" total instead of forcing a per-batch view — see getCombinedBatchStats.
+  const combinedStats = await getCombinedBatchStats(
+    supabase,
+    congregation.id,
+    batchViews.map((v) => v.stats),
+    today,
+    congregation.timezone
+  )
+
+  return (
+    <GroupLeaderTabs
+      batches={batchViews}
+      activeTerritories={activeTerritories}
+      todaysTerritories={todaysTerritories}
+      combinedStats={combinedStats}
+    />
+  )
 }

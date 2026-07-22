@@ -31,6 +31,7 @@ export default function PublisherBottomMenu({
   const items: {
     key: string
     label: string
+    shortLabel: string
     icon: LucideIcon
     active: boolean
     disabled?: boolean
@@ -40,14 +41,15 @@ export default function PublisherBottomMenu({
   }[] = []
 
   items.push(
-    { key: 'home', label: 'Home', icon: Home, active: view === 'home', onClick: onGoToHome },
-    { key: 'partners', label: 'All Partners', icon: Users, active: view === 'partners', onClick: onGoToPartners },
-    { key: 'records', label: 'Assigned Records', icon: ClipboardList, active: view === 'list', onClick: onGoToRecords }
+    { key: 'home', label: 'Home', shortLabel: 'Home', icon: Home, active: view === 'home', onClick: onGoToHome },
+    { key: 'partners', label: 'All Partners', shortLabel: 'Partners', icon: Users, active: view === 'partners', onClick: onGoToPartners },
+    { key: 'records', label: 'Assigned Records', shortLabel: 'List', icon: ClipboardList, active: view === 'list', onClick: onGoToRecords }
   )
   if (showAddedRecords) {
     items.push({
       key: 'addedRecords',
       label: 'My Added Records',
+      shortLabel: 'Record',
       icon: ClipboardPlus,
       active: view === 'addedRecords' || view === 'addedRecordDetail' || view === 'editAddedRecord',
       onClick: onGoToAddedRecords,
@@ -77,9 +79,9 @@ export default function PublisherBottomMenu({
             )}
           </span>
         )
-        // Icon-only — no visible label text below the icon. aria-label/title keep it
-        // identifiable for screen readers and on long-press/hover.
-        const className = `flex flex-1 items-center justify-center py-3.5 transition disabled:opacity-40 ${
+        // Visible short label below the icon, plus the fuller label kept as aria-label/title
+        // for screen readers and on long-press/hover.
+        const className = `flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[11px] font-semibold leading-tight transition disabled:opacity-40 ${
           item.active ? 'text-[#2563EB]' : 'text-slate-400'
         }`
         return (
@@ -94,6 +96,7 @@ export default function PublisherBottomMenu({
             aria-current={item.active ? 'page' : undefined}
           >
             {content}
+            {item.shortLabel}
           </button>
         )
       })}
