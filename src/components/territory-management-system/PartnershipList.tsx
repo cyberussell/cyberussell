@@ -45,15 +45,22 @@ export default function PartnershipList({
         {partnerships.map((p) => {
           const pct = p.recordCount > 0 ? Math.round((p.completedCount / p.recordCount) * 100) : 0
           // finished_at/ended_early_at (see 018_partnership_finished_at.sql) both mean "genuinely
-          // done" — a publisher can end their ministry any time, whether they've searched zero or
-          // many records, so ending early isn't a distinct/lesser status worth flagging on its own.
+          // done." Ending early on a zero-record ("searching a fresh territory") partnership isn't
+          // a distinct/lesser status worth flagging — a publisher can stop searching any time,
+          // whether they've added zero or many new records, so that case just reads as "Done."
+          // But ending early on a partnership that DOES have assigned records left unvisited is
+          // real, useful information for the Group Leader — surfaced as its own "Ended Early"
+          // status with an explanatory note, same as before.
+          const endedEarlyWithRecords = Boolean(p.ended_early_at) && p.recordCount > 0
           const done = Boolean(p.finished_at || p.ended_early_at)
-          const status = done ? 'Done' : p.claimed_at ? 'Claimed' : 'Unclaimed'
-          const statusClass = done
-            ? 'bg-emerald-50 text-emerald-600'
-            : p.claimed_at
-              ? 'bg-blue-50 text-[#2563EB]'
-              : 'bg-slate-100 text-slate-500'
+          const status = endedEarlyWithRecords ? 'Ended Early' : done ? 'Done' : p.claimed_at ? 'Claimed' : 'Unclaimed'
+          const statusClass = endedEarlyWithRecords
+            ? 'bg-amber-50 text-amber-600'
+            : done
+              ? 'bg-emerald-50 text-emerald-600'
+              : p.claimed_at
+                ? 'bg-blue-50 text-[#2563EB]'
+                : 'bg-slate-100 text-slate-500'
           return (
             <Card key={p.id} className="relative overflow-hidden p-4">
               {p.hasBibleStudy && (
@@ -81,6 +88,9 @@ export default function PartnershipList({
                   {p.territories.map((t) => `${t.name} — ${t.description}`).join(', ')}
                   {p.sections.length > 0 ? ` · Section ${p.sections.map((s) => s.label).join(', ')}` : ''}
                 </p>
+              )}
+              {endedEarlyWithRecords && (
+                <p className="mt-1 text-xs text-amber-600">Ended early — the remaining records weren&apos;t visited this session.</p>
               )}
               {onEndPartnership && !done && (
                 <button
