@@ -19,9 +19,9 @@ import { NumberStepper } from './AssignmentForm'
 //
 // The Group Leader deliberately does NOT choose a search area here — that choice moved to each
 // Ministry Partner individually (see ChooseSearchScopeForm), a one-time locked-in pick made
-// after they claim their partnership. That's also what actually prevents two pairs covering the
-// same block (partnership_search_blocks' unique(block_id, assignment_date) constraint) — a
-// batch-level choice here couldn't have enforced that across multiple partnerships anyway.
+// after they claim their partnership. Blocks are shareable across partnerships by design (see
+// 037_partnership_search_blocks_shareable.sql); only the section itself is a one-time,
+// single choice per partnership.
 export default function OverflowAssignmentForm({ territories }: { territories: { id: string; name: string; barangayName: string }[] }) {
   const { dispatch, pending, error } = useServerAction(createOverflowAssignmentAction)
   const [selected, setSelected] = useState<string[]>([])

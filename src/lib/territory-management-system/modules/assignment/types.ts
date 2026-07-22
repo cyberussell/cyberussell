@@ -120,10 +120,6 @@ export interface PartnershipWorkspace extends Partnership {
   // shown so a publisher searching the area doesn't create a duplicate for a household someone
   // already logged. Always empty when searchScope is null.
   searchScopeRecords: TerritoryRecordWithLocation[]
-  // Every block already locked in by any partnership congregation-wide today — only populated
-  // (and only meaningful) for an overflow partnership that hasn't chosen a scope yet, to feed
-  // ChooseSearchScopeForm's disabled/"Already claimed" state. Always empty otherwise.
-  takenBlockIds: string[]
   // Every partnership in THIS batch (including this one), with live progress — the same data
   // the pre-claim "Today's Assignment" batch-landing page shows, fetched up front so the
   // in-workspace "All Partners" tab never needs a real page navigation to render (that

@@ -9,22 +9,16 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 // The Ministry Partner's one-time, locked-in search-area choice for an overflow batch — made
 // right after claiming, required before anything else in the workspace becomes visible (see
 // PublisherWorkspaceApp's gating on workspace.searchScope). Deliberately no "change later"
-// affordance anywhere: once saved, this form never renders again for this partnership (its
-// section/blocks are what the unique(block_id, assignment_date) constraint on
-// partnership_search_blocks keys off of — changing it after the fact would defeat the whole
-// point of preventing two pairs covering the same ground).
+// affordance anywhere: once saved, this form never renders again for this partnership. The
+// section is a single choice per partnership; blocks are shareable — other partnerships can
+// (and often will) pick the same ones, by design (see 037_partnership_search_blocks_shareable.sql).
 export default function ChooseSearchScopeForm({
   territories,
-  takenBlockIds,
   submitting,
   error,
   onSubmit,
 }: {
   territories: TerritoryStructure[]
-  // Every block already locked in by any partnership congregation-wide today — shown
-  // disabled/"Already claimed" rather than hidden, so it's clear why a block isn't pickable
-  // rather than looking like it silently doesn't exist.
-  takenBlockIds: string[]
   submitting: boolean
   error: string
   onSubmit: (sectionId: string, blockIds: string[]) => void
@@ -34,7 +28,6 @@ export default function ChooseSearchScopeForm({
   const [sectionId, setSectionId] = useState('')
   const section = territory?.sections.find((s) => s.id === sectionId)
   const [blockIds, setBlockIds] = useState<string[]>([])
-  const takenSet = new Set(takenBlockIds)
 
   function toggleBlock(id: string) {
     setBlockIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -55,8 +48,7 @@ export default function ChooseSearchScopeForm({
     <Card className="p-6">
       <h2 className="mb-1 font-semibold text-[#0B1B33]">Choose Your Search Area</h2>
       <p className="mb-4 text-xs text-slate-500">
-        Pick one section and the blocks you&apos;ll search today — a one-time choice you can&apos;t change after saving, so no
-        one else covers the same ground.
+        Pick one section and the blocks you&apos;ll search today — a one-time choice you can&apos;t change after saving.
       </p>
       <div className="space-y-4">
         {territories.length > 1 && (
@@ -90,28 +82,21 @@ export default function ChooseSearchScopeForm({
           <FormField label="Blocks">
             <div className="flex flex-wrap gap-2">
               {section.blocks.map((b) => {
-                const taken = takenSet.has(b.id)
                 const checked = blockIds.includes(b.id)
                 return (
                   <label
                     key={b.id}
                     className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium ${
-                      taken
-                        ? 'cursor-not-allowed border-slate-100 text-slate-300'
-                        : checked
-                          ? 'border-[#2563EB] bg-blue-50 text-[#2563EB]'
-                          : 'border-blue-100 text-slate-600'
+                      checked ? 'border-[#2563EB] bg-blue-50 text-[#2563EB]' : 'border-blue-100 text-slate-600'
                     }`}
                   >
                     <input
                       type="checkbox"
                       checked={checked}
-                      disabled={taken}
                       onChange={() => toggleBlock(b.id)}
                       className="h-3.5 w-3.5 rounded border-blue-200"
                     />
                     Block {b.label}
-                    {taken && <span className="text-[10px]">Already claimed</span>}
                   </label>
                 )
               })}

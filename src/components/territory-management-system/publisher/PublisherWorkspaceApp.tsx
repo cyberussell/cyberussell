@@ -941,7 +941,6 @@ export default function PublisherWorkspaceApp({
         {(view.name === 'home' || view.name === 'list') && (readOnly || workspace.claimed_at) && needsSearchScope && (
           <ChooseSearchScopeForm
             territories={batchTerritoryStructures}
-            takenBlockIds={workspace.takenBlockIds}
             submitting={choosingSearchScope}
             error={searchScopeChoiceError}
             onSubmit={handleChooseSearchScope}

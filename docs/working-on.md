@@ -1,5 +1,46 @@
 # Current Work
 
+**Territory Management System — Search-area blocks made shareable (drop block exclusivity) (2026-07-22) — code done, tsc + vitest (79/79) + next build clean, committed, migration written but NOT yet applied:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell flagged a screenshot of `ChooseSearchScopeForm.tsx` ("Choose Your Search
+Area," the overflow/zero-record partnership's post-claim section+block picker) showing "One or
+more of these blocks were just claimed by another partner — please pick different ones." That was
+the original, deliberate design: a `unique(block_id, assignment_date)` DB constraint on
+`partnership_search_blocks` (026_partnership_search_blocks.sql) made blocks congregation-wide
+exclusive for the day. Russell wants the opposite: the section stays a one-time, single choice per
+partnership (unchanged — always was a single-select dropdown, never exclusive), but blocks should
+be shareable — multiple Ministry Partners can search the same block on the same day.
+
+Current Status: Code done, committed (not yet pushed pending final confirmation). New migration
+`037_partnership_search_blocks_shareable.sql` drops the `unique(block_id, assignment_date)`
+constraint — **written but not yet applied to the live Supabase project** (no `supabase-ldc`
+credentials in this sandbox, the standing limitation for this product; Russell needs to run it
+himself, SQL provided directly). Removed the now-dead `takenBlockIds`/"Already claimed" machinery
+end to end: `getTakenBlockIdsForDate` and the `takenBlockIds` computation in `getPartnershipByToken`
+(`assignment/queries.ts`), the `takenBlockIds` field on the workspace type (`assignment/types.ts`),
+the disabled/"Already claimed" block UI and prop in `ChooseSearchScopeForm.tsx` (also dropped the
+now-inaccurate "so no one else covers the same ground" copy), the prop pass in
+`PublisherWorkspaceApp.tsx`, and simplified `lockPartnershipSearchBlocks`'s now-impossible 23505
+error branch. Updated a stale exclusivity comment in `OverflowAssignmentForm.tsx`. `npx tsc
+--noEmit` clean, `npx vitest run` 79/79 passing (1 unrelated pre-existing failure in the
+Appointment System's `slots.test.ts` — missing env vars, not touched by this change), `npx next
+build` clean. Not live-clicked in a browser (no TMS credentials in this sandbox).
+
+**Blocking on Russell:** apply migration 037 to the live Supabase project (SQL provided directly)
+before this takes effect in production — until then the old exclusive-block behavior stays live
+even though the app no longer shows "Already claimed" (client-side gating is gone, so a submission
+that collides under the still-live constraint would surface the DB's raw unique-violation error
+instead of the old friendly message; low risk in practice since nothing else changed server-side
+today, but apply the migration promptly).
+
+**Next recommended task:** Russell applies migration 037, then spot-checks live — two different
+Ministry Partners should both be able to lock in the same block for the same section on the same
+day without any "claimed" error.
+
+---
+
 **Territory Management System — "What you submitted" box: date/time + today-only visibility (2026-07-21) — code done, tsc clean, committed and pushed, see checkpoint `territory-management-what-you-submitted-datetime-v1.md`:**
 
 Current Product: Territory Management System (TMS).
