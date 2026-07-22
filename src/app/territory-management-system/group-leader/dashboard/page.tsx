@@ -44,11 +44,11 @@ export default async function GroupLeaderDashboardPage() {
       batches.map(async (batch): Promise<BatchView | null> => {
         const stats = await getBatchStats(supabase, congregation.id, batch.id, congregation.timezone)
         if (!stats) return null
-        // Inverted (white on black) for an overflow batch's QR so it's visually distinct from
+        // Inverted (orange on black) for an overflow batch's QR so it's visually distinct from
         // the original assignment's plain black-on-white QR at a glance.
         const qrDataUrl = await getAssignmentBatchQrDataUrl(
           batch.access_token,
-          batch.is_overflow ? '#FFFFFF' : undefined,
+          batch.is_overflow ? '#F97316' : undefined,
           batch.is_overflow ? '#000000' : undefined
         )
         return {
