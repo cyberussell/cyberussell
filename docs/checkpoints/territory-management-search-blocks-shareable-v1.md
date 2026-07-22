@@ -50,18 +50,13 @@ Changes:
   this product.
 
 ## Remaining Work
-None on the code side. **Migration 037 has NOT been applied to the live Supabase project** — no
-`supabase-ldc` credentials in this sandbox. Russell needs to run it himself (SQL provided
-directly in this session).
+None. Migration 037 has been applied live by Russell (no `supabase-ldc` credentials in this
+sandbox to apply it directly, the standing limitation for this product — SQL provided directly,
+Russell confirmed it ran).
 
 ## Known Issues
-Until migration 037 is applied, the old `unique(block_id, assignment_date)` constraint is still
-live in the database even though the app no longer computes or shows "Already claimed" client-side.
-Two partners submitting the same block in that window would hit the DB's raw unique-violation
-error (no longer translated to a friendly message) instead of silently succeeding. Low risk in
-practice — apply the migration promptly to close the gap.
+None identified.
 
 ## Next Recommended Task
-Russell applies migration 037 to the live Supabase project, then spot-checks live: two different
-Ministry Partners should both be able to lock in the same section/block for the same day without
-any "claimed by another partner" error.
+Russell spot-checks live: two different Ministry Partners should both be able to lock in the same
+section/block for the same day without any "claimed by another partner" error.
