@@ -1,5 +1,39 @@
 # Current Work
 
+**Territory Management System — Plus Code UPPERCASE, Name/Address Title Case, Admin add/edit audit note (2026-07-23) — code done, tsc + vitest (53/53) + next build clean, committed (`644b8d2`), NOT pushed — see checkpoint `territory-management-record-formatting-admin-audit-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell asked for Plus Code to always save as UPPERCASE and Resident Name/Address
+to always save in proper/title case ("camelCase" in his wording, interpreted as Title Case since
+literal camelCase makes no sense for a name) — across the Group Leader, Publisher, and Admin
+entry points — plus a small note on the Admin dashboard showing who added or edited a record and
+when. Confirmed via `AskUserQuestion` before building: the Group Leader ("TGL") role has no
+record-add/edit surface at all in the current codebase (its dashboard is Home/Dashboard/Visit
+Results/Ministry Partner tabs only, no records UI), so formatting was scoped to Admin + Publisher.
+
+Current Status: Done, not pushed. New `records/format.ts` (`formatPlusCode`/`formatProperCase`,
+8 unit tests) is applied inside the shared `records/queries.ts` write functions (`createRecord`,
+`updateRecord`, `recommendRecordCorrection`, `recommendRecordMove`, `importRecords`) — one
+touchpoint covers Admin's Add/Edit forms, a publisher's field-added records, publisher Move/
+Correction recommendations, and CSV import alike. Unit field deliberately left unformatted. New
+migration `038_record_admin_audit.sql` adds `admin_added_by/_at`/`admin_edited_by/_at` to
+`territory_records`, stamped only from the Admin's own `createRecordAction`/`updateRecordAction`
+(not CSV import, not publisher actions) — shown as "Added by X on Y"/"Last edited by X on Y" on
+the record detail page. `tsc`/`vitest` (53/53)/`next build` all clean. Not live-verified (no live
+TMS credentials in this session).
+
+**Blocking: `git push` failed.** `origin`'s HTTPS remote has a plaintext PAT embedded in the URL
+that GitHub is now rejecting ("could not read Password... terminal prompts disabled") — same
+pre-existing issue already tracked in memory (`project_git_remote_token.md`). Commit `644b8d2` is
+sitting on local `main`, needs Russell to fix the remote credential (SSH or `gh` credential
+helper) and push manually.
+
+**Next recommended task:** Russell fixes the git remote credential, pushes `644b8d2`, then
+live-verifies Add/Edit on the Admin dashboard and a publisher Move/Correction recommendation.
+
+---
+
 **Territory Management System — Publisher bottom nav: bigger icons + text labels (2026-07-22) — code done, tsc + vitest (79/79) clean, live-verified via a temporary scratch route (removed before finishing), committed:**
 
 Current Product: Territory Management System (TMS).

@@ -480,7 +480,9 @@
       "Bash(git -C \"/Users/russellparayno/Documents/Business/cyberussell.com\" mv \"src/app/territory-management-system/_scratch-test/page.tsx\" \"src/app/territory-management-system/scratch-test-pw9k2/page.tsx\")",
       "Bash(find \"/Users/russellparayno/Documents/Business/cyberussell.com\" -maxdepth 1 -iname \".mcp.json\" 2>&1; find ~/.claude -maxdepth 2 -iname \"*.json\" 2>&1 | grep -i mcp; echo \"---claude config---\"; cat ~/.claude.json 2>/dev/null | head -c 500)",
       "Bash(echo \"EXIT: $?\")",
-      "Bash(grep -rl *)"
+      "Bash(grep -rl *)",
+      "Bash(wait 98534)",
+      "Bash(git ls-remote *)"
     ]
   }
 }
