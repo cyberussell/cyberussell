@@ -593,6 +593,10 @@ export default function PublisherWorkspaceApp({
       move_recommended_section_id: null,
       move_recommended_block_id: null,
       created_by_partnership_id: workspace.id,
+      admin_added_by: null,
+      admin_added_at: null,
+      admin_edited_by: null,
+      admin_edited_at: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       territory: territory ? { id: territory.id, name: territory.name, description: territory.description } : null,
@@ -604,6 +608,8 @@ export default function PublisherWorkspaceApp({
       move_territory: null,
       move_section: null,
       move_block: null,
+      added_by_profile: null,
+      edited_by_profile: null,
     }
     setWorkspace((w) => ({ ...w, addedRecords: [optimisticRecord, ...w.addedRecords] }))
     await enqueue(partnershipToken, 'addRecord', { partnershipToken, recordId, ...payload })

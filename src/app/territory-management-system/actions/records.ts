@@ -56,7 +56,7 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
   }
 
   try {
-    const record = await recordQueries.createRecord(supabase, congregation.id, parsed.data)
+    const record = await recordQueries.createRecord(supabase, congregation.id, { ...parsed.data, addedByAdminId: userId })
     if (parsed.data.initialResult) {
       await recordQueries.logVisit(supabase, congregation.id, {
         recordId: record.id,
@@ -90,9 +90,9 @@ export async function updateRecordAction(_prev: ActionResult, formData: FormData
   if (!parsed.success) return { error: 'Please fill in the required fields.' }
   const { recordId, ...updates } = parsed.data
 
-  const { supabase } = await requireAdmin()
+  const { supabase, userId } = await requireAdmin()
   try {
-    await recordQueries.updateRecord(supabase, recordId, updates)
+    await recordQueries.updateRecord(supabase, recordId, { ...updates, editedByAdminId: userId })
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Could not update the contact record.' }
   }

@@ -1,6 +1,7 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { OpenLocationCode } from 'open-location-code'
+import { formatPlusCode, formatProperCase } from './format'
 import type { RecordStatus, RecordVisitWithAuthor, TerritoryRecord, TerritoryRecordWithLocation } from './types'
 
 const openLocationCode = new OpenLocationCode()
@@ -20,7 +21,9 @@ const RECORD_WITH_LOCATION_SELECT =
   'correction_territory:territories!correction_recommended_territory_id(id, name, description), ' +
   'move_territory:territories!move_recommended_territory_id(id, name, description), ' +
   'move_section:territory_sections!move_recommended_section_id(id, label), ' +
-  'move_block:territory_blocks!move_recommended_block_id(id, label)'
+  'move_block:territory_blocks!move_recommended_block_id(id, label), ' +
+  'added_by_profile:profiles!admin_added_by(full_name), ' +
+  'edited_by_profile:profiles!admin_edited_by(full_name)'
 
 export async function listRecords(
   supabase: SupabaseClient,
@@ -125,6 +128,10 @@ export async function createRecord(
     status?: RecordStatus
     source?: TerritoryRecord['source']
     createdByPartnershipId?: string
+    // Set only by the Admin's own createRecordAction — stamps who added this record and when,
+    // shown as a small audit note on the record detail page. Left unset for publisher-added
+    // and CSV-imported records (no Admin actually typed those in).
+    addedByAdminId?: string
   }
 ): Promise<TerritoryRecord> {
   const { data, error } = await supabase
@@ -135,16 +142,17 @@ export async function createRecord(
       territory_id: input.territoryId,
       section_id: input.sectionId,
       block_id: input.blockId,
-      address: input.address,
+      address: formatProperCase(input.address),
       unit: input.unit,
-      resident_name: input.residentName,
-      plus_code: input.plusCode || null,
+      resident_name: formatProperCase(input.residentName),
+      plus_code: formatPlusCode(input.plusCode) || null,
       household_members: input.householdMembers ?? null,
       notes: input.notes,
       do_not_call: input.doNotCall,
       status: input.status ?? 'approved',
       source: input.source ?? 'manual',
       created_by_partnership_id: input.createdByPartnershipId ?? null,
+      ...(input.addedByAdminId ? { admin_added_by: input.addedByAdminId, admin_added_at: new Date().toISOString() } : {}),
     })
     .select('*')
     .single()
@@ -168,6 +176,10 @@ export async function updateRecord(
     householdMembers?: number
     notes: string
     doNotCall: boolean
+    // Set only by the Admin's own updateRecordAction — stamps who last edited this record and
+    // when, shown as a small audit note on the record detail page. Left unset for publisher
+    // edits (own added-record edit, "Update Contact Record" after a Move).
+    editedByAdminId?: string
   }
 ): Promise<void> {
   const { error } = await supabase
@@ -176,14 +188,15 @@ export async function updateRecord(
       ...(updates.territoryId ? { territory_id: updates.territoryId } : {}),
       ...(updates.sectionId ? { section_id: updates.sectionId } : {}),
       ...(updates.blockId ? { block_id: updates.blockId } : {}),
-      address: updates.address,
+      address: formatProperCase(updates.address),
       unit: updates.unit,
-      resident_name: updates.residentName,
-      plus_code: updates.plusCode || null,
+      resident_name: formatProperCase(updates.residentName),
+      plus_code: formatPlusCode(updates.plusCode) || null,
       household_members: updates.householdMembers ?? null,
       notes: updates.notes,
       do_not_call: updates.doNotCall,
       updated_at: new Date().toISOString(),
+      ...(updates.editedByAdminId ? { admin_edited_by: updates.editedByAdminId, admin_edited_at: new Date().toISOString() } : {}),
     })
     .eq('id', recordId)
   if (error) throw error
@@ -342,7 +355,7 @@ export async function recommendRecordCorrection(
     .from('territory_records')
     .update({
       correction_recommended_at: new Date().toISOString(),
-      correction_recommended_plus_code: fields.plusCode,
+      correction_recommended_plus_code: formatPlusCode(fields.plusCode),
       correction_recommended_reason: fields.reason,
       correction_recommended_by: recommendedBy,
       correction_recommended_territory_id: fields.territoryId,
@@ -448,9 +461,9 @@ export async function recommendRecordMove(
     .from('territory_records')
     .update({
       move_recommended_at: new Date().toISOString(),
-      move_recommended_address: fields.address,
+      move_recommended_address: formatProperCase(fields.address),
       move_recommended_unit: fields.unit,
-      move_recommended_plus_code: fields.plusCode || null,
+      move_recommended_plus_code: formatPlusCode(fields.plusCode) || null,
       move_recommended_household_members: fields.householdMembers ?? null,
       move_recommended_notes: fields.notes,
       move_recommended_by: recommendedBy,
@@ -603,10 +616,10 @@ export async function importRecords(supabase: SupabaseClient, congregationId: st
       territory_id: r.territoryId,
       section_id: r.sectionId,
       block_id: r.blockId,
-      address: r.address,
+      address: formatProperCase(r.address),
       unit: r.unit,
-      resident_name: r.residentName,
-      plus_code: r.plusCode || null,
+      resident_name: formatProperCase(r.residentName),
+      plus_code: formatPlusCode(r.plusCode) || null,
       household_members: r.householdMembers,
       notes: r.notes,
       do_not_call: r.doNotCall,

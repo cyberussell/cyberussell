@@ -82,6 +82,14 @@ export interface TerritoryRecord {
   move_recommended_territory_id: string | null
   move_recommended_section_id: string | null
   move_recommended_block_id: string | null
+  // Stamped only when the Admin's own Add/Edit Contact Record forms are used (createRecord's
+  // addedByAdminId / updateRecord's editedByAdminId in records/queries.ts) — null for
+  // publisher-added/edited or CSV-imported records. Powers the "Added by X on Y" / "Last
+  // edited by X on Y" note on the record detail page.
+  admin_added_by: string | null
+  admin_added_at: string | null
+  admin_edited_by: string | null
+  admin_edited_at: string | null
   created_at: string
   updated_at: string
 }
@@ -96,6 +104,8 @@ export interface TerritoryRecordWithLocation extends TerritoryRecord {
   move_territory: { id: string; name: string; description: string } | null
   move_section: { id: string; label: string } | null
   move_block: { id: string; label: string } | null
+  added_by_profile: { full_name: string } | null
+  edited_by_profile: { full_name: string } | null
 }
 
 export interface RecordVisit {

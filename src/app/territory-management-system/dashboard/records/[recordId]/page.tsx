@@ -40,6 +40,23 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ r
           Passed by {passedFrom.name} on {new Date(passedFrom.at).toLocaleDateString('en-US', { dateStyle: 'medium' })}
         </p>
       )}
+      {(record.added_by_profile || record.edited_by_profile) && (
+        <p className="text-sm text-slate-500">
+          {record.added_by_profile && (
+            <>
+              Added by {record.added_by_profile.full_name || 'Admin'} on{' '}
+              {new Date(record.admin_added_at!).toLocaleDateString('en-US', { dateStyle: 'medium' })}
+            </>
+          )}
+          {record.added_by_profile && record.edited_by_profile && ' · '}
+          {record.edited_by_profile && (
+            <>
+              Last edited by {record.edited_by_profile.full_name || 'Admin'} on{' '}
+              {new Date(record.admin_edited_at!).toLocaleDateString('en-US', { dateStyle: 'medium' })}
+            </>
+          )}
+        </p>
+      )}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RecordEditForm record={record} />
         <VisitLogForm recordId={record.id} latestResult={latestVisit?.result} doNotCall={record.do_not_call} />
