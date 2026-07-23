@@ -157,6 +157,32 @@ export async function listRecordHistory(supabase: SupabaseClient, recordId: stri
   return (data ?? []) as unknown as RecordHistoryEntry[]
 }
 
+// Resolves Territory/Section/Block ids to their display labels — used by the applyRecordCorrection/
+// applyRecordMove change-history summaries below so a diff reads "Barangay: Old Name → New Name"
+// instead of two raw uuids. Plain lookups, not embeds — same "don't nest through a table with
+// more than one FK to the same target" rule this codebase applies everywhere else (see
+// RECORD_WITH_LOCATION_SELECT's own comment).
+async function resolveLocationLabels(
+  supabase: SupabaseClient,
+  territoryIds: string[],
+  sectionIds: string[],
+  blockIds: string[]
+): Promise<{ territories: Map<string, string>; sections: Map<string, string>; blocks: Map<string, string> }> {
+  const uniqueTerritoryIds = Array.from(new Set(territoryIds))
+  const uniqueSectionIds = Array.from(new Set(sectionIds))
+  const uniqueBlockIds = Array.from(new Set(blockIds))
+  const [territoriesRes, sectionsRes, blocksRes] = await Promise.all([
+    uniqueTerritoryIds.length ? supabase.from('territories').select('id, name').in('id', uniqueTerritoryIds) : Promise.resolve({ data: [] }),
+    uniqueSectionIds.length ? supabase.from('territory_sections').select('id, label').in('id', uniqueSectionIds) : Promise.resolve({ data: [] }),
+    uniqueBlockIds.length ? supabase.from('territory_blocks').select('id, label').in('id', uniqueBlockIds) : Promise.resolve({ data: [] }),
+  ])
+  return {
+    territories: new Map(((territoriesRes.data ?? []) as { id: string; name: string }[]).map((t) => [t.id, t.name])),
+    sections: new Map(((sectionsRes.data ?? []) as { id: string; label: string }[]).map((s) => [s.id, s.label])),
+    blocks: new Map(((blocksRes.data ?? []) as { id: string; label: string }[]).map((b) => [b.id, b.label])),
+  }
+}
+
 export async function createRecord(
   supabase: SupabaseClient,
   congregationId: string,
@@ -388,6 +414,7 @@ export async function recommendRecordForRemoval(
 // Admin dismisses a removal recommendation without deleting the record (e.g. it turned out to
 // be a mistake) — clears the flag so it drops off the Flagged for Removal list.
 export async function dismissRemovalRecommendation(supabase: SupabaseClient, congregationId: string, recordId: string, actorName: string): Promise<void> {
+  const { data: existing } = await supabase.from('territory_records').select('removal_recommended_reason').eq('id', recordId).maybeSingle()
   const { error } = await supabase
     .from('territory_records')
     .update({ removal_recommended_at: null, removal_recommended_reason: null, removal_recommended_by: null })
@@ -396,7 +423,9 @@ export async function dismissRemovalRecommendation(supabase: SupabaseClient, con
   await logRecordHistory(supabase, congregationId, {
     recordId,
     action: 'removal_dismissed',
-    summary: 'Dismissed the removal recommendation.',
+    summary: existing?.removal_recommended_reason
+      ? `Dismissed the removal recommendation: "${existing.removal_recommended_reason}"`
+      : 'Dismissed the removal recommendation.',
     actor: { role: 'admin', name: actorName },
   })
 }
@@ -518,6 +547,7 @@ export async function dismissCorrectionRecommendation(
   recordId: string,
   actorName: string
 ): Promise<void> {
+  const { data: existing } = await supabase.from('territory_records').select('correction_recommended_reason').eq('id', recordId).maybeSingle()
   const { error } = await supabase
     .from('territory_records')
     .update({
@@ -535,7 +565,9 @@ export async function dismissCorrectionRecommendation(
   await logRecordHistory(supabase, congregationId, {
     recordId,
     action: 'correction_dismissed',
-    summary: 'Dismissed the correction recommendation.',
+    summary: existing?.correction_recommended_reason
+      ? `Dismissed the correction recommendation: "${existing.correction_recommended_reason}"`
+      : 'Dismissed the correction recommendation.',
     actor: { role: 'admin', name: actorName },
   })
 }
@@ -543,12 +575,14 @@ export async function dismissCorrectionRecommendation(
 // Admin applies a correction recommendation — writes the recommended Plus Code/Territory/
 // Section/Block/Household Members onto the record's real columns and clears the recommendation
 // flag in the same update. Reads the recommended values first since Supabase's update() can't
-// copy one column's value into another server-side without a raw SQL/RPC call.
+// copy one column's value into another server-side without a raw SQL/RPC call. Also reads the
+// record's CURRENT values for the same fields (not just the recommended ones) so the
+// change-history entry can show a real before/after diff instead of just "applied."
 export async function applyRecordCorrection(supabase: SupabaseClient, congregationId: string, recordId: string, actorName: string): Promise<void> {
   const { data: existing } = await supabase
     .from('territory_records')
     .select(
-      'correction_recommended_plus_code, correction_recommended_territory_id, correction_recommended_section_id, correction_recommended_block_id, correction_recommended_household_members'
+      'plus_code, territory_id, section_id, block_id, household_members, correction_recommended_plus_code, correction_recommended_territory_id, correction_recommended_section_id, correction_recommended_block_id, correction_recommended_household_members'
     )
     .eq('id', recordId)
     .maybeSingle()
@@ -579,10 +613,38 @@ export async function applyRecordCorrection(supabase: SupabaseClient, congregati
   if (existing.correction_recommended_household_members != null) update.household_members = existing.correction_recommended_household_members
   const { error } = await supabase.from('territory_records').update(update).eq('id', recordId)
   if (error) throw error
+
+  const labels = await resolveLocationLabels(
+    supabase,
+    [existing.territory_id, existing.correction_recommended_territory_id].filter((v): v is string => !!v),
+    [existing.section_id, existing.correction_recommended_section_id].filter((v): v is string => !!v),
+    [existing.block_id, existing.correction_recommended_block_id].filter((v): v is string => !!v)
+  )
+  const parts: string[] = []
+  if (existing.correction_recommended_plus_code && existing.correction_recommended_plus_code !== existing.plus_code) {
+    parts.push(`Plus Code: ${existing.plus_code ?? '(blank)'} → ${existing.correction_recommended_plus_code}`)
+  }
+  if (existing.correction_recommended_territory_id && existing.correction_recommended_territory_id !== existing.territory_id) {
+    parts.push(
+      `Barangay: ${labels.territories.get(existing.territory_id) ?? '?'} → ${labels.territories.get(existing.correction_recommended_territory_id) ?? '?'}`
+    )
+  }
+  if (existing.correction_recommended_section_id && existing.correction_recommended_section_id !== existing.section_id) {
+    parts.push(
+      `Section: ${labels.sections.get(existing.section_id) ?? '?'} → ${labels.sections.get(existing.correction_recommended_section_id) ?? '?'}`
+    )
+  }
+  if (existing.correction_recommended_block_id && existing.correction_recommended_block_id !== existing.block_id) {
+    parts.push(`Block: ${labels.blocks.get(existing.block_id) ?? '?'} → ${labels.blocks.get(existing.correction_recommended_block_id) ?? '?'}`)
+  }
+  if (existing.correction_recommended_household_members != null && existing.correction_recommended_household_members !== existing.household_members) {
+    parts.push(`Household members: ${existing.household_members ?? '(blank)'} → ${existing.correction_recommended_household_members}`)
+  }
+
   await logRecordHistory(supabase, congregationId, {
     recordId,
     action: 'correction_applied',
-    summary: 'Applied the recommended correction.',
+    summary: parts.length > 0 ? `Applied correction — ${parts.join('; ')}` : 'Applied the recommended correction.',
     actor: { role: 'admin', name: actorName },
   })
 }
@@ -649,6 +711,7 @@ export async function recommendRecordMove(
 // Admin dismisses a move recommendation without applying it — clears the flag, leaves the
 // record's own address/unit/plus_code/household_members/territory/section/block untouched.
 export async function dismissMoveRecommendation(supabase: SupabaseClient, congregationId: string, recordId: string, actorName: string): Promise<void> {
+  const { data: existing } = await supabase.from('territory_records').select('move_recommended_notes').eq('id', recordId).maybeSingle()
   const { error } = await supabase
     .from('territory_records')
     .update({
@@ -665,10 +728,11 @@ export async function dismissMoveRecommendation(supabase: SupabaseClient, congre
     })
     .eq('id', recordId)
   if (error) throw error
+  const trimmedNotes = existing?.move_recommended_notes?.trim()
   await logRecordHistory(supabase, congregationId, {
     recordId,
     action: 'move_dismissed',
-    summary: 'Dismissed the move recommendation.',
+    summary: trimmedNotes ? `Dismissed the move recommendation: "${trimmedNotes}"` : 'Dismissed the move recommendation.',
     actor: { role: 'admin', name: actorName },
   })
 }
@@ -684,7 +748,7 @@ export async function applyRecordMove(supabase: SupabaseClient, congregationId: 
   const { data: existing } = await supabase
     .from('territory_records')
     .select(
-      'move_recommended_address, move_recommended_unit, move_recommended_plus_code, move_recommended_household_members, move_recommended_territory_id, move_recommended_section_id, move_recommended_block_id'
+      'address, unit, plus_code, household_members, territory_id, section_id, block_id, move_recommended_address, move_recommended_unit, move_recommended_plus_code, move_recommended_household_members, move_recommended_territory_id, move_recommended_section_id, move_recommended_block_id'
     )
     .eq('id', recordId)
     .maybeSingle()
@@ -711,10 +775,37 @@ export async function applyRecordMove(supabase: SupabaseClient, congregationId: 
   if (existing.move_recommended_block_id) update.block_id = existing.move_recommended_block_id
   const { error } = await supabase.from('territory_records').update(update).eq('id', recordId)
   if (error) throw error
+
+  const labels = await resolveLocationLabels(
+    supabase,
+    [existing.territory_id, existing.move_recommended_territory_id].filter((v): v is string => !!v),
+    [existing.section_id, existing.move_recommended_section_id].filter((v): v is string => !!v),
+    [existing.block_id, existing.move_recommended_block_id].filter((v): v is string => !!v)
+  )
+  const parts: string[] = [`Address: ${existing.address || '(blank)'} → ${existing.move_recommended_address}`]
+  if ((existing.move_recommended_unit ?? '') !== existing.unit) {
+    parts.push(`Unit: ${existing.unit || '(blank)'} → ${existing.move_recommended_unit || '(blank)'}`)
+  }
+  if (existing.move_recommended_plus_code && existing.move_recommended_plus_code !== existing.plus_code) {
+    parts.push(`Plus Code: ${existing.plus_code ?? '(blank)'} → ${existing.move_recommended_plus_code}`)
+  }
+  if (existing.move_recommended_household_members != null && existing.move_recommended_household_members !== existing.household_members) {
+    parts.push(`Household members: ${existing.household_members ?? '(blank)'} → ${existing.move_recommended_household_members}`)
+  }
+  if (existing.move_recommended_territory_id && existing.move_recommended_territory_id !== existing.territory_id) {
+    parts.push(`Barangay: ${labels.territories.get(existing.territory_id) ?? '?'} → ${labels.territories.get(existing.move_recommended_territory_id) ?? '?'}`)
+  }
+  if (existing.move_recommended_section_id && existing.move_recommended_section_id !== existing.section_id) {
+    parts.push(`Section: ${labels.sections.get(existing.section_id) ?? '?'} → ${labels.sections.get(existing.move_recommended_section_id) ?? '?'}`)
+  }
+  if (existing.move_recommended_block_id && existing.move_recommended_block_id !== existing.block_id) {
+    parts.push(`Block: ${labels.blocks.get(existing.block_id) ?? '?'} → ${labels.blocks.get(existing.move_recommended_block_id) ?? '?'}`)
+  }
+
   await logRecordHistory(supabase, congregationId, {
     recordId,
     action: 'move_applied',
-    summary: 'Applied the recommended move.',
+    summary: `Applied move — ${parts.join('; ')}`,
     actor: { role: 'admin', name: actorName },
   })
 }
