@@ -36,7 +36,7 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
   })
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in the required fields.' }
 
-  const { supabase, congregation, userId } = await requireAdmin()
+  const { supabase, congregation, userId, userName } = await requireAdmin()
 
   // RLS only checks that congregation_id on the new row belongs to the caller — it never
   // verifies the territoryId/sectionId/blockId in the (client-editable) hidden form fields
@@ -56,7 +56,11 @@ export async function createRecordAction(_prev: ActionResult, formData: FormData
   }
 
   try {
-    const record = await recordQueries.createRecord(supabase, congregation.id, { ...parsed.data, addedByAdminId: userId })
+    const record = await recordQueries.createRecord(supabase, congregation.id, {
+      ...parsed.data,
+      addedByAdminId: userId,
+      historyActor: { role: 'admin', name: userName },
+    })
     if (parsed.data.initialResult) {
       await recordQueries.logVisit(supabase, congregation.id, {
         recordId: record.id,
@@ -90,9 +94,13 @@ export async function updateRecordAction(_prev: ActionResult, formData: FormData
   if (!parsed.success) return { error: 'Please fill in the required fields.' }
   const { recordId, ...updates } = parsed.data
 
-  const { supabase, userId } = await requireAdmin()
+  const { supabase, congregation, userId, userName } = await requireAdmin()
   try {
-    await recordQueries.updateRecord(supabase, recordId, { ...updates, editedByAdminId: userId })
+    await recordQueries.updateRecord(supabase, congregation.id, recordId, {
+      ...updates,
+      editedByAdminId: userId,
+      historyActor: { role: 'admin', name: userName },
+    })
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Could not update the contact record.' }
   }
@@ -152,8 +160,8 @@ export async function overrideLatestVisitAction(recordId: string, result: string
 // Admin dismisses a publisher's "Recommend for Admin Removal" without deleting the record —
 // clears it off the Flagged for Removal list.
 export async function dismissRemovalRecommendationAction(recordId: string): Promise<void> {
-  const { supabase } = await requireAdmin()
-  await recordQueries.dismissRemovalRecommendation(supabase, recordId)
+  const { supabase, congregation, userName } = await requireAdmin()
+  await recordQueries.dismissRemovalRecommendation(supabase, congregation.id, recordId, userName)
   revalidatePath('/territory-management-system/dashboard/records/flagged')
 }
 
@@ -169,8 +177,8 @@ export async function dismissWeeklyNoteAction(visitId: string): Promise<void> {
 // Admin applies a publisher's "Update" (correction) recommendation — writes the recommended
 // Plus Code onto the record and clears the flag.
 export async function applyRecordCorrectionAction(recordId: string): Promise<void> {
-  const { supabase } = await requireAdmin()
-  await recordQueries.applyRecordCorrection(supabase, recordId)
+  const { supabase, congregation, userName } = await requireAdmin()
+  await recordQueries.applyRecordCorrection(supabase, congregation.id, recordId, userName)
   revalidatePath('/territory-management-system/dashboard/records/flagged')
   revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
 }
@@ -178,16 +186,16 @@ export async function applyRecordCorrectionAction(recordId: string): Promise<voi
 // Admin dismisses a correction recommendation without applying it — clears the flag, leaves
 // the record's own Plus Code untouched.
 export async function dismissCorrectionRecommendationAction(recordId: string): Promise<void> {
-  const { supabase } = await requireAdmin()
-  await recordQueries.dismissCorrectionRecommendation(supabase, recordId)
+  const { supabase, congregation, userName } = await requireAdmin()
+  await recordQueries.dismissCorrectionRecommendation(supabase, congregation.id, recordId, userName)
   revalidatePath('/territory-management-system/dashboard/records/flagged')
 }
 
 // Admin applies a publisher's "Recommend New Location" (move) recommendation — writes the
 // recommended address/unit/plus_code/household_members onto the record and clears the flag.
 export async function applyRecordMoveAction(recordId: string): Promise<void> {
-  const { supabase } = await requireAdmin()
-  await recordQueries.applyRecordMove(supabase, recordId)
+  const { supabase, congregation, userName } = await requireAdmin()
+  await recordQueries.applyRecordMove(supabase, congregation.id, recordId, userName)
   revalidatePath('/territory-management-system/dashboard/records/flagged')
   revalidatePath(`/territory-management-system/dashboard/records/${recordId}`)
 }
@@ -195,8 +203,8 @@ export async function applyRecordMoveAction(recordId: string): Promise<void> {
 // Admin dismisses a move recommendation without applying it — clears the flag, leaves the
 // record's own address/unit/plus_code/household_members untouched.
 export async function dismissMoveRecommendationAction(recordId: string): Promise<void> {
-  const { supabase } = await requireAdmin()
-  await recordQueries.dismissMoveRecommendation(supabase, recordId)
+  const { supabase, congregation, userName } = await requireAdmin()
+  await recordQueries.dismissMoveRecommendation(supabase, congregation.id, recordId, userName)
   revalidatePath('/territory-management-system/dashboard/records/flagged')
 }
 

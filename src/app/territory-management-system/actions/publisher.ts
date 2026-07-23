@@ -217,6 +217,7 @@ export async function addPublisherRecordAction(_prev: ActionResult, formData: Fo
       status: 'pending',
       source: 'publisher',
       createdByPartnershipId: partnership.id,
+      historyActor: { role: 'publisher', name: partnership.name || 'Unnamed partnership' },
     })
     // Not marked as a completed partnership record — a just-added record is still pending admin
     // review and was never assigned to this partnership in the first place (see the comment on
@@ -427,7 +428,7 @@ export async function updatePublisherRecordAction(_prev: ActionResult, formData:
   if (!existing) return { error: 'Contact record not found.' }
 
   try {
-    await updateRecord(supabase, parsed.data.recordId, {
+    await updateRecord(supabase, partnership.congregation_id, parsed.data.recordId, {
       address: parsed.data.address,
       unit: parsed.data.unit,
       residentName: parsed.data.residentName,
@@ -435,6 +436,7 @@ export async function updatePublisherRecordAction(_prev: ActionResult, formData:
       householdMembers: parsed.data.householdMembers ?? existing.household_members ?? undefined,
       notes: parsed.data.notes,
       doNotCall: existing.do_not_call,
+      historyActor: { role: 'publisher', name: partnership.name || 'Unnamed partnership' },
     })
     await logVisit(supabase, partnership.congregation_id, {
       recordId: parsed.data.recordId,
@@ -498,6 +500,7 @@ export async function recommendMoveAction(_prev: ActionResult, formData: FormDat
   try {
     await recommendRecordMove(
       supabase,
+      partnership.congregation_id,
       parsed.data.recordId,
       {
         address: parsed.data.address,
@@ -550,7 +553,7 @@ export async function recommendRemovalAction(_prev: ActionResult, formData: Form
   if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
 
   try {
-    await recommendRecordForRemoval(supabase, parsed.data.recordId, parsed.data.reason, partnership.name || 'Unnamed partnership')
+    await recommendRecordForRemoval(supabase, partnership.congregation_id, parsed.data.recordId, parsed.data.reason, partnership.name || 'Unnamed partnership')
     await logVisit(supabase, partnership.congregation_id, {
       recordId: parsed.data.recordId,
       visitedAt: new Date().toISOString(),
@@ -613,6 +616,7 @@ export async function recommendCorrectionAction(_prev: ActionResult, formData: F
   try {
     await recommendRecordCorrection(
       supabase,
+      partnership.congregation_id,
       parsed.data.recordId,
       {
         plusCode: parsed.data.plusCode,
@@ -706,7 +710,7 @@ export async function editPublisherAddedRecordAction(_prev: ActionResult, formDa
   if (!existing) return { error: 'Contact record not found.' }
 
   try {
-    await updateRecord(supabase, parsed.data.recordId, {
+    await updateRecord(supabase, partnership.congregation_id, parsed.data.recordId, {
       territoryId: parsed.data.territoryId,
       sectionId: parsed.data.sectionId,
       blockId: parsed.data.blockId,
@@ -717,6 +721,7 @@ export async function editPublisherAddedRecordAction(_prev: ActionResult, formDa
       householdMembers: parsed.data.householdMembers,
       notes: parsed.data.notes,
       doNotCall: existing.do_not_call,
+      historyActor: { role: 'publisher', name: partnership.name || 'Unnamed partnership' },
     })
   } catch (e) {
     await logError(partnership.congregation_id, 'editPublisherAddedRecordAction', e)
@@ -796,6 +801,7 @@ export async function recommendSearchScopeCorrectionAction(_prev: ActionResult, 
   try {
     await recommendRecordCorrection(
       supabase,
+      partnership.congregation_id,
       parsed.data.recordId,
       {
         plusCode: parsed.data.plusCode,

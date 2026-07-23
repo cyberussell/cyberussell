@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { requireAdmin } from '@/lib/territory-management-system/modules/auth/queries'
-import { getRecordById, listVisits } from '@/lib/territory-management-system/modules/records/queries'
+import { getRecordById, listVisits, listRecordHistory } from '@/lib/territory-management-system/modules/records/queries'
 import { getPassedFromForRecord } from '@/lib/territory-management-system/modules/assignment/queries'
 import { overrideLatestVisitAction, undoLastVisitAction } from '@/app/territory-management-system/actions/records'
 import PageHeader from '@/components/territory-management-system/dashboard/PageHeader'
@@ -10,6 +10,7 @@ import RecordEditForm from '@/components/territory-management-system/RecordEditF
 import VisitLogForm from '@/components/territory-management-system/VisitLogForm'
 import VisitHistoryList from '@/components/territory-management-system/VisitHistoryList'
 import VisitResultBadge from '@/components/territory-management-system/VisitResultBadge'
+import RecordHistoryList from '@/components/territory-management-system/RecordHistoryList'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,6 +22,7 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ r
   const visits = await listVisits(supabase, recordId)
   const latestVisit = visits[0] ?? null
   const passedFrom = await getPassedFromForRecord(supabase, recordId)
+  const history = await listRecordHistory(supabase, recordId)
 
   return (
     <div className="space-y-8">
@@ -68,6 +70,10 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ r
           onUndoLast={undoLastVisitAction.bind(null, record.id)}
           onOverride={overrideLatestVisitAction.bind(null, record.id)}
         />
+      </div>
+      <div>
+        <h2 className="mb-4 font-semibold text-[#0B1B33]">Record History</h2>
+        <RecordHistoryList entries={history} />
       </div>
     </div>
   )

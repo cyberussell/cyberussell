@@ -71,6 +71,15 @@ const FAQ: { question: string; answer: string }[] = [
     question: 'Can I leave a note for Admin?',
     answer: "Yes, after finishing you'll get an optional screen to leave a note before syncing.",
   },
+  {
+    question: 'How long is visit history kept?',
+    answer: "Each record's visit history is kept for 6 months, then automatically cleared.",
+  },
+  {
+    question: "How long is a record's change history kept?",
+    answer:
+      'Changes made to a record — edits, corrections, moves, and removal recommendations — are kept for 1 year, then automatically cleared.',
+  },
 ]
 
 export default function PublisherFAQ() {

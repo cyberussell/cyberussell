@@ -130,3 +130,30 @@ export interface RecordVisit {
 export interface RecordVisitWithAuthor extends RecordVisit {
   created_by_name: string | null
 }
+
+export type RecordHistoryAction =
+  | 'created'
+  | 'edited'
+  | 'correction_recommended'
+  | 'correction_applied'
+  | 'correction_dismissed'
+  | 'move_recommended'
+  | 'move_applied'
+  | 'move_dismissed'
+  | 'removal_recommended'
+  | 'removal_dismissed'
+
+// A record's own change history — distinct from RecordVisit (field-ministry visit results).
+// actor_name is a plain-text snapshot (Admin's full_name at write time, or a partnership's
+// name), not a live profiles join — same "no live join" choice as
+// removal_recommended_by/correction_recommended_by/move_recommended_by on TerritoryRecord.
+export interface RecordHistoryEntry {
+  id: string
+  congregation_id: string
+  record_id: string
+  action: RecordHistoryAction
+  summary: string
+  actor_role: 'admin' | 'publisher'
+  actor_name: string | null
+  created_at: string
+}

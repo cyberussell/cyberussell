@@ -7,6 +7,9 @@ import type { UserRole } from './types'
 export interface RoleSession {
   supabase: Awaited<ReturnType<typeof createServerSupabase>>
   userId: string
+  // Plain-text snapshot of the signed-in user's profiles.full_name — used to attribute
+  // change-history entries (records/queries.ts's logRecordHistory) without a separate lookup.
+  userName: string
   congregation: Congregation
 }
 
@@ -22,7 +25,7 @@ async function requireRole(role: UserRole): Promise<RoleSession> {
   // adding a full extra Supabase round-trip to every single authenticated TMS page load.
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role, congregation_id, revoked_at, must_change_password, congregation:congregations(*)')
+    .select('role, congregation_id, revoked_at, must_change_password, full_name, congregation:congregations(*)')
     .eq('id', user.id)
     .maybeSingle()
   if (!profile || profile.role !== role) redirect('/territory-management-system/login')
@@ -36,7 +39,7 @@ async function requireRole(role: UserRole): Promise<RoleSession> {
   if (profile.must_change_password) redirect('/territory-management-system/change-password')
   if (!profile.congregation_id || !profile.congregation) redirect('/territory-management-system/login?error=not_provisioned')
 
-  return { supabase, userId: user.id, congregation: profile.congregation as unknown as Congregation }
+  return { supabase, userId: user.id, userName: profile.full_name || 'Admin', congregation: profile.congregation as unknown as Congregation }
 }
 
 // Admin dashboard pages/actions call this: resolves the signed-in admin + their congregation.

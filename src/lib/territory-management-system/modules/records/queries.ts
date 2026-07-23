@@ -2,7 +2,25 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { OpenLocationCode } from 'open-location-code'
 import { formatPlusCode, formatProperCase } from './format'
-import type { RecordStatus, RecordVisitWithAuthor, TerritoryRecord, TerritoryRecordWithLocation } from './types'
+import { buildEditSummary } from './history'
+import type {
+  RecordHistoryAction,
+  RecordHistoryEntry,
+  RecordStatus,
+  RecordVisitWithAuthor,
+  TerritoryRecord,
+  TerritoryRecordWithLocation,
+} from './types'
+
+// Who performed a record mutation, for the change-history log below — a plain-text name
+// snapshot (Admin's full_name, or a partnership's name), never a live join. Optional on every
+// write function that accepts it: omitting it (the publisher's assigned-record visit-logging
+// path, admin approve/pending-status toggles, etc.) simply skips logging, same as
+// addedByAdminId/editedByAdminId already do for the separate admin-audit-note columns.
+interface HistoryActor {
+  role: 'admin' | 'publisher'
+  name: string
+}
 
 const openLocationCode = new OpenLocationCode()
 
@@ -105,6 +123,40 @@ export async function getRecordById(
   return (data as unknown as TerritoryRecordWithLocation) ?? null
 }
 
+// Logs one entry to a record's change history — distinct from logVisit's territory_record_visits
+// (field-ministry visit results). Called from every write function below that accepts a
+// HistoryActor. Retention is 1 year (vs. visits' 6 months) — same opportunistic
+// delete-on-every-write pattern as logVisit's own retention cleanup, just a longer window since
+// this is a lower-volume, more consequential audit trail.
+export async function logRecordHistory(
+  supabase: SupabaseClient,
+  congregationId: string,
+  input: { recordId: string; action: RecordHistoryAction; summary: string; actor: HistoryActor }
+): Promise<void> {
+  const { error } = await supabase.from('territory_record_history').insert({
+    congregation_id: congregationId,
+    record_id: input.recordId,
+    action: input.action,
+    summary: input.summary,
+    actor_role: input.actor.role,
+    actor_name: input.actor.name,
+  })
+  if (error) throw error
+
+  const oneYearAgo = new Date()
+  oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1)
+  await supabase.from('territory_record_history').delete().eq('congregation_id', congregationId).lt('created_at', oneYearAgo.toISOString())
+}
+
+export async function listRecordHistory(supabase: SupabaseClient, recordId: string): Promise<RecordHistoryEntry[]> {
+  const { data } = await supabase
+    .from('territory_record_history')
+    .select('*')
+    .eq('record_id', recordId)
+    .order('created_at', { ascending: false })
+  return (data ?? []) as unknown as RecordHistoryEntry[]
+}
+
 export async function createRecord(
   supabase: SupabaseClient,
   congregationId: string,
@@ -132,6 +184,9 @@ export async function createRecord(
     // shown as a small audit note on the record detail page. Left unset for publisher-added
     // and CSV-imported records (no Admin actually typed those in).
     addedByAdminId?: string
+    // Logs a 'created' change-history entry when provided — CSV import omits this (bulk,
+    // low-signal-per-row), everything else that adds a single record passes it.
+    historyActor?: HistoryActor
   }
 ): Promise<TerritoryRecord> {
   const { data, error } = await supabase
@@ -157,11 +212,21 @@ export async function createRecord(
     .select('*')
     .single()
   if (error) throw error
-  return data as TerritoryRecord
+  const record = data as TerritoryRecord
+  if (input.historyActor) {
+    await logRecordHistory(supabase, congregationId, {
+      recordId: record.id,
+      action: 'created',
+      summary: 'Added this contact record.',
+      actor: input.historyActor,
+    })
+  }
+  return record
 }
 
 export async function updateRecord(
   supabase: SupabaseClient,
+  congregationId: string,
   recordId: string,
   updates: {
     // Only set by the publisher's own "edit a record I added" path — every other caller
@@ -180,19 +245,46 @@ export async function updateRecord(
     // when, shown as a small audit note on the record detail page. Left unset for publisher
     // edits (own added-record edit, "Update Contact Record" after a Move).
     editedByAdminId?: string
+    // Logs an 'edited' change-history entry (with a before/after diff) when provided, but only
+    // if something actually changed — a Save click that changed nothing logs no entry.
+    historyActor?: HistoryActor
   }
 ): Promise<void> {
+  const formattedAddress = formatProperCase(updates.address)
+  const formattedResidentName = formatProperCase(updates.residentName)
+  const formattedPlusCode = formatPlusCode(updates.plusCode) || null
+  const householdMembers = updates.householdMembers ?? null
+
+  type EditSnapshot = {
+    address: string
+    unit: string
+    resident_name: string
+    plus_code: string | null
+    household_members: number | null
+    do_not_call: boolean
+    notes: string
+  }
+  let before: EditSnapshot | null = null
+  if (updates.historyActor) {
+    const { data } = await supabase
+      .from('territory_records')
+      .select('address, unit, resident_name, plus_code, household_members, do_not_call, notes')
+      .eq('id', recordId)
+      .maybeSingle()
+    before = data as EditSnapshot | null
+  }
+
   const { error } = await supabase
     .from('territory_records')
     .update({
       ...(updates.territoryId ? { territory_id: updates.territoryId } : {}),
       ...(updates.sectionId ? { section_id: updates.sectionId } : {}),
       ...(updates.blockId ? { block_id: updates.blockId } : {}),
-      address: formatProperCase(updates.address),
+      address: formattedAddress,
       unit: updates.unit,
-      resident_name: formatProperCase(updates.residentName),
-      plus_code: formatPlusCode(updates.plusCode) || null,
-      household_members: updates.householdMembers ?? null,
+      resident_name: formattedResidentName,
+      plus_code: formattedPlusCode,
+      household_members: householdMembers,
       notes: updates.notes,
       do_not_call: updates.doNotCall,
       updated_at: new Date().toISOString(),
@@ -200,6 +292,32 @@ export async function updateRecord(
     })
     .eq('id', recordId)
   if (error) throw error
+
+  if (updates.historyActor && before) {
+    const summary = buildEditSummary(
+      {
+        address: before.address,
+        unit: before.unit,
+        residentName: before.resident_name,
+        plusCode: before.plus_code ?? '',
+        householdMembers: before.household_members,
+        doNotCall: before.do_not_call,
+        notes: before.notes,
+      },
+      {
+        address: formattedAddress,
+        unit: updates.unit,
+        residentName: formattedResidentName,
+        plusCode: formattedPlusCode ?? '',
+        householdMembers,
+        doNotCall: updates.doNotCall,
+        notes: updates.notes,
+      }
+    )
+    if (summary) {
+      await logRecordHistory(supabase, congregationId, { recordId, action: 'edited', summary, actor: updates.historyActor })
+    }
+  }
 }
 
 export async function deleteRecord(supabase: SupabaseClient, recordId: string): Promise<void> {
@@ -244,9 +362,12 @@ export async function setRecordStatus(supabase: SupabaseClient, recordId: string
 }
 
 // Publisher-facing "Mark as Moved" → "Recommend for Admin Removal" path — the reason is
-// required at the schema level (assignment/schema.ts), never optional.
+// required at the schema level (assignment/schema.ts), never optional. Logged verbatim to
+// change-history at recommend time (not just onto removal_recommended_reason) since dismissing
+// the recommendation clears that column — history is the only place the reason survives that.
 export async function recommendRecordForRemoval(
   supabase: SupabaseClient,
+  congregationId: string,
   recordId: string,
   reason: string,
   recommendedBy: string
@@ -256,16 +377,28 @@ export async function recommendRecordForRemoval(
     .update({ removal_recommended_at: new Date().toISOString(), removal_recommended_reason: reason, removal_recommended_by: recommendedBy })
     .eq('id', recordId)
   if (error) throw error
+  await logRecordHistory(supabase, congregationId, {
+    recordId,
+    action: 'removal_recommended',
+    summary: `Recommended removal: "${reason}"`,
+    actor: { role: 'publisher', name: recommendedBy },
+  })
 }
 
 // Admin dismisses a removal recommendation without deleting the record (e.g. it turned out to
 // be a mistake) — clears the flag so it drops off the Flagged for Removal list.
-export async function dismissRemovalRecommendation(supabase: SupabaseClient, recordId: string): Promise<void> {
+export async function dismissRemovalRecommendation(supabase: SupabaseClient, congregationId: string, recordId: string, actorName: string): Promise<void> {
   const { error } = await supabase
     .from('territory_records')
     .update({ removal_recommended_at: null, removal_recommended_reason: null, removal_recommended_by: null })
     .eq('id', recordId)
   if (error) throw error
+  await logRecordHistory(supabase, congregationId, {
+    recordId,
+    action: 'removal_dismissed',
+    summary: 'Dismissed the removal recommendation.',
+    actor: { role: 'admin', name: actorName },
+  })
 }
 
 export async function listFlaggedForRemoval(supabase: SupabaseClient, congregationId: string): Promise<TerritoryRecordWithLocation[]> {
@@ -334,6 +467,7 @@ export async function territorySectionBlockBelongsToCongregation(
 // silently reorder either of the two call sites' existing positional args.
 export async function recommendRecordCorrection(
   supabase: SupabaseClient,
+  congregationId: string,
   recordId: string,
   fields: {
     plusCode: string
@@ -365,11 +499,25 @@ export async function recommendRecordCorrection(
     })
     .eq('id', recordId)
   if (error) throw error
+  // Logged verbatim to change-history at recommend time — dismissing or applying the
+  // recommendation both clear correction_recommended_reason, so history is the only place the
+  // publisher's reason survives either outcome.
+  await logRecordHistory(supabase, congregationId, {
+    recordId,
+    action: 'correction_recommended',
+    summary: `Recommended a correction: "${fields.reason}"`,
+    actor: { role: 'publisher', name: recommendedBy },
+  })
 }
 
 // Admin dismisses a correction recommendation without applying it (e.g. it turned out to be
 // wrong) — clears the flag, leaves the record's own plus_code untouched.
-export async function dismissCorrectionRecommendation(supabase: SupabaseClient, recordId: string): Promise<void> {
+export async function dismissCorrectionRecommendation(
+  supabase: SupabaseClient,
+  congregationId: string,
+  recordId: string,
+  actorName: string
+): Promise<void> {
   const { error } = await supabase
     .from('territory_records')
     .update({
@@ -384,13 +532,19 @@ export async function dismissCorrectionRecommendation(supabase: SupabaseClient, 
     })
     .eq('id', recordId)
   if (error) throw error
+  await logRecordHistory(supabase, congregationId, {
+    recordId,
+    action: 'correction_dismissed',
+    summary: 'Dismissed the correction recommendation.',
+    actor: { role: 'admin', name: actorName },
+  })
 }
 
 // Admin applies a correction recommendation — writes the recommended Plus Code/Territory/
 // Section/Block/Household Members onto the record's real columns and clears the recommendation
 // flag in the same update. Reads the recommended values first since Supabase's update() can't
 // copy one column's value into another server-side without a raw SQL/RPC call.
-export async function applyRecordCorrection(supabase: SupabaseClient, recordId: string): Promise<void> {
+export async function applyRecordCorrection(supabase: SupabaseClient, congregationId: string, recordId: string, actorName: string): Promise<void> {
   const { data: existing } = await supabase
     .from('territory_records')
     .select(
@@ -425,6 +579,12 @@ export async function applyRecordCorrection(supabase: SupabaseClient, recordId: 
   if (existing.correction_recommended_household_members != null) update.household_members = existing.correction_recommended_household_members
   const { error } = await supabase.from('territory_records').update(update).eq('id', recordId)
   if (error) throw error
+  await logRecordHistory(supabase, congregationId, {
+    recordId,
+    action: 'correction_applied',
+    summary: 'Applied the recommended correction.',
+    actor: { role: 'admin', name: actorName },
+  })
 }
 
 export async function listFlaggedForCorrection(supabase: SupabaseClient, congregationId: string): Promise<TerritoryRecordWithLocation[]> {
@@ -444,6 +604,7 @@ export async function listFlaggedForCorrection(supabase: SupabaseClient, congreg
 // same person, just a new location.
 export async function recommendRecordMove(
   supabase: SupabaseClient,
+  congregationId: string,
   recordId: string,
   fields: {
     address: string
@@ -473,11 +634,21 @@ export async function recommendRecordMove(
     })
     .eq('id', recordId)
   if (error) throw error
+  // Logged verbatim to change-history at recommend time — dismissing or applying the
+  // recommendation both clear move_recommended_notes, so history is the only place the
+  // publisher's note survives either outcome.
+  const trimmedNotes = fields.notes.trim()
+  await logRecordHistory(supabase, congregationId, {
+    recordId,
+    action: 'move_recommended',
+    summary: trimmedNotes ? `Recommended a new location: "${trimmedNotes}"` : 'Recommended a new location.',
+    actor: { role: 'publisher', name: recommendedBy },
+  })
 }
 
 // Admin dismisses a move recommendation without applying it — clears the flag, leaves the
 // record's own address/unit/plus_code/household_members/territory/section/block untouched.
-export async function dismissMoveRecommendation(supabase: SupabaseClient, recordId: string): Promise<void> {
+export async function dismissMoveRecommendation(supabase: SupabaseClient, congregationId: string, recordId: string, actorName: string): Promise<void> {
   const { error } = await supabase
     .from('territory_records')
     .update({
@@ -494,6 +665,12 @@ export async function dismissMoveRecommendation(supabase: SupabaseClient, record
     })
     .eq('id', recordId)
   if (error) throw error
+  await logRecordHistory(supabase, congregationId, {
+    recordId,
+    action: 'move_dismissed',
+    summary: 'Dismissed the move recommendation.',
+    actor: { role: 'admin', name: actorName },
+  })
 }
 
 // Admin applies a move recommendation — writes the recommended address/unit/plus_code/household
@@ -503,7 +680,7 @@ export async function dismissMoveRecommendation(supabase: SupabaseClient, record
 // location, never a partial one), so they're applied unconditionally alongside address/unit —
 // unlike Correction's applyRecordCorrection, there's no "only touch what was recommended" partial
 // case here.
-export async function applyRecordMove(supabase: SupabaseClient, recordId: string): Promise<void> {
+export async function applyRecordMove(supabase: SupabaseClient, congregationId: string, recordId: string, actorName: string): Promise<void> {
   const { data: existing } = await supabase
     .from('territory_records')
     .select(
@@ -534,6 +711,12 @@ export async function applyRecordMove(supabase: SupabaseClient, recordId: string
   if (existing.move_recommended_block_id) update.block_id = existing.move_recommended_block_id
   const { error } = await supabase.from('territory_records').update(update).eq('id', recordId)
   if (error) throw error
+  await logRecordHistory(supabase, congregationId, {
+    recordId,
+    action: 'move_applied',
+    summary: 'Applied the recommended move.',
+    actor: { role: 'admin', name: actorName },
+  })
 }
 
 export async function listFlaggedForMove(supabase: SupabaseClient, congregationId: string): Promise<TerritoryRecordWithLocation[]> {
