@@ -505,3 +505,83 @@ export async function getReportStats(
     newRecordsSubmitted,
   }
 }
+
+export interface TerritoryVisitHistoryEntry {
+  territoryId: string
+  // territories.name (e.g. "Q-11") / territories.description (barangay, e.g. "Santos Quezon") —
+  // same "Territory Number — Barangay Name" pairing already used for the Group Leader's own
+  // territory checklist (see group-leader/dashboard/page.tsx's activeTerritories).
+  territoryName: string
+  barangayName: string
+  // Sorted Section labels (e.g. ["A", "B"]) with at least one visit in the window — deliberately
+  // not filtered by which batch (House To House vs. Auxiliary Groups) the visit came from, since
+  // territory_record_visits carries no batch/partnership-type distinction at all; a visit counts
+  // toward this list regardless of which kind of assignment produced it.
+  sectionLabels: string[]
+  lastVisitedAt: string
+}
+
+// Every territory with at least one logged visit since sinceIso, for the Group Leader's
+// "worked in the last month" list — so a Group Leader can see territory coverage over time
+// instead of only today's snapshot (the Dashboard tab's other stat cards). Two plain queries
+// rather than a nested embed through territory_record_visits -> territory_records -> territories/
+// territory_sections — those two tables each carry more than one FK to territories/
+// territory_sections (correction_recommended_*/move_recommended_*), the exact ambiguous-embed
+// footgun this codebase has hit before (see RECORD_WITH_LOCATION_SELECT's own comment).
+export async function getTerritoryVisitHistory(
+  supabase: SupabaseClient,
+  congregationId: string,
+  sinceIso: string
+): Promise<TerritoryVisitHistoryEntry[]> {
+  const { data: visits } = await supabase
+    .from('territory_record_visits')
+    .select('record_id, visited_at')
+    .eq('congregation_id', congregationId)
+    .gte('visited_at', sinceIso)
+  const visitRows = (visits ?? []) as { record_id: string; visited_at: string }[]
+  if (visitRows.length === 0) return []
+
+  const recordIds = Array.from(new Set(visitRows.map((v) => v.record_id)))
+  const { data: records } = await supabase.from('territory_records').select('id, territory_id, section_id').in('id', recordIds)
+  const recordById = new Map(((records ?? []) as { id: string; territory_id: string; section_id: string }[]).map((r) => [r.id, r]))
+
+  const byTerritory = new Map<string, { lastVisitedAt: string; sectionIds: Set<string> }>()
+  for (const v of visitRows) {
+    const record = recordById.get(v.record_id)
+    if (!record) continue
+    const existing = byTerritory.get(record.territory_id)
+    if (!existing) {
+      byTerritory.set(record.territory_id, { lastVisitedAt: v.visited_at, sectionIds: new Set([record.section_id]) })
+    } else {
+      existing.sectionIds.add(record.section_id)
+      if (v.visited_at > existing.lastVisitedAt) existing.lastVisitedAt = v.visited_at
+    }
+  }
+  if (byTerritory.size === 0) return []
+
+  const territoryIds = Array.from(byTerritory.keys())
+  const [{ data: territories }, { data: sections }] = await Promise.all([
+    supabase.from('territories').select('id, name, description').in('id', territoryIds),
+    supabase
+      .from('territory_sections')
+      .select('id, label')
+      .in('id', Array.from(new Set(Array.from(byTerritory.values()).flatMap((e) => Array.from(e.sectionIds))))),
+  ])
+  const territoryById = new Map(((territories ?? []) as { id: string; name: string; description: string }[]).map((t) => [t.id, t]))
+  const sectionLabelById = new Map(((sections ?? []) as { id: string; label: string }[]).map((s) => [s.id, s.label]))
+
+  return Array.from(byTerritory.entries())
+    .map(([territoryId, { lastVisitedAt, sectionIds }]) => {
+      const territory = territoryById.get(territoryId)
+      return {
+        territoryId,
+        territoryName: territory?.name ?? '—',
+        barangayName: territory?.description ?? '',
+        sectionLabels: Array.from(sectionIds)
+          .map((id) => sectionLabelById.get(id) ?? '?')
+          .sort(),
+        lastVisitedAt,
+      }
+    })
+    .sort((a, b) => b.lastVisitedAt.localeCompare(a.lastVisitedAt)) // most recently visited first
+}

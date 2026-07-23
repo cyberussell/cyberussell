@@ -1,12 +1,13 @@
 import { requireGroupLeader } from '@/lib/territory-management-system/modules/auth/queries'
 import { getApprovedRecordCounts, getBatchesForGroupLeaderAndDate } from '@/lib/territory-management-system/modules/assignment/queries'
 import { listTerritories } from '@/lib/territory-management-system/modules/territory/queries'
-import { getBatchStats, getCombinedBatchStats } from '@/lib/territory-management-system/modules/reports/queries'
+import { getBatchStats, getCombinedBatchStats, getTerritoryVisitHistory } from '@/lib/territory-management-system/modules/reports/queries'
 import { getAssignmentBatchQrDataUrl, getAssignmentBatchUrl } from '@/lib/territory-management-system/modules/assignment/qr'
 import { todayInTimezone } from '@/lib/territory-management-system/modules/assignment/date'
 import PageHeader from '@/components/territory-management-system/dashboard/PageHeader'
 import GroupLeaderTabs, { type BatchView } from '@/components/territory-management-system/GroupLeaderTabs'
 import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
+import TerritoryVisitHistoryList from '@/components/territory-management-system/TerritoryVisitHistoryList'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,14 +28,22 @@ export default async function GroupLeaderDashboardPage() {
     .filter((t) => t.status === 'active')
     .map((t) => ({ id: t.id, name: t.name, barangayName: t.description, approvedCount: approvedCounts[t.id] ?? 0 }))
 
+  // "Worked in the last month" list — fetched regardless of whether today's assignment exists
+  // yet, since territory coverage over time is useful information on both the pre-assignment
+  // screen below and the tabbed Dashboard view (see GroupLeaderTabs).
+  const oneMonthAgo = new Date()
+  oneMonthAgo.setUTCMonth(oneMonthAgo.getUTCMonth() - 1)
+  const territoryHistory = await getTerritoryVisitHistory(supabase, congregation.id, oneMonthAgo.toISOString())
+
   // Campaign-day scenario: no assignment yet today — lead with the generation form itself
   // rather than a passive "nothing here" message, since this is the Group Leader's very first
   // decision most days.
   if (batches.length === 0) {
     return (
-      <div>
+      <div className="space-y-8">
         <PageHeader title="Today's Assignment" subtitle={`${today} — no assignment generated yet`} />
         <AssignmentForm territories={activeTerritories} hasExistingBatch={false} />
+        <TerritoryVisitHistoryList entries={territoryHistory} />
       </div>
     )
   }
@@ -88,6 +97,7 @@ export default async function GroupLeaderDashboardPage() {
       activeTerritories={activeTerritories}
       todaysTerritories={todaysTerritories}
       combinedStats={combinedStats}
+      territoryHistory={territoryHistory}
     />
   )
 }

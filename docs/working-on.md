@@ -1,5 +1,21 @@
 # Current Work
 
+**Territory Management System — GL territory visit history, record change history, Plus Code/Name formatting (2026-07-23) — code done across 3 commits, tsc + vitest (59/59) + next build clean each time, NONE pushed yet (git remote credential broken) — see checkpoints `territory-management-gl-territory-visit-history-v1.md`, `territory-management-record-change-history-v1.md`, `territory-management-record-formatting-admin-audit-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Three requests in one session, built and committed sequentially:
+
+1. **Plus Code UPPERCASE / Name+Address Title Case + Admin add/edit audit note** (commit `644b8d2`) — see its own checkpoint for detail. **Migration 038 already applied live by Russell** (needed to unblock record visibility mid-session — the deployed-nowhere code was already querying it against local dev pointed at the live DB).
+2. **Record change history, 1-year retention** (commit `7c83ea8`) — new `territory_record_history` table (**migration 039, NOT yet applied live**) logging record creation/edits/correction-move-removal recommend-apply-dismiss cycles, fixing "admin can't see publisher notes" once a recommendation is applied or dismissed. See its own checkpoint for detail.
+3. **Group Leader "Territories Worked (Last 30 Days)" list** (commit pending — see below) — requested mid-session from a live screenshot of the GL "no assignment generated yet" screen. Shows Territory Number — Barangay Name, Sections worked (House To House and Auxiliary Groups combined, undistinguished), and last-visit date, most-recently-visited first, on both the pre-assignment empty state and the Dashboard tab. No migration needed (pure read/aggregate query over existing tables). See its own checkpoint for detail.
+
+**Blocking: `git push` still fails.** `origin`'s HTTPS remote has a plaintext PAT embedded in the URL that GitHub rejects ("could not read Password... terminal prompts disabled") — tracked in memory `project_git_remote_token.md`. All 3 commits above sit on local `main`, need Russell to fix the remote credential (SSH or `gh` credential helper) and push manually.
+
+**Next recommended task:** Russell applies migration 039 to the live TMS Supabase project (SQL is in the migration file / the checkpoint), fixes the git remote credential, pushes all 3 commits, then live-verifies each of the three features per their checkpoints' "Next Recommended Task" sections.
+
+---
+
 **Territory Management System — Plus Code UPPERCASE, Name/Address Title Case, Admin add/edit audit note (2026-07-23) — code done, tsc + vitest (53/53) + next build clean, committed (`644b8d2`), NOT pushed — see checkpoint `territory-management-record-formatting-admin-audit-v1.md`:**
 
 Current Product: Territory Management System (TMS).

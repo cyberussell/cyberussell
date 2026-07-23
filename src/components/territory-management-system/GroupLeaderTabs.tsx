@@ -24,7 +24,7 @@ import {
   XCircle,
   type LucideIcon,
 } from 'lucide-react'
-import type { BatchStats } from '@/lib/territory-management-system/modules/reports/queries'
+import type { BatchStats, TerritoryVisitHistoryEntry } from '@/lib/territory-management-system/modules/reports/queries'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
 import { deleteGroupLeaderAssignmentAction, endPartnershipAction } from '@/app/territory-management-system/actions/group-leader'
 import StatCard from '@/components/territory-management-system/dashboard/StatCard'
@@ -35,6 +35,7 @@ import VisitResultBarChart from '@/components/territory-management-system/VisitR
 import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
 import OverflowAssignmentForm from '@/components/territory-management-system/OverflowAssignmentForm'
 import PublisherFAQ from '@/components/territory-management-system/publisher/PublisherFAQ'
+import TerritoryVisitHistoryList from '@/components/territory-management-system/TerritoryVisitHistoryList'
 
 type Tab = 'home' | 'dashboard' | 'results' | 'progress' | 'faq'
 
@@ -81,6 +82,7 @@ export default function GroupLeaderTabs({
   activeTerritories,
   todaysTerritories,
   combinedStats,
+  territoryHistory,
 }: {
   batches: BatchView[]
   activeTerritories: { id: string; name: string; barangayName: string; approvedCount: number }[]
@@ -90,6 +92,10 @@ export default function GroupLeaderTabs({
   // tab summary display, instead of forcing a per-batch view. The batch switcher below still picks
   // which single batch the QR/generate/regenerate/delete controls on the Home tab act on.
   combinedStats: BatchStats
+  // "Worked in the last month" territory list (see getTerritoryVisitHistory) — same data shown
+  // on the pre-assignment "no assignment yet" screen (group-leader/dashboard/page.tsx), rendered
+  // here too on the Dashboard tab so it's still visible once today's assignment exists.
+  territoryHistory: TerritoryVisitHistoryEntry[]
 }) {
   const [tab, setTab] = useState<Tab>('home')
   // Home tab's Generate/Regenerate toggle — deliberately starts at null (neither shown), even
@@ -417,6 +423,12 @@ export default function GroupLeaderTabs({
           <StatCard icon={Percent} label="Completion" value={`${combinedStats.completionPct}%`} />
           <StatCard icon={FilePlus} label="New Contact Records Submitted" value={combinedStats.newRecordsSubmitted} />
           <StatCard icon={BookOpen} label="Bible Studies in the Area" value={combinedStats.activeBibleStudies} />
+        </div>
+      )}
+
+      {tab === 'dashboard' && (
+        <div className="mt-8">
+          <TerritoryVisitHistoryList entries={territoryHistory} />
         </div>
       )}
 
