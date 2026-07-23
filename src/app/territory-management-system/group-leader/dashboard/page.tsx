@@ -3,8 +3,7 @@ import { getApprovedRecordCounts, getBatchesForGroupLeaderAndDate } from '@/lib/
 import { listTerritories } from '@/lib/territory-management-system/modules/territory/queries'
 import { getBatchStats, getCombinedBatchStats, getTerritoryVisitHistory } from '@/lib/territory-management-system/modules/reports/queries'
 import { getAssignmentBatchQrDataUrl, getAssignmentBatchUrl } from '@/lib/territory-management-system/modules/assignment/qr'
-import { todayInTimezone } from '@/lib/territory-management-system/modules/assignment/date'
-import PageHeader from '@/components/territory-management-system/dashboard/PageHeader'
+import { formatLongDate, todayInTimezone } from '@/lib/territory-management-system/modules/assignment/date'
 import GroupLeaderTabs, { type BatchView } from '@/components/territory-management-system/GroupLeaderTabs'
 import AssignmentForm from '@/components/territory-management-system/AssignmentForm'
 import TerritoryVisitHistoryList from '@/components/territory-management-system/TerritoryVisitHistoryList'
@@ -16,7 +15,7 @@ export const dynamic = 'force-dynamic'
 // 023_multiple_batches_per_group_leader.sql lifted the one-per-day limit so a Group Leader can
 // also generate an overflow batch for extra publishers without disturbing their original one).
 export default async function GroupLeaderDashboardPage() {
-  const { supabase, congregation, userId } = await requireGroupLeader()
+  const { supabase, congregation, userId, userName } = await requireGroupLeader()
   const today = todayInTimezone(congregation.timezone)
   const batches = await getBatchesForGroupLeaderAndDate(supabase, congregation.id, userId, today)
 
@@ -41,7 +40,11 @@ export default async function GroupLeaderDashboardPage() {
   if (batches.length === 0) {
     return (
       <div className="space-y-8">
-        <PageHeader title="Today's Assignment" subtitle={`${today} — no assignment generated yet`} />
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-[#0B1B33]">Select Territory For Today</h1>
+          <p className="mt-1 text-base font-medium text-slate-600">{formatLongDate(today)}</p>
+          <p className="mt-0.5 text-sm text-slate-500">{userName}</p>
+        </div>
         <AssignmentForm territories={activeTerritories} hasExistingBatch={false} />
         <TerritoryVisitHistoryList entries={territoryHistory} />
       </div>

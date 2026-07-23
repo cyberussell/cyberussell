@@ -18,6 +18,23 @@ export function todayInTimezone(timezone: string): string {
   return new Date().toLocaleDateString('en-CA', { timeZone: safeTimezone(timezone) })
 }
 
+// Formats a YYYY-MM-DD date string (e.g. from todayInTimezone) as "Tuesday, July 7, 2026" — for
+// the Group Leader dashboard's "Select Territory For Today" header. Parses the date parts
+// directly and formats with timeZone: 'UTC' rather than passing the string through `new Date()`
+// and a second timezone conversion — the date is already the correct congregation-local calendar
+// day by the time it gets here, so this just spells it out in words without risking a day-shift
+// from the server's own timezone.
+export function formatLongDate(dateStr: string): string {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
 // A batch is "expired" once its assignment_date is before today in the congregation's own
 // timezone — publisher-facing QR/claim links for it stop working the next day, but nothing
 // about the batch or its data is ever deleted (Reports and history still read it normally).
