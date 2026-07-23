@@ -40,7 +40,7 @@ export default async function GroupLeaderDashboardPage() {
   if (batches.length === 0) {
     return (
       <div className="space-y-8">
-        <div className="mb-6">
+        <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-[#0B1B33]">Select Territory For Today</h1>
           <p className="mt-1 text-base font-medium text-slate-600">{formatLongDate(today)}</p>
           <p className="mt-0.5 text-sm text-slate-500">{userName}</p>
