@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Header from "@/components/demo/laundryflow/Header";
 import Hero from "@/components/demo/laundryflow/Hero";
 import Pricing from "@/components/demo/laundryflow/Pricing";
-import CTA from "@/components/demo/laundryflow/CTA";
+import Location from "@/components/demo/laundryflow/Location";
+import PlansComparison from "@/components/demo/laundryflow/PlansComparison";
 import Footer from "@/components/demo/laundryflow/Footer";
 
 export const metadata: Metadata = {
@@ -17,8 +18,9 @@ export default function LaundryFlowDemo() {
       <Header />
       <Hero />
       <Pricing />
+      <Location />
       <Footer />
-      <CTA />
+      <PlansComparison />
     </div>
   );
 }

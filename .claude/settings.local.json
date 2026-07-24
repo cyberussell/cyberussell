@@ -482,7 +482,13 @@
       "Bash(echo \"EXIT: $?\")",
       "Bash(grep -rl *)",
       "Bash(wait 98534)",
-      "Bash(git ls-remote *)"
+      "Bash(git ls-remote *)",
+      "Bash(ls -la \"/Users/russellparayno/Downloads/\" | grep -i laundry)",
+      "Bash(git -C \"/Users/russellparayno/Documents/Business/cyberussell.com\" diff --stat docs/working-on.md)",
+      "Bash(git -C \"/Users/russellparayno/Documents/Business/cyberussell.com\" diff docs/working-on.md)",
+      "Bash(mkdir -p /private/tmp/claude-501/-Users-russellparayno-Documents-Business-cyberussell-com/3872a33c-1498-452d-ad42-1e73bb7dc971/scratchpad/laundryflow-zip)",
+      "Bash(unzip -o -q \"/Users/russellparayno/Downloads/stitch_laundryflow_integrated_web_suite.zip\")",
+      "Bash(awk '/^## 5\\\\. Services/,/^## 6\\\\./' \"/Users/russellparayno/Documents/Business/cyberussell.com/docs/project-map.md\")"
     ]
   }
 }

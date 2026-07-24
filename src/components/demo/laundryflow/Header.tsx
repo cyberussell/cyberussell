@@ -16,7 +16,7 @@ export default function Header() {
       className="absolute top-0 left-0 right-0 z-50"
     >
       <div className="max-w-6xl mx-auto px-6 md:px-10 h-[76px] flex items-center justify-between">
-        <a href="#top" className="flex items-center gap-2.5">
+        <a href="/demo/laundryflow#top" className="flex items-center gap-2.5">
           <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center">
             <Shirt size={18} className="text-[#2563EB]" />
           </span>
@@ -32,7 +32,7 @@ export default function Header() {
         </nav>
 
         <a
-          href="#pricing"
+          href="/demo/laundryflow/book-a-pickup"
           className="hidden md:inline-flex items-center gap-2 bg-[#2563EB] text-white font-[family-name:var(--font-inter)] font-bold text-[13px] py-2.5 px-5 rounded-full hover:opacity-90 transition-all"
         >
           Book Pickup
@@ -56,7 +56,7 @@ export default function Header() {
             </a>
           ))}
           <a
-            href="#pricing"
+            href="/demo/laundryflow/book-a-pickup"
             onClick={() => setOpen(false)}
             className="mt-4 text-center bg-white text-[#2563EB] font-[family-name:var(--font-inter)] font-bold text-[14px] py-3 rounded-full"
           >

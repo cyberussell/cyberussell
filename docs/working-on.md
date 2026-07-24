@@ -1,5 +1,29 @@
 # Current Work
 
+**Laundryflow demo — Stitch redesign: Location section, expanded Footer, new Book-a-Pickup flow (2026-07-24) — code done, tsc clean, not committed — see checkpoint `laundryflow-stitch-redesign-v1.md`:**
+
+Current Product: Services (Portfolio demo — `/demo/laundryflow`, NOT the real Laundry Management System SaaS product).
+
+Current Feature: Russell uploaded a Google Stitch-generated design suite ("Linen & Sky") for the demo. Existing Hero/Pricing already matched it closely, so scope was the real gaps: new `Location.tsx` ("Find Us Here" section, also fixes a previously-dead `#contact` nav anchor), an expanded 4-column `Footer.tsx`, and a brand-new `/demo/laundryflow/book-a-pickup` route with a 3-step `BookingFlow.tsx` (Contact → Service → Details → Confirmed). Header's "Book Pickup" CTA now points at the new route; `NAV_LINKS` fixed to work from any page (`/demo/laundryflow#pricing` instead of bare `#pricing`). Skipped the Stitch export's photo gallery (no real source photos) and its floating "Concept Project" bubble (redundant with `PlansComparison.tsx`, kept as-is this session).
+
+Found and fixed a real bug in `BookingFlow.tsx` during verification: an impure `setStep` functional updater (with a nested `setConfirmed` side effect) that's unsafe under React 18 Strict Mode's dev double-invocation. Fixed by making `step` the single source of truth (`confirmed = step === 4`).
+
+**Known issue:** the booking flow's step transitions could not be fully live-verified in this session's browser preview — confirmed to be a preview-tool/environment issue (`document.hidden` stuck `true`, reproduced on an already-shipped unmodified feature too), not a code defect. **Russell should click through `/demo/laundryflow/book-a-pickup` once in a real browser to confirm.** Full detail in the checkpoint.
+
+**Next recommended task:** Russell does the one manual click-through above, then reviews the diff. Nothing blocking otherwise (no migration, no shared/other-product files touched).
+
+---
+
+**Laundryflow demo — 3-tier "What's Included" comparison section (2026-07-24) — code done, tsc clean, live-verified in browser, not committed — see checkpoint `laundryflow-plans-comparison-v1.md`:**
+
+Current Product: Services (Portfolio demo — `/demo/laundryflow`, NOT the real Laundry Management System SaaS product; see `docs/project-map.md` §8's explicit note that these are unrelated artifacts).
+
+Current Feature: Russell wanted `/demo/laundryflow` revised to reflect the real LMS product's Essential-plan features (from a screenshot of `src/components/laundry-management-system/Pricing.tsx`). After clarifying scope via `AskUserQuestion` twice, landed on: keep the existing demo site (Header/Hero/Pricing/Footer) untouched as "the whole demo website," and replace the old plain CTA section with a 3-plan comparison — Essential (₱399/mo + ₱2,999 setup, with website), Professional (₱699/mo + ₱4,999 setup, with website) copied verbatim from the real product's pricing, plus a new demo-only "System Only" tier (₱399/mo, no setup fee, no website — Essential's feature list minus the 3 website-specific items) for clients who just want the management software. New `PlansComparison.tsx` component absorbed the old `CTA.tsx`'s closing "A Cyberussell Concept" messaging; `CTA.tsx` deleted. Full detail in the checkpoint.
+
+**Next recommended task:** Russell reviews the diff; nothing blocking (no migration, no shared/other-product files touched). If he wants a real "System Only" tier added to the actual live LMS product pricing page too, that's a separate LMS-product task.
+
+---
+
 **Territory Management System — GL territory visit history, record change history, Plus Code/Name formatting (2026-07-23) — code done across 3 commits, tsc + vitest (59/59) + next build clean each time, NONE pushed yet (git remote credential broken) — see checkpoints `territory-management-gl-territory-visit-history-v1.md`, `territory-management-record-change-history-v1.md`, `territory-management-record-formatting-admin-audit-v1.md`:**
 
 Current Product: Territory Management System (TMS).

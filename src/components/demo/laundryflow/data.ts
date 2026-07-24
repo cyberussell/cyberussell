@@ -10,6 +10,8 @@ import {
   Clock,
   CreditCard,
   CircleCheckBig,
+  Globe,
+  Cpu,
 } from "lucide-react";
 
 export const SHOP = {
@@ -31,8 +33,8 @@ export const PHOTOS = {
 };
 
 export const NAV_LINKS = [
-  { label: "Pricing", href: "#pricing" },
-  { label: "Contact", href: "#contact" },
+  { label: "Pricing", href: "/demo/laundryflow#pricing" },
+  { label: "Contact", href: "/demo/laundryflow#contact" },
 ];
 
 export const HERO = {
@@ -71,6 +73,91 @@ export const PRICING_BANNER = {
   body: "Every load is carefully washed, dried, and folded with love and attention to detail.",
   ratingNote: "Rated 4.9/5 by our happy customers",
 };
+
+export const PLANS = [
+  {
+    key: "essential",
+    name: "Essential",
+    icon: Globe,
+    tagline: "With a professional website",
+    price: "₱399/month",
+    setup: "₱2,999 one-time setup",
+    highlight: false,
+    features: [
+      "Professional Website",
+      "Hosting & SSL",
+      "Custom Domain Connection",
+      "Customer Order Portal",
+      "QR Check-in & Tracking",
+      "Laundry Order Tracking",
+      "Customer Database",
+      "Monthly Sales Dashboard",
+      "Simple Inventory Tracking",
+      "Owner Dashboard",
+      "Up to 3 Staff Accounts",
+      "Standard Support",
+      "Up to 2 Website/System Change Requests per Month",
+    ],
+  },
+  {
+    key: "professional",
+    name: "Professional",
+    icon: Globe,
+    tagline: "With a professional website",
+    price: "₱699/month",
+    setup: "₱4,999 one-time setup",
+    highlight: true,
+    features: [
+      "Everything in Essential, plus:",
+      "Unlimited Staff Accounts",
+      "Pickup & Delivery Management",
+      "Google Business Profile Setup",
+      "Priority Support",
+      "Up to 6 Website/System Change Requests per Month",
+    ],
+  },
+  {
+    key: "system-only",
+    name: "System Only",
+    icon: Cpu,
+    tagline: "No website — just the management system",
+    price: "₱399/month",
+    setup: "No one-time setup fee",
+    highlight: false,
+    features: [
+      "Customer Order Portal",
+      "QR Check-in & Tracking",
+      "Laundry Order Tracking",
+      "Customer Database",
+      "Monthly Sales Dashboard",
+      "Simple Inventory Tracking",
+      "Owner Dashboard",
+      "Up to 3 Staff Accounts",
+      "Standard Support",
+      "Up to 2 System Change Requests per Month",
+    ],
+  },
+];
+
+export const LOCATION = {
+  heading: "Find Us Here",
+  body: "Conveniently located to serve the metro. Visit any of our branches for premium care.",
+};
+
+export const BOOKING_TIME_SLOTS = [
+  "09:00 AM - 11:00 AM",
+  "11:00 AM - 01:00 PM",
+  "01:00 PM - 03:00 PM",
+  "03:00 PM - 05:00 PM",
+  "05:00 PM - 07:00 PM",
+];
+
+export const BOOKING_SERVICES = [
+  { key: "wash-fold", icon: Shirt, service: "Wash & Fold", desc: "Perfect for everyday wear.", price: "₱35", unit: "/ kg" },
+  { key: "wash-iron", icon: WashingMachine, service: "Wash & Iron", desc: "Crisp, clean, and ready to wear.", price: "₱70", unit: "/ kg" },
+  { key: "comforters", icon: BedDouble, service: "Comforters", desc: "Deep cleaning for large items.", price: "₱250", unit: "/ pc" },
+  { key: "curtains", icon: Blinds, service: "Curtains", desc: "Dust-free and vibrant.", price: "₱180", unit: "/ panel" },
+];
 
 export const TESTIMONIALS = [
   { quote: "Always on time. Their pickup service has made our lives so much easier.", name: "Carla Mendoza", role: "Working Mom", color: "orange" },
