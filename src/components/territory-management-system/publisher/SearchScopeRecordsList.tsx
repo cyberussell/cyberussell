@@ -91,7 +91,6 @@ export default function SearchScopeRecordsList({
                   <p className="truncate text-xs text-slate-400">
                     Sec {r.section?.label ?? '—'} / Blk {r.block?.label ?? '—'}
                   </p>
-                  {r.plus_code && <p className="truncate text-xs text-slate-400">{r.plus_code}</p>}
                 </div>
                 {r.plus_code && (
                   <span
@@ -133,7 +132,7 @@ export default function SearchScopeRecordsList({
             ? `This block is currently being searched by ${formatPartnerNames(confirmPartnerNames)}. You can still view its location on the map.`
             : 'No other Ministry Partner currently has this block locked for search — you may be the only one working this area today. You can still view its location on the map.'
         }
-        confirmLabel="Open in Google Maps"
+        confirmLabel="Open Maps"
         variant="info"
         onConfirm={() => {
           if (mapConfirmFor?.plus_code) {

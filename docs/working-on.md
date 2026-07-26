@@ -1,10 +1,26 @@
 # Current Work
 
-**Territory Management System — Publisher UX relabel batch: post-completion actions, search-area tap target, terminology (2026-07-26) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed — see checkpoint `territory-management-publisher-relabel-batch-v1.md`:**
+**Territory Management System — Publisher polish batch: end-ministry button styling/placement, map-icon lockdown for viewers (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed — see checkpoint `territory-management-publisher-polish-batch-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Six items from Russell's screenshots — (1) search-area card no longer shows the Plus Code, End Ministry button restyled to an embossed red gradient button; (2) search-area ownership popup's confirm button shortened to "Open Maps" for a cleaner fit (the specific-partner-name feature itself, from the previous session, confirmed already correct — the screenshot just showed the solo-searcher fallback case); (3) "End My Ministry" removed from the Home tab entirely, List-tab only now; (4) read-only "viewing someone else's assignment" record detail: Territory Map/Google Maps icons hidden (a viewer shouldn't have a path to navigate to a record that isn't theirs), contact-detail text enlarged to fill the space; (5) confirmed, no change needed — List tab's End Ministry button already correctly hides itself whenever the Sync & Finish banner is showing. No migration needed.
+
+Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101, unchanged), `npx next build` (clean). Not live-verified (no TMS credentials in this sandbox). Not yet committed.
+
+**Next recommended task:** Russell live-verifies per the checkpoint's "Next Recommended Task" section, then commit and push (scoped explicitly to TMS files only — see the git-mistake note below).
+
+---
+
+**Territory Management System — Publisher UX relabel batch: post-completion actions, search-area tap target, terminology (2026-07-26) — code done, tsc + vitest (101/101) + next build clean, committed and pushed (`8c5afaa`) — see checkpoint `territory-management-publisher-relabel-batch-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 
 Current Feature: Four items from Russell's screenshots — (1) the search-area card's whole row is now the tap target for the ownership popup, not just the small "Map" pill; (2) assigned-record detail view: once a status is already logged, Unlocated/Correction/Add Person stay available (so a publisher can keep editing/appending), only "Pass to Another Partner" drops away — previously the whole action block disappeared the instant `completed_at` was set; (3) "My Added Records" tab buttons relabeled "Add Contact in This Territory" / "Report Contact in Another Territory"; (4) `MarkMovedForm`'s "Unlocated" chooser relabeled — "Update Current Resident"→"Correction", "Recommend New Location"→"Suggest New Location", "Recommend for Admin Removal"→"Request Record Removal", "Quick Note to Admin..."→"Report Contact in Another Territory" (matching item 3's label, same underlying feature). No migration needed.
+
+**Git mistake made and corrected in this same session:** the commit for this batch (and a follow-up `b069cbc`) was run without a trailing pathspec, sweeping in unrelated pre-staged Laundryflow/Services demo files (`Gallery.tsx`, 3 photos, `data.ts`, `page.tsx`, its own checkpoint) and `.claude/settings.local.json` that had been sitting staged in the index from a different session. Russell reviewed and said to leave it (that Laundryflow work was already finished/verified per its own checkpoint, just not yet committed by that session) rather than revert. Flagged: a Supabase secret key sitting in `.claude/settings.local.json`'s Bash-permission allowlist was already in git history from a prior commit (not newly introduced here) — worth rotating regardless since it's now on GitHub. **Lesson for future commits in this repo: always scope `git commit` with an explicit trailing `-- <paths>` pathspec** — this repo commonly has multiple sessions' unrelated work sitting staged/unstaged in the same working tree at once.
+
+Current Status: Committed and pushed. Not live-verified (no TMS credentials in this sandbox).
 
 Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101, unchanged), `npx next build` (clean). Not live-verified (no TMS credentials in this sandbox). Committed and pushed at Russell's request ("Deploy") without a live click-through first — see checkpoint's Known Issues for one naming-overlap flag (two different "Correction" buttons now exist on the same screen).
 

@@ -212,11 +212,13 @@ export default function PublisherRecordDetailView({
             <Home className="h-5 w-5 text-[#2563EB]" />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className={`truncate font-semibold ${tone.primary}`}>
+            {/* Read-only viewers (someone else's assignment) never see the map icons below —
+                bumped up a size here to fill that space rather than leave it looking sparse. */}
+            <h2 className={`truncate font-semibold ${readOnly ? 'text-lg' : ''} ${tone.primary}`}>
               {assigned.record.address || assigned.record.plus_code || 'Unlabeled record'}
               {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
             </h2>
-            <p className={`mt-0.5 truncate text-sm ${tone.secondary}`}>
+            <p className={`mt-0.5 truncate ${readOnly ? 'text-base' : 'text-sm'} ${tone.secondary}`}>
               Sec {assigned.record.section?.label ?? '—'} / Blk {assigned.record.block?.label ?? '—'}
               {assigned.record.resident_name ? ` · ${assigned.record.resident_name}` : ''}
             </p>
@@ -283,8 +285,10 @@ export default function PublisherRecordDetailView({
         {/* Bigger, well-separated, icon-only touch targets in the corner rather than full-width
             labeled buttons — easier for a less phone-dexterous publisher to tap accurately.
             Notes intentionally don't appear on this card anymore — a visit's own notes still
-            show per-entry in Visit History below. */}
-        {(mapsUrl || mapUrl) && (
+            show per-entry in Visit History below. Hidden entirely for a read-only viewer (someone
+            else's assignment) — a "viewer" shouldn't have a way to navigate to a record that
+            isn't theirs, map or otherwise. */}
+        {!readOnly && (mapsUrl || mapUrl) && (
           <div className="mt-4 flex justify-end gap-3">
             {mapUrl && (
               <TerritoryMapViewer mapImageUrl={mapUrl} territoryName={assigned.record.territory?.name ?? 'Territory'} variant="icon" />

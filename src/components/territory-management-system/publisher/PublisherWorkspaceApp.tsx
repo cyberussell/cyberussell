@@ -1091,23 +1091,6 @@ export default function PublisherWorkspaceApp({
               )
             })()}
 
-            {/* Release Assignment moved to the batch-landing "Select your Partner" page (see
-                ReleaseAssignmentSlider) — that page is where a change-of-mind actually needs to
-                happen, before this device has even settled into a workspace. This action itself
-                disappears once the session has already ended — there's nothing left to end. Once
-                every assigned record is done (accounting for Do Not Call locks, see
-                isPartnershipAllDone) or this is a search-only partnership (which can never reach
-                "all done" by record count — see allDone's comment above), this is a genuine
-                finish, not an early exit, so it must NOT stamp ended_early_at. */}
-            {!readOnly && !sessionEnded && (
-              <button
-                type="button"
-                onClick={() => setConfirmDialog({ type: allDone || isSearchOnlyPartnership ? 'endMinistry' : 'endMinistryEarly' })}
-                className="w-full rounded-lg border border-red-200 bg-red-50 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100"
-              >
-                {allDone || isSearchOnlyPartnership ? 'End My Ministry' : 'End My Ministry Early'}
-              </button>
-            )}
           </>
         )}
 
@@ -1193,16 +1176,15 @@ export default function PublisherWorkspaceApp({
               </div>
             )}
 
-            {/* Same control as the Home tab (see above) — surfaced here too since a partner
-                searching an area spends most of their time on this tab, not Home, and
-                previously had no way to end their ministry without switching tabs first. Skipped
-                when the "All assigned records are done!" banner above is already showing its own
-                Sync & Finish button — that's the same finish action, no need for a second one. */}
+            {/* List-tab only now — Russell had this removed from Home (it's map/territory-
+                focused, not a place to end ministry from). Skipped when the "All assigned
+                records are done!" banner above is already showing its own Sync & Finish button
+                — that's the same finish action, no need for a second one. */}
             {!readOnly && !sessionEnded && !(allDone && workspace.records.length > 0) && (
               <button
                 type="button"
                 onClick={() => setConfirmDialog({ type: allDone || isSearchOnlyPartnership ? 'endMinistry' : 'endMinistryEarly' })}
-                className="w-full rounded-lg border border-red-200 bg-red-50 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                className="w-full rounded-lg bg-gradient-to-r from-red-600 to-red-500 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-110"
               >
                 {allDone || isSearchOnlyPartnership ? 'End My Ministry' : 'End My Ministry Early'}
               </button>
