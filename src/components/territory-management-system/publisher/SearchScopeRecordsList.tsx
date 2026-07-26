@@ -1,6 +1,8 @@
-import { RefreshCw } from 'lucide-react'
+import { useState } from 'react'
+import { MapPin, RefreshCw } from 'lucide-react'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 import Card from '@/components/territory-management-system/dashboard/Card'
+import ConfirmModal from '@/components/territory-management-system/ConfirmModal'
 
 // Whatever records already exist in an overflow batch's chosen search area (see
 // getRecordsInBlocks/025_overflow_search_scope.sql) — read-only by design (these were never
@@ -9,13 +11,17 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 // adding a new one. The manual Refresh button re-fetches live rather than relying on the
 // initial page load, since the whole point is catching a record added moments ago by someone
 // else still working the same area.
+//
+// Deliberately not tappable into a detail/edit view — these records aren't this partnership's
+// to update. The only action is "View on Map" (opens Google Maps directly), gated behind a
+// branded popup clarifying why: it belongs to whichever ministry partner is actually covering
+// it, not the one searching nearby.
 export default function SearchScopeRecordsList({
   sectionLabel,
   blockLabels,
   records,
   refreshing,
   onRefresh,
-  onSelect,
   showAreaLabel = true,
 }: {
   sectionLabel: string
@@ -23,12 +29,13 @@ export default function SearchScopeRecordsList({
   records: TerritoryRecordWithLocation[]
   refreshing: boolean
   onRefresh: () => void
-  onSelect: (recordId: string) => void
   // The caller may already show the Section/Block line as part of a page-level "Area To
   // Search" header (see PublisherWorkspaceApp's List tab) — set false there to avoid repeating
   // it right underneath.
   showAreaLabel?: boolean
 }) {
+  const [mapConfirmFor, setMapConfirmFor] = useState<TerritoryRecordWithLocation | null>(null)
+
   return (
     <div>
       <div className="mb-3 flex items-center justify-between gap-2">
@@ -58,12 +65,7 @@ export default function SearchScopeRecordsList({
       ) : (
         <div className="space-y-2">
           {records.map((r) => (
-            <button
-              key={r.id}
-              type="button"
-              onClick={() => onSelect(r.id)}
-              className="flex w-full items-center justify-between gap-3 rounded-xl border border-blue-100/60 bg-white p-3 text-left shadow-sm transition hover:border-[#38BDF8]/40"
-            >
+            <div key={r.id} className="flex w-full items-center justify-between gap-3 rounded-xl border border-blue-100/60 bg-white p-3 shadow-sm">
               <div className="min-w-0">
                 <p className="truncate font-medium text-[#0B1B33]">
                   {r.address || r.plus_code || 'Unlabeled record'}
@@ -75,10 +77,36 @@ export default function SearchScopeRecordsList({
                 </p>
                 {r.plus_code && <p className="truncate text-xs text-slate-400">{r.plus_code}</p>}
               </div>
-            </button>
+              {r.plus_code && (
+                <button
+                  type="button"
+                  onClick={() => setMapConfirmFor(r)}
+                  aria-label="View on map"
+                  className="flex shrink-0 items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+                >
+                  <MapPin className="h-3.5 w-3.5" />
+                  Map
+                </button>
+              )}
+            </div>
           ))}
         </div>
       )}
+
+      <ConfirmModal
+        open={mapConfirmFor !== null}
+        title="Not your assigned record"
+        message="This record belongs to the ministry partner currently working in this area. You can still view its location on the map."
+        confirmLabel="Open in Google Maps"
+        variant="info"
+        onConfirm={() => {
+          if (mapConfirmFor?.plus_code) {
+            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapConfirmFor.plus_code)}`, '_blank', 'noopener,noreferrer')
+          }
+          setMapConfirmFor(null)
+        }}
+        onCancel={() => setMapConfirmFor(null)}
+      />
     </div>
   )
 }

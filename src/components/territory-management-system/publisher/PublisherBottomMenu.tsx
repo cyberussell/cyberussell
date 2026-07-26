@@ -18,7 +18,7 @@ export default function PublisherBottomMenu({
   onGoToAddedRecords,
   showAddedRecords,
 }: {
-  view: 'home' | 'list' | 'detail' | 'addRecord' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord' | 'partners'
+  view: 'home' | 'list' | 'detail' | 'addRecord' | 'addQuickNote' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord' | 'partners'
   onGoToHome: () => void
   onGoToPartners: () => void
   onGoToRecords: () => void

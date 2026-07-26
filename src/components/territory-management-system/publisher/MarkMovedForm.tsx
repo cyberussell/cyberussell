@@ -7,6 +7,7 @@ import FormField, { inputClass } from '@/components/territory-management-system/
 import Card from '@/components/territory-management-system/dashboard/Card'
 import { locatePlusCode } from '@/lib/territory-management-system/plusCode'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
+import PublisherQuickNoteForm, { type QuickNoteFields } from './PublisherQuickNoteForm'
 
 export interface MovedRecordFields {
   address: string
@@ -41,9 +42,11 @@ export interface MoveRecommendFields {
 export default function MarkMovedForm({
   initial,
   submitting,
+  sendingQuickNote,
   onUpdate,
   onRecommendMove,
   onRecommend,
+  onSendQuickNote,
   // Lets a parent skip straight past the trigger button — used by the mobile "Pass to Other /
   // Mark as Moved" button row (PublisherRecordDetailView), which only mounts this component
   // once its own "Mark as Moved" button is tapped, so the trigger itself would be redundant.
@@ -56,6 +59,7 @@ export default function MarkMovedForm({
 }: {
   initial: MovedRecordFields
   submitting: boolean
+  sendingQuickNote: boolean
   // "Update Current Resident" — a different person lives here now, direct/instant write, no
   // Admin review (same trust level as logging a visit).
   onUpdate: (fields: MovedRecordFields) => void
@@ -66,6 +70,10 @@ export default function MarkMovedForm({
   // recordId is currentRecordId unless the publisher picks a different household member on the
   // record-picker step below (only shown when householdRecords is non-empty).
   onRecommend: (reason: string, recordId: string) => void
+  // Additive alternative to onRecommendMove above, for when the publisher doesn't have (or
+  // doesn't want to fill in) the structured address/Plus Code/territory-section-block details
+  // that path needs for the Admin to auto-apply the move — same admin Notes list either way.
+  onSendQuickNote: (fields: QuickNoteFields) => void
   initialMode?: 'closed' | 'choose'
   // This record's own id/label, used as the record picker's default selection and its own radio
   // option — required even when householdRecords is empty since onRecommend always needs a
@@ -83,7 +91,7 @@ export default function MarkMovedForm({
   // publisher who's only updating the address within the same barangay doesn't have to touch them.
   currentTerritoryId: string
 }) {
-  const [mode, setMode] = useState<'closed' | 'choose' | 'updateCurrent' | 'recommendMove' | 'recommend'>(initialMode)
+  const [mode, setMode] = useState<'closed' | 'choose' | 'updateCurrent' | 'recommendMove' | 'recommend' | 'quickNote'>(initialMode)
   const [fields, setFields] = useState(initial)
   const [reason, setReason] = useState('')
   const [recommendRecordId, setRecommendRecordId] = useState(currentRecordId)
@@ -161,6 +169,13 @@ export default function MarkMovedForm({
             className="w-full rounded-lg border border-red-200 bg-white py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300"
           >
             Recommend for Admin Removal
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('quickNote')}
+            className="w-full rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+          >
+            Quick Note to Admin (no location details)
           </button>
           <button
             type="button"
@@ -423,6 +438,18 @@ export default function MarkMovedForm({
           </button>
         </div>
       </Card>
+    )
+  }
+
+  if (mode === 'quickNote') {
+    return (
+      <PublisherQuickNoteForm
+        heading="Quick Note to Admin"
+        description="No address/location details needed — just enough for the Admin to follow up manually. This is in addition to Recommend New Location, not a replacement for it."
+        sending={sendingQuickNote}
+        onSubmit={onSendQuickNote}
+        onCancel={() => setMode('choose')}
+      />
     )
   }
 

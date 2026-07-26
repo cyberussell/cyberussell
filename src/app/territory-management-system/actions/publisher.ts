@@ -21,10 +21,12 @@ import {
   releasePartnershipSchema,
   renamePartnershipSchema,
   submitPartnershipNoteSchema,
+  submitQuickNoteSchema,
   terminatePartnershipEarlySchema,
   updatePublisherRecordSchema,
 } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
+  addPartnershipQuickNote,
   finishPartnership,
   getBatchById,
   getBatchSummary,
@@ -391,6 +393,37 @@ export async function submitPartnershipNoteAction(_prev: ActionResult, formData:
     await submitPartnershipNote(supabase, partnership.id, parsed.data.note)
   } catch (e) {
     await logError(partnership.congregation_id, 'submitPartnershipNoteAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not send the note.' }
+  }
+
+  return { error: 'SAVED' }
+}
+
+// The unstructured alternative to the full Add Record / Recommend New Location forms — see
+// submitQuickNoteSchema. Not gated on partnership.expired, same reasoning as
+// submitPartnershipNoteAction above.
+export async function sendQuickNoteAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  const parsed = submitQuickNoteSchema.safeParse({
+    partnershipToken: formData.get('partnershipToken'),
+    name: formData.get('name'),
+    phone: formData.get('phone'),
+    notes: formData.get('notes'),
+  })
+  if (!parsed.success) return { error: 'Please fill in the required fields.' }
+  if (!(await checkRateLimit(`tms-quicknote:${clientIp(await headers())}`, 5))) return { error: 'Too many attempts. Please wait a moment.' }
+
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, parsed.data.partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+
+  try {
+    await addPartnershipQuickNote(supabase, partnership.id, partnership.congregation_id, {
+      name: parsed.data.name,
+      phone: parsed.data.phone ?? '',
+      notes: parsed.data.notes,
+    })
+  } catch (e) {
+    await logError(partnership.congregation_id, 'sendQuickNoteAction', e)
     return { error: e instanceof Error ? e.message : 'Could not send the note.' }
   }
 

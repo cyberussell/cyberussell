@@ -14,6 +14,7 @@ import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherVisitLogForm from './PublisherVisitLogForm'
 import MoveRecordForm from './MoveRecordForm'
 import MarkMovedForm, { type MoveRecommendFields, type MovedRecordFields } from './MarkMovedForm'
+import type { QuickNoteFields } from './PublisherQuickNoteForm'
 import RecommendCorrectionForm, { type CorrectionFields } from './RecommendCorrectionForm'
 import AddHouseholdMemberForm, { type NewHouseholdMemberPayload } from './AddHouseholdMemberForm'
 
@@ -93,6 +94,7 @@ export default function PublisherRecordDetailView({
   onSelectHouseholdRecord,
   moving,
   markingMoved,
+  sendingQuickNote,
   recommendingCorrection,
   territories,
   mapUrl,
@@ -102,6 +104,7 @@ export default function PublisherRecordDetailView({
   onRecommendMove,
   onRecommendRemoval,
   onRecommendCorrection,
+  onSendQuickNote,
   onAddSibling,
   onAddHouseholdMember,
 }: {
@@ -135,6 +138,8 @@ export default function PublisherRecordDetailView({
   // True while either "Mark as Moved" path (Update Contact Record / Recommend for Admin
   // Removal) is being saved/synced.
   markingMoved: boolean
+  // True while MarkMovedForm's "Quick Note to Admin" alternative is being saved/synced.
+  sendingQuickNote: boolean
   // True while the "Correction" (Recommend a Correction) form is being saved/synced.
   recommendingCorrection: boolean
   // Every congregation territory (not just this record's own), for RecommendCorrectionForm's and
@@ -154,6 +159,8 @@ export default function PublisherRecordDetailView({
   // see MarkMovedForm's record picker.
   onRecommendRemoval: (reason: string, recordId: string) => void
   onRecommendCorrection: (fields: CorrectionFields) => void
+  // Additive alternative to onRecommendMove, see MarkMovedForm.
+  onSendQuickNote: (fields: QuickNoteFields) => void
   onAddSibling: () => void
   // Mobile-only inline path for "Add Person" — same underlying add-a-household-member action as
   // onAddSibling, but submits from right here instead of navigating to a separate view, matching
@@ -319,9 +326,11 @@ export default function PublisherRecordDetailView({
             <MarkMovedForm
               initial={movedFields}
               submitting={markingMoved}
+              sendingQuickNote={sendingQuickNote}
               onUpdate={onUpdateMoved}
               onRecommendMove={onRecommendMove}
               onRecommend={onRecommendRemoval}
+              onSendQuickNote={onSendQuickNote}
               currentRecordId={assigned.record.id}
               currentRecordLabel={assigned.record.resident_name || assigned.record.address || 'this record'}
               householdRecords={householdRecords}
@@ -395,9 +404,11 @@ export default function PublisherRecordDetailView({
                   initialMode="choose"
                   initial={movedFields}
                   submitting={markingMoved}
+                  sendingQuickNote={sendingQuickNote}
                   onUpdate={onUpdateMoved}
                   onRecommendMove={onRecommendMove}
                   onRecommend={onRecommendRemoval}
+                  onSendQuickNote={onSendQuickNote}
                   currentRecordId={assigned.record.id}
                   currentRecordLabel={assigned.record.resident_name || assigned.record.address || 'this record'}
                   householdRecords={householdRecords}

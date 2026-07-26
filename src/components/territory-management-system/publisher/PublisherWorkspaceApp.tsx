@@ -24,8 +24,8 @@ import PublisherBottomMenu from './PublisherBottomMenu'
 import PublisherStatusHelp from './PublisherStatusHelp'
 import PublisherFAQ from './PublisherFAQ'
 import ConfirmModal from '@/components/territory-management-system/ConfirmModal'
-import SlideToConfirm from './SlideToConfirm'
 import PartnershipRenameForm from './PartnershipRenameForm'
+import PublisherQuickNoteForm, { type QuickNoteFields } from './PublisherQuickNoteForm'
 import SharePartnershipCard from './SharePartnershipCard'
 import ChooseSearchScopeForm from './ChooseSearchScopeForm'
 import AssignedRecordsList from './AssignedRecordsList'
@@ -37,7 +37,6 @@ import PublisherRecordForm, { type NewPublisherRecordPayload } from './Publisher
 import AddHouseholdMemberForm, { type NewHouseholdMemberPayload } from './AddHouseholdMemberForm'
 import PublisherNoteForm from './PublisherNoteForm'
 import SearchScopeRecordsList from './SearchScopeRecordsList'
-import SearchScopeRecordDetailView from './SearchScopeRecordDetailView'
 import PartnerStatusList from './PartnerStatusList'
 import SearchScopeSummaryCard from './SearchScopeSummaryCard'
 
@@ -69,6 +68,7 @@ const QUEUE_ITEM_TYPE_LABELS: Record<SyncQueueItem['type'], string> = {
   recommendCorrection: 'Recommend a correction',
   recommendSearchScopeCorrection: 'Recommend a correction',
   recommendMove: 'Recommend new location',
+  quickNote: 'Quick note to Admin',
 }
 
 function describeQueueItem(item: SyncQueueItem): string {
@@ -108,13 +108,13 @@ type View =
   // instead of "My Added Records". Both undefined for the plain "My Added Records" entry point,
   // which still starts blank and lands on "My Added Records" afterward as before.
   | { name: 'addRecord'; prefill?: Partial<NewPublisherRecordPayload>; returnToRecordId?: string }
+  | { name: 'addQuickNote' }
   | { name: 'addedRecords' }
   | { name: 'addedRecordDetail'; recordId: string }
   | { name: 'editAddedRecord'; recordId: string }
   | { name: 'note' }
   | { name: 'sync' }
   | { name: 'done' }
-  | { name: 'searchScopeDetail'; recordId: string }
 
 // The offline-first app shell: everything after the initial server-rendered load happens as
 // in-memory view-state changes here, never a new Next.js page navigation — that's what makes
@@ -142,9 +142,9 @@ export default function PublisherWorkspaceApp({
   const [savingVisit, setSavingVisit] = useState(false)
   const [movingRecord, setMovingRecord] = useState(false)
   const [sendingNote, setSendingNote] = useState(false)
+  const [sendingQuickNote, setSendingQuickNote] = useState(false)
   const [markingMoved, setMarkingMoved] = useState(false)
   const [recommendingCorrection, setRecommendingCorrection] = useState(false)
-  const [recommendingSearchScopeCorrection, setRecommendingSearchScopeCorrection] = useState(false)
   const [refreshingSearchScope, setRefreshingSearchScope] = useState(false)
   const [refreshingPartners, setRefreshingPartners] = useState(false)
   const [choosingSearchScope, setChoosingSearchScope] = useState(false)
@@ -159,10 +159,14 @@ export default function PublisherWorkspaceApp({
   const [mapView, setMapView] = useState<'territory' | 'records' | 'search' | 'summary' | 'share' | 'help' | 'faq'>('territory')
   // Which branded confirm dialog (see ConfirmModal) is currently open, replacing
   // window.confirm() — its "www.cyberussell.com says" chrome reads as an unfamiliar browser
-  // warning to a publisher in the field, not a TMS-branded prompt. Early Out and Release now go
-  // through SlideToConfirm's own drag gesture instead (a deliberate slide is confirmation enough
-  // on its own), so only deleteAddedRecord still needs this.
-  const [confirmDialog, setConfirmDialog] = useState<{ type: 'deleteAddedRecord'; recordId: string } | null>(null)
+  // warning to a publisher in the field, not a TMS-branded prompt. Release still goes through
+  // ReleaseAssignmentSlider's own SlideToConfirm drag gesture; ending ministry (early or once
+  // all records are done) used to as well but was switched to this same modal below — a
+  // completion-aware label needed a real button to hang the label off of, and a slide gesture
+  // was hiding the "missing" Save-button-style bug pattern behind an unfamiliar interaction.
+  const [confirmDialog, setConfirmDialog] = useState<
+    { type: 'deleteAddedRecord'; recordId: string } | { type: 'endMinistry' } | { type: 'endMinistryEarly' } | null
+  >(null)
   const online = useOnlineStatus()
   // Several call sites can each decide "we're online, sync now" in quick succession (a form
   // submit's own trigger, plus the reconnect effect) — without this, two overlapping
@@ -293,6 +297,9 @@ export default function PublisherWorkspaceApp({
     if (claiming) {
       setClaimedPartnershipToken(batchToken, partnershipToken)
       setDeviceClaim(partnershipToken)
+      // First-time claim lands on the records list (what they're here to do) instead of
+      // staying on Home — a later rename (editing an already-claimed name) doesn't navigate.
+      setView({ name: 'list' })
     }
     await enqueue(partnershipToken, 'rename', { partnershipToken, name })
     await refreshQueue()
@@ -459,31 +466,6 @@ export default function PublisherWorkspaceApp({
   function returnToList() {
     setView({ name: 'list' })
     window.scrollTo({ top: 0, behavior: 'auto' })
-  }
-
-  // Recommends a Plus Code correction on a search-scope record (never assigned to this
-  // partnership — see recommendSearchScopeCorrectionAction). Doesn't change what's displayed
-  // (the Admin hasn't applied it yet), same as the assigned-record correction path.
-  async function handleRecommendSearchScopeCorrection(recordId: string, fields: CorrectionFields) {
-    setRecommendingSearchScopeCorrection(true)
-    try {
-      await enqueue(partnershipToken, 'recommendSearchScopeCorrection', {
-        partnershipToken,
-        recordId,
-        plusCode: fields.plusCode,
-        householdMembers: fields.householdMembers,
-        reason: fields.reason,
-        territoryId: fields.territoryId,
-        sectionId: fields.sectionId,
-        blockId: fields.blockId,
-      })
-      await refreshQueue()
-      if (online) await handleSync()
-      toast.success('Correction recommendation sent to the Admin.')
-      setView({ name: 'list' })
-    } finally {
-      setRecommendingSearchScopeCorrection(false)
-    }
   }
 
   // Manual re-fetch of the search-scope records list — deliberately not automatic polling
@@ -725,6 +707,23 @@ export default function PublisherWorkspaceApp({
     await handleFinish()
     if (online) await handleSync()
     goToSync()
+  }
+
+  // The unstructured "I don't have the full details" alternative to Add Record / Recommend New
+  // Location — lands in the same admin Notes list as the end-of-ministry note, just enqueued as
+  // its own item rather than routing through the finish flow (a partnership can send any number
+  // of these throughout the day).
+  async function handleSendQuickNote(fields: QuickNoteFields) {
+    setSendingQuickNote(true)
+    try {
+      await enqueue(partnershipToken, 'quickNote', { partnershipToken, ...fields })
+      await refreshQueue()
+      if (online) await handleSync()
+      toast.success('Sent to the Admin.')
+      setView({ name: 'addedRecords' })
+    } finally {
+      setSendingQuickNote(false)
+    }
   }
 
   async function handleTerminate() {
@@ -1094,16 +1093,20 @@ export default function PublisherWorkspaceApp({
 
             {/* Release Assignment moved to the batch-landing "Select your Partner" page (see
                 ReleaseAssignmentSlider) — that page is where a change-of-mind actually needs to
-                happen, before this device has even settled into a workspace. Early Out itself
-                disappears once the session has already ended (whether via this same slide or a
-                normal Sync & Finish) — there's nothing left to end. */}
+                happen, before this device has even settled into a workspace. This action itself
+                disappears once the session has already ended — there's nothing left to end. Once
+                every assigned record is done (accounting for Do Not Call locks, see
+                isPartnershipAllDone) or this is a search-only partnership (which can never reach
+                "all done" by record count — see allDone's comment above), this is a genuine
+                finish, not an early exit, so it must NOT stamp ended_early_at. */}
             {!readOnly && !sessionEnded && (
-              <SlideToConfirm
-                label={isSearchOnlyPartnership ? 'Slide to End My Ministry' : 'Slide for Early Out'}
-                confirmingLabel="Ending…"
-                tone="danger"
-                onConfirm={handleTerminate}
-              />
+              <button
+                type="button"
+                onClick={() => setConfirmDialog({ type: allDone || isSearchOnlyPartnership ? 'endMinistry' : 'endMinistryEarly' })}
+                className="w-full rounded-lg border border-red-200 bg-red-50 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+              >
+                {allDone || isSearchOnlyPartnership ? 'End My Ministry' : 'End My Ministry Early'}
+              </button>
             )}
           </>
         )}
@@ -1175,7 +1178,6 @@ export default function PublisherWorkspaceApp({
                         records={workspace.searchScopeRecords}
                         refreshing={refreshingSearchScope}
                         onRefresh={handleRefreshSearchScope}
-                        onSelect={(recordId) => setView({ name: 'searchScopeDetail', recordId })}
                         showAreaLabel={false}
                       />
                     </div>
@@ -1190,16 +1192,19 @@ export default function PublisherWorkspaceApp({
               </div>
             )}
 
-            {/* Same control as the Home tab (see below) — surfaced here too since a partner
+            {/* Same control as the Home tab (see above) — surfaced here too since a partner
                 searching an area spends most of their time on this tab, not Home, and
-                previously had no way to end their ministry without switching tabs first. */}
-            {!readOnly && !sessionEnded && (
-              <SlideToConfirm
-                label={isSearchOnlyPartnership ? 'Slide to End My Ministry' : 'Slide for Early Out'}
-                confirmingLabel="Ending…"
-                tone="danger"
-                onConfirm={handleTerminate}
-              />
+                previously had no way to end their ministry without switching tabs first. Skipped
+                when the "All assigned records are done!" banner above is already showing its own
+                Sync & Finish button — that's the same finish action, no need for a second one. */}
+            {!readOnly && !sessionEnded && !(allDone && workspace.records.length > 0) && (
+              <button
+                type="button"
+                onClick={() => setConfirmDialog({ type: allDone || isSearchOnlyPartnership ? 'endMinistry' : 'endMinistryEarly' })}
+                className="w-full rounded-lg border border-red-200 bg-red-50 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+              >
+                {allDone || isSearchOnlyPartnership ? 'End My Ministry' : 'End My Ministry Early'}
+              </button>
             )}
           </>
         )}
@@ -1233,6 +1238,7 @@ export default function PublisherWorkspaceApp({
             onSelectHouseholdRecord={(recordId) => setView({ name: 'detail', recordId })}
             moving={movingRecord}
             markingMoved={markingMoved}
+            sendingQuickNote={sendingQuickNote}
             recommendingCorrection={recommendingCorrection}
             territories={territoryStructures}
             mapUrl={selected.record.territory ? mapUrls[selected.record.territory.id] : undefined}
@@ -1242,6 +1248,7 @@ export default function PublisherWorkspaceApp({
             onRecommendMove={(fields) => handleRecommendMove(selected.record.id, fields)}
             onRecommendRemoval={(reason, recordId) => handleRecommendRemoval(recordId, reason)}
             onRecommendCorrection={(fields) => handleRecommendCorrection(selected.record.id, fields)}
+            onSendQuickNote={handleSendQuickNote}
             onAddSibling={() =>
               setView({
                 name: 'addRecord',
@@ -1312,16 +1319,36 @@ export default function PublisherWorkspaceApp({
               onSelect={(recordId) => setView({ name: 'addedRecordDetail', recordId })}
             />
             {editable && territoryStructures.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setView({ name: 'addRecord' })}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-medium text-[#2563EB] hover:border-[#38BDF8]/40"
-              >
-                <Plus className="h-4 w-4" />
-                Add a New Contact Record
-              </button>
+              <div className="mt-3 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setView({ name: 'addRecord' })}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-medium text-[#2563EB] hover:border-[#38BDF8]/40"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Someone Found in Today&apos;s Territory
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setView({ name: 'addQuickNote' })}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-medium text-[#2563EB] hover:border-[#38BDF8]/40"
+                >
+                  <Plus className="h-4 w-4" />
+                  Send a Quick Note to Admin
+                </button>
+              </div>
             )}
           </div>
+        )}
+
+        {view.name === 'addQuickNote' && (
+          <PublisherQuickNoteForm
+            heading="Send a Quick Note to Admin"
+            description="No territory details needed — just enough for the Admin to follow up. This goes to the same Notes list as your end-of-ministry note."
+            sending={sendingQuickNote}
+            onSubmit={handleSendQuickNote}
+            onCancel={() => setView({ name: 'addedRecords' })}
+          />
         )}
 
         {view.name === 'addedRecordDetail' &&
@@ -1360,21 +1387,6 @@ export default function PublisherWorkspaceApp({
                 }}
                 onSubmit={(payload) => handleEditAddedRecord(addedRecord.id, payload)}
                 onCancel={() => setView({ name: 'addedRecordDetail', recordId: addedRecord.id })}
-              />
-            )
-          })()}
-
-        {view.name === 'searchScopeDetail' &&
-          (() => {
-            const record = workspace.searchScopeRecords.find((r) => r.id === view.recordId)
-            if (!record) return null
-            return (
-              <SearchScopeRecordDetailView
-                record={record}
-                territories={territoryStructures}
-                editable={editable}
-                submitting={recommendingSearchScopeCorrection}
-                onRecommendCorrection={(fields) => handleRecommendSearchScopeCorrection(record.id, fields)}
               />
             )
           })()}
@@ -1465,7 +1477,6 @@ export default function PublisherWorkspaceApp({
           view.name === 'note' ||
           view.name === 'sync' ||
           view.name === 'done' ||
-          view.name === 'searchScopeDetail' ||
           view.name === 'detail'
             ? 'list'
             : view.name
@@ -1485,6 +1496,32 @@ export default function PublisherWorkspaceApp({
         onConfirm={() => {
           if (confirmDialog?.type === 'deleteAddedRecord') handleDeleteAddedRecord(confirmDialog.recordId)
           setConfirmDialog(null)
+        }}
+        onCancel={() => setConfirmDialog(null)}
+      />
+
+      <ConfirmModal
+        open={confirmDialog?.type === 'endMinistry'}
+        title="End your ministry for today?"
+        message="Every record assigned to you is done. This will take you to Sync & Finish."
+        confirmLabel="End My Ministry"
+        variant="info"
+        onConfirm={() => {
+          setConfirmDialog(null)
+          goToNote()
+        }}
+        onCancel={() => setConfirmDialog(null)}
+      />
+
+      <ConfirmModal
+        open={confirmDialog?.type === 'endMinistryEarly'}
+        title="End your ministry early?"
+        message="You still have unfinished records. Ending now marks them as not completed today."
+        confirmLabel="End Early"
+        variant="caution"
+        onConfirm={() => {
+          setConfirmDialog(null)
+          handleTerminate()
         }}
         onCancel={() => setConfirmDialog(null)}
       />

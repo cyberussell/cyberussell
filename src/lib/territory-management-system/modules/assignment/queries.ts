@@ -805,6 +805,67 @@ export interface PartnershipNote {
   assignment_date: string
 }
 
+// The quick-note alternative to the full Add Record / Recommend New Location forms — see
+// 040_publisher_quick_notes.sql. Unlike admin_note (one per partnership), a partnership can send
+// any number of these.
+export async function addPartnershipQuickNote(
+  supabase: SupabaseClient,
+  partnershipId: string,
+  congregationId: string,
+  fields: { name: string; phone: string; notes: string }
+): Promise<void> {
+  const { error } = await supabase.from('partnership_quick_notes').insert({
+    congregation_id: congregationId,
+    partnership_id: partnershipId,
+    name: fields.name,
+    phone: fields.phone || null,
+    notes: fields.notes,
+  })
+  if (error) throw error
+}
+
+export interface PartnershipQuickNote {
+  id: string
+  partnershipName: string
+  name: string
+  phone: string | null
+  notes: string
+  created_at: string
+  assignment_date: string
+}
+
+// Admin-only read of every quick note sent across all of this congregation's batches (not
+// scoped to today) — same reasoning as listPartnershipNotesForCongregation above. Merged with
+// that list on the Notes page itself rather than here, since the two carry different shapes.
+export async function listPartnershipQuickNotesForCongregation(
+  supabase: SupabaseClient,
+  congregationId: string
+): Promise<PartnershipQuickNote[]> {
+  const { data } = await supabase
+    .from('partnership_quick_notes')
+    .select('id, name, phone, notes, created_at, partnership:partnerships(name, batch:assignment_batches(assignment_date))')
+    .eq('congregation_id', congregationId)
+    .order('created_at', { ascending: false })
+  return (
+    (data ?? []) as unknown as Array<{
+      id: string
+      name: string
+      phone: string | null
+      notes: string
+      created_at: string
+      partnership: { name: string; batch: { assignment_date: string } | null } | null
+    }>
+  ).map((row) => ({
+    id: row.id,
+    partnershipName: row.partnership?.name ?? '',
+    name: row.name,
+    phone: row.phone,
+    notes: row.notes,
+    created_at: row.created_at,
+    assignment_date: row.partnership?.batch?.assignment_date ?? '',
+  }))
+}
+
 // Admin-only read of every submitted end-of-ministry note across all of this congregation's
 // batches (not scoped to today) — a note from last week is still worth an admin seeing it.
 export async function listPartnershipNotesForCongregation(supabase: SupabaseClient, congregationId: string): Promise<PartnershipNote[]> {

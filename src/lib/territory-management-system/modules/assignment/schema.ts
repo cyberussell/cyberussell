@@ -142,6 +142,18 @@ export const submitPartnershipNoteSchema = z.object({
 })
 export type SubmitPartnershipNoteInput = z.input<typeof submitPartnershipNoteSchema>
 
+// The unstructured alternative to the full Add Record / Recommend New Location forms — no
+// territory/section/block/address, just enough for the Admin to follow up manually. Phone is
+// the only optional field; Name and Notes are both required (there's no point sending this with
+// neither).
+export const submitQuickNoteSchema = z.object({
+  partnershipToken: z.string().min(1),
+  name: z.string().min(1).max(120),
+  phone: z.string().max(30).optional().default(''),
+  notes: z.string().min(1).max(1000),
+})
+export type SubmitQuickNoteInput = z.input<typeof submitQuickNoteSchema>
+
 // "Mark as Moved" → "Update Current Resident" path — a different person now lives at this same
 // address (location itself hasn't changed, so no Plus Code field), territory/section/block
 // never change here either. Instant, no Admin review — same trust level as logging a visit.

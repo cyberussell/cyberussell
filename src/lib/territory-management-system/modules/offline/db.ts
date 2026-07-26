@@ -25,6 +25,7 @@ export type SyncQueueItemType =
   | 'recommendCorrection'
   | 'recommendSearchScopeCorrection'
   | 'recommendMove'
+  | 'quickNote'
 export type SyncQueueItemStatus = 'pending' | 'syncing' | 'failed'
 
 export interface SyncQueueItem {
