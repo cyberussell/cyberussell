@@ -120,6 +120,13 @@ export interface PartnershipWorkspace extends Partnership {
   // shown so a publisher searching the area doesn't create a duplicate for a household someone
   // already logged. Always empty when searchScope is null.
   searchScopeRecords: TerritoryRecordWithLocation[]
+  // Which OTHER Ministry Partner(s) (by name) currently have each of this scope's blocks locked
+  // for search today (see getPartnersSearchingBlocks/026_partnership_search_blocks.sql) — blocks
+  // are shareable (037_partnership_search_blocks_shareable.sql), so a block can have zero, one,
+  // or several. Excludes this partnership's own lock on its own blocks. Keyed by block id; a
+  // block with no other current searcher is simply absent from the map. Always empty when
+  // searchScope is null.
+  searchScopeBlockPartners: Record<string, string[]>
   // Every partnership in THIS batch (including this one), with live progress — the same data
   // the pre-claim "Today's Assignment" batch-landing page shows, fetched up front so the
   // in-workspace "All Partners" tab never needs a real page navigation to render (that

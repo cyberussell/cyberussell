@@ -496,6 +496,37 @@ export async function getSearchScopeForPartnership(supabase: SupabaseClient, par
   }
 }
 
+// Which OTHER partnership(s) currently have each of the given blocks locked for search today —
+// blocks are shareable (037_partnership_search_blocks_shareable.sql), so more than one can hold
+// the same block. Used to tell a publisher browsing "Existing Records in This Area" specifically
+// who else is working that ground today, instead of a generic "the ministry partner currently
+// working in this area." Excludes excludePartnershipId (the caller's own lock on its own scope)
+// and any block with no other current searcher (simply absent from the returned map).
+export async function getPartnersSearchingBlocks(
+  supabase: SupabaseClient,
+  congregationId: string,
+  blockIds: string[],
+  assignmentDate: string,
+  excludePartnershipId: string
+): Promise<Record<string, string[]>> {
+  if (blockIds.length === 0) return {}
+  const { data } = await supabase
+    .from('partnership_search_blocks')
+    .select('block_id, partnership:partnerships(id, name)')
+    .eq('congregation_id', congregationId)
+    .eq('assignment_date', assignmentDate)
+    .in('block_id', blockIds)
+
+  const result: Record<string, string[]> = {}
+  for (const row of (data ?? []) as unknown as Array<{ block_id: string; partnership: { id: string; name: string } | null }>) {
+    if (!row.partnership || row.partnership.id === excludePartnershipId) continue
+    const list = result[row.block_id] ?? []
+    list.push(row.partnership.name)
+    result[row.block_id] = list
+  }
+  return result
+}
+
 export interface LockSearchBlocksResult {
   ok: boolean
   error?: string
@@ -618,6 +649,15 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   const searchScopeRecords = searchScope
     ? await getRecordsInBlocks(supabase, partnership.congregation_id, searchScope.blocks.map((b) => b.id))
     : []
+  const searchScopeBlockPartners = searchScope
+    ? await getPartnersSearchingBlocks(
+        supabase,
+        partnership.congregation_id,
+        searchScope.blocks.map((b) => b.id),
+        batch.assignment_date,
+        partnership.id
+      )
+    : {}
   // Same data the pre-claim batch-landing page shows (see getBatchByToken) — fetched here too
   // so the workspace's own "All Partners" tab can render it from the initial load, offline and
   // all, instead of navigating back to that server-rendered page.
@@ -637,6 +677,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     addedRecords,
     searchScope,
     searchScopeRecords,
+    searchScopeBlockPartners,
     batchPartnerships,
     congregationAnchor,
   }

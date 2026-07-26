@@ -475,8 +475,8 @@ export default function PublisherWorkspaceApp({
   async function handleRefreshSearchScope() {
     setRefreshingSearchScope(true)
     try {
-      const records = await getSearchScopeRecordsAction(partnershipToken)
-      setWorkspace((w) => ({ ...w, searchScopeRecords: records }))
+      const { records, blockPartners } = await getSearchScopeRecordsAction(partnershipToken)
+      setWorkspace((w) => ({ ...w, searchScopeRecords: records, searchScopeBlockPartners: blockPartners }))
     } finally {
       setRefreshingSearchScope(false)
     }
@@ -519,8 +519,8 @@ export default function PublisherWorkspaceApp({
         .filter((b) => blockIds.includes(b.id))
         .map((b) => ({ id: b.id, label: b.label }))
       setWorkspace((w) => ({ ...w, searchScope: { sectionId, sectionLabel: section?.label ?? '', blocks } }))
-      const records = await getSearchScopeRecordsAction(partnershipToken)
-      setWorkspace((w) => ({ ...w, searchScopeRecords: records }))
+      const { records, blockPartners } = await getSearchScopeRecordsAction(partnershipToken)
+      setWorkspace((w) => ({ ...w, searchScopeRecords: records, searchScopeBlockPartners: blockPartners }))
       toast.success('Search area saved.')
     } finally {
       setChoosingSearchScope(false)
@@ -1176,6 +1176,7 @@ export default function PublisherWorkspaceApp({
                         sectionLabel={workspace.searchScope.sectionLabel}
                         blockLabels={blockLabels}
                         records={workspace.searchScopeRecords}
+                        blockPartners={workspace.searchScopeBlockPartners}
                         refreshing={refreshingSearchScope}
                         onRefresh={handleRefreshSearchScope}
                         showAreaLabel={false}

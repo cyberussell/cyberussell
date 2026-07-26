@@ -1,14 +1,26 @@
 # Current Work
 
-**Territory Management System — Publisher UX batch: claim landing, end-ministry rework, search-area lockdown, quick notes (2026-07-26) — code done, tsc + vitest (101/101) + next build clean, NOT committed, migration 040 applied live by Russell — see checkpoint `territory-management-publisher-ux-batch-v1.md`:**
+**Territory Management System — Search-area popup names the specific partner(s) (2026-07-26) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed — see checkpoint `territory-management-search-scope-partner-names-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Follow-up to the publisher UX batch below (already committed/pushed as `fefcae7`) — Russell asked for the search-area "Map" button's ownership popup to name the actual Ministry Partner(s) currently working that block, instead of the generic phrasing. New `getPartnersSearchingBlocks` query reads `partnership_search_blocks` (shareable since migration 037 — a block can have several current searchers) joined to `partnerships.name`, excluding the viewer's own partnership. New `searchScopeBlockPartners` field threaded through `PartnershipWorkspace` (initial load) and `getSearchScopeRecordsAction`'s return shape (manual Refresh + first-time "choose search scope" fetch). `SearchScopeRecordsList.tsx`'s popup now says "This block is currently being searched by {names}" (Oxford-comma joined) when it finds someone, or a generic "no one else has this locked" fallback otherwise. No migration needed.
+
+Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101, unchanged), `npx next build` (clean). Not live-verified (no TMS credentials in this sandbox). Not yet committed.
+
+**Next recommended task:** Russell live-verifies with two real search-only partnerships sharing the same block, confirming each sees the other's actual name (not their own), then commit and push.
+
+---
+
+**Territory Management System — Publisher UX batch: claim landing, end-ministry rework, search-area lockdown, quick notes (2026-07-26) — code done, tsc + vitest (101/101) + next build clean, committed and pushed (`fefcae7`), migration 040 applied live by Russell — see checkpoint `territory-management-publisher-ux-batch-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 
 Current Feature: Six requests from Russell in one session — (1) first-time claim now lands on the Assigned Contact Records list instead of Home; (2) removed the Home/List "Slide for Early Out" gesture, replaced with a completion-aware button (DNC-aware `allDone` already existed and already treats DNC-locked records as done — confirmed with Russell before building, no logic change needed) — "End My Ministry" (clean finish, no `ended_early_at`) once every record is done or the partnership is search-only, "End My Ministry Early" otherwise (unchanged `handleTerminate` behavior); (3) search-area "Existing Records in This Area" cards are no longer tappable into a correction-capable detail view — replaced with a "Map" button gated behind a popup clarifying the record belongs to whoever's actually working that area; (4) fixed a real missing-Save-button bug on the Ministry Partner name-entry form (side-by-side layout had no room once the mobile keyboard was up — now stacked); (5) two new *additive* options — a "Send a Quick Note to Admin" (Name required/Phone optional/Notes required, new `partnership_quick_notes` table) alongside the existing "Add a New Contact Record" (relabeled "Add Someone Found in Today's Territory"), and the same quick-note form as a 4th option on the Unlocated → "Recommend New Location" chooser, which Russell confirmed twice stays completely untouched (structured address/Plus Code/territory-section-block fields, Admin auto-apply intact); (6) the second screenshot Russell flagged as unexplained turned out to be the real, current `GroupLeaderTabs.tsx` GL dashboard — not a stray dev route, nothing changed.
 
-Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101), `npx next build` (clean, all TMS routes present). **Migration `040_publisher_quick_notes.sql` confirmed applied live by Russell.** **Not yet live-verified in the browser** (no TMS credentials in this sandbox) — Russell still needs to click through all six items himself. Not yet committed.
+Current Status: Committed and pushed. Also fixed the broken `git push` credential this session — `origin`'s HTTPS remote had a plaintext PAT GitHub was rejecting; switched to the already-authorized SSH remote (`git@github.com:cyberussellofficial-ctrl/cyberussell.git`), push succeeded. Old PAT should be revoked/rotated on GitHub (flagged to Russell, his action). **Migration `040_publisher_quick_notes.sql` confirmed applied live by Russell.** **Not yet live-verified in the browser** (no TMS credentials in this sandbox) — Russell still needs to click through all six items himself.
 
-**Next recommended task:** Russell live-verifies all six items per the checkpoint's "Next Recommended Task" section, then this gets committed.
+**Next recommended task:** Russell live-verifies all six items per the checkpoint's "Next Recommended Task" section, and revokes the old exposed PAT on GitHub.
 
 ---
 

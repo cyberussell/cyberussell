@@ -12,14 +12,24 @@ import ConfirmModal from '@/components/territory-management-system/ConfirmModal'
 // initial page load, since the whole point is catching a record added moments ago by someone
 // else still working the same area.
 //
+// "Juan & Maria" / "Juan & Maria and Pedro & Ana" / "Juan & Maria, Pedro & Ana, and Rosa" — an
+// Oxford-comma list, matching how a Ministry Partner's own name is written (multiple people, one
+// partnership name per entry).
+function formatPartnerNames(names: string[]): string {
+  if (names.length === 1) return names[0]
+  if (names.length === 2) return `${names[0]} and ${names[1]}`
+  return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`
+}
+
 // Deliberately not tappable into a detail/edit view — these records aren't this partnership's
 // to update. The only action is "View on Map" (opens Google Maps directly), gated behind a
-// branded popup clarifying why: it belongs to whichever ministry partner is actually covering
-// it, not the one searching nearby.
+// branded popup naming specifically who else currently has this block locked for search today
+// (see getPartnersSearchingBlocks) — falls back to a generic heads-up when no one else does.
 export default function SearchScopeRecordsList({
   sectionLabel,
   blockLabels,
   records,
+  blockPartners,
   refreshing,
   onRefresh,
   showAreaLabel = true,
@@ -27,6 +37,10 @@ export default function SearchScopeRecordsList({
   sectionLabel: string
   blockLabels: string[]
   records: TerritoryRecordWithLocation[]
+  // Which OTHER Ministry Partner(s), by name, currently have each block locked for search today
+  // — keyed by block id, absent/empty when no one else does. See PartnershipWorkspace's own
+  // searchScopeBlockPartners field for the full explanation.
+  blockPartners: Record<string, string[]>
   refreshing: boolean
   onRefresh: () => void
   // The caller may already show the Section/Block line as part of a page-level "Area To
@@ -35,6 +49,7 @@ export default function SearchScopeRecordsList({
   showAreaLabel?: boolean
 }) {
   const [mapConfirmFor, setMapConfirmFor] = useState<TerritoryRecordWithLocation | null>(null)
+  const confirmPartnerNames = mapConfirmFor?.block?.id ? (blockPartners[mapConfirmFor.block.id] ?? []) : []
 
   return (
     <div>
@@ -96,7 +111,11 @@ export default function SearchScopeRecordsList({
       <ConfirmModal
         open={mapConfirmFor !== null}
         title="Not your assigned record"
-        message="This record belongs to the ministry partner currently working in this area. You can still view its location on the map."
+        message={
+          confirmPartnerNames.length > 0
+            ? `This block is currently being searched by ${formatPartnerNames(confirmPartnerNames)}. You can still view its location on the map.`
+            : 'No other Ministry Partner currently has this block locked for search — you may be the only one working this area today. You can still view its location on the map.'
+        }
         confirmLabel="Open in Google Maps"
         variant="info"
         onConfirm={() => {

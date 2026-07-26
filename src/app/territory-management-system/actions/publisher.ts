@@ -30,6 +30,7 @@ import {
   finishPartnership,
   getBatchById,
   getBatchSummary,
+  getPartnersSearchingBlocks,
   getPartnershipById,
   getPartnershipByToken,
   getSearchScopeForPartnership,
@@ -765,18 +766,29 @@ export async function editPublisherAddedRecordAction(_prev: ActionResult, formDa
   return { error: 'SAVED' }
 }
 
+export interface SearchScopeRecordsResult {
+  records: TerritoryRecordWithLocation[]
+  // See getPartnersSearchingBlocks — who else currently has each block locked for search today.
+  blockPartners: Record<string, string[]>
+}
+
 // Manual "Refresh" for the partnership's search-scope records list — a plain read, not queued
 // through the offline sync system, since the whole point is checking the LIVE state (has anyone
 // else logged this address in the last few minutes) rather than whatever was cached at initial
 // page load. Re-derives the scope from the partnership's own locked blocks (see
 // 026_partnership_search_blocks.sql) rather than trusting a client-supplied block list.
-export async function getSearchScopeRecordsAction(partnershipToken: string): Promise<TerritoryRecordWithLocation[]> {
+export async function getSearchScopeRecordsAction(partnershipToken: string): Promise<SearchScopeRecordsResult> {
   const supabase = createAdminSupabase()
   const partnership = await getPartnershipByToken(supabase, partnershipToken)
-  if (!partnership) return []
+  if (!partnership) return { records: [], blockPartners: {} }
   const scope = await getSearchScopeForPartnership(supabase, partnership.id)
-  if (!scope) return []
-  return getRecordsInBlocks(supabase, partnership.congregation_id, scope.blocks.map((b) => b.id))
+  if (!scope) return { records: [], blockPartners: {} }
+  const blockIds = scope.blocks.map((b) => b.id)
+  const [records, blockPartners] = await Promise.all([
+    getRecordsInBlocks(supabase, partnership.congregation_id, blockIds),
+    getPartnersSearchingBlocks(supabase, partnership.congregation_id, blockIds, partnership.batch.assignment_date, partnership.id),
+  ])
+  return { records, blockPartners }
 }
 
 // Manual "Refresh" for the in-workspace "All Partners" tab — same "plain read, not queued
