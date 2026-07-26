@@ -500,13 +500,8 @@ export async function recommendMoveAction(_prev: ActionResult, formData: FormDat
     partnershipToken: formData.get('partnershipToken'),
     recordId: formData.get('recordId'),
     address: formData.get('address'),
-    unit: formData.get('unit'),
-    plusCode: formData.get('plusCode'),
     householdMembers: formData.get('householdMembers'),
     notes: formData.get('notes'),
-    territoryId: formData.get('territoryId'),
-    sectionId: formData.get('sectionId'),
-    blockId: formData.get('blockId'),
   })
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Please fill in the required fields.' }
   if (!(await checkRateLimit(`tms-recommend-move:${clientIp(await headers())}`, 15))) return { error: 'Too many attempts. Please wait a moment.' }
@@ -519,18 +514,6 @@ export async function recommendMoveAction(_prev: ActionResult, formData: FormDat
   const owns = await partnershipHasRecord(supabase, partnership.id, parsed.data.recordId)
   if (!owns) return { error: 'This contact record is not assigned to your partnership.' }
 
-  // Unlike Correction (territoryId always the record's own, server-derived), a Move
-  // recommendation lets the publisher pick a different territory/barangay entirely — territoryId
-  // is client input here, so it needs its own congregation-ownership check before trusting it.
-  const validScope = await territorySectionBlockBelongsToCongregation(
-    supabase,
-    partnership.congregation_id,
-    parsed.data.territoryId,
-    parsed.data.sectionId,
-    parsed.data.blockId
-  )
-  if (!validScope) return { error: 'Choose a valid Barangay, Section, and Block.' }
-
   try {
     await recommendRecordMove(
       supabase,
@@ -538,13 +521,8 @@ export async function recommendMoveAction(_prev: ActionResult, formData: FormDat
       parsed.data.recordId,
       {
         address: parsed.data.address,
-        unit: parsed.data.unit,
-        plusCode: parsed.data.plusCode,
         householdMembers: parsed.data.householdMembers,
         notes: parsed.data.notes,
-        territoryId: parsed.data.territoryId,
-        sectionId: parsed.data.sectionId,
-        blockId: parsed.data.blockId,
       },
       partnership.name || 'Unnamed partnership'
     )
@@ -617,6 +595,7 @@ export async function recommendCorrectionAction(_prev: ActionResult, formData: F
     recordId: formData.get('recordId'),
     plusCode: formData.get('plusCode'),
     householdMembers: formData.get('householdMembers'),
+    residentName: formData.get('residentName'),
     reason: formData.get('reason'),
     territoryId: formData.get('territoryId'),
     sectionId: formData.get('sectionId'),
@@ -659,6 +638,7 @@ export async function recommendCorrectionAction(_prev: ActionResult, formData: F
         sectionId: parsed.data.sectionId,
         blockId: parsed.data.blockId,
         householdMembers: parsed.data.householdMembers,
+        residentName: parsed.data.residentName || undefined,
       },
       partnership.name || 'Unnamed partnership'
     )

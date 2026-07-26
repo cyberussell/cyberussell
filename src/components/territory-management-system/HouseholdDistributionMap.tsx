@@ -148,7 +148,13 @@ export default function HouseholdDistributionMap({
   const bounds = L.latLngBounds(pins.map((p): [number, number] => [p.lat, p.lng]))
 
   return (
-    <Card className="overflow-hidden p-0">
+    // isolate: Leaflet's internal panes/markers/popups use their own z-index scale (200-700,
+    // well above this app's fixed bottom nav at z-20). .leaflet-container is `position:
+    // relative` with no z-index of its own, so without a stacking-context boundary here those
+    // values escape straight into the page's global stacking order and paint over the nav bar
+    // (confirmed live — pins rendering on top of Home/Partners/List/Record). `isolate` creates
+    // that boundary so nothing inside this Card can ever render above page chrome outside it.
+    <Card className="isolate overflow-hidden p-0">
       <MapContainer
         bounds={bounds}
         boundsOptions={{ padding: [32, 32], maxZoom: 18 }}

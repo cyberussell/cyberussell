@@ -169,34 +169,18 @@ export const updatePublisherRecordSchema = z.object({
 })
 export type UpdatePublisherRecordInput = z.input<typeof updatePublisherRecordSchema>
 
-// "Mark as Moved" → "Recommend New Location" path — the current resident here knows where the
-// person who used to live here moved to. Unlike updatePublisherRecordSchema above, resident_name
-// isn't part of this at all (same person, only the location changes) and Plus Code is optional
-// (the new resident may only know the general area). Review-gated like recommendCorrectionSchema
-// below — nothing on the real record changes until the Admin applies it.
+// "Mark as Moved" → "Suggest New Location" path — the current resident here knows where the
+// person who used to live here moved to. resident_name isn't part of this at all (same person,
+// only the location changes). No more Plus Code or Territory/Section/Block — the record stays in
+// its own territory/section/block; only the street address text and household count change.
+// Address and Notes are both required. Review-gated like recommendCorrectionSchema below —
+// nothing on the real record changes until the Admin applies it.
 export const recommendMoveSchema = z.object({
   partnershipToken: z.string().min(1),
   recordId: z.string().uuid(),
-  address: z.string().min(1, 'Address is required.').max(200),
-  unit: z.string().max(40).optional().default(''),
-  plusCode: z
-    .string()
-    .max(20)
-    .optional()
-    .default('')
-    .refine((code) => code === '' || openLocationCode.isValid(code), 'Enter a valid Plus Code (e.g. 7FG8+4V).'),
+  address: z.string().min(1, 'Address is required.').max(300),
   householdMembers: householdMembersField,
-  notes: z.string().max(500).optional().default(''),
-  // The new location's Territory (Barangay)/Section/Block — always submitted together as a full
-  // location (the dropdown always has a real selection, defaulting to the record's own current
-  // territory). Both this and recommendCorrectionSchema below now take a client-supplied
-  // territoryId (034_correction_recommendation_territory.sql added the same capability to
-  // Correction) — see recommendMoveAction/recommendCorrectionAction for the shared
-  // congregation-ownership check this needs, since a client-supplied territoryId can't be
-  // trusted outright.
-  territoryId: z.string().uuid(),
-  sectionId: z.string().uuid(),
-  blockId: z.string().uuid(),
+  notes: z.string().min(1, 'Notes are required.').max(500),
 })
 export type RecommendMoveInput = z.input<typeof recommendMoveSchema>
 
@@ -219,6 +203,9 @@ export const recommendCorrectionSchema = z.object({
   recordId: z.string().uuid(),
   plusCode: plusCodeField,
   householdMembers: householdMembersField,
+  // Optional — lets a publisher recommend a corrected name (e.g. a misspelling) alongside the
+  // other fields here, admin-review-gated like everything else in this schema.
+  residentName: z.string().max(120).optional().default(''),
   reason: z.string().min(1, 'Please explain what needs to be corrected.').max(500),
   territoryId: z.string().uuid(),
   sectionId: z.string().uuid(),

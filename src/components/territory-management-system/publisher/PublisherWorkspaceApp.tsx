@@ -362,47 +362,11 @@ export default function PublisherWorkspaceApp({
     }
   }
 
-  // All three "Mark as Moved" paths behave like logging a visit (completes the record, advances
-  // to the next one) — they just route through updatePublisherRecordAction/recommendMoveAction/
-  // recommendRemovalAction instead of logPublisherVisitAction directly (those three also log the
-  // underlying 'moved' visit themselves, server-side).
-  async function handleUpdateMoved(
-    recordId: string,
-    fields: { address: string; unit: string; residentName: string; plusCode: string; householdMembers: string; notes: string }
-  ) {
-    setMarkingMoved(true)
-    try {
-      const updatedRecords = workspace.records.map((r) =>
-        r.record.id === recordId ? { ...r, completed_at: r.completed_at ?? new Date().toISOString() } : r
-      )
-      setWorkspace((w) => ({ ...w, records: updatedRecords }))
-      await enqueue(partnershipToken, 'updateRecord', { partnershipToken, recordId, ...fields })
-      await refreshQueue()
-      if (online) await handleSync()
-      toast.success('Contact record updated.')
-      returnToList()
-    } finally {
-      setMarkingMoved(false)
-    }
-  }
-
-  // "Recommend New Location" — unlike Update Current Resident above, this doesn't write to the
-  // record directly (see recommendMoveAction), but it's still a real ministry-visit outcome
-  // (the household situation changed — the old resident moved), so it completes the record and
-  // advances the list same as the other two "Mark as Moved" paths.
-  async function handleRecommendMove(
-    recordId: string,
-    fields: {
-      address: string
-      unit: string
-      plusCode: string
-      householdMembers: string
-      notes: string
-      territoryId: string
-      sectionId: string
-      blockId: string
-    }
-  ) {
+  // "Suggest New Location" — this doesn't write to the record directly (see recommendMoveAction),
+  // but it's still a real ministry-visit outcome (the household situation changed — the old
+  // resident moved), so it completes the record and advances the list same as the other "Mark as
+  // Moved" path (Request Record Removal).
+  async function handleRecommendMove(recordId: string, fields: { address: string; householdMembers: string; notes: string }) {
     setMarkingMoved(true)
     try {
       const updatedRecords = workspace.records.map((r) =>
@@ -447,6 +411,7 @@ export default function PublisherWorkspaceApp({
         recordId,
         plusCode: fields.plusCode,
         householdMembers: fields.householdMembers,
+        residentName: fields.residentName,
         reason: fields.reason,
         territoryId: fields.territoryId,
         sectionId: fields.sectionId,
@@ -564,6 +529,7 @@ export default function PublisherWorkspaceApp({
       correction_recommended_section_id: null,
       correction_recommended_block_id: null,
       correction_recommended_household_members: null,
+      correction_recommended_resident_name: null,
       move_recommended_at: null,
       move_recommended_address: null,
       move_recommended_unit: null,
@@ -1221,17 +1187,14 @@ export default function PublisherWorkspaceApp({
             onSelectHouseholdRecord={(recordId) => setView({ name: 'detail', recordId })}
             moving={movingRecord}
             markingMoved={markingMoved}
-            sendingQuickNote={sendingQuickNote}
             recommendingCorrection={recommendingCorrection}
             territories={territoryStructures}
             mapUrl={selected.record.territory ? mapUrls[selected.record.territory.id] : undefined}
             onLogVisit={(visitedAt, result, notes) => handleLogVisit(selected.record.id, visitedAt, result, notes)}
             onMoveRecord={(destinationPartnershipId) => handleMoveRecord(selected.record.id, destinationPartnershipId)}
-            onUpdateMoved={(fields) => handleUpdateMoved(selected.record.id, fields)}
             onRecommendMove={(fields) => handleRecommendMove(selected.record.id, fields)}
             onRecommendRemoval={(reason, recordId) => handleRecommendRemoval(recordId, reason)}
             onRecommendCorrection={(fields) => handleRecommendCorrection(selected.record.id, fields)}
-            onSendQuickNote={handleSendQuickNote}
             onAddSibling={() =>
               setView({
                 name: 'addRecord',
@@ -1290,7 +1253,7 @@ export default function PublisherWorkspaceApp({
               territories={territoryStructures}
               lockedScope={addRecordLockedScope}
               onSubmit={handleAddRecord}
-              onCancel={() => setView({ name: 'list' })}
+              onCancel={() => setView({ name: 'addedRecords' })}
             />
           ))}
 

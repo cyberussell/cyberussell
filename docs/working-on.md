@@ -1,14 +1,24 @@
 # Current Work
 
-**Territory Management System — Publisher polish batch: end-ministry button styling/placement, map-icon lockdown for viewers (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed — see checkpoint `territory-management-publisher-polish-batch-v1.md`:**
+**Territory Management System — Unlocated flow redesign, Correction resident-name field, card/button polish (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed — see checkpoint `territory-management-unlocated-redesign-correction-name-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Twelve items across two messages — (1) Unlocated chooser cut from 4 options to 2 (Suggest New Location, Request Record Removal), removing the duplicate "Correction" and the "Report Contact in Another Territory" quick-note option from it; Suggest New Location itself simplified to Resident Name/Household Members (prefilled context) + a required free-text Address (multi-line) + required Notes, dropping Territory/Section/Block/Plus Code/Unit entirely (record now always stays in its own territory/section/block) — with a defensive fix in `applyRecordMove` to stop nulling the record's existing plus_code/unit now that this path never resubmits them; (2) Correction form gains an optional Resident Name field (migration 041, **applied live**), admin-review-gated, threaded through schema/action/query/Admin Flagged-for-Correction display; (3) mobile Pass/Unlocated/Correction/Add Person action row given 4 distinct bold colors (was 3 of the 4 sharing blue); (4) Contact Card hierarchy reordered — Resident Name first/biggest, then Section/Block, then Address, then Plus Code; (5) "Add Contact in This Territory" Cancel button fixed to return to My Added Records instead of the assigned-records list; (6) Group Leader "Visits" tab gets an explanatory header (today's combined-batch totals, not a running history, what the delta arrow means); (7) fixed Leaflet map pins/zoom controls painting over the fixed bottom nav on the publisher Home "Pins" panel (`.leaflet-container`'s z-index-200+ panes escaping into the page's global stacking order — fixed with `isolate` on the wrapping Card).
+
+Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101, unchanged), `npx next build` (clean). Not live-verified (no TMS credentials in this sandbox). Not yet committed.
+
+**Next recommended task:** Russell live-verifies per the checkpoint's "Next Recommended Task" section, then commit and push (scoped explicitly to TMS files only).
+
+---
+
+**Territory Management System — Publisher polish batch: end-ministry button styling/placement, map-icon lockdown for viewers (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed (`ddc3c38`) — see checkpoint `territory-management-publisher-polish-batch-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 
 Current Feature: Six items from Russell's screenshots — (1) search-area card no longer shows the Plus Code, End Ministry button restyled to an embossed red gradient button; (2) search-area ownership popup's confirm button shortened to "Open Maps" for a cleaner fit (the specific-partner-name feature itself, from the previous session, confirmed already correct — the screenshot just showed the solo-searcher fallback case); (3) "End My Ministry" removed from the Home tab entirely, List-tab only now; (4) read-only "viewing someone else's assignment" record detail: Territory Map/Google Maps icons hidden (a viewer shouldn't have a path to navigate to a record that isn't theirs), contact-detail text enlarged to fill the space; (5) confirmed, no change needed — List tab's End Ministry button already correctly hides itself whenever the Sync & Finish banner is showing. No migration needed.
 
-Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101, unchanged), `npx next build` (clean). Not live-verified (no TMS credentials in this sandbox). Not yet committed.
-
-**Next recommended task:** Russell live-verifies per the checkpoint's "Next Recommended Task" section, then commit and push (scoped explicitly to TMS files only — see the git-mistake note below).
+Current Status: Committed and pushed.
 
 ---
 

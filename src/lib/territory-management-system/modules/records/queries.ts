@@ -511,6 +511,9 @@ export async function recommendRecordCorrection(
     // there's only ever one recommendation in flight per record at a time, so this mostly guards
     // against a caller forgetting to pass it rather than a real concurrent-edit scenario).
     householdMembers?: number
+    // Optional — see 041_correction_resident_name.sql. Same "undefined means no change
+    // recommended" reasoning as householdMembers above.
+    residentName?: string
   },
   recommendedBy: string
 ): Promise<void> {
@@ -525,6 +528,7 @@ export async function recommendRecordCorrection(
       correction_recommended_section_id: fields.sectionId,
       correction_recommended_block_id: fields.blockId,
       correction_recommended_household_members: fields.householdMembers ?? null,
+      correction_recommended_resident_name: fields.residentName ? formatProperCase(fields.residentName) : null,
     })
     .eq('id', recordId)
   if (error) throw error
@@ -559,6 +563,7 @@ export async function dismissCorrectionRecommendation(
       correction_recommended_section_id: null,
       correction_recommended_block_id: null,
       correction_recommended_household_members: null,
+      correction_recommended_resident_name: null,
     })
     .eq('id', recordId)
   if (error) throw error
@@ -582,7 +587,7 @@ export async function applyRecordCorrection(supabase: SupabaseClient, congregati
   const { data: existing } = await supabase
     .from('territory_records')
     .select(
-      'plus_code, territory_id, section_id, block_id, household_members, correction_recommended_plus_code, correction_recommended_territory_id, correction_recommended_section_id, correction_recommended_block_id, correction_recommended_household_members'
+      'plus_code, territory_id, section_id, block_id, household_members, resident_name, correction_recommended_plus_code, correction_recommended_territory_id, correction_recommended_section_id, correction_recommended_block_id, correction_recommended_household_members, correction_recommended_resident_name'
     )
     .eq('id', recordId)
     .maybeSingle()
@@ -591,7 +596,8 @@ export async function applyRecordCorrection(supabase: SupabaseClient, congregati
     !existing?.correction_recommended_territory_id &&
     !existing?.correction_recommended_section_id &&
     !existing?.correction_recommended_block_id &&
-    existing?.correction_recommended_household_members == null
+    existing?.correction_recommended_household_members == null &&
+    !existing?.correction_recommended_resident_name
   ) {
     return
   }
@@ -604,6 +610,7 @@ export async function applyRecordCorrection(supabase: SupabaseClient, congregati
     correction_recommended_section_id: null,
     correction_recommended_block_id: null,
     correction_recommended_household_members: null,
+    correction_recommended_resident_name: null,
     updated_at: new Date().toISOString(),
   }
   if (existing.correction_recommended_plus_code) update.plus_code = existing.correction_recommended_plus_code
@@ -611,6 +618,7 @@ export async function applyRecordCorrection(supabase: SupabaseClient, congregati
   if (existing.correction_recommended_section_id) update.section_id = existing.correction_recommended_section_id
   if (existing.correction_recommended_block_id) update.block_id = existing.correction_recommended_block_id
   if (existing.correction_recommended_household_members != null) update.household_members = existing.correction_recommended_household_members
+  if (existing.correction_recommended_resident_name) update.resident_name = existing.correction_recommended_resident_name
   const { error } = await supabase.from('territory_records').update(update).eq('id', recordId)
   if (error) throw error
 
@@ -640,6 +648,9 @@ export async function applyRecordCorrection(supabase: SupabaseClient, congregati
   if (existing.correction_recommended_household_members != null && existing.correction_recommended_household_members !== existing.household_members) {
     parts.push(`Household members: ${existing.household_members ?? '(blank)'} → ${existing.correction_recommended_household_members}`)
   }
+  if (existing.correction_recommended_resident_name && existing.correction_recommended_resident_name !== existing.resident_name) {
+    parts.push(`Resident name: ${existing.resident_name || '(blank)'} → ${existing.correction_recommended_resident_name}`)
+  }
 
   await logRecordHistory(supabase, congregationId, {
     recordId,
@@ -659,24 +670,21 @@ export async function listFlaggedForCorrection(supabase: SupabaseClient, congreg
   return (data ?? []) as unknown as TerritoryRecordWithLocation[]
 }
 
-// Publisher-facing "Unlocated" -> "They Moved, New Location Known" path — the current resident
-// at this address knows where the person who used to live here moved to. Same review-gated
-// shape as recommendRecordForRemoval/recommendRecordCorrection above: nothing on the real
-// record changes until the Admin applies it. resident_name is deliberately never touched here —
-// same person, just a new location.
+// Publisher-facing "Unlocated" -> "Suggest New Location" path — the current resident at this
+// address knows where the person who used to live here moved to. Same review-gated shape as
+// recommendRecordForRemoval/recommendRecordCorrection above: nothing on the real record changes
+// until the Admin applies it. resident_name is deliberately never touched here — same person,
+// just a new location. No more Plus Code/Territory/Section/Block — the record stays put in its
+// own territory/section/block; applyRecordMove leaves plus_code and unit as-is since this path
+// never collects a new one for either.
 export async function recommendRecordMove(
   supabase: SupabaseClient,
   congregationId: string,
   recordId: string,
   fields: {
     address: string
-    unit: string
-    plusCode: string
     householdMembers?: number
     notes: string
-    territoryId: string
-    sectionId: string
-    blockId: string
   },
   recommendedBy: string
 ): Promise<void> {
@@ -685,14 +693,14 @@ export async function recommendRecordMove(
     .update({
       move_recommended_at: new Date().toISOString(),
       move_recommended_address: formatProperCase(fields.address),
-      move_recommended_unit: fields.unit,
-      move_recommended_plus_code: formatPlusCode(fields.plusCode) || null,
+      move_recommended_unit: null,
+      move_recommended_plus_code: null,
       move_recommended_household_members: fields.householdMembers ?? null,
       move_recommended_notes: fields.notes,
       move_recommended_by: recommendedBy,
-      move_recommended_territory_id: fields.territoryId,
-      move_recommended_section_id: fields.sectionId,
-      move_recommended_block_id: fields.blockId,
+      move_recommended_territory_id: null,
+      move_recommended_section_id: null,
+      move_recommended_block_id: null,
     })
     .eq('id', recordId)
   if (error) throw error
@@ -765,8 +773,12 @@ export async function applyRecordMove(supabase: SupabaseClient, congregationId: 
     move_recommended_section_id: null,
     move_recommended_block_id: null,
     address: existing.move_recommended_address,
-    unit: existing.move_recommended_unit ?? '',
-    plus_code: existing.move_recommended_plus_code,
+    // Suggest New Location no longer collects a Unit or Plus Code — preserve whatever the record
+    // already had instead of wiping it, since move_recommended_unit/plus_code will now always be
+    // null (only kept in the recommended_* columns for old, pre-redesign recommendations, if any
+    // are still in flight).
+    unit: existing.move_recommended_unit ?? existing.unit ?? '',
+    plus_code: existing.move_recommended_plus_code ?? existing.plus_code,
     updated_at: new Date().toISOString(),
   }
   if (existing.move_recommended_household_members != null) update.household_members = existing.move_recommended_household_members

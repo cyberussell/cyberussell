@@ -14,6 +14,7 @@ const openLocationCode = new OpenLocationCode()
 export interface CorrectionFields {
   plusCode: string
   householdMembers: string
+  residentName: string
   reason: string
   territoryId: string
   sectionId: string
@@ -32,6 +33,7 @@ export default function RecommendCorrectionForm({
   currentSectionId,
   currentBlockId,
   currentHouseholdMembers,
+  currentResidentName,
   territories,
   submitting,
   onSubmit,
@@ -48,6 +50,9 @@ export default function RecommendCorrectionForm({
   currentSectionId: string
   currentBlockId: string
   currentHouseholdMembers: number | null
+  // Lets a publisher recommend a corrected name (e.g. a misspelling) — admin-review-gated like
+  // every other field here, unlike the old direct-write "Update Current Resident" path (removed).
+  currentResidentName: string
   // Every congregation territory (not just this record's own) — a correction can move a record
   // into a different barangay entirely, not just a different Section/Block within its own.
   territories: TerritoryStructure[]
@@ -59,6 +64,7 @@ export default function RecommendCorrectionForm({
   const [plusCode, setPlusCode] = useState(currentPlusCode)
   const initialHouseholdMembers = currentHouseholdMembers != null ? String(currentHouseholdMembers) : ''
   const [householdMembers, setHouseholdMembers] = useState(initialHouseholdMembers)
+  const [residentName, setResidentName] = useState(currentResidentName)
   const [reason, setReason] = useState('')
   const [locating, setLocating] = useState(false)
   const [territoryId, setTerritoryId] = useState(currentTerritoryId)
@@ -73,6 +79,7 @@ export default function RecommendCorrectionForm({
   // text alone isn't a "change" the Admin can act on.
   const isDirty =
     trimmedPlusCode !== currentPlusCode ||
+    residentName.trim() !== currentResidentName ||
     territoryId !== currentTerritoryId ||
     sectionId !== currentSectionId ||
     blockId !== currentBlockId ||
@@ -185,17 +192,28 @@ export default function RecommendCorrectionForm({
             </select>
           </FormField>
         </div>
-        <FormField label="Household Members" optional>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={0}
-            value={householdMembers}
-            onChange={(e) => setHouseholdMembers(e.target.value)}
-            disabled={submitting}
-            className={inputClass}
-          />
-        </FormField>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label="Resident Name" optional>
+            <input
+              value={residentName}
+              onChange={(e) => setResidentName(e.target.value)}
+              maxLength={120}
+              disabled={submitting}
+              className={inputClass}
+            />
+          </FormField>
+          <FormField label="Household Members" optional>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              value={householdMembers}
+              onChange={(e) => setHouseholdMembers(e.target.value)}
+              disabled={submitting}
+              className={inputClass}
+            />
+          </FormField>
+        </div>
         <FormField label="Note to Admin">
           <textarea
             value={reason}
@@ -223,6 +241,7 @@ export default function RecommendCorrectionForm({
             onSubmit({
               plusCode: trimmedPlusCode,
               householdMembers: householdMembers.trim(),
+              residentName: residentName.trim(),
               reason: reason.trim(),
               territoryId,
               sectionId,

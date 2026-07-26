@@ -13,8 +13,7 @@ import TerritoryMapViewer from '@/components/territory-management-system/Territo
 import Card from '@/components/territory-management-system/dashboard/Card'
 import PublisherVisitLogForm from './PublisherVisitLogForm'
 import MoveRecordForm from './MoveRecordForm'
-import MarkMovedForm, { type MoveRecommendFields, type MovedRecordFields } from './MarkMovedForm'
-import type { QuickNoteFields } from './PublisherQuickNoteForm'
+import MarkMovedForm, { type MoveRecommendFields } from './MarkMovedForm'
 import RecommendCorrectionForm, { type CorrectionFields } from './RecommendCorrectionForm'
 import AddHouseholdMemberForm, { type NewHouseholdMemberPayload } from './AddHouseholdMemberForm'
 
@@ -94,17 +93,14 @@ export default function PublisherRecordDetailView({
   onSelectHouseholdRecord,
   moving,
   markingMoved,
-  sendingQuickNote,
   recommendingCorrection,
   territories,
   mapUrl,
   onLogVisit,
   onMoveRecord,
-  onUpdateMoved,
   onRecommendMove,
   onRecommendRemoval,
   onRecommendCorrection,
-  onSendQuickNote,
   onAddSibling,
   onAddHouseholdMember,
 }: {
@@ -135,11 +131,9 @@ export default function PublisherRecordDetailView({
   // available even on the read-only/other-partner's-assignment view.
   onSelectHouseholdRecord: (recordId: string) => void
   moving: boolean
-  // True while either "Mark as Moved" path (Update Contact Record / Recommend for Admin
+  // True while either "Mark as Moved" path (Suggest New Location / Recommend for Admin
   // Removal) is being saved/synced.
   markingMoved: boolean
-  // True while MarkMovedForm's "Quick Note to Admin" alternative is being saved/synced.
-  sendingQuickNote: boolean
   // True while the "Correction" (Recommend a Correction) form is being saved/synced.
   recommendingCorrection: boolean
   // Every congregation territory (not just this record's own), for RecommendCorrectionForm's and
@@ -152,15 +146,12 @@ export default function PublisherRecordDetailView({
   mapUrl?: string
   onLogVisit: (visitedAt: string, result: string, notes: string) => void
   onMoveRecord: (destinationPartnershipId: string) => void
-  onUpdateMoved: (fields: MovedRecordFields) => void
-  // "Recommend New Location" — review-gated, see MarkMovedForm.
+  // "Suggest New Location" — review-gated, see MarkMovedForm.
   onRecommendMove: (fields: MoveRecommendFields) => void
   // recordId defaults to this record's own id, but can be any entry from householdRecords —
   // see MarkMovedForm's record picker.
   onRecommendRemoval: (reason: string, recordId: string) => void
   onRecommendCorrection: (fields: CorrectionFields) => void
-  // Additive alternative to onRecommendMove, see MarkMovedForm.
-  onSendQuickNote: (fields: QuickNoteFields) => void
   onAddSibling: () => void
   // Mobile-only inline path for "Add Person" — same underlying add-a-household-member action as
   // onAddSibling, but submits from right here instead of navigating to a separate view, matching
@@ -212,16 +203,28 @@ export default function PublisherRecordDetailView({
             <Home className="h-5 w-5 text-[#2563EB]" />
           </div>
           <div className="min-w-0 flex-1">
-            {/* Read-only viewers (someone else's assignment) never see the map icons below —
-                bumped up a size here to fill that space rather than leave it looking sparse. */}
+            {/* Hierarchy: Resident Name first (biggest/boldest — who this record is about),
+                then Section/Block, then Address (if any), then Plus Code. Read-only viewers
+                (someone else's assignment) never see the map icons below — bumped up a size
+                here to fill that space rather than leave it looking sparse. */}
             <h2 className={`truncate font-semibold ${readOnly ? 'text-lg' : ''} ${tone.primary}`}>
-              {assigned.record.address || assigned.record.plus_code || 'Unlabeled record'}
-              {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
+              {assigned.record.resident_name || assigned.record.address || assigned.record.plus_code || 'Unlabeled record'}
             </h2>
             <p className={`mt-0.5 truncate ${readOnly ? 'text-base' : 'text-sm'} ${tone.secondary}`}>
               Sec {assigned.record.section?.label ?? '—'} / Blk {assigned.record.block?.label ?? '—'}
-              {assigned.record.resident_name ? ` · ${assigned.record.resident_name}` : ''}
             </p>
+            {/* Address/Plus Code only get their own line when they're not already doing double
+                duty as the h2 above (i.e. whenever a Resident Name — or, for Plus Code, an
+                Address too — pushed them out of the title spot). */}
+            {assigned.record.address && assigned.record.resident_name && (
+              <p className={`mt-0.5 truncate ${readOnly ? 'text-base' : 'text-sm'} ${tone.secondary}`}>
+                {assigned.record.address}
+                {assigned.record.unit ? `, ${assigned.record.unit}` : ''}
+              </p>
+            )}
+            {assigned.record.plus_code && (assigned.record.resident_name || assigned.record.address) && (
+              <p className={`mt-0.5 truncate ${readOnly ? 'text-base' : 'text-sm'} ${tone.secondary}`}>{assigned.record.plus_code}</p>
+            )}
             {(assigned.record.household_members != null || householdRecords.length > 0) && (
               <div className={`mt-1.5 flex flex-nowrap items-center gap-1.5 text-sm ${tone.secondary}`}>
                 {assigned.record.household_members != null && (
@@ -334,16 +337,11 @@ export default function PublisherRecordDetailView({
             <MarkMovedForm
               initial={movedFields}
               submitting={markingMoved}
-              sendingQuickNote={sendingQuickNote}
-              onUpdate={onUpdateMoved}
               onRecommendMove={onRecommendMove}
               onRecommend={onRecommendRemoval}
-              onSendQuickNote={onSendQuickNote}
               currentRecordId={assigned.record.id}
               currentRecordLabel={assigned.record.resident_name || assigned.record.address || 'this record'}
               householdRecords={householdRecords}
-              territories={territories}
-              currentTerritoryId={assigned.record.territory_id}
             />
             <RecommendCorrectionForm
               currentPlusCode={assigned.record.plus_code ?? ''}
@@ -351,6 +349,7 @@ export default function PublisherRecordDetailView({
               currentSectionId={assigned.record.section_id}
               currentBlockId={assigned.record.block_id}
               currentHouseholdMembers={assigned.record.household_members}
+              currentResidentName={assigned.record.resident_name}
               territories={territories}
               submitting={recommendingCorrection}
               onSubmit={onRecommendCorrection}
@@ -364,6 +363,9 @@ export default function PublisherRecordDetailView({
             {mobileAction === 'none' && (
               <Card className="overflow-hidden p-0">
                 <div className={`grid divide-x divide-gray-100 ${assigned.completed_at ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                  {/* Each action gets its own bold, distinct color against the white card — all
+                      four used to share the same blue, making them hard to tell apart at a
+                      glance. */}
                   {!assigned.completed_at && (
                     <button
                       type="button"
@@ -385,7 +387,7 @@ export default function PublisherRecordDetailView({
                   <button
                     type="button"
                     onClick={() => setMobileAction('correction')}
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-[#2563EB] transition hover:bg-blue-50"
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-violet-700 transition hover:bg-violet-50"
                   >
                     <PencilLine className="h-4 w-4" />
                     Correction
@@ -393,7 +395,7 @@ export default function PublisherRecordDetailView({
                   <button
                     type="button"
                     onClick={() => setMobileAction('addPerson')}
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-[#2563EB] transition hover:bg-blue-50"
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50"
                   >
                     <UserPlus className="h-4 w-4" />
                     Add Person
@@ -414,16 +416,11 @@ export default function PublisherRecordDetailView({
                   initialMode="choose"
                   initial={movedFields}
                   submitting={markingMoved}
-                  sendingQuickNote={sendingQuickNote}
-                  onUpdate={onUpdateMoved}
                   onRecommendMove={onRecommendMove}
                   onRecommend={onRecommendRemoval}
-                  onSendQuickNote={onSendQuickNote}
                   currentRecordId={assigned.record.id}
                   currentRecordLabel={assigned.record.resident_name || assigned.record.address || 'this record'}
                   householdRecords={householdRecords}
-                  territories={territories}
-                  currentTerritoryId={assigned.record.territory_id}
                 />
               </div>
             )}
@@ -436,6 +433,7 @@ export default function PublisherRecordDetailView({
                   currentSectionId={assigned.record.section_id}
                   currentBlockId={assigned.record.block_id}
                   currentHouseholdMembers={assigned.record.household_members}
+                  currentResidentName={assigned.record.resident_name}
                   territories={territories}
                   submitting={recommendingCorrection}
                   onSubmit={onRecommendCorrection}

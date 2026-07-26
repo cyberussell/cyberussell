@@ -433,7 +433,16 @@ export default function GroupLeaderTabs({
       )}
 
       {tab === 'results' && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div className="space-y-4">
+          <div>
+            <h2 className="font-semibold text-[#0B1B33]">Visit Results</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              How every contact record has been logged so far today, across the currently generated assignment (House To House plus any
+              Auxiliary Groups) — not a running history. The small arrow badge shows what&apos;s changed since you first opened this tab
+              today.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {(
             [
               ['initial_visit', ClipboardList],
@@ -458,6 +467,7 @@ export default function GroupLeaderTabs({
               delta={combinedStats.resultCounts[key] - resultBaseline[key]}
             />
           ))}
+          </div>
         </div>
       )}
 

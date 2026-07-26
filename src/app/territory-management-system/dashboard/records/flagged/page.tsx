@@ -220,6 +220,13 @@ export default async function FlaggedForRemovalPage() {
                         <span className="font-medium text-[#0B1B33]">{r.correction_recommended_household_members}</span>
                       </p>
                     )}
+                    {r.correction_recommended_resident_name && (
+                      <p className="mt-1 text-sm text-slate-600">
+                        Current Resident Name: <span className="font-medium text-[#0B1B33]">{r.resident_name || '—'}</span>
+                        {' → Recommended: '}
+                        <span className="font-medium text-[#0B1B33]">{r.correction_recommended_resident_name}</span>
+                      </p>
+                    )}
                     <p className="mt-1 text-sm text-slate-600">{r.correction_recommended_reason}</p>
                     <p className="mt-1 text-xs text-slate-400">
                       Recommended by {r.correction_recommended_by ?? 'Unknown'}
