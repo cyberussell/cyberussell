@@ -32,6 +32,12 @@ export const PHOTOS = {
   finalCta: PHOTO("cta-scene.jpg"),
 };
 
+export const GALLERY = [
+  { src: PHOTO("gallery-shop.jpg"), alt: "Aling Maria's Laundry Shop counter, shelves stacked with folded laundry", wide: true, ratio: 370 / 268 },
+  { src: PHOTO("gallery-towels.jpg"), alt: "A neatly folded stack of fresh white and navy towels", ratio: 179 / 268 },
+  { src: PHOTO("gallery-handoff.jpg"), alt: "A staff member handing a finished laundry order to a customer", ratio: 180 / 268 },
+];
+
 export const NAV_LINKS = [
   { label: "Pricing", href: "/demo/laundryflow#pricing" },
   { label: "Contact", href: "/demo/laundryflow#contact" },

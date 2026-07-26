@@ -16,8 +16,15 @@
 - `src/app/demo/laundryflow/book-a-pickup/page.tsx` — new route, reuses `Header`/`Footer`.
 
 ## Skipped (by design)
-- The photo gallery strip from the Stitch pricing page — no real source photos existed (Stitch export only pointed at ephemeral `lh3.googleusercontent.com` placeholder URLs), and hotlinking those wasn't appropriate.
 - The floating "Concept Project" disclaimer bubble from the Stitch export — redundant with the "A Cyberussell Concept" messaging already in `PlansComparison.tsx` (kept as-is this session per Russell's explicit choice).
+
+## Gallery addition (same session, after initial review)
+Russell flagged that the photo gallery strip from the Stitch `pricing_services` screen was expected on the deployed site — it had initially been skipped because the Stitch export only pointed at ephemeral `lh3.googleusercontent.com` placeholder URLs, unsuitable to hotlink. Instead, the 3 photos were cropped directly out of the zip's own `pricing_services/screen.png` (a real rendered screenshot, not a live URL) using Python/PIL, saved as local assets consistent with how `hero-pile.png`/`cta-scene.jpg` already work:
+- `public/demo/laundryflow/photos/gallery-shop.jpg` (370×268)
+- `public/demo/laundryflow/photos/gallery-towels.jpg` (179×268)
+- `public/demo/laundryflow/photos/gallery-handoff.jpg` (180×268)
+
+New `src/components/demo/laundryflow/Gallery.tsx` (3-column grid, first image wide to match the source's ~2:1:1 proportions) plus a `GALLERY` array in `data.ts`. Inserted into `page.tsx` between `Pricing` and `Location`, matching the Stitch `pricing_services` page's own internal order (pricing → testimonial → gallery → footer). Verified live: all 3 images return 200 OK and render in the correct position (confirmed via a fresh browser tab after the original tab's screenshot pipeline degraded — see Known Issues).
 
 ## Summary of Changes
 Scope and approach (full-replace of Header/Hero/Pricing/Footer content vs. add-only; what to do with the pre-existing uncommitted `PlansComparison.tsx`) were confirmed with Russell via `AskUserQuestion` before building. A concrete file-by-file plan was then presented and approved before any edits, per the single-product-at-a-time / present-plan-first workflow rule.

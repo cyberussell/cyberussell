@@ -154,28 +154,28 @@ export default function MarkMovedForm({
             onClick={() => setMode('updateCurrent')}
             className="w-full rounded-lg bg-gradient-to-r from-[#2563EB] to-[#38BDF8] py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
           >
-            Update Current Resident
+            Correction
           </button>
           <button
             type="button"
             onClick={() => setMode('recommendMove')}
             className="w-full rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
           >
-            Recommend New Location
+            Suggest New Location
           </button>
           <button
             type="button"
             onClick={() => setMode('recommend')}
             className="w-full rounded-lg border border-red-200 bg-white py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300"
           >
-            Recommend for Admin Removal
+            Request Record Removal
           </button>
           <button
             type="button"
             onClick={() => setMode('quickNote')}
             className="w-full rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
           >
-            Quick Note to Admin (no location details)
+            Report Contact in Another Territory
           </button>
           <button
             type="button"
@@ -192,7 +192,7 @@ export default function MarkMovedForm({
   if (mode === 'updateCurrent') {
     return (
       <Card className="border-amber-200 bg-amber-50 p-6">
-        <h2 className="font-semibold text-[#0B1B33]">Update Current Resident</h2>
+        <h2 className="font-semibold text-[#0B1B33]">Correction</h2>
         <p className="mt-1 text-sm text-slate-500">A different person lives here now — update who's currently at this address.</p>
         <div className="mt-4 space-y-4">
           <FormField label="Unit" optional>
@@ -281,7 +281,7 @@ export default function MarkMovedForm({
   if (mode === 'recommendMove') {
     return (
       <Card className="border-amber-200 bg-amber-50 p-6">
-        <h2 className="font-semibold text-[#0B1B33]">Recommend New Location</h2>
+        <h2 className="font-semibold text-[#0B1B33]">Suggest New Location</h2>
         <p className="mt-1 text-sm text-slate-500">
           The current resident here knows where the person who used to live here moved to. This is sent to the Admin for
           approval — nothing changes on this record until it's applied.
@@ -432,7 +432,7 @@ export default function MarkMovedForm({
             ) : (
               <>
                 <Send className="h-4 w-4" />
-                Recommend Move
+                Suggest Location
               </>
             )}
           </button>
@@ -444,8 +444,8 @@ export default function MarkMovedForm({
   if (mode === 'quickNote') {
     return (
       <PublisherQuickNoteForm
-        heading="Quick Note to Admin"
-        description="No address/location details needed — just enough for the Admin to follow up manually. This is in addition to Recommend New Location, not a replacement for it."
+        heading="Report Contact in Another Territory"
+        description="No address/location details needed — just enough for the Admin to follow up manually. This is in addition to Suggest New Location, not a replacement for it."
         sending={sendingQuickNote}
         onSubmit={onSendQuickNote}
         onCancel={() => setMode('choose')}
@@ -455,7 +455,7 @@ export default function MarkMovedForm({
 
   return (
     <Card className="border-red-200 bg-red-50 p-6">
-      <h2 className="font-semibold text-[#0B1B33]">Recommend for Admin Removal</h2>
+      <h2 className="font-semibold text-[#0B1B33]">Request Record Removal</h2>
       <p className="mt-1 text-sm text-slate-500">Required — tell the Admin why this record should be removed.</p>
       {householdRecords.length > 0 && (
         <div className="mt-4">
@@ -507,7 +507,7 @@ export default function MarkMovedForm({
           disabled={submitting || !reason.trim()}
           className="flex-1 rounded-lg bg-red-600 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
         >
-          {submitting ? 'Submitting…' : 'Submit Recommendation'}
+          {submitting ? 'Submitting…' : 'Submit Request'}
         </button>
       </div>
     </Card>

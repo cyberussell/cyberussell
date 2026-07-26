@@ -79,32 +79,49 @@ export default function SearchScopeRecordsList({
         </Card>
       ) : (
         <div className="space-y-2">
-          {records.map((r) => (
-            <div key={r.id} className="flex w-full items-center justify-between gap-3 rounded-xl border border-blue-100/60 bg-white p-3 shadow-sm">
-              <div className="min-w-0">
-                <p className="truncate font-medium text-[#0B1B33]">
-                  {r.address || r.plus_code || 'Unlabeled record'}
-                  {r.unit ? `, ${r.unit}` : ''}
-                </p>
-                {r.resident_name && <p className="truncate text-xs text-slate-600">{r.resident_name}</p>}
-                <p className="truncate text-xs text-slate-400">
-                  Sec {r.section?.label ?? '—'} / Blk {r.block?.label ?? '—'}
-                </p>
-                {r.plus_code && <p className="truncate text-xs text-slate-400">{r.plus_code}</p>}
+          {records.map((r) => {
+            const content = (
+              <>
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-[#0B1B33]">
+                    {r.address || r.plus_code || 'Unlabeled record'}
+                    {r.unit ? `, ${r.unit}` : ''}
+                  </p>
+                  {r.resident_name && <p className="truncate text-xs text-slate-600">{r.resident_name}</p>}
+                  <p className="truncate text-xs text-slate-400">
+                    Sec {r.section?.label ?? '—'} / Blk {r.block?.label ?? '—'}
+                  </p>
+                  {r.plus_code && <p className="truncate text-xs text-slate-400">{r.plus_code}</p>}
+                </div>
+                {r.plus_code && (
+                  <span
+                    aria-hidden="true"
+                    className="flex shrink-0 items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB]"
+                  >
+                    <MapPin className="h-3.5 w-3.5" />
+                    Map
+                  </span>
+                )}
+              </>
+            )
+            // The whole card is the tap target (not just the Map pill) — tapping anywhere opens
+            // the ownership + map popup below. Only tappable when there's a Plus Code to show on
+            // a map at all; otherwise it's a plain, non-interactive row.
+            return r.plus_code ? (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => setMapConfirmFor(r)}
+                className="flex w-full items-center justify-between gap-3 rounded-xl border border-blue-100/60 bg-white p-3 text-left shadow-sm transition hover:border-[#38BDF8]/40"
+              >
+                {content}
+              </button>
+            ) : (
+              <div key={r.id} className="flex w-full items-center justify-between gap-3 rounded-xl border border-blue-100/60 bg-white p-3 shadow-sm">
+                {content}
               </div>
-              {r.plus_code && (
-                <button
-                  type="button"
-                  onClick={() => setMapConfirmFor(r)}
-                  aria-label="View on map"
-                  className="flex shrink-0 items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
-                >
-                  <MapPin className="h-3.5 w-3.5" />
-                  Map
-                </button>
-              )}
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 

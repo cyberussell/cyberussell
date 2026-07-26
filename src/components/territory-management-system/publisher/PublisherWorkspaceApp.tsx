@@ -1327,7 +1327,7 @@ export default function PublisherWorkspaceApp({
                   className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-medium text-[#2563EB] hover:border-[#38BDF8]/40"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Someone Found in Today&apos;s Territory
+                  Add Contact in This Territory
                 </button>
                 <button
                   type="button"
@@ -1335,7 +1335,7 @@ export default function PublisherWorkspaceApp({
                   className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-100 bg-white py-2.5 text-sm font-medium text-[#2563EB] hover:border-[#38BDF8]/40"
                 >
                   <Plus className="h-4 w-4" />
-                  Send a Quick Note to Admin
+                  Report Contact in Another Territory
                 </button>
               </div>
             )}
@@ -1344,7 +1344,7 @@ export default function PublisherWorkspaceApp({
 
         {view.name === 'addQuickNote' && (
           <PublisherQuickNoteForm
-            heading="Send a Quick Note to Admin"
+            heading="Report Contact in Another Territory"
             description="No territory details needed — just enough for the Admin to follow up. This goes to the same Notes list as your end-of-ministry note."
             sending={sendingQuickNote}
             onSubmit={handleSendQuickNote}

@@ -1,12 +1,22 @@
 # Current Work
 
-**Territory Management System — Search-area popup names the specific partner(s) (2026-07-26) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed — see checkpoint `territory-management-search-scope-partner-names-v1.md`:**
+**Territory Management System — Publisher UX relabel batch: post-completion actions, search-area tap target, terminology (2026-07-26) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed — see checkpoint `territory-management-publisher-relabel-batch-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 
-Current Feature: Follow-up to the publisher UX batch below (already committed/pushed as `fefcae7`) — Russell asked for the search-area "Map" button's ownership popup to name the actual Ministry Partner(s) currently working that block, instead of the generic phrasing. New `getPartnersSearchingBlocks` query reads `partnership_search_blocks` (shareable since migration 037 — a block can have several current searchers) joined to `partnerships.name`, excluding the viewer's own partnership. New `searchScopeBlockPartners` field threaded through `PartnershipWorkspace` (initial load) and `getSearchScopeRecordsAction`'s return shape (manual Refresh + first-time "choose search scope" fetch). `SearchScopeRecordsList.tsx`'s popup now says "This block is currently being searched by {names}" (Oxford-comma joined) when it finds someone, or a generic "no one else has this locked" fallback otherwise. No migration needed.
+Current Feature: Four items from Russell's screenshots — (1) the search-area card's whole row is now the tap target for the ownership popup, not just the small "Map" pill; (2) assigned-record detail view: once a status is already logged, Unlocated/Correction/Add Person stay available (so a publisher can keep editing/appending), only "Pass to Another Partner" drops away — previously the whole action block disappeared the instant `completed_at` was set; (3) "My Added Records" tab buttons relabeled "Add Contact in This Territory" / "Report Contact in Another Territory"; (4) `MarkMovedForm`'s "Unlocated" chooser relabeled — "Update Current Resident"→"Correction", "Recommend New Location"→"Suggest New Location", "Recommend for Admin Removal"→"Request Record Removal", "Quick Note to Admin..."→"Report Contact in Another Territory" (matching item 3's label, same underlying feature). No migration needed.
 
-Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101, unchanged), `npx next build` (clean). Not live-verified (no TMS credentials in this sandbox). Not yet committed.
+Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101, unchanged), `npx next build` (clean). Not live-verified (no TMS credentials in this sandbox). Committed and pushed at Russell's request ("Deploy") without a live click-through first — see checkpoint's Known Issues for one naming-overlap flag (two different "Correction" buttons now exist on the same screen).
+
+---
+
+**Territory Management System — Search-area popup names the specific partner(s) (2026-07-26) — code done, tsc + vitest (101/101) + next build clean, committed and pushed (`2dc19fb`) — see checkpoint `territory-management-search-scope-partner-names-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Follow-up to the publisher UX batch below (committed/pushed as `fefcae7`) — Russell asked for the search-area "Map" button's ownership popup to name the actual Ministry Partner(s) currently working that block, instead of the generic phrasing. New `getPartnersSearchingBlocks` query reads `partnership_search_blocks` (shareable since migration 037 — a block can have several current searchers) joined to `partnerships.name`, excluding the viewer's own partnership. New `searchScopeBlockPartners` field threaded through `PartnershipWorkspace` (initial load) and `getSearchScopeRecordsAction`'s return shape (manual Refresh + first-time "choose search scope" fetch). `SearchScopeRecordsList.tsx`'s popup now says "This block is currently being searched by {names}" (Oxford-comma joined) when it finds someone, or a generic "no one else has this locked" fallback otherwise. No migration needed.
+
+Current Status: Committed and pushed. Not live-verified (no TMS credentials in this sandbox).
 
 **Next recommended task:** Russell live-verifies with two real search-only partnerships sharing the same block, confirming each sees the other's actual name (not their own), then commit and push.
 

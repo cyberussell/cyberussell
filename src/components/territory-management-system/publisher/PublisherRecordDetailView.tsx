@@ -318,11 +318,15 @@ export default function PublisherRecordDetailView({
         </button>
       )}
 
-      {editable && !assigned.completed_at && (
+      {editable && (
         <>
-          {/* Desktop/tablet: all forms fully expanded, plenty of room */}
+          {/* Desktop/tablet: all forms fully expanded, plenty of room. Pass to Another Partner
+              only makes sense before any visit has been logged yet — once a status is already on
+              record, Unlocated/Correction/Add Person all stay available so a publisher can keep
+              editing/appending to what's already there, but passing an already-worked record to
+              someone else no longer makes sense. */}
           <div className="hidden space-y-6 sm:block">
-            <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
+            {!assigned.completed_at && <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />}
             <MarkMovedForm
               initial={movedFields}
               submitting={markingMoved}
@@ -349,21 +353,23 @@ export default function PublisherRecordDetailView({
             />
           </div>
 
-          {/* Mobile: collapsed behind a four-button row (one shared panel, not four separate
-              floating buttons) until one is tapped — all four, including Add Person, show an
-              inline form here instead of navigating away. */}
+          {/* Mobile: collapsed behind a button row (one shared panel, not separate floating
+              buttons) until one is tapped — Pass is only included once the record hasn't been
+              logged yet, same reasoning as desktop above. */}
           <div className="sm:hidden">
             {mobileAction === 'none' && (
               <Card className="overflow-hidden p-0">
-                <div className="grid grid-cols-4 divide-x divide-gray-100">
-                  <button
-                    type="button"
-                    onClick={() => setMobileAction('move')}
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-[#2563EB] transition hover:bg-blue-50"
-                  >
-                    <ArrowRightLeft className="h-4 w-4" />
-                    Pass
-                  </button>
+                <div className={`grid divide-x divide-gray-100 ${assigned.completed_at ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                  {!assigned.completed_at && (
+                    <button
+                      type="button"
+                      onClick={() => setMobileAction('move')}
+                      className="flex flex-col items-center justify-center gap-1.5 py-3 text-xs font-semibold text-[#2563EB] transition hover:bg-blue-50"
+                    >
+                      <ArrowRightLeft className="h-4 w-4" />
+                      Pass
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => setMobileAction('moved')}
@@ -391,7 +397,7 @@ export default function PublisherRecordDetailView({
                 </div>
               </Card>
             )}
-            {mobileAction === 'move' && (
+            {mobileAction === 'move' && !assigned.completed_at && (
               <div className="relative">
                 <CloseMobileActionButton onClick={() => setMobileAction('none')} />
                 <MoveRecordForm siblingPartnerships={siblingPartnerships} moving={moving} onMove={onMoveRecord} />
