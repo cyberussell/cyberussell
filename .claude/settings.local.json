@@ -497,7 +497,9 @@
       "Bash(gh --version)",
       "Read(//Users/russellparayno/.ssh/**)",
       "Bash(ssh -T git@github.com -o BatchMode=yes -o ConnectTimeout=5)",
-      "Bash(echo \"EXIT=$?\")"
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(grep -n \"| { name: 'partners' }\\\\|const \\\\[workspace, setWorkspace\\\\]\\\\|<PublisherBottomMenu\" /Users/russellparayno/Documents/Business/cyberussell.com/src/components/territory-management-system/publisher/PublisherWorkspaceApp.tsx)",
+      "Bash(grep -n \"Refresh$\\\\|Refresh everything\" /Users/russellparayno/Documents/Business/cyberussell.com/src/components/territory-management-system/publisher/PublisherWorkspaceApp.tsx)"
     ]
   }
 }
