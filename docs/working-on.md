@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Group Leader Home Refresh moved into QR panel corner (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed — see checkpoint `territory-management-gl-home-refresh-corner-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Follow-up to the batch below — moved the Group Leader Home tab's Refresh button off its own standalone row and onto the QR/summary panel itself, upper-left corner, same row as the existing trash/delete icon (upper-right), icon only (no text label). Applied to both panel states (all-partners-done summary card, and the QR-not-done card, the latter color-branching on `isOverflow` same as the trash icon already does). Same `refreshing`/reload logic as before, only position and markup changed.
+
+Current Status: Committed and pushed.
+
+**Next recommended task:** Russell live-verifies the Refresh icon's new position in both panel states (and both normal/Auxiliary coloring).
+
+---
+
 **Territory Management System — Refresh-button spinner consistency (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed — see checkpoint `territory-management-refresh-spinner-consistency-v1.md`:**
 
 Current Product: Territory Management System (TMS).

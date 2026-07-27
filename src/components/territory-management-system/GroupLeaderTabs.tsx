@@ -283,25 +283,25 @@ export default function GroupLeaderTabs({
 
       {tab === 'home' && (
         <div className="space-y-8">
-          {/* A full browser reload rather than a soft in-app refresh — this component is fed by
-              server-rendered props too, same "only ever read once" concern as the publisher
-              workspace's own Refresh button. */}
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => {
-                setRefreshing(true)
-                window.location.reload()
-              }}
-              disabled={refreshing}
-              className="flex items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
-            >
-              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-              Refresh
-            </button>
-          </div>
           {allPartnersDone ? (
             <Card className="relative p-6">
+              {/* A full browser reload rather than a soft in-app refresh — this component is fed
+                  by server-rendered props too, same "only ever read once" concern as the
+                  publisher workspace's own Refresh button. Icon-only, mirrors the delete button's
+                  corner on the opposite side of the same row. */}
+              <button
+                type="button"
+                onClick={() => {
+                  setRefreshing(true)
+                  window.location.reload()
+                }}
+                disabled={refreshing}
+                aria-label="Refresh"
+                title="Refresh"
+                className="absolute left-4 top-4 text-[#2563EB] hover:text-[#1d4fd1] disabled:opacity-50"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
               <ConfirmDeleteButton
                 action={deleteGroupLeaderAssignmentAction.bind(null, batchId)}
                 confirmMessage="Delete this assignment? Publishers who scanned the QR code will lose access."
@@ -341,6 +341,23 @@ export default function GroupLeaderTabs({
                 isOverflow ? '!border-black !bg-black' : ''
               }`}
             >
+              <button
+                type="button"
+                onClick={() => {
+                  setRefreshing(true)
+                  window.location.reload()
+                }}
+                disabled={refreshing}
+                aria-label="Refresh"
+                title="Refresh"
+                className={
+                  isOverflow
+                    ? 'absolute left-4 top-4 text-[#60A5FA] hover:text-white disabled:opacity-50'
+                    : 'absolute left-4 top-4 text-[#2563EB] hover:text-[#1d4fd1] disabled:opacity-50'
+                }
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
               <ConfirmDeleteButton
                 action={deleteGroupLeaderAssignmentAction.bind(null, batchId)}
                 confirmMessage="Delete this assignment? Publishers who scanned the QR code will lose access."
