@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Refresh-button tab drift fix, List tab header layout (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed — see checkpoint `territory-management-refresh-tab-fix-list-header-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Two follow-ups to the batch below — (1) Home and List's "Refresh" buttons both did a plain `window.location.reload()`; since switching tabs via the bottom nav is in-memory only and never updates the URL's `?view=` param, refreshing from a tab other than whatever `?view=` last pointed to silently bounced the publisher onto the wrong tab. Fixed with a `handleFullRefresh(targetView)` helper that stamps the current tab onto `?view=` before reloading, so Refresh always lands back where it was pressed. (2) List tab's "Assigned Contact Records" header moved into the same row as its Refresh button (`flex items-center justify-between`), matching the "All Partners" header layout in `PartnerStatusList`, instead of a separate centered block below its own `flex justify-end` Refresh row.
+
+Current Status: Committed and pushed.
+
+**Next recommended task:** Russell live-verifies both fixes per the checkpoint's "Next Recommended Task" section.
+
+---
+
 **Territory Management System — Fix claimed-record not appearing/navigating, add List tab refresh button (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed — see checkpoint `territory-management-search-claim-navigation-fix-v1.md`:**
 
 Current Product: Territory Management System (TMS).

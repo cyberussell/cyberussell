@@ -482,6 +482,18 @@ export default function PublisherWorkspaceApp({
     }
   }
 
+  // Full-page reload used by the Home/List "Refresh" buttons — see their onClick comments for
+  // why a soft router.refresh() isn't enough. Switching tabs via the bottom nav is an in-memory
+  // setView() only (see PublisherBottomMenu), it never touches the URL's ?view= param, so a
+  // plain window.location.reload() would reload whatever tab the URL happened to be set to on
+  // first mount — not necessarily the tab currently on screen. Stamping ?view= with the current
+  // tab before reloading keeps the reload landing back where the publisher actually was.
+  function handleFullRefresh(targetView: 'home' | 'list') {
+    const url = new URL(window.location.href)
+    url.searchParams.set('view', targetView)
+    window.location.href = url.toString()
+  }
+
   // The one-time, locked-in search-area choice — called directly (not through the offline sync
   // queue) since it needs a live, real-time answer about whether these blocks are still
   // available, same reasoning as handleRefreshSearchScope's direct call. On success, sets
@@ -920,7 +932,7 @@ export default function PublisherWorkspaceApp({
                 the page at all, unlike Sync above which just flushes the local queue. */}
             <button
               type="button"
-              onClick={() => window.location.reload()}
+              onClick={() => handleFullRefresh('home')}
               disabled={!online}
               title={online ? 'Refresh everything (records, partners, requests)' : 'Refresh needs a connection'}
               className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
@@ -1117,14 +1129,20 @@ export default function PublisherWorkspaceApp({
             {/* No push notifications anywhere in this app — a record claimed via Search, an
                 approved Ask, or a Pass from another partner all only ever show up here after a
                 fresh load. Same full-reload Refresh as Home, always visible on this tab
-                regardless of whether records exist yet. */}
-            <div className="flex justify-end">
+                regardless of whether records exist yet. Header + Refresh share one row, same
+                layout as PartnerStatusList's "All Partners" header. */}
+            <div className="mb-3 flex items-center justify-between gap-2">
+              {workspace.records.length > 0 ? (
+                <h2 className="text-xl font-bold text-[#0B1B33]">Assigned Contact Records</h2>
+              ) : (
+                <div />
+              )}
               <button
                 type="button"
-                onClick={() => window.location.reload()}
+                onClick={() => handleFullRefresh('list')}
                 disabled={!online}
                 title={online ? 'Refresh your assigned records' : 'Refresh needs a connection'}
-                className="flex items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Refresh
@@ -1132,14 +1150,15 @@ export default function PublisherWorkspaceApp({
             </div>
             {workspace.records.length > 0 && (
               <div>
-                <div className="text-center">
-                  <h2 className="text-xl font-bold text-[#0B1B33]">Assigned Contact Records</h2>
-                  {workspace.territories.map((t) => (
-                    <p key={t.id} className="text-xs text-slate-500">
-                      {t.name} — {t.description}
-                    </p>
-                  ))}
-                </div>
+                {workspace.territories.length > 0 && (
+                  <div className="text-center">
+                    {workspace.territories.map((t) => (
+                      <p key={t.id} className="text-xs text-slate-500">
+                        {t.name} — {t.description}
+                      </p>
+                    ))}
+                  </div>
+                )}
 
                 {!readOnly && allDone && (
                   <div className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center shadow-sm">
