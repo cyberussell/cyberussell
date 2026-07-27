@@ -27,6 +27,7 @@ import {
 } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
   addPartnershipQuickNote,
+  createRecordTransferRequest,
   finishPartnership,
   getBatchById,
   getBatchSummary,
@@ -34,16 +35,23 @@ import {
   getPartnershipById,
   getPartnershipByToken,
   getSearchScopeForPartnership,
+  listIncomingRecordTransferRequests,
   lockPartnershipSearchBlocks,
   markPartnershipRecordCompleted,
   movePartnershipRecord,
   partnershipHasRecord,
   releasePartnership,
   renamePartnership,
+  resolveRecordTransferRequest,
+  searchTodaysAssignedRecords,
   submitPartnershipNote,
   terminatePartnershipEarly,
 } from '@/lib/territory-management-system/modules/assignment/queries'
-import type { PartnershipWithProgress } from '@/lib/territory-management-system/modules/assignment/types'
+import type {
+  IncomingRecordTransferRequest,
+  PartnershipWithProgress,
+  RecordSearchResult,
+} from '@/lib/territory-management-system/modules/assignment/types'
 import {
   createRecord,
   deleteRecord,
@@ -780,6 +788,70 @@ export async function getBatchPartnersAction(partnershipToken: string): Promise<
   if (!partnership) return []
   const batchSummary = await getBatchSummary(supabase, partnership.congregation_id, partnership.batch_id)
   return batchSummary?.partnerships ?? []
+}
+
+// Backs the publisher workspace's Search tab — a live, on-demand lookup (not offline-queued;
+// there's no meaningful "search offline" against congregation-wide live assignment state).
+// Requires at least 2 characters (see searchTodaysAssignedRecords) so an empty/near-empty query
+// doesn't return a huge unfiltered list.
+export async function searchTodaysRecordsAction(partnershipToken: string, query: string): Promise<RecordSearchResult[]> {
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, partnershipToken)
+  if (!partnership) return []
+  return searchTodaysAssignedRecords(supabase, partnership.congregation_id, partnership.batch.assignment_date, query)
+}
+
+// "Ask" — sends a pending request to whoever currently holds the record, rather than an instant
+// transfer. See createRecordTransferRequest for the cross-group (Auxiliary-cannot-take-from-
+// House-To-House) enforcement.
+export async function requestRecordTransferAction(partnershipToken: string, recordId: string): Promise<ActionResult> {
+  if (!(await checkRateLimit(`tms-request-transfer:${clientIp(await headers())}`, 20))) {
+    return { error: 'Too many attempts. Please wait a moment.' }
+  }
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+
+  try {
+    const result = await createRecordTransferRequest(supabase, partnership.congregation_id, recordId, partnership.id, partnership.batch.is_overflow)
+    if ('error' in result) return { error: result.error }
+  } catch (e) {
+    await logError(partnership.congregation_id, 'requestRecordTransferAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not send the request.' }
+  }
+  return { error: 'SAVED' }
+}
+
+// Manual "Refresh" for the Search tab's own "Incoming Requests" section — same "plain read, not
+// queued" reasoning as getBatchPartnersAction above.
+export async function listIncomingRecordTransferRequestsAction(partnershipToken: string): Promise<IncomingRecordTransferRequest[]> {
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, partnershipToken)
+  if (!partnership) return []
+  return listIncomingRecordTransferRequests(supabase, partnership.id)
+}
+
+// Approve or decline an incoming "Ask" — re-verifies partnershipToken resolves to the request's
+// own holding partnership before acting (never trusts a client-supplied requestId/partnership
+// pairing outright).
+export async function respondToRecordTransferRequestAction(
+  partnershipToken: string,
+  requestId: string,
+  decision: 'approved' | 'declined'
+): Promise<ActionResult> {
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+
+  try {
+    const result = await resolveRecordTransferRequest(supabase, requestId, partnership.id, decision, partnership.name || 'Unnamed partnership')
+    if ('error' in result) return { error: result.error }
+  } catch (e) {
+    await logError(partnership.congregation_id, 'respondToRecordTransferRequestAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not respond to the request.' }
+  }
+  return { error: 'SAVED' }
 }
 
 // Recommends a Plus Code correction on a record the publisher found while searching their own

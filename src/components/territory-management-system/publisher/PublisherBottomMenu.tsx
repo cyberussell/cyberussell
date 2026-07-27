@@ -1,6 +1,6 @@
 'use client'
 
-import { ClipboardList, ClipboardPlus, Home, Users, type LucideIcon } from 'lucide-react'
+import { ClipboardList, ClipboardPlus, Home, Search, Users, type LucideIcon } from 'lucide-react'
 
 // Fixed bottom navigation for the publisher workspace, like a native app tab bar — easier to
 // reach one-handed than a top bar while out in ministry. Download/Sync live in a top bar
@@ -16,9 +16,21 @@ export default function PublisherBottomMenu({
   onGoToPartners,
   onGoToRecords,
   onGoToAddedRecords,
+  onGoToSearch,
   showAddedRecords,
+  incomingRequestCount,
 }: {
-  view: 'home' | 'list' | 'detail' | 'addRecord' | 'addQuickNote' | 'addedRecords' | 'addedRecordDetail' | 'editAddedRecord' | 'partners'
+  view:
+    | 'home'
+    | 'list'
+    | 'detail'
+    | 'addRecord'
+    | 'addQuickNote'
+    | 'addedRecords'
+    | 'addedRecordDetail'
+    | 'editAddedRecord'
+    | 'partners'
+    | 'search'
   onGoToHome: () => void
   onGoToPartners: () => void
   onGoToRecords: () => void
@@ -26,7 +38,14 @@ export default function PublisherBottomMenu({
   // record only ever belongs to the partnership that added it, same as "Add a New Contact
   // Record" itself, which is also readOnly-gated.
   onGoToAddedRecords: () => void
+  // Hidden while readOnly too — a read-only viewer has no real partnership of their own to ask
+  // for records with, or to receive incoming requests as.
+  onGoToSearch: () => void
   showAddedRecords: boolean
+  // Pending "Ask" requests for records this partnership currently holds — shown as a badge on
+  // the Search tab so there's some chance of noticing one without navigating there first (no
+  // push notifications in this offline-first app).
+  incomingRequestCount?: number
 }) {
   const items: {
     key: string
@@ -51,6 +70,14 @@ export default function PublisherBottomMenu({
       icon: ClipboardPlus,
       active: view === 'addedRecords' || view === 'addedRecordDetail' || view === 'editAddedRecord',
       onClick: onGoToAddedRecords,
+    })
+    items.push({
+      key: 'search',
+      label: 'Search',
+      icon: Search,
+      active: view === 'search',
+      onClick: onGoToSearch,
+      badge: incomingRequestCount,
     })
   }
   return (

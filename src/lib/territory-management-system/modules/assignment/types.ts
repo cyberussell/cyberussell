@@ -133,10 +133,38 @@ export interface PartnershipWorkspace extends Partnership {
   // navigation used to hard-fail offline — see PublisherBottomMenu). Manually refreshable
   // (see getBatchPartnersAction) but otherwise just a snapshot from initial load.
   batchPartnerships: PartnershipWithProgress[]
+  // Pending "Ask" requests for records THIS partnership currently holds (see
+  // 042_record_transfer_requests.sql and the Search tab) — fetched up front purely so the Search
+  // nav icon's badge count has something to show without navigating there first; the Search tab
+  // itself always re-fetches fresh via listIncomingRecordTransferRequestsAction on open/refresh.
+  incomingRequests: IncomingRecordTransferRequest[]
   // A congregation-wide reference point (see getCongregationPlusCodeAnchor) letting
   // HouseholdDistributionMap recover a short/local-form Plus Code even when this partnership's
   // own record set (assigned records, or a freshly-chosen search area) has no full-form code of
   // its own to anchor against. Null only if the whole congregation has never captured a single
   // full-form code.
   congregationAnchor: { lat: number; lng: number } | null
+}
+
+export interface RecordSearchResult {
+  id: string
+  residentName: string
+  address: string
+  plusCode: string | null
+  territoryName: string
+  // null = not currently assigned to anyone today.
+  assignedTo: { partnershipId: string; partnershipName: string; isOverflow: boolean } | null
+}
+
+export interface RecordTransferRequestError {
+  error: string
+}
+
+export interface IncomingRecordTransferRequest {
+  id: string
+  recordId: string
+  residentName: string
+  address: string
+  requestingPartnershipName: string
+  createdAt: string
 }

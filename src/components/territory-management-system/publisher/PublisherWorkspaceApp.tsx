@@ -26,6 +26,7 @@ import PublisherFAQ from './PublisherFAQ'
 import ConfirmModal from '@/components/territory-management-system/ConfirmModal'
 import PartnershipRenameForm from './PartnershipRenameForm'
 import PublisherQuickNoteForm, { type QuickNoteFields } from './PublisherQuickNoteForm'
+import PublisherSearchPanel from './PublisherSearchPanel'
 import SharePartnershipCard from './SharePartnershipCard'
 import ChooseSearchScopeForm from './ChooseSearchScopeForm'
 import AssignedRecordsList from './AssignedRecordsList'
@@ -98,6 +99,7 @@ function buildFailedSyncReport(items: SyncQueueItem[], partnerName: string): str
 type View =
   | { name: 'home' }
   | { name: 'partners' }
+  | { name: 'search' }
   | { name: 'list' }
   | { name: 'detail'; recordId: string }
   // prefill + returnToRecordId are both set when reached via "+ Add Another Person Here" on a
@@ -1416,6 +1418,15 @@ export default function PublisherWorkspaceApp({
             </button>
           </div>
         )}
+
+        {view.name === 'search' && !readOnly && (
+          <PublisherSearchPanel
+            partnershipToken={partnershipToken}
+            isOverflow={workspace.batch.is_overflow}
+            incomingRequests={workspace.incomingRequests}
+            onIncomingRequestsChange={(incomingRequests) => setWorkspace((w) => ({ ...w, incomingRequests }))}
+          />
+        )}
       </div>
 
       <PublisherBottomMenu
@@ -1430,6 +1441,8 @@ export default function PublisherWorkspaceApp({
         onGoToHome={() => setView({ name: 'home' })}
         onGoToPartners={() => setView({ name: 'partners' })}
         onGoToRecords={() => setView({ name: 'list' })}
+        onGoToSearch={() => setView({ name: 'search' })}
+        incomingRequestCount={workspace.incomingRequests.length}
         onGoToAddedRecords={() => setView({ name: 'addedRecords' })}
         showAddedRecords={!readOnly}
       />

@@ -8,7 +8,9 @@ import {
   createAssignment,
   deleteBatch,
   getBatchesForGroupLeaderAndDate,
+  getPartnershipAssignedRecordSummaries,
   terminatePartnershipEarly,
+  type PartnershipAssignedRecordSummary,
 } from '@/lib/territory-management-system/modules/assignment/queries'
 import { todayInTimezone } from '@/lib/territory-management-system/modules/assignment/date'
 import { isAssignmentError } from '@/lib/territory-management-system/modules/assignment/engine'
@@ -139,4 +141,15 @@ export async function endPartnershipAction(partnershipId: string): Promise<void>
     }
   }
   revalidatePath('/territory-management-system/group-leader/dashboard')
+}
+
+// Lazy-loaded when a Group Leader taps a partnership card in the Partners tab (see
+// PartnershipList.tsx's accordion) — read-only, congregation-scoped by the session client's own
+// RLS (group_leader has read-only policies across every table, see 003_group_leader_and_reports.sql),
+// same as every other stat already shown on this tab. Deliberately not gated to "batches I
+// created" like the mutations above — reading who's assigned to a partner isn't a write, and RLS
+// already keeps this scoped to the Group Leader's own congregation.
+export async function getPartnershipAssignedRecordsAction(partnershipId: string): Promise<PartnershipAssignedRecordSummary[]> {
+  const { supabase } = await requireGroupLeader()
+  return getPartnershipAssignedRecordSummaries(supabase, partnershipId)
 }

@@ -120,8 +120,10 @@ describe('getSelectableResults', () => {
     expect(getSelectableResults(null)).not.toContain('study_discontinued')
   })
 
-  it('Potential BS narrows to Started Bible Study / No Positive Response, no longer re-offering Potential BS itself', () => {
-    expect([...getSelectableResults('potential_bible_study')].sort()).toEqual(['discontinued', 'started_bible_study'].sort())
+  it('Potential BS narrows to Potential BS / Started Bible Study / No Positive Response', () => {
+    expect([...getSelectableResults('potential_bible_study')].sort()).toEqual(
+      ['discontinued', 'potential_bible_study', 'started_bible_study'].sort()
+    )
   })
 
   it('Started Bible Study narrows to Progressive BS / No Positive Response / Discontinued (skips Bible Study)', () => {

@@ -69,15 +69,15 @@ export const BIBLE_STUDY_FOLLOWUP_RESULTS = ['progressing', 'discontinued', 'stu
 
 // The Bible Study funnel's entry stage, with its own narrowed follow-up choices — evaluated in
 // getSelectableResults() before the BIBLE_STUDY_ONGOING_RESULTS check above:
-//   'potential_bible_study' ("Potential BS", the default-pool entry point) -> locks to
-//     [started_bible_study, discontinued] ("Started Bible Study" confirms a real study began,
-//     "No Positive Response" — discontinued's display label — returns the record to the
-//     regular/default pool). Re-confirming "Potential BS" itself was removed 2026-07-20
-//     (Russell's request) — a record already at Potential BS must move forward or dead-end, not
-//     loop back onto its own current status.
+//   'potential_bible_study' ("Potential BS", the default-pool entry point) -> stays at
+//     [potential_bible_study, started_bible_study, discontinued]. Re-confirming "Potential BS"
+//     itself was removed 2026-07-20 then reinstated 2026-07-27 (both Russell's request) — a
+//     genuine Bible Study interest can take several visits to actually start, so a publisher
+//     needs to be able to log "still Potential BS" repeatedly rather than being forced to either
+//     confirm "Started Bible Study" or dead-end to "No Positive Response" on the very next visit.
 // From 'started_bible_study' onward, BIBLE_STUDY_ONGOING_RESULTS/BIBLE_STUDY_FOLLOWUP_RESULTS
 // above take over directly — see the removed STARTED_BIBLE_STUDY_RESULTS note above.
-export const POTENTIAL_BIBLE_STUDY_RESULTS = ['started_bible_study', 'discontinued'] as const
+export const POTENTIAL_BIBLE_STUDY_RESULTS = ['potential_bible_study', 'started_bible_study', 'discontinued'] as const
 
 // Any visit result that should read as "there's an active Bible Study interest here" for
 // card-tone purposes (see getRecordCardTone below) — a superset of the funnel/follow-up

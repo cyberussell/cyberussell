@@ -7,10 +7,13 @@ import { BIBLE_STUDY_FAMILY_RESULTS, isDoNotCallLocked } from '../records/schema
 import type {
   AssignmentBatch,
   BatchSummary,
+  IncomingRecordTransferRequest,
   Partnership,
   PartnershipRecordDetail,
   PartnershipWithProgress,
   PartnershipWorkspace,
+  RecordSearchResult,
+  RecordTransferRequestError,
 } from './types'
 
 // Fetches the eligible ('approved') record pool across the selected territories, in the
@@ -664,6 +667,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
   const batchSummary = await getBatchSummary(supabase, partnership.congregation_id, partnership.batch_id)
   const batchPartnerships = batchSummary?.partnerships ?? []
   const congregationAnchor = await getCongregationPlusCodeAnchor(supabase, partnership.congregation_id)
+  const incomingRequests = await listIncomingRecordTransferRequests(supabase, partnership.id)
 
   return {
     ...(partnership as Partnership),
@@ -679,6 +683,7 @@ export async function getPartnershipByToken(supabase: SupabaseClient, claimToken
     searchScopeRecords,
     searchScopeBlockPartners,
     batchPartnerships,
+    incomingRequests,
     congregationAnchor,
   }
 }
@@ -761,6 +766,35 @@ export async function getGroupLeaderPartnershipsForDate(
 export async function getPartnershipById(supabase: SupabaseClient, partnershipId: string): Promise<Partnership | null> {
   const { data } = await supabase.from('partnerships').select('*').eq('id', partnershipId).maybeSingle()
   return (data as Partnership | null) ?? null
+}
+
+export interface PartnershipAssignedRecordSummary {
+  id: string
+  residentName: string
+  address: string
+  plusCode: string | null
+}
+
+// Read-only name list for the Group Leader's Partners tab accordion (see PartnershipList.tsx) —
+// deliberately minimal (no visit status/history, no Admin-only fields), just enough for a Group
+// Leader to see exactly who's assigned to a given partner without navigating away. Grouping by
+// Plus Code (same address = same household, i.e. "linked contacts") is left to the caller — this
+// just returns the flat list in assignment order.
+export async function getPartnershipAssignedRecordSummaries(
+  supabase: SupabaseClient,
+  partnershipId: string
+): Promise<PartnershipAssignedRecordSummary[]> {
+  const { data } = await supabase
+    .from('partnership_records')
+    .select('record:territory_records(id, resident_name, address, plus_code)')
+    .eq('partnership_id', partnershipId)
+    .order('sequence')
+  return (
+    (data ?? []) as unknown as Array<{ record: { id: string; resident_name: string; address: string; plus_code: string | null } | null }>
+  )
+    .map((r) => r.record)
+    .filter((r): r is { id: string; resident_name: string; address: string; plus_code: string | null } => r !== null)
+    .map((r) => ({ id: r.id, residentName: r.resident_name, address: r.address, plusCode: r.plus_code }))
 }
 
 // The first successful rename *is* the claim (see getPartnershipByToken's comment above) — a
@@ -1011,4 +1045,195 @@ export async function getPassedFromForRecord(
   if (!data) return null
   const row = data as { passed_from_name: string | null; passed_from_at: string | null }
   return row.passed_from_name && row.passed_from_at ? { name: row.passed_from_name, at: row.passed_from_at } : null
+}
+
+// Backs the publisher workspace's Search tab — congregation-wide across every one of today's
+// batches (House To House + every Auxiliary/overflow one), scoped to the territories those
+// batches actually cover (never the whole congregation's all-time record database). See
+// 042_record_transfer_requests.sql for the feature this powers.
+export async function searchTodaysAssignedRecords(
+  supabase: SupabaseClient,
+  congregationId: string,
+  assignmentDate: string,
+  query: string
+): Promise<RecordSearchResult[]> {
+  const trimmed = query.trim()
+  if (trimmed.length < 2) return []
+
+  const { data: batches } = await supabase
+    .from('assignment_batches')
+    .select('id')
+    .eq('congregation_id', congregationId)
+    .eq('assignment_date', assignmentDate)
+  const batchIds = (batches ?? []).map((b) => b.id as string)
+  if (batchIds.length === 0) return []
+
+  const { data: territoryLinks } = await supabase.from('assignment_batch_territories').select('territory_id').in('batch_id', batchIds)
+  const territoryIds = [...new Set((territoryLinks ?? []).map((l) => l.territory_id as string))]
+  if (territoryIds.length === 0) return []
+
+  // Escape PostgREST's ilike wildcards so a query containing a literal % or _ doesn't behave
+  // like a wildcard itself.
+  const escaped = trimmed.replace(/[%_]/g, (c) => `\\${c}`)
+  const { data: records } = await supabase
+    .from('territory_records')
+    .select('id, resident_name, address, plus_code, territory:territories!territory_id(name, description)')
+    .in('territory_id', territoryIds)
+    .or(`resident_name.ilike.%${escaped}%,address.ilike.%${escaped}%,plus_code.ilike.%${escaped}%`)
+    .limit(30)
+  const matched = (records ?? []) as unknown as Array<{
+    id: string
+    resident_name: string
+    address: string
+    plus_code: string | null
+    territory: { name: string; description: string } | null
+  }>
+  if (matched.length === 0) return []
+
+  // Two plain follow-up queries (not an embedded/inner-join filter) — simpler to reason about
+  // and avoids relying on PostgREST's nested-filter syntax working exactly as expected. Fine at
+  // this scale (at most 30 matched records, at most a handful of partnerships today).
+  const { data: prRows } = await supabase
+    .from('partnership_records')
+    .select('record_id, partnership_id')
+    .in(
+      'record_id',
+      matched.map((m) => m.id)
+    )
+  const partnershipIdByRecordId = new Map((prRows ?? []).map((r) => [r.record_id as string, r.partnership_id as string]))
+  const partnershipIds = [...new Set(partnershipIdByRecordId.values())]
+
+  const partnershipInfoById = new Map<string, { name: string; isOverflow: boolean }>()
+  if (partnershipIds.length > 0) {
+    const { data: partnershipRows } = await supabase.from('partnerships').select('id, name, batch_id').in('id', partnershipIds)
+    const todaysBatchIds = new Set(batchIds)
+    const relevant = (partnershipRows ?? []).filter((p) => todaysBatchIds.has(p.batch_id as string))
+    if (relevant.length > 0) {
+      const relevantBatchIds = [...new Set(relevant.map((p) => p.batch_id as string))]
+      const { data: batchRows } = await supabase.from('assignment_batches').select('id, is_overflow').in('id', relevantBatchIds)
+      const isOverflowByBatchId = new Map((batchRows ?? []).map((b) => [b.id as string, b.is_overflow as boolean]))
+      for (const p of relevant) {
+        partnershipInfoById.set(p.id as string, { name: p.name as string, isOverflow: isOverflowByBatchId.get(p.batch_id as string) ?? false })
+      }
+    }
+  }
+
+  return matched.map((m) => {
+    const partnershipId = partnershipIdByRecordId.get(m.id)
+    const info = partnershipId ? partnershipInfoById.get(partnershipId) : undefined
+    return {
+      id: m.id,
+      residentName: m.resident_name,
+      address: m.address,
+      plusCode: m.plus_code,
+      territoryName: m.territory?.description || m.territory?.name || '',
+      assignedTo: partnershipId && info ? { partnershipId, partnershipName: info.name, isOverflow: info.isOverflow } : null,
+    }
+  })
+}
+
+// Creates a pending request (see 042_record_transfer_requests.sql) — the requesting partnership
+// asks the current holder for a record instead of an instant "Pass." Re-verifies the current
+// holder server-side rather than trusting a client-supplied holdingPartnershipId, and enforces
+// the cross-group rule: an Auxiliary/overflow partnership can never request a record currently
+// held by a House To House (non-overflow) one.
+export async function createRecordTransferRequest(
+  supabase: SupabaseClient,
+  congregationId: string,
+  recordId: string,
+  requestingPartnershipId: string,
+  requestingIsOverflow: boolean
+): Promise<RecordTransferRequestError | { ok: true }> {
+  const { data: prRow } = await supabase.from('partnership_records').select('partnership_id').eq('record_id', recordId).maybeSingle()
+  const holdingPartnershipId = prRow?.partnership_id as string | undefined
+  if (!holdingPartnershipId) return { error: 'This record is no longer assigned to anyone today.' }
+  if (holdingPartnershipId === requestingPartnershipId) return { error: 'This record is already assigned to you.' }
+
+  const { data: holdingPartnership } = await supabase.from('partnerships').select('batch_id').eq('id', holdingPartnershipId).maybeSingle()
+  if (!holdingPartnership) return { error: 'This record is no longer assigned to anyone today.' }
+  const { data: holdingBatch } = await supabase.from('assignment_batches').select('is_overflow').eq('id', holdingPartnership.batch_id).maybeSingle()
+  const holdingIsOverflow = Boolean(holdingBatch?.is_overflow)
+
+  if (requestingIsOverflow && !holdingIsOverflow) {
+    return { error: 'Auxiliary Groups cannot request records assigned to House To House.' }
+  }
+
+  const { error } = await supabase.from('record_transfer_requests').insert({
+    congregation_id: congregationId,
+    record_id: recordId,
+    requesting_partnership_id: requestingPartnershipId,
+    holding_partnership_id: holdingPartnershipId,
+  })
+  // A duplicate still-pending request for the same record/requester hits the partial unique
+  // index — treat it as a harmless no-op (the request is already in) rather than an error.
+  if (error && error.code !== '23505') throw error
+  return { ok: true }
+}
+
+// Pending requests for records THIS partnership currently holds — surfaced on the Search tab so
+// the holder can approve or decline. Re-fetched manually (see the Search tab's own Refresh), same
+// "plain read, not queued through the offline sync system" pattern as getSearchScopeRecordsAction.
+export async function listIncomingRecordTransferRequests(
+  supabase: SupabaseClient,
+  holdingPartnershipId: string
+): Promise<IncomingRecordTransferRequest[]> {
+  const { data } = await supabase
+    .from('record_transfer_requests')
+    .select(
+      'id, created_at, record:territory_records(id, resident_name, address), requesting:partnerships!requesting_partnership_id(name)'
+    )
+    .eq('holding_partnership_id', holdingPartnershipId)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+  return (
+    (data ?? []) as unknown as Array<{
+      id: string
+      created_at: string
+      record: { id: string; resident_name: string; address: string } | null
+      requesting: { name: string } | null
+    }>
+  )
+    .filter((r) => r.record !== null)
+    .map((r) => ({
+      id: r.id,
+      recordId: r.record!.id,
+      residentName: r.record!.resident_name,
+      address: r.record!.address,
+      requestingPartnershipName: r.requesting?.name ?? 'Unnamed partnership',
+      createdAt: r.created_at,
+    }))
+}
+
+// Approves or declines an incoming request. Re-verifies the record is still actually held by
+// holdingPartnershipId before approving — if it was passed/re-assigned elsewhere in the meantime,
+// this fails gracefully rather than moving a record out from under whoever actually has it now.
+export async function resolveRecordTransferRequest(
+  supabase: SupabaseClient,
+  requestId: string,
+  holdingPartnershipId: string,
+  decision: 'approved' | 'declined',
+  holdingPartnershipName: string
+): Promise<RecordTransferRequestError | { ok: true }> {
+  const { data: request } = await supabase
+    .from('record_transfer_requests')
+    .select('record_id, requesting_partnership_id, status')
+    .eq('id', requestId)
+    .eq('holding_partnership_id', holdingPartnershipId)
+    .maybeSingle()
+  if (!request || request.status !== 'pending') return { error: 'This request is no longer pending.' }
+
+  if (decision === 'approved') {
+    const { data: prRow } = await supabase.from('partnership_records').select('partnership_id').eq('record_id', request.record_id).maybeSingle()
+    if (!prRow || prRow.partnership_id !== holdingPartnershipId) {
+      return { error: 'This record is no longer assigned to you — the request can no longer be approved.' }
+    }
+    await movePartnershipRecord(supabase, holdingPartnershipId, request.requesting_partnership_id, request.record_id, holdingPartnershipName)
+  }
+
+  const { error } = await supabase
+    .from('record_transfer_requests')
+    .update({ status: decision, resolved_at: new Date().toISOString() })
+    .eq('id', requestId)
+  if (error) throw error
+  return { ok: true }
 }

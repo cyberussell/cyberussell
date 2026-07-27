@@ -26,7 +26,11 @@ import {
 } from 'lucide-react'
 import type { BatchStats, TerritoryVisitHistoryEntry } from '@/lib/territory-management-system/modules/reports/queries'
 import { VISIT_RESULT_LABELS } from '@/lib/territory-management-system/modules/records/schema'
-import { deleteGroupLeaderAssignmentAction, endPartnershipAction } from '@/app/territory-management-system/actions/group-leader'
+import {
+  deleteGroupLeaderAssignmentAction,
+  endPartnershipAction,
+  getPartnershipAssignedRecordsAction,
+} from '@/app/territory-management-system/actions/group-leader'
 import StatCard from '@/components/territory-management-system/dashboard/StatCard'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'
@@ -473,7 +477,13 @@ export default function GroupLeaderTabs({
 
       {/* Follows the batch switcher above (House To House / Auxiliary Groups) — only the
           currently selected batch's own partners, not every batch stacked on one page. */}
-      {tab === 'progress' && <PartnershipList partnerships={stats.partnerships} onEndPartnership={endPartnershipAction} />}
+      {tab === 'progress' && (
+        <PartnershipList
+          partnerships={stats.partnerships}
+          onEndPartnership={endPartnershipAction}
+          onLoadAssignedRecords={getPartnershipAssignedRecordsAction}
+        />
+      )}
 
       {tab === 'faq' && <PublisherFAQ />}
     </div>
