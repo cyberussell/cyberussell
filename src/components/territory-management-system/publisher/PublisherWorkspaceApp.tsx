@@ -1114,6 +1114,22 @@ export default function PublisherWorkspaceApp({
 
         {view.name === 'list' && (readOnly || workspace.claimed_at) && !needsSearchScope && (
           <>
+            {/* No push notifications anywhere in this app — a record claimed via Search, an
+                approved Ask, or a Pass from another partner all only ever show up here after a
+                fresh load. Same full-reload Refresh as Home, always visible on this tab
+                regardless of whether records exist yet. */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                disabled={!online}
+                title={online ? 'Refresh your assigned records' : 'Refresh needs a connection'}
+                className="flex items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                Refresh
+              </button>
+            </div>
             {workspace.records.length > 0 && (
               <div>
                 <div className="text-center">

@@ -41,7 +41,6 @@ export default function PublisherSearchPanel({
   const [asking, setAsking] = useState(false)
   const [claimConfirmFor, setClaimConfirmFor] = useState<RecordSearchResult | null>(null)
   const [claiming, setClaiming] = useState(false)
-  const [claimedIds, setClaimedIds] = useState<Set<string>>(new Set())
   const [refreshingIncoming, setRefreshingIncoming] = useState(false)
   const [respondingId, setRespondingId] = useState<string | null>(null)
 
@@ -52,7 +51,6 @@ export default function PublisherSearchPanel({
     try {
       const found = await searchTodaysRecordsAction(partnershipToken, query)
       setResults(found)
-      setClaimedIds(new Set())
     } finally {
       setSearching(false)
     }
@@ -81,13 +79,20 @@ export default function PublisherSearchPanel({
       const result = await claimUnassignedRecordAction(partnershipToken, claimConfirmFor.id)
       if (result.error && result.error !== 'SAVED') {
         toast.error(result.error)
-      } else {
-        toast.success('Added to your list — refresh Home to see it.')
-        setClaimedIds((prev) => new Set(prev).add(claimConfirmFor.id))
+        setClaiming(false)
+        setClaimConfirmFor(null)
+        return
       }
-    } finally {
+      // A full reload, not a soft in-app navigation — the workspace only ever reads its records
+      // from the initial server-rendered load, so this is the only way the newly-claimed
+      // record's full detail (territory/section/block, visit history) actually shows up.
+      // ?view=list lands directly on the Assigned Contact Records list, same param
+      // BatchLandingBottomMenu already uses to jump straight to a tab on first mount.
+      window.location.href = `${window.location.pathname}?view=list`
+    } catch (e) {
       setClaiming(false)
       setClaimConfirmFor(null)
+      throw e
     }
   }
 
@@ -215,8 +220,6 @@ export default function PublisherSearchPanel({
                       </button>
                     )}
                   </>
-                ) : claimedIds.has(r.id) ? (
-                  <p className="mt-1 text-xs font-medium text-emerald-600">Added to your list ✓</p>
                 ) : (
                   <>
                     <p className="mt-1 text-xs font-medium text-emerald-600">Not assigned today</p>

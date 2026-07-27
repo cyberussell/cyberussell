@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Fix claimed-record not appearing/navigating, add List tab refresh button (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed — see checkpoint `territory-management-search-claim-navigation-fix-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Russell reported live that claiming an unassigned record via Search neither navigated anywhere nor actually showed up in the records list. Root cause: the workspace only reads `workspace.records` from its initial server load, and the claim action never triggered any refetch — the earlier "refresh Home to see it" toast was the only signal. Fixed by having a successful claim do a full page reload targeting `?view=list` (same query param `BatchLandingBottomMenu` already uses to land on a tab on mount), landing directly on Assigned Contact Records with the new record's full detail genuinely fetched fresh. Also added a "Refresh" button to the List tab itself (same full-reload pattern as Home's), per Russell's follow-up ask, since this offline-first app has no push notifications for any way the assigned list can change out from under a publisher (claim, approved Ask, Pass from another partner).
+
+Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101, unchanged), `npx next build` (clean). Not live-verified (no TMS credentials in this sandbox). Not yet committed.
+
+**Next recommended task:** Russell live-verifies the claim → list navigation and the new List tab Refresh button, then commit and push (scoped explicitly to TMS files only).
+
+---
+
 **Territory Management System — Claim unassigned record, full-refresh buttons, wrong-partner switch fix (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed — see checkpoint `territory-management-claim-refresh-switch-partner-v1.md`:**
 
 Current Product: Territory Management System (TMS).
