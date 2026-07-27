@@ -103,6 +103,10 @@ export default function GroupLeaderTabs({
   territoryHistory: TerritoryVisitHistoryEntry[]
 }) {
   const [tab, setTab] = useState<Tab>('home')
+  // Spins the Refresh icon for the moment between tapping it and the full page reload actually
+  // taking over — otherwise the button looks like it did nothing for however long the network
+  // round-trip takes.
+  const [refreshing, setRefreshing] = useState(false)
   // Home tab's Generate/Regenerate toggle — deliberately starts at null (neither shown), even
   // right after a page refresh, so the tab opens clean instead of always stacking both forms.
   const [assignmentAction, setAssignmentAction] = useState<'generate' | 'regenerate' | null>(null)
@@ -285,10 +289,14 @@ export default function GroupLeaderTabs({
           <div className="flex justify-end">
             <button
               type="button"
-              onClick={() => window.location.reload()}
-              className="flex items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+              onClick={() => {
+                setRefreshing(true)
+                window.location.reload()
+              }}
+              disabled={refreshing}
+              className="flex items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
             >
-              <RefreshCw className="h-3.5 w-3.5" />
+              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
             </button>
           </div>

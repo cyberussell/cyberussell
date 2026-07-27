@@ -1,5 +1,17 @@
 # Current Work
 
+**Territory Management System — Refresh-button spinner consistency (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed — see checkpoint `territory-management-refresh-spinner-consistency-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Follow-up to the batch below — Russell noted the Partners tab's Refresh button already spins its icon while refreshing (`PartnerStatusList.tsx`), but three others didn't: publisher Home tab Refresh and publisher List tab Refresh (both `PublisherWorkspaceApp.tsx`, routed through the shared `handleFullRefresh` helper — added a `fullRefreshing` state set before navigating) and Group Leader Home tab Refresh (`GroupLeaderTabs.tsx` — added a local `refreshing` state). All three still do a real full-page `window.location` reload, the state just drives the spin + disables the button for the moment before the new page takes over.
+
+Current Status: Committed and pushed.
+
+**Next recommended task:** Russell live-verifies all four Refresh buttons (publisher Home, publisher List, publisher Partners, Group Leader Home) spin while refreshing.
+
+---
+
 **Territory Management System — Refresh-button tab drift fix, List tab header layout (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed — see checkpoint `territory-management-refresh-tab-fix-list-header-v1.md`:**
 
 Current Product: Territory Management System (TMS).

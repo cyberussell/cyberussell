@@ -154,6 +154,9 @@ export default function PublisherWorkspaceApp({
   const [recommendingCorrection, setRecommendingCorrection] = useState(false)
   const [refreshingSearchScope, setRefreshingSearchScope] = useState(false)
   const [refreshingPartners, setRefreshingPartners] = useState(false)
+  // Shared by the Home/List "Refresh" buttons (see handleFullRefresh) — only one is ever on
+  // screen at a time, since they belong to different tabs.
+  const [fullRefreshing, setFullRefreshing] = useState(false)
   const [choosingSearchScope, setChoosingSearchScope] = useState(false)
   const [searchScopeChoiceError, setSearchScopeChoiceError] = useState('')
   const [deletingAddedRecord, setDeletingAddedRecord] = useState(false)
@@ -489,6 +492,7 @@ export default function PublisherWorkspaceApp({
   // first mount — not necessarily the tab currently on screen. Stamping ?view= with the current
   // tab before reloading keeps the reload landing back where the publisher actually was.
   function handleFullRefresh(targetView: 'home' | 'list') {
+    setFullRefreshing(true)
     const url = new URL(window.location.href)
     url.searchParams.set('view', targetView)
     window.location.href = url.toString()
@@ -933,11 +937,11 @@ export default function PublisherWorkspaceApp({
             <button
               type="button"
               onClick={() => handleFullRefresh('home')}
-              disabled={!online}
+              disabled={!online || fullRefreshing}
               title={online ? 'Refresh everything (records, partners, requests)' : 'Refresh needs a connection'}
               className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
             >
-              <RefreshCw className="h-3.5 w-3.5" />
+              <RefreshCw className={`h-3.5 w-3.5 ${fullRefreshing ? 'animate-spin' : ''}`} />
               Refresh
             </button>
           </div>
@@ -1140,11 +1144,11 @@ export default function PublisherWorkspaceApp({
               <button
                 type="button"
                 onClick={() => handleFullRefresh('list')}
-                disabled={!online}
+                disabled={!online || fullRefreshing}
                 title={online ? 'Refresh your assigned records' : 'Refresh needs a connection'}
                 className="flex shrink-0 items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
               >
-                <RefreshCw className="h-3.5 w-3.5" />
+                <RefreshCw className={`h-3.5 w-3.5 ${fullRefreshing ? 'animate-spin' : ''}`} />
                 Refresh
               </button>
             </div>
