@@ -1,14 +1,26 @@
 # Current Work
 
-**Territory Management System — Publisher Search tab (Ask/request-transfer flow), Potential BS reversal, GL Partners accordion (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, NOT yet committed, migration 042 NOT yet applied live — see checkpoint `territory-management-search-tab-ask-flow-v1.md`:**
+**Territory Management System — Claim unassigned record, full-refresh buttons, wrong-partner switch fix (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed — see checkpoint `territory-management-claim-refresh-switch-partner-v1.md`:**
 
 Current Product: Territory Management System (TMS).
 
-Current Feature: Three requests — (1) new "Search" nav tab: congregation-wide search across all of today's batches (House To House + Auxiliary), shows who currently holds a record (or "not assigned today"), lets a publisher send an "Ask" request the current holder must approve (not an instant transfer) — confirmed via clarifying questions first: everyone searches everything, but an Auxiliary/overflow partnership can never successfully request a record held by a House To House one (enforced server-side + reflected in the UI). New `record_transfer_requests` table (migration 042, **NOT yet applied live**). New `PublisherSearchPanel.tsx`, badge on the nav icon for pending incoming requests; (2) "Potential BS" reinstated as re-selectable on a record already at that status — reverses a narrower 2026-07-20 rule, since genuine interest can take several visits before actually becoming a study; (3) Group Leader Partners tab: tap a partnership card to expand an accordion (same space) showing its assigned record names, grouped by Plus Code so linked/household contacts show together.
+Current Feature: Follow-up to the Search tab below (same session) — three requests: (1) an unassigned record found via Search can now be claimed instantly (no approval, since nobody holds it) via a new "Add to My List" button — plain `partnership_records` insert, so every dashboard already reading that table reflects it automatically, no separate wiring; (2) a "Refresh" button added to both the publisher and Group Leader Home tabs, doing a real `window.location.reload()` (not a soft `router.refresh()` — both components only ever read their initial data prop once, so a soft refresh would silently fetch fresh data and discard it) — publisher's is disabled while offline; (3) fixed a real "stuck" bug traced in the code: a device with no local claim yet silently auto-binds to whatever ALREADY-claimed partnership it opens (existing behavior, meant for a real pair's second phone) with no way back to "Select Ministry Partner Number" if that was a mistaken tap. New "Wrong Ministry Partner? Switch" link on the workspace Home tab clears only this device's own local claim and returns to the batch-landing page — deliberately never touches the partnership's server-side claimed_at/name, so a real pair's in-progress session is untouched if this was them. No migration needed for any of the three.
 
-Current Status: Code complete, verified via `npx tsc --noEmit` (clean), `npx vitest run` (101/101, one test updated for item 2), `npx next build` (clean). Not live-verified (no TMS credentials in this sandbox). Not yet committed.
+Current Status: Committed and pushed. Not live-verified (no TMS credentials in this sandbox).
 
-**Next recommended task:** Russell applies migration 042 live, then live-verifies per the checkpoint's "Next Recommended Task" section, then commit and push (scoped explicitly to TMS files only).
+**Next recommended task:** Russell live-verifies both this batch and the Search tab per their checkpoints' "Next Recommended Task" sections.
+
+---
+
+**Territory Management System — Publisher Search tab (Ask/request-transfer flow), Potential BS reversal, GL Partners accordion (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed, migration 042 applied live by Russell — see checkpoint `territory-management-search-tab-ask-flow-v1.md`:**
+
+Current Product: Territory Management System (TMS).
+
+Current Feature: Three requests — (1) new "Search" nav tab: congregation-wide search across all of today's batches (House To House + Auxiliary), shows who currently holds a record (or "not assigned today"), lets a publisher send an "Ask" request the current holder must approve (not an instant transfer) — confirmed via clarifying questions first: everyone searches everything, but an Auxiliary/overflow partnership can never successfully request a record held by a House To House one (enforced server-side + reflected in the UI). New `record_transfer_requests` table (migration 042, applied live). New `PublisherSearchPanel.tsx`, badge on the nav icon for pending incoming requests; (2) "Potential BS" reinstated as re-selectable on a record already at that status — reverses a narrower 2026-07-20 rule, since genuine interest can take several visits before actually becoming a study; (3) Group Leader Partners tab: tap a partnership card to expand an accordion (same space) showing its assigned record names, grouped by Plus Code so linked/household contacts show together.
+
+Current Status: Committed and pushed. Not live-verified (no TMS credentials in this sandbox).
+
+**Next recommended task:** Russell live-verifies both this batch and the follow-up batch above per their checkpoints' "Next Recommended Task" sections.
 
 ---
 

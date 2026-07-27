@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   Percent,
   PhoneOff,
+  RefreshCw,
   Repeat,
   Sparkles,
   TrendingUp,
@@ -278,6 +279,19 @@ export default function GroupLeaderTabs({
 
       {tab === 'home' && (
         <div className="space-y-8">
+          {/* A full browser reload rather than a soft in-app refresh — this component is fed by
+              server-rendered props too, same "only ever read once" concern as the publisher
+              workspace's own Refresh button. */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="flex items-center gap-1.5 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40"
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              Refresh
+            </button>
+          </div>
           {allPartnersDone ? (
             <Card className="relative p-6">
               <ConfirmDeleteButton

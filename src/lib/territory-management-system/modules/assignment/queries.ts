@@ -1132,6 +1132,37 @@ export async function searchTodaysAssignedRecords(
   })
 }
 
+// A Search-tab result with no current holder can be claimed instantly, no approval needed —
+// there's no one to ask. Just a normal partnership_records insert (same mechanism as a regular
+// assignment), so every existing dashboard/stat that already reads from that table picks up the
+// new assignment automatically, no separate wiring needed. Re-verifies the record is still
+// actually unassigned server-side (never trusts the client's search-result snapshot, which could
+// be stale by the time they tap the button).
+export async function claimUnassignedRecord(
+  supabase: SupabaseClient,
+  congregationId: string,
+  recordId: string,
+  partnershipId: string
+): Promise<RecordTransferRequestError | { ok: true }> {
+  const { data: existing } = await supabase.from('partnership_records').select('id').eq('record_id', recordId).maybeSingle()
+  if (existing) return { error: 'This record was just claimed by someone else — try refreshing your search.' }
+
+  const { data: lastRow } = await supabase
+    .from('partnership_records')
+    .select('sequence')
+    .eq('partnership_id', partnershipId)
+    .order('sequence', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  const nextSequence = ((lastRow?.sequence as number | undefined) ?? 0) + 1
+
+  const { error } = await supabase
+    .from('partnership_records')
+    .insert({ congregation_id: congregationId, partnership_id: partnershipId, record_id: recordId, sequence: nextSequence })
+  if (error) throw error
+  return { ok: true }
+}
+
 // Creates a pending request (see 042_record_transfer_requests.sql) — the requesting partnership
 // asks the current holder for a record instead of an instant "Pass." Re-verifies the current
 // holder server-side rather than trusting a client-supplied holdingPartnershipId, and enforces

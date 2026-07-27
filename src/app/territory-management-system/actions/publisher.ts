@@ -27,6 +27,7 @@ import {
 } from '@/lib/territory-management-system/modules/assignment/schema'
 import {
   addPartnershipQuickNote,
+  claimUnassignedRecord,
   createRecordTransferRequest,
   finishPartnership,
   getBatchById,
@@ -819,6 +820,27 @@ export async function requestRecordTransferAction(partnershipToken: string, reco
   } catch (e) {
     await logError(partnership.congregation_id, 'requestRecordTransferAction', e)
     return { error: e instanceof Error ? e.message : 'Could not send the request.' }
+  }
+  return { error: 'SAVED' }
+}
+
+// Instant claim for a Search-tab result with no current holder — no approval needed, see
+// claimUnassignedRecord.
+export async function claimUnassignedRecordAction(partnershipToken: string, recordId: string): Promise<ActionResult> {
+  if (!(await checkRateLimit(`tms-claim-unassigned:${clientIp(await headers())}`, 20))) {
+    return { error: 'Too many attempts. Please wait a moment.' }
+  }
+  const supabase = createAdminSupabase()
+  const partnership = await getPartnershipByToken(supabase, partnershipToken)
+  if (!partnership) return { error: 'This partnership link is no longer valid.' }
+  if (partnership.expired) return { error: 'This assignment has ended for the day.' }
+
+  try {
+    const result = await claimUnassignedRecord(supabase, partnership.congregation_id, recordId, partnership.id)
+    if ('error' in result) return { error: result.error }
+  } catch (e) {
+    await logError(partnership.congregation_id, 'claimUnassignedRecordAction', e)
+    return { error: e instanceof Error ? e.message : 'Could not add this record to your list.' }
   }
   return { error: 'SAVED' }
 }

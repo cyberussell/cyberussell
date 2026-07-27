@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { RefreshCw, Search as SearchIcon } from 'lucide-react'
 import type { IncomingRecordTransferRequest, RecordSearchResult } from '@/lib/territory-management-system/modules/assignment/types'
 import {
+  claimUnassignedRecordAction,
   listIncomingRecordTransferRequestsAction,
   requestRecordTransferAction,
   respondToRecordTransferRequestAction,
@@ -38,6 +39,9 @@ export default function PublisherSearchPanel({
   const [searching, setSearching] = useState(false)
   const [askConfirmFor, setAskConfirmFor] = useState<RecordSearchResult | null>(null)
   const [asking, setAsking] = useState(false)
+  const [claimConfirmFor, setClaimConfirmFor] = useState<RecordSearchResult | null>(null)
+  const [claiming, setClaiming] = useState(false)
+  const [claimedIds, setClaimedIds] = useState<Set<string>>(new Set())
   const [refreshingIncoming, setRefreshingIncoming] = useState(false)
   const [respondingId, setRespondingId] = useState<string | null>(null)
 
@@ -48,6 +52,7 @@ export default function PublisherSearchPanel({
     try {
       const found = await searchTodaysRecordsAction(partnershipToken, query)
       setResults(found)
+      setClaimedIds(new Set())
     } finally {
       setSearching(false)
     }
@@ -66,6 +71,23 @@ export default function PublisherSearchPanel({
     } finally {
       setAsking(false)
       setAskConfirmFor(null)
+    }
+  }
+
+  async function handleClaim() {
+    if (!claimConfirmFor) return
+    setClaiming(true)
+    try {
+      const result = await claimUnassignedRecordAction(partnershipToken, claimConfirmFor.id)
+      if (result.error && result.error !== 'SAVED') {
+        toast.error(result.error)
+      } else {
+        toast.success('Added to your list — refresh Home to see it.')
+        setClaimedIds((prev) => new Set(prev).add(claimConfirmFor.id))
+      }
+    } finally {
+      setClaiming(false)
+      setClaimConfirmFor(null)
     }
   }
 
@@ -193,8 +215,19 @@ export default function PublisherSearchPanel({
                       </button>
                     )}
                   </>
+                ) : claimedIds.has(r.id) ? (
+                  <p className="mt-1 text-xs font-medium text-emerald-600">Added to your list ✓</p>
                 ) : (
-                  <p className="mt-1 text-xs font-medium text-emerald-600">Not assigned today</p>
+                  <>
+                    <p className="mt-1 text-xs font-medium text-emerald-600">Not assigned today</p>
+                    <button
+                      type="button"
+                      onClick={() => setClaimConfirmFor(r)}
+                      className="mt-2 w-full rounded-lg border border-emerald-200 bg-white py-1.5 text-xs font-semibold text-emerald-700 transition hover:border-emerald-300"
+                    >
+                      Add to My List
+                    </button>
+                  </>
                 )}
               </Card>
             ))
@@ -212,6 +245,16 @@ export default function PublisherSearchPanel({
         variant="info"
         onConfirm={handleAsk}
         onCancel={() => setAskConfirmFor(null)}
+      />
+
+      <ConfirmModal
+        open={claimConfirmFor !== null}
+        title="Add this record to your list?"
+        message={`No one else has ${claimConfirmFor?.residentName || claimConfirmFor?.address || 'this record'} assigned today, so this adds it straight to your list — no approval needed.`}
+        confirmLabel={claiming ? 'Adding…' : 'Add to My List'}
+        variant="info"
+        onConfirm={handleClaim}
+        onCancel={() => setClaimConfirmFor(null)}
       />
     </div>
   )

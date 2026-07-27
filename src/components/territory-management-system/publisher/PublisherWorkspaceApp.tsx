@@ -15,7 +15,12 @@ import { downloadAssignment, getLocalMapImageUrl, isDownloaded } from '@/lib/ter
 import { enqueue, listQueue } from '@/lib/territory-management-system/modules/offline/queue'
 import { flushQueue } from '@/lib/territory-management-system/modules/offline/sync'
 import { useOnlineStatus } from '@/lib/territory-management-system/modules/offline/useOnlineStatus'
-import { getClaimedPartnershipToken, setClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
+import { useRouter } from 'next/navigation'
+import {
+  clearClaimedPartnershipToken,
+  getClaimedPartnershipToken,
+  setClaimedPartnershipToken,
+} from '@/lib/territory-management-system/modules/offline/claim'
 import { chooseSearchScopeAction, getBatchPartnersAction, getSearchScopeRecordsAction } from '@/app/territory-management-system/actions/publisher'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
 import VisitResultPieChart from '@/components/territory-management-system/VisitResultPieChart'
@@ -170,6 +175,7 @@ export default function PublisherWorkspaceApp({
     { type: 'deleteAddedRecord'; recordId: string } | { type: 'endMinistry' } | { type: 'endMinistryEarly' } | null
   >(null)
   const online = useOnlineStatus()
+  const router = useRouter()
   // Several call sites can each decide "we're online, sync now" in quick succession (a form
   // submit's own trigger, plus the reconnect effect) — without this, two overlapping
   // flushQueue() runs could both pick up the same still-queued item and submit it twice. A
@@ -291,6 +297,20 @@ export default function PublisherWorkspaceApp({
     await downloadAssignment(partnershipToken, workspace)
     setDownloaded(true)
     toast.success('Downloaded — ready for offline use.')
+  }
+
+  // Fixes a real "stuck" bug: a device with no local claim yet silently binds itself to
+  // WHATEVER partnership it opens that's already claimed_at (see the mount effect below — meant
+  // for a real pair's second phone joining the same partnership), with no in-workspace way back
+  // to "Select Ministry Partner Number" if that was actually the wrong card tapped by mistake.
+  // Deliberately only clears THIS device's own local binding (clearClaimedPartnershipToken) —
+  // never the partnership's server-side claimed_at/name, so a real pair's in-progress session
+  // stays completely untouched if this was them. The batch-landing page's own
+  // ReleaseAssignmentSlider (zero-completed-records eligibility) remains the only way to reset
+  // the server-side claim itself, unchanged by this.
+  function handleSwitchPartner() {
+    clearClaimedPartnershipToken(batchToken)
+    router.push(`/territory-management-system/assignment/${batchToken}`)
   }
 
   async function handleRename(name: string) {
@@ -893,6 +913,36 @@ export default function PublisherWorkspaceApp({
                 )}
               </button>
             )}
+            {/* A full browser reload, not a soft in-app refresh — this component only ever reads
+                its initialWorkspace prop once (useState's initializer), so a Next.js
+                router.refresh() alone would silently fetch fresh data and then throw it away.
+                Disabled offline since a full reload needs a real network round-trip to render
+                the page at all, unlike Sync above which just flushes the local queue. */}
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              disabled={!online}
+              title={online ? 'Refresh everything (records, partners, requests)' : 'Refresh needs a connection'}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-blue-100 bg-white py-2 text-xs font-semibold text-[#2563EB] transition hover:border-[#38BDF8]/40 disabled:opacity-60"
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              Refresh
+            </button>
+          </div>
+        )}
+
+        {/* Always available on Home, claimed or not — covers both "I haven't named anyone yet
+            and this is the wrong card" and the silent-join case (this device had no claim yet
+            and opened an ALREADY-claimed partnership — see the mount effect below — meant for a
+            real pair's second phone, but just as easily a mistaken tap on someone else's
+            in-progress card). Hidden while readOnly: that means this device is already bound to
+            a DIFFERENT partnership and is only viewing this one via All Partners, so "switch"
+            doesn't apply to what's on screen. */}
+        {showSessionChrome && view.name === 'home' && !readOnly && (
+          <div className="text-center">
+            <button type="button" onClick={handleSwitchPartner} className="text-xs font-medium text-slate-400 hover:text-[#2563EB] hover:underline">
+              Wrong Ministry Partner? Switch
+            </button>
           </div>
         )}
 
