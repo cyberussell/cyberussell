@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Globe } from "lucide-react";
 import { getAllProjects } from "@/lib/portfolio/data";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -60,7 +61,9 @@ export default function PortfolioIndex() {
                       className="object-cover"
                     />
                   ) : (
-                    <span className="font-sans text-[15px] font-bold text-white/25">{project.title}</span>
+                    <div className="w-16 h-16 rounded-2xl bg-white/[0.06] flex items-center justify-center">
+                      <Globe size={28} className="text-white/40" strokeWidth={1.5} />
+                    </div>
                   )}
                 </div>
                 <div className="p-6 flex flex-col gap-3 flex-grow">

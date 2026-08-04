@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Fragment } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
-import { Mail, Phone, MapPin, Download, Palmtree } from "lucide-react";
+import { Mail, Phone, MapPin, Download, Palmtree, Globe } from "lucide-react";
 import {
   siNextdotjs, siReact, siTypescript, siNodedotjs, siSupabase,
   siPostgresql, siClaude, siTailwindcss, siVercel, siFirebase, siGithub,
@@ -10,6 +10,8 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getAllProjects } from "@/lib/portfolio/data";
+import { getAllServices } from "@/lib/services/data";
+import { getServiceIcon } from "@/components/services/icons";
 
 export const metadata: Metadata = {
   title: "Russell Parayno — Resume | Senior AI Software Engineer",
@@ -104,10 +106,22 @@ const portfolioLiveLinks: Record<string, string> = {
   "hireworkers": "https://www.hireworkers.work",
   "laundry-management-system": "https://www.cyberussell.com/lms",
   "appointment-system": "https://www.cyberussell.com/appointments",
+  "fastrack-lending": "https://fastrackrate.com",
+  "mina-pro": "https://minapro.io",
+};
+
+const freelanceTaglines: Record<string, string> = {
+  "website-design-development": "I design and build mobile-friendly, SEO-optimized websites that turn visitors into customers — and that Google actually surfaces.",
+  "custom-web-applications": "I build custom software around how a business already works — CRMs, booking systems, dashboards, and fast MVPs.",
+  "ai-automation-solutions": "I set up AI chatbots and automated workflows that take repetitive busywork off a client's plate.",
+  "mobile-app-development": "I ship installable, mobile-first apps — progressive web apps and cross-platform builds — without the native app-store overhead.",
+  "website-hosting-maintenance": "I keep client sites fast, secure, and online with ongoing updates, backups, and monitoring.",
+  "ai-technology-consulting": "I help teams adopt AI the right way — training, market research, and the documentation to back it up.",
 };
 
 export default async function ResumePage() {
-  const projects = getAllProjects().slice(0, 5);
+  const projects = getAllProjects();
+  const services = getAllServices();
   const qrDataUrl = await QRCode.toDataURL("https://www.cyberussell.com/resume", {
     margin: 1,
     width: 400,
@@ -307,7 +321,9 @@ export default async function ResumePage() {
                           />
                         </div>
                       ) : (
-                        <div className="w-7 h-7 rounded-md bg-white/[0.06] shrink-0" />
+                        <div className="w-7 h-7 rounded-md bg-white/[0.06] flex items-center justify-center shrink-0">
+                          <Globe size={15} className="text-white/40" strokeWidth={1.8} />
+                        </div>
                       )}
                       <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/60 group-hover:text-white leading-tight transition-colors pt-1">
                         {project.title}
@@ -500,6 +516,42 @@ export default async function ResumePage() {
                 </div>
               </div>
 
+            </div>
+          </div>
+
+          {/* Six Ways I Help Businesses Grow */}
+          <div className="mt-16">
+            <div className="text-center mb-10">
+              <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F] uppercase tracking-[3px]">Freelance Services</span>
+              <h2 className="font-sans text-[28px] md:text-[38px] font-bold text-white mt-2">
+                Things I&apos;m Doing for Clients as a Freelancer
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {services.map((service) => {
+                const Icon = getServiceIcon(service.icon);
+                return (
+                  <div
+                    key={service.slug}
+                    className="bg-[#111118] border border-white/[0.06] rounded-[20px] p-7 flex flex-col gap-4"
+                  >
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                      style={{ backgroundColor: `${service.color}14`, border: `1px solid ${service.color}28` }}
+                    >
+                      <Icon size={22} style={{ color: service.color }} strokeWidth={1.5} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-sans text-[18px] font-bold text-white mb-2">
+                        {service.name}
+                      </h3>
+                      <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/50 leading-[1.7]">
+                        {freelanceTaglines[service.slug] ?? service.tagline}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

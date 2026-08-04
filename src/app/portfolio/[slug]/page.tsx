@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Globe } from "lucide-react";
 import { getAllProjects, getProject } from "@/lib/portfolio/data";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -105,7 +106,9 @@ export default async function PortfolioProjectPage({ params }: Props) {
                 className="object-cover"
               />
             ) : (
-              <span className="font-sans text-[16px] font-bold text-white/25">{project.title}</span>
+              <div className="w-20 h-20 rounded-2xl bg-white/[0.06] flex items-center justify-center">
+                <Globe size={36} className="text-white/40" strokeWidth={1.5} />
+              </div>
             )}
           </div>
 
