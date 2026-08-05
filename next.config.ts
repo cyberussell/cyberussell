@@ -30,6 +30,27 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },
     ],
   },
+  async rewrites() {
+    // Multi-zone proxy for the Appointment System, now a standalone Next.js
+    // app (cyberussellofficial-ctrl/appointmentsystems) deployed on its own
+    // Vercel project. Gated on an env var so that until it's set (e.g. in a
+    // preview deployment for testing, then production), this app keeps
+    // serving its own local src/app/appointments/** unchanged — the rewrite
+    // only takes over once APPOINTMENTS_ZONE_URL is configured. Uses
+    // beforeFiles (checked before local pages/static files) rather than the
+    // default afterFiles behavior specifically so it can take priority over
+    // the local appointment-system pages that still exist here during the
+    // transition, without needing to delete them first.
+    const zoneUrl = process.env.APPOINTMENTS_ZONE_URL
+    if (!zoneUrl) return { beforeFiles: [] }
+    return {
+      beforeFiles: [
+        { source: "/appointments", destination: `${zoneUrl}/appointments` },
+        { source: "/appointments/:path+", destination: `${zoneUrl}/appointments/:path+` },
+        { source: "/appointments-assets/:path+", destination: `${zoneUrl}/appointments-assets/:path+` },
+      ],
+    }
+  },
   async redirects() {
     return [
       {
