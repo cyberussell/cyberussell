@@ -31,25 +31,39 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    // Multi-zone proxy for the Appointment System, now a standalone Next.js
-    // app (cyberussellofficial-ctrl/appointmentsystems) deployed on its own
-    // Vercel project. Gated on an env var so that until it's set (e.g. in a
-    // preview deployment for testing, then production), this app keeps
-    // serving its own local src/app/appointments/** unchanged — the rewrite
-    // only takes over once APPOINTMENTS_ZONE_URL is configured. Uses
+    // Multi-zone proxies for products that have been extracted into their own
+    // standalone Next.js apps/repos, each deployed on its own Vercel project.
+    // Each is independently gated on its own env var so that until it's set
+    // (e.g. in a preview deployment for testing, then production), this app
+    // keeps serving its own local pages for that product unchanged — the
+    // rewrite only takes over once the zone URL is configured. Uses
     // beforeFiles (checked before local pages/static files) rather than the
     // default afterFiles behavior specifically so it can take priority over
-    // the local appointment-system pages that still exist here during the
-    // transition, without needing to delete them first.
-    const zoneUrl = process.env.APPOINTMENTS_ZONE_URL
-    if (!zoneUrl) return { beforeFiles: [] }
-    return {
-      beforeFiles: [
-        { source: "/appointments", destination: `${zoneUrl}/appointments` },
-        { source: "/appointments/:path+", destination: `${zoneUrl}/appointments/:path+` },
-        { source: "/appointments-assets/:path+", destination: `${zoneUrl}/appointments-assets/:path+` },
-      ],
+    // local pages that still exist here during a transition, without needing
+    // to delete them first.
+    const beforeFiles: { source: string; destination: string }[] = []
+
+    // Appointment System — cyberussellofficial-ctrl/appointmentsystems
+    const appointmentsZoneUrl = process.env.APPOINTMENTS_ZONE_URL
+    if (appointmentsZoneUrl) {
+      beforeFiles.push(
+        { source: "/appointments", destination: `${appointmentsZoneUrl}/appointments` },
+        { source: "/appointments/:path+", destination: `${appointmentsZoneUrl}/appointments/:path+` },
+        { source: "/appointments-assets/:path+", destination: `${appointmentsZoneUrl}/appointments-assets/:path+` },
+      )
     }
+
+    // Laundry Management System — cyberussellofficial-ctrl/laundrymanagementsystem
+    const lmsZoneUrl = process.env.LMS_ZONE_URL
+    if (lmsZoneUrl) {
+      beforeFiles.push(
+        { source: "/lms", destination: `${lmsZoneUrl}/lms` },
+        { source: "/lms/:path+", destination: `${lmsZoneUrl}/lms/:path+` },
+        { source: "/lms-assets/:path+", destination: `${lmsZoneUrl}/lms-assets/:path+` },
+      )
+    }
+
+    return { beforeFiles }
   },
   async redirects() {
     return [
