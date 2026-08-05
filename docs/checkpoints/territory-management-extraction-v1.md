@@ -23,13 +23,13 @@ Mirrored the exact extraction pattern used for the Appointment System and LMS. R
 
 Scaffolded a genuinely standalone, independently buildable Next.js app in a new sibling repo — not just a file copy. Determined the real dependency surface by grepping the copied code rather than assuming (found `leaflet`/`react-leaflet`/`open-location-code` for the map/plus-code features, `lucide-react` for icons, and a custom `open-location-code` ambient type declaration with no `@types` package equivalent — all three were easy to miss). Verified the new repo end-to-end before considering it done: `npm install`, `tsc --noEmit` clean, `vitest run` (59/59 passing), and `next build` succeeding with every route correctly nested under `/tms/*` (matching the multi-zone rewrite's destination path shape).
 
-## Remaining Work
+## Remaining Work — updated 2026-08-06 (later same day)
 
-- Push the new repo to GitHub (`cyberussellofficial-ctrl/territorymanagementsystem`, matching naming convention) and import into a new Vercel project — needs Russell's login, not done this session.
-- Set the three `TMS_SUPABASE_*` env vars on that new Vercel project (values already exist from the live Supabase project).
-- Set `TMS_ZONE_URL` on the cyberussell.com Vercel project once deployed — this is what actually turns on the `/tms` proxy in production.
-- Commit this session's changes in **this** repo (rename + path fixes + `next.config.ts`) — left uncommitted per this repo's "only commit when explicitly asked" convention; Russell hasn't asked for that yet.
-- Verify `/tms` end-to-end through the live proxy once `TMS_ZONE_URL` is set (login, dashboard, group-leader dashboard, publisher QR flow — at minimum).
+Done since the above was written: Russell pushed the new repo to GitHub, imported it into Vercel (`cyberussell` team), set the three `TMS_SUPABASE_*` env vars, and deployed — confirmed live at `https://territorymanagementsystem.vercel.app/tms/login`. `TMS_ZONE_URL` set on the cyberussell.com Vercel project (Production only), production redeployed. Verified end-to-end that `https://www.cyberussell.com/tms/login` now serves the proxied app correctly. This repo's local rename/path-fix changes were committed (`84717c3`) and pushed. The root `territory-management-system/` folder (migrations, SETUP.md, email templates) was also removed from this repo (`db2f3ab`) — it was docs/ops-only, not read by any runtime code, and already fully preserved in the new repo.
+
+Still outstanding:
+- Fuller manual click-through of the live proxied app beyond the login page (dashboard, group-leader dashboard, publisher QR flow) — only the login/forgot-password pages were verified live so far.
+- Remove the now-redundant runtime TMS code from **this** repo — `src/app/tms/**`, `src/lib/territory-management-system/**`, `src/components/territory-management-system/**`. Deliberately not done yet even though the proxy is confirmed working — see Next Recommended Task.
 
 ## Known Issues
 
@@ -37,4 +37,4 @@ Scaffolded a genuinely standalone, independently buildable Next.js app in a new 
 
 ## Next Recommended Task
 
-Once Russell has pushed the new repo and deployed it to Vercel with env vars set: come back, set `TMS_ZONE_URL`, verify `/tms` live through the proxy, then remove the now-redundant local TMS code from this repo (`src/app/tms/**`, `src/lib/territory-management-system/**`, `src/components/territory-management-system/**`, root `territory-management-system/**`) in a dedicated commit — same as `0b2d6d0` and `e0ff176` did for the other two products. Until then, this repo's local `/tms` code stays as the working fallback.
+The proxy is live and verified for the login flow. Before deleting this repo's local runtime TMS code (`src/app/tms/**`, `src/lib/territory-management-system/**`, `src/components/territory-management-system/**`), do a fuller click-through of the live `cyberussell.com/tms` proxy — admin dashboard, group-leader dashboard, and the publisher QR/assignment flow at minimum — since those weren't exercised yet, only login/forgot-password. Once satisfied, remove the local code in a dedicated commit, same as `0b2d6d0` and `e0ff176` did for the other two products.

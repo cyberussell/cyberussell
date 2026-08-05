@@ -2695,3 +2695,11 @@ Priority: Sequential — do not start #2 until user confirms readiness (already 
 - Naming: keep `/tms` — do not reintroduce `/territory-management-system` as canonical anywhere.
 - The new standalone repo intentionally keeps `src/lib/territory-management-system/` and `src/components/territory-management-system/` names as-is (only the route folder became `tms`) — internal, not URL-exposed, renaming them would have been unnecessary churn.
 - See `docs/checkpoints/territory-management-extraction-v1.md` for the full file-level summary.
+
+## Update — 2026-08-06 (same day, later): deployed and verified live
+
+- Standalone repo pushed to `cyberussellofficial-ctrl/territorymanagementsystem`, imported into Vercel, env vars set, deployed — confirmed live at `https://territorymanagementsystem.vercel.app/tms/login`.
+- `TMS_ZONE_URL` set on the cyberussell.com Vercel project (Production only, matching `LMS_ZONE_URL`/`APPOINTMENTS_ZONE_URL`), production redeployed.
+- **Verified end-to-end**: `https://www.cyberussell.com/tms/login` now serves the proxied standalone app correctly (confirmed via live network request + rendered page content).
+- Removed the root `territory-management-system/` folder (migrations, SETUP.md, email templates, seed script, logo) from this repo — docs/ops-only, not read by any runtime code, fully preserved in the new repo. Commit `db2f3ab`, pushed.
+- **Still NOT removed**: `src/app/tms/**`, `src/lib/territory-management-system/**`, `src/components/territory-management-system/**` — this is the actual runtime code and is a separate, deliberate later step (see "Next Recommended Task" below — unchanged).
