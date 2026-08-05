@@ -1,0 +1,17 @@
+{
+  "slug": "territory-management-system",
+  "title": "TMS — Territory Management System",
+  "client": "Personal Project",
+  "tagline": "A multi-congregation SaaS for organizing, assigning, and tracking territory work during field ministry.",
+  "category": "Web App",
+  "date": "2026-07-13",
+  "timeline": "Live",
+  "liveUrl": "/tms",
+  "techStack": ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL"],
+  "overview": "TMS is a standalone multi-congregation SaaS for organizing, assigning, and tracking territory work during field ministry — built with its own Supabase project, its own auth, and a fully isolated codebase from Cyberussell.com's other products.",
+  "problem": "Coordinating territory assignments across a congregation by hand — paper slips, manual tracking, and no visibility into what's been covered — makes it hard for administrators and group leaders to stay organized or see progress in real time.",
+  "solution": "Built a full Administrator module for managing territories, sections, blocks, and records with CSV import/export, an assignment engine with a QR-based publisher workflow that works offline and syncs later, and a Group Leader role with its own dashboard for generating assignments and reviewing stats, results, and partner activity.",
+  "results": "Live and in active use, with publishers claiming and completing assignments entirely from a scanned QR code — no app install, works offline, and syncs automatically when back online.",
+  "testimonial": null,
+  "featured": true
+}
