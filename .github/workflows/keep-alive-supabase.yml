@@ -16,10 +16,12 @@ jobs:
         run: |
           curl -sf -o /dev/null -w "main site: %{http_code}\n" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/"
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/services?select=id&limit=1"
 
       - name: Ping Territory Management System Supabase project
         run: |
           curl -sf -o /dev/null -w "TMS: %{http_code}\n" \
             -H "apikey: ${{ secrets.TMS_SUPABASE_ANON_KEY }}" \
-            "${{ secrets.TMS_SUPABASE_URL }}/rest/v1/"
+            -H "Authorization: Bearer ${{ secrets.TMS_SUPABASE_ANON_KEY }}" \
+            "${{ secrets.TMS_SUPABASE_URL }}/rest/v1/congregations?select=id&limit=1"
