@@ -26,7 +26,7 @@ export default function PartnershipCard({
 
   return (
     <Link
-      href={`/territory-management-system/assignment/${batchToken}/${partnership.claim_token}`}
+      href={`/tms/assignment/${batchToken}/${partnership.claim_token}`}
       className="relative block overflow-hidden rounded-2xl border border-gray-300 bg-white p-4 shadow-[0_0_18px_-3px_rgba(148,163,184,0.6)] transition hover:border-[#38BDF8]/40"
     >
       {partnership.hasBibleStudy && (

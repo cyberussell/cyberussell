@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createRecordAction } from '@/app/territory-management-system/actions/records'
+import { createRecordAction } from '@/app/tms/actions/records'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import {

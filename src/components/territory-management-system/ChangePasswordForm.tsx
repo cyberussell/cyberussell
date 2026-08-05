@@ -1,8 +1,8 @@
 'use client'
 
 import { useActionState } from 'react'
-import { changePasswordAction } from '@/app/territory-management-system/actions/auth'
-import type { ActionResult } from '@/app/territory-management-system/actions/shared'
+import { changePasswordAction } from '@/app/tms/actions/auth'
+import type { ActionResult } from '@/app/tms/actions/shared'
 
 // Reached only via a forced redirect (must_change_password) — the account was just created or
 // reset with a temp password an Admin relayed directly, replacing the emailed invite/reset-link

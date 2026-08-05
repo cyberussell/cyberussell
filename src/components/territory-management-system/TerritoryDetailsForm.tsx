@@ -1,6 +1,6 @@
 'use client'
 
-import { updateTerritoryDetails } from '@/app/territory-management-system/actions/territories'
+import { updateTerritoryDetails } from '@/app/tms/actions/territories'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import type { Territory } from '@/lib/territory-management-system/modules/territory/types'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'

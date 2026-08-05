@@ -18,7 +18,7 @@ async function requireRole(role: UserRole): Promise<RoleSession> {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) redirect('/territory-management-system/login')
+  if (!user) redirect('/tms/login')
 
   // Profile + congregation in one round-trip via the existing profiles.congregation_id FK
   // (PostgREST resolves the embed server-side) — this ran as two sequential fetches before,
@@ -28,16 +28,16 @@ async function requireRole(role: UserRole): Promise<RoleSession> {
     .select('role, congregation_id, revoked_at, must_change_password, full_name, congregation:congregations(*)')
     .eq('id', user.id)
     .maybeSingle()
-  if (!profile || profile.role !== role) redirect('/territory-management-system/login')
+  if (!profile || profile.role !== role) redirect('/tms/login')
   // Defense in depth: the account itself is also banned server-side the moment access is
   // revoked (see revokeGroupLeaderAccess), but a session token issued just before that could
   // otherwise still pass auth.getUser() until it naturally expires.
-  if (profile.revoked_at) redirect('/territory-management-system/login?error=revoked')
+  if (profile.revoked_at) redirect('/tms/login?error=revoked')
   // Enforced here (not just at the login redirect) so a session that already existed when an
   // Admin reset this account's password — or a tab left open from before — can't reach any
   // dashboard page without first setting a real password.
-  if (profile.must_change_password) redirect('/territory-management-system/change-password')
-  if (!profile.congregation_id || !profile.congregation) redirect('/territory-management-system/login?error=not_provisioned')
+  if (profile.must_change_password) redirect('/tms/change-password')
+  if (!profile.congregation_id || !profile.congregation) redirect('/tms/login?error=not_provisioned')
 
   return { supabase, userId: user.id, userName: profile.full_name || 'Admin', congregation: profile.congregation as unknown as Congregation }
 }

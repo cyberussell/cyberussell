@@ -2624,3 +2624,74 @@ Priority: Sequential — do not start #2 until user confirms readiness (already 
 - Test signup accounts created during verification: `russell.a.parayno+multitype@gmail.com` (orphaned — auth user exists but no business row, safe to ignore/delete), `russell.a.parayno+multitype2@gmail.com` (successful, has businesses row with business_types = {medical,dental,spa}).
 - Test business "Bright Bright" (slug `bright-bright`, owner `russell.a.parayno+1@gmail.com`) was bumped to `plan_tier = 'pro'` during feature #2 testing to get past the Free tier's 1-provider limit — still on `pro` now, not reverted. Has 2 staff (Dr Vonne, Dr. Maya), 2 services (Cleaning, Crowning), and a couple of test appointments booked during feature #2/#3 verification.
 - **Known bug, not yet fixed (flagged, no decision from Russell yet):** plan-limit-gated server actions (`createStaff` confirmed, likely others in `actions.ts`) fail completely silently with no user-facing error when a plan limit is hit — the form just does nothing.
+
+----------------------------------------
+
+# Territory Management System — Extraction to standalone repo (in progress)
+
+**Date:** 2026-08-06
+**Product:** Territory Management System (TMS)
+**Goal:** Same pattern as the Appointment System and Laundry Management System extractions — split TMS into its own standalone Next.js repo/Vercel project, proxied back at `https://www.cyberussell.com/tms` via a multi-zone rewrite. Russell explicitly wants `/tms` to become the permanent canonical URL (old `/territory-management-system/*` now redirects into it), matching the LMS pattern.
+
+## Done this session
+
+1. **Renamed the route folder**: `src/app/territory-management-system/` → `src/app/tms/`.
+2. **Fixed ~30+ hardcoded internal path strings** across `src/app/tms/**`, `src/lib/territory-management-system/**`, `src/components/territory-management-system/**` — `redirect()`/`router.push()`/`<Link href>` calls and one absolute password-reset URL (`actions/password.ts`) that pointed at the old `/territory-management-system/...` paths, now `/tms/...`. Also fixed `@/app/territory-management-system/actions/...` import specifiers (broken by the folder rename) → `@/app/tms/actions/...`, in both `src/app/tms/**` and — easy to miss — the files in `src/lib/territory-management-system/**` and `src/components/territory-management-system/**` that import Server Actions back from `src/app/tms/actions/`. Intentionally left `@/lib/territory-management-system/...` and `@/components/territory-management-system/...` import paths unchanged since those two directories were **not** renamed (only the route folder was).
+3. **Flipped the redirect** in `next.config.ts`: was `/tms` → `/territory-management-system/login`; now `/territory-management-system` → `/tms/login` and `/territory-management-system/:path*` → `/tms/:path*`.
+4. **Added a `TMS_ZONE_URL`-gated rewrite block** in `next.config.ts` (`/tms`, `/tms/:path+`, `/tms-assets/:path+`), same shape as the existing Appointments/LMS blocks — a no-op today since `TMS_ZONE_URL` isn't set.
+5. Verified: full `tsc --noEmit` clean in this repo after all the above.
+6. **Scaffolded a new standalone repo** at `/Users/russellparayno/Documents/Business/territorymanagementsystem` (sibling to `appointmentsystems`/`laundrymanagementsystem`, not yet pushed to GitHub): copied in the renamed `src/app/tms`, `src/lib/territory-management-system`, `src/components/territory-management-system`, root `territory-management-system/` (migrations, SETUP.md, email templates, logo), `public/tms-logo.png`, and `src/types/open-location-code.d.ts` (ambient module declaration TMS needs — easy to miss, no `@types/open-location-code` package exists). Added a minimal own `package.json` (only the deps TMS actually uses — includes `leaflet`/`react-leaflet`/`open-location-code`/`lucide-react`, confirmed via grep, not assumed), `tsconfig.json`, `next.config.ts` (security headers + the 6MB server-action body limit TMS's map upload needs), `postcss.config.mjs`, `vitest.config.ts`/`vitest.setup.ts`/`vitest.server-only-stub.ts`, a minimal `src/app/layout.tsx` (noindex — this deployment's raw Vercel URL shouldn't get indexed separately from the canonical `cyberussell.com/tms`), `README.md`, `.env.example`. Updated the copied `SETUP.md`'s path references (`/territory-management-system/login` → `/tms/login`, etc).
+7. **Verified the new repo standalone**: `npm install`, `tsc --noEmit` clean, `npm run test` (59/59 pass), `npm run build` succeeds — all routes correctly nested under `/tms/*`. `git init -b main`, committed (224 files, one commit).
+
+## NOT done — deliberately deferred
+
+- **Not pushed to GitHub, not deployed to Vercel** — needs Russell's GitHub/Vercel login, same as the other two extractions.
+- **`TMS_ZONE_URL` not set anywhere** — the rewrite in this repo is a no-op until Russell deploys the new repo and sets it.
+- **Old TMS code NOT removed from this repo yet** — this repo's `src/app/tms/**`, `src/lib/territory-management-system/**`, `src/components/territory-management-system/**`, root `territory-management-system/**` all still exist and are still what actually serves `/tms` today (the rewrite doesn't take over until `TMS_ZONE_URL` is set). Deletion is a deliberate later step, same order as the Appointment System (`0b2d6d0`) and LMS (`e0ff176`) extractions — only after Russell confirms the new repo is live and verified at `/tms`.
+- **This session's local-repo changes (rename + path fixes + `next.config.ts`) have NOT been committed** — staged/working-tree only, awaiting Russell's go-ahead to commit (per this repo's "only commit when explicitly asked" rule).
+
+----------------------------------------
+
+## Allowed Files
+
+- `src/app/tms/**` (was `src/app/territory-management-system/**`)
+- `src/components/territory-management-system/**`
+- `src/lib/territory-management-system/**`
+- `territory-management-system/**` (root — migrations, SETUP.md, email templates)
+- `next.config.ts` (rewrite/redirect blocks only)
+- New standalone repo: `/Users/russellparayno/Documents/Business/territorymanagementsystem/**`
+
+----------------------------------------
+
+## Blocked Areas
+
+- Any other product (Start Here, AI Tools, Learn, Earn, Services, Shop, Appointment System, LMS)
+- Mission Control
+- Shared site components (`Navbar.tsx`, `Footer.tsx`) — not touched, TMS never linked from either
+
+----------------------------------------
+
+## Current Dependencies
+
+- Blocked on Russell to: push the new repo to GitHub, import it into a new Vercel project, set the three `TMS_SUPABASE_*` env vars there (values already exist from the live Supabase project — see `docs/checkpoints/` TMS history), then set `TMS_ZONE_URL` on the **cyberussell.com** Vercel project once the new deployment is live.
+
+----------------------------------------
+
+## Success Criteria
+
+- [x] Route folder renamed, all internal path references fixed, `tsc` clean
+- [x] `next.config.ts` rewrite + redirect updated
+- [x] Standalone repo scaffolded, installs/typechecks/tests/builds clean, git-committed locally
+- [ ] Pushed to GitHub
+- [ ] Deployed to Vercel, env vars set
+- [ ] `TMS_ZONE_URL` set on cyberussell.com, `/tms` verified live through the proxy
+- [ ] This repo's local TMS rename/path-fix changes committed
+- [ ] Old TMS code removed from this repo (separate later commit, after the above is verified)
+
+----------------------------------------
+
+## Notes
+
+- Naming: keep `/tms` — do not reintroduce `/territory-management-system` as canonical anywhere.
+- The new standalone repo intentionally keeps `src/lib/territory-management-system/` and `src/components/territory-management-system/` names as-is (only the route folder became `tms`) — internal, not URL-exposed, renaming them would have been unnecessary churn.
+- See `docs/checkpoints/territory-management-extraction-v1.md` for the full file-level summary.

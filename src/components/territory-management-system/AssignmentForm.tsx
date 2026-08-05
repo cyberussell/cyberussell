@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { AlertTriangle, Minus, Plus } from 'lucide-react'
-import { createGroupLeaderAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
+import { createGroupLeaderAssignmentAction } from '@/app/tms/actions/group-leader'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import { useConfirm } from '@/lib/territory-management-system/hooks/useConfirm'
 import { DEFAULT_MAX_PER_PARTNERSHIP } from '@/lib/territory-management-system/modules/assignment/engine'

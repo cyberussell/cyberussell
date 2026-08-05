@@ -21,7 +21,7 @@ import {
   getClaimedPartnershipToken,
   setClaimedPartnershipToken,
 } from '@/lib/territory-management-system/modules/offline/claim'
-import { chooseSearchScopeAction, getBatchPartnersAction, getSearchScopeRecordsAction } from '@/app/territory-management-system/actions/publisher'
+import { chooseSearchScopeAction, getBatchPartnersAction, getSearchScopeRecordsAction } from '@/app/tms/actions/publisher'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'
 import VisitResultPieChart from '@/components/territory-management-system/VisitResultPieChart'
 import Card from '@/components/territory-management-system/dashboard/Card'
@@ -313,7 +313,7 @@ export default function PublisherWorkspaceApp({
   // the server-side claim itself, unchanged by this.
   function handleSwitchPartner() {
     clearClaimedPartnershipToken(batchToken)
-    router.push(`/territory-management-system/assignment/${batchToken}`)
+    router.push(`/tms/assignment/${batchToken}`)
   }
 
   async function handleRename(name: string) {

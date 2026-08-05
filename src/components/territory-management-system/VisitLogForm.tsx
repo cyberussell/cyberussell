@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { logVisitAction } from '@/app/territory-management-system/actions/records'
+import { logVisitAction } from '@/app/tms/actions/records'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import {
   getSelectableResults,

@@ -1,6 +1,6 @@
 'use client'
 
-import { updateCongregationAction } from '@/app/territory-management-system/actions/congregation'
+import { updateCongregationAction } from '@/app/tms/actions/congregation'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import type { Congregation } from '@/lib/territory-management-system/modules/congregation/types'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'

@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { approveRecordAction, rejectRecordAction } from '@/app/territory-management-system/actions/records'
+import { approveRecordAction, rejectRecordAction } from '@/app/tms/actions/records'
 import { useConfirm } from '@/lib/territory-management-system/hooks/useConfirm'
 
 export default function RecordApprovalActions({ recordId }: { recordId: string }) {
@@ -27,7 +27,7 @@ export default function RecordApprovalActions({ recordId }: { recordId: string }
     if (!ok) return
     startTransition(async () => {
       await rejectRecordAction(recordId)
-      router.push('/territory-management-system/dashboard/records')
+      router.push('/tms/dashboard/records')
     })
   }
 

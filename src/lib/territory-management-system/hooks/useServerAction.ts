@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useTransition } from 'react'
 import { toast } from 'sonner'
-import type { ActionResult } from '@/app/territory-management-system/actions/shared'
+import type { ActionResult } from '@/app/tms/actions/shared'
 
 // Centralizes the "is state.error a real error or an info sentinel like 'SAVED'"
 // branching so forms don't hand-roll it. Pass the sentinel strings a given action

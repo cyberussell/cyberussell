@@ -31,7 +31,7 @@ import {
   deleteGroupLeaderAssignmentAction,
   endPartnershipAction,
   getPartnershipAssignedRecordsAction,
-} from '@/app/territory-management-system/actions/group-leader'
+} from '@/app/tms/actions/group-leader'
 import StatCard from '@/components/territory-management-system/dashboard/StatCard'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'

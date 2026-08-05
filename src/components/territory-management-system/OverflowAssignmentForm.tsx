@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createOverflowAssignmentAction } from '@/app/territory-management-system/actions/group-leader'
+import { createOverflowAssignmentAction } from '@/app/tms/actions/group-leader'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import FormField from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'

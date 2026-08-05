@@ -24,7 +24,7 @@ export default function TerritoriesTable({ territories }: { territories: Territo
             header: 'Territory Number',
             cell: (t) => (
               <Link
-                href={`/territory-management-system/dashboard/territories/${t.id}`}
+                href={`/tms/dashboard/territories/${t.id}`}
                 className="font-medium hover:text-[#2563EB]"
               >
                 {t.name}

@@ -12,7 +12,7 @@ import {
   restoreGroupLeaderAccessAction,
   revokeGroupLeaderAccessAction,
   type InviteGroupLeaderResult,
-} from '@/app/territory-management-system/actions/group-leaders'
+} from '@/app/tms/actions/group-leaders'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import { useConfirm } from '@/lib/territory-management-system/hooks/useConfirm'
 import { usePrompt } from '@/lib/territory-management-system/hooks/usePrompt'

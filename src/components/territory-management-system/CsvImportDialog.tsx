@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from 'react'
 import Papa from 'papaparse'
 import { Upload, X } from 'lucide-react'
-import { importRecordsAction, type ImportSummary } from '@/app/territory-management-system/actions/records'
+import { importRecordsAction, type ImportSummary } from '@/app/tms/actions/records'
 import {
   type HeaderMap,
   type ImportField,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { ImageIcon } from 'lucide-react'
-import { uploadTerritoryMapAction } from '@/app/territory-management-system/actions/territories'
+import { uploadTerritoryMapAction } from '@/app/tms/actions/territories'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import TerritoryMapViewer from '@/components/territory-management-system/TerritoryMapViewer'

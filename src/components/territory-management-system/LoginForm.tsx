@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useActionState } from 'react'
-import { signIn } from '@/app/territory-management-system/actions/auth'
-import type { ActionResult } from '@/app/territory-management-system/actions/shared'
+import { signIn } from '@/app/tms/actions/auth'
+import type { ActionResult } from '@/app/tms/actions/shared'
 
 export default function LoginForm({ notice }: { notice?: string }) {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(signIn, {})
@@ -51,7 +51,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
               className="mt-1 w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-base text-[#0B1B33] focus:border-[#38BDF8] focus:outline-none"
             />
           </label>
-          <Link href="/territory-management-system/forgot-password" className="block text-right text-sm text-[#2563EB] hover:underline">
+          <Link href="/tms/forgot-password" className="block text-right text-sm text-[#2563EB] hover:underline">
             Forgot password?
           </Link>
           {notice && !state.error && <p className="text-sm text-amber-600">{notice}</p>}

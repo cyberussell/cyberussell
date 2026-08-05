@@ -10,7 +10,7 @@ import {
   requestRecordTransferAction,
   respondToRecordTransferRequestAction,
   searchTodaysRecordsAction,
-} from '@/app/territory-management-system/actions/publisher'
+} from '@/app/tms/actions/publisher'
 import { inputClass } from '@/components/territory-management-system/dashboard/FormField'
 import Card from '@/components/territory-management-system/dashboard/Card'
 import ConfirmModal from '@/components/territory-management-system/ConfirmModal'

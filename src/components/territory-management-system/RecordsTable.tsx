@@ -8,7 +8,7 @@ import FilterPills from '@/components/territory-management-system/dashboard/Filt
 import TableSearchInput from '@/components/territory-management-system/dashboard/TableSearchInput'
 import ApprovalBadge from '@/components/territory-management-system/ApprovalBadge'
 import ConfirmDeleteButton from '@/components/territory-management-system/dashboard/ConfirmDeleteButton'
-import { approveRecordAction, deleteRecordAction, rejectRecordAction } from '@/app/territory-management-system/actions/records'
+import { approveRecordAction, deleteRecordAction, rejectRecordAction } from '@/app/tms/actions/records'
 import type { TerritoryRecordWithLocation } from '@/lib/territory-management-system/modules/records/types'
 
 const STATUS_OPTIONS: { label: string; value: 'all' | 'pending' | 'approved' }[] = [
@@ -67,7 +67,7 @@ export default function RecordsTable({ records }: { records: TerritoryRecordWith
               const householdCount = r.plus_code ? (plusCodeCounts.get(r.plus_code) ?? 1) : 1
               return (
                 <span className="flex items-center gap-1.5">
-                  <Link href={`/territory-management-system/dashboard/records/${r.id}`} className="font-medium hover:text-[#2563EB]">
+                  <Link href={`/tms/dashboard/records/${r.id}`} className="font-medium hover:text-[#2563EB]">
                     {recordLabel(r)}
                     {r.unit ? `, ${r.unit}` : ''}
                   </Link>

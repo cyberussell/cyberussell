@@ -17,22 +17,22 @@ import {
   NotebookPen,
   HelpCircle,
 } from 'lucide-react'
-import { signOut } from '@/app/territory-management-system/actions/auth'
+import { signOut } from '@/app/tms/actions/auth'
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/territory-management-system/dashboard', icon: LayoutDashboard },
-  { label: 'Territories', href: '/territory-management-system/dashboard/territories', icon: Map },
-  { label: 'Contact Records', href: '/territory-management-system/dashboard/records', icon: ClipboardList },
-  { label: 'Group Leaders', href: '/territory-management-system/dashboard/group-leaders', icon: Users },
-  { label: 'Reports', href: '/territory-management-system/dashboard/reports', icon: BarChart3 },
+  { label: 'Dashboard', href: '/tms/dashboard', icon: LayoutDashboard },
+  { label: 'Territories', href: '/tms/dashboard/territories', icon: Map },
+  { label: 'Contact Records', href: '/tms/dashboard/records', icon: ClipboardList },
+  { label: 'Group Leaders', href: '/tms/dashboard/group-leaders', icon: Users },
+  { label: 'Reports', href: '/tms/dashboard/reports', icon: BarChart3 },
   // Publisher end-of-ministry notes — admin-only, deliberately not visible anywhere in the
   // Group Leader dashboard (see 011_partnership_admin_note.sql).
-  { label: 'Notes', href: '/territory-management-system/dashboard/notes', icon: MessageSquareText },
+  { label: 'Notes', href: '/tms/dashboard/notes', icon: MessageSquareText },
   // Distinct from "Notes" above — this is per-visit notes (territory_record_visits.notes),
   // aggregated into a Monday–Sunday review window (see notesWeekRange), not end-of-ministry notes.
-  { label: 'Weekly Notes', href: '/territory-management-system/dashboard/weekly-notes', icon: NotebookPen },
-  { label: 'FAQ', href: '/territory-management-system/dashboard/faq', icon: HelpCircle },
-  { label: 'Settings', href: '/territory-management-system/dashboard/settings', icon: SettingsIcon },
+  { label: 'Weekly Notes', href: '/tms/dashboard/weekly-notes', icon: NotebookPen },
+  { label: 'FAQ', href: '/tms/dashboard/faq', icon: HelpCircle },
+  { label: 'Settings', href: '/tms/dashboard/settings', icon: SettingsIcon },
 ]
 
 export default function DashboardSidebar({ congregationName }: { congregationName: string }) {
@@ -85,7 +85,7 @@ export default function DashboardSidebar({ congregationName }: { congregationNam
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           {NAV_ITEMS.map((item) => {
             const active =
-              item.href === '/territory-management-system/dashboard' ? pathname === item.href : pathname.startsWith(item.href)
+              item.href === '/tms/dashboard' ? pathname === item.href : pathname.startsWith(item.href)
             return (
               <Link
                 key={item.href}

@@ -63,6 +63,16 @@ const nextConfig: NextConfig = {
       )
     }
 
+    // Territory Management System — cyberussellofficial-ctrl/territorymanagementsystem
+    const tmsZoneUrl = process.env.TMS_ZONE_URL
+    if (tmsZoneUrl) {
+      beforeFiles.push(
+        { source: "/tms", destination: `${tmsZoneUrl}/tms` },
+        { source: "/tms/:path+", destination: `${tmsZoneUrl}/tms/:path+` },
+        { source: "/tms-assets/:path+", destination: `${tmsZoneUrl}/tms-assets/:path+` },
+      )
+    }
+
     return { beforeFiles }
   },
   async redirects() {
@@ -83,13 +93,13 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/tms",
-        destination: "/territory-management-system/login",
+        source: "/territory-management-system",
+        destination: "/tms/login",
         permanent: true,
       },
       {
-        source: "/tms/:path*",
-        destination: "/territory-management-system/:path*",
+        source: "/territory-management-system/:path*",
+        destination: "/tms/:path*",
         permanent: true,
       },
       {

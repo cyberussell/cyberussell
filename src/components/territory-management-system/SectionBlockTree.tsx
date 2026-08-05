@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ChevronDown, ChevronRight, Plus } from 'lucide-react'
-import { addBlockAction, addSectionAction, deleteBlockAction, deleteSectionAction } from '@/app/territory-management-system/actions/territories'
+import { addBlockAction, addSectionAction, deleteBlockAction, deleteSectionAction } from '@/app/tms/actions/territories'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import type { TerritoryStructure } from '@/lib/territory-management-system/modules/territory/types'
 import Card from '@/components/territory-management-system/dashboard/Card'

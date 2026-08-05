@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createTerritory } from '@/app/territory-management-system/actions/territories'
+import { createTerritory } from '@/app/tms/actions/territories'
 import { useServerAction } from '@/lib/territory-management-system/hooks/useServerAction'
 import { sectionLabel } from '@/lib/territory-management-system/modules/territory/labels'
 import FormField, { inputClass } from '@/components/territory-management-system/dashboard/FormField'

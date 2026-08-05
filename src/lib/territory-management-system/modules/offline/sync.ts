@@ -21,7 +21,7 @@ import {
   submitPartnershipNoteAction,
   terminatePartnershipEarlyAction,
   updatePublisherRecordAction,
-} from '@/app/territory-management-system/actions/publisher'
+} from '@/app/tms/actions/publisher'
 import type { SyncQueueItem } from './db'
 import { listQueue, removeFromQueue, updateQueueItem } from './queue'
 

@@ -21,7 +21,7 @@ export default function BatchLandingBottomMenu({ batchToken }: { batchToken: str
 
   if (!claimedToken) return null
 
-  const workspaceHref = `/territory-management-system/assignment/${batchToken}/${claimedToken}`
+  const workspaceHref = `/tms/assignment/${batchToken}/${claimedToken}`
 
   // The workspace always mounts fresh from this page (it's a real navigation, not a client-side
   // view-state change) — without a hint it always lands on its default Home tab regardless of

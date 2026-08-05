@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import type { PartnershipWithProgress } from '@/lib/territory-management-system/modules/assignment/types'
 import { getClaimedPartnershipToken, clearClaimedPartnershipToken } from '@/lib/territory-management-system/modules/offline/claim'
-import { releasePartnershipAction } from '@/app/territory-management-system/actions/publisher'
+import { releasePartnershipAction } from '@/app/tms/actions/publisher'
 import SlideToConfirm from './SlideToConfirm'
 
 // Lives on the batch-landing "Select your Partner" page (moved here from the workspace's own
