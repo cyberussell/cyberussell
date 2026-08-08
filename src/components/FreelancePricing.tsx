@@ -688,26 +688,6 @@ export default function FreelancePricing() {
             </div>
           </div>
 
-          {/* Ebook CTA */}
-          <div className="bg-gradient-to-br from-[#FFD23F]/10 via-[#18181F] to-[#18181F] border border-[#FFD23F]/20 rounded-[14px] p-6 md:p-8 mb-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              <div className="flex-1">
-                <span className="font-[family-name:var(--font-inter)] text-[11px] font-bold text-[#FFD23F]/70 uppercase tracking-[0.15em] mb-1 block">Next Step</span>
-                <h3 className="font-sans text-[18px] md:text-[20px] font-bold text-white mb-2">
-                  You know your rate. Now land the client.
-                </h3>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-white/55 leading-[1.7]">
-                  Get 5 proposal templates, invoice and contract templates, and a 30-day action plan to go from pricing to first paying client.
-                </p>
-              </div>
-              <a
-                href="https://academy.cyberussell.com/shop/freelancer-kit"
-                className="shrink-0 bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[14px] font-extrabold px-6 py-3.5 rounded-[10px] hover:opacity-90 transition-all shadow-lg shadow-[#FFD23F]/20"
-              >
-                Get the Kit — ₱199
-              </a>
-            </div>
-          </div>
 
           {/* Actions */}
           <div className="flex gap-3 flex-wrap mb-12">

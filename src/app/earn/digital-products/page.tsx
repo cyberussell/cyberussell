@@ -29,8 +29,7 @@ export default function DigitalProductsPage() {
           can earn you passive income — no inventory, no shipping, no capital.
         </p>
         <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-8 text-center">
-          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/50 mb-4">Content coming soon. See our existing digital products:</p>
-          <a href="https://academy.cyberussell.com/shop" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#FFD23F] hover:text-white transition-colors">Browse the Shop →</a>
+          <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/50">Content coming soon.</p>
         </div>
       </main>
       <Footer />

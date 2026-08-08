@@ -1,5 +1,17 @@
 # Current Work
 
+**Shop — product removed entirely (2026-08-09) — code done, tsc + next build clean, NOT yet committed:**
+
+Current Product: Shop.
+
+Current Feature: Russell asked to totally remove the Shop page. Deleted the whole product: `src/app/shop/` (all 4 pages), `src/components/{Shop,FreelancerKitProduct,ChatGptClaudeProduct,Downloads,DownloadContent}.tsx`, `src/app/api/{checkout,download,dispute}/route.ts`, `src/lib/download-token.ts`, `src/data/products.ts`. Also removed the now-dead cross-product references that pointed into Shop: the "SHOP" navbar item (`Navbar.tsx`), the `/shop` entry in `next-sitemap.config.js`, the `/shop` ad-mode rule in `ads-config.ts`, the "Browse the Shop" link on `/earn/digital-products`, and the five "Ebook CTA" blocks in `ScamScanner.tsx`, `BioGenerator.tsx`, `ClientAnalyzer.tsx`, `FreelancePricing.tsx`, `PromptForge.tsx` (each was a self-contained CTA box linking to a now-deleted `/shop/*` page). Left `PAYMONGO_SECRET_KEY`/`PAYMONGO_PUBLIC_KEY` env vars untouched — `.env.example` documents them as shared with the Appointment System's billing. `public/downloads/` product files were already gone (removed in a prior commit); nothing left to clean up there.
+
+Current Status: `npx tsc --noEmit` clean (after a stale `.next` regen), `npx next build` clean (no `/shop` route in output), live-verified in the browser preview — `/shop` 404s, navbar no longer shows SHOP, `/tools/scam-scanner` renders with no console/server errors. Not yet committed — project map (`docs/project-map.md`) section 6 also needs regenerating/removing to match, not yet done.
+
+**Next recommended task:** Review the diff, then commit. Also update `docs/project-map.md` — it still documents Shop as product #6; either delete that section or mark it removed.
+
+---
+
 **Territory Management System — Group Leader Home Refresh moved into QR panel corner (2026-07-27) — code done, tsc + vitest (101/101) + next build clean, committed and pushed — see checkpoint `territory-management-gl-home-refresh-corner-v1.md`:**
 
 Current Product: Territory Management System (TMS).

@@ -77,10 +77,6 @@ const navItems: NavItem[] = [
       { label: "Portfolio", href: "/portfolio" },
     ],
   },
-  {
-    label: "SHOP",
-    href: "https://academy.cyberussell.com/shop",
-  },
 ];
 
 function DropdownMenu({ items }: { items: DropdownItem[] }) {
