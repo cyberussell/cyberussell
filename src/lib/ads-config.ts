@@ -21,7 +21,6 @@ const AD_RULES: [string, AdMode][] = [
   // ── No ads ─────────────────────────────────────────────────────────────────
   ["/services",        "none"],
   ["/contact",         "none"],
-  ["/shop",            "none"],
   ["/mission-control", "none"],
   ["/skill-finder",    "none"],
   ["/careers",         "none"],

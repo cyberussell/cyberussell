@@ -30,7 +30,7 @@ export default function DigitalProductsPage() {
         </p>
         <div className="bg-[#18181F] border border-white/[0.08] rounded-2xl p-8 text-center">
           <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/50 mb-4">Content coming soon. See our existing digital products:</p>
-          <a href="/shop" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#FFD23F] hover:text-white transition-colors">Browse the Shop →</a>
+          <a href="https://academy.cyberussell.com/shop" className="font-[family-name:var(--font-inter)] text-[14px] font-bold text-[#FFD23F] hover:text-white transition-colors">Browse the Shop →</a>
         </div>
       </main>
       <Footer />

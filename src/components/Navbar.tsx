@@ -79,7 +79,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "SHOP",
-    href: "/shop",
+    href: "https://academy.cyberussell.com/shop",
   },
 ];
 

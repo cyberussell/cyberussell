@@ -14,7 +14,6 @@ module.exports = {
     { loc: '/tools/bio-generator', priority: 0.8, changefreq: 'monthly' },
     { loc: '/earn', priority: 0.8, changefreq: 'monthly' },
     { loc: '/learn', priority: 0.8, changefreq: 'monthly' },
-    { loc: '/shop', priority: 0.8, changefreq: 'weekly' },
     { loc: '/blog', priority: 0.8, changefreq: 'weekly' },
     { loc: '/platforms', priority: 0.8, changefreq: 'monthly' },
     { loc: '/resources', priority: 0.7, changefreq: 'monthly' },

@@ -398,7 +398,7 @@ export default function PromptForge() {
               </p>
             </div>
             <a
-              href="/shop/chatgpt-claude"
+              href="https://academy.cyberussell.com/shop/chatgpt-claude"
               className="shrink-0 bg-[#3B82F6] text-white font-[family-name:var(--font-inter)] text-[14px] font-extrabold px-6 py-3.5 rounded-[10px] hover:opacity-90 transition-all shadow-lg shadow-[#3B82F6]/20"
             >
               Get the Guide — ₱99

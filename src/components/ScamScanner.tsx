@@ -352,7 +352,7 @@ export default function ScamScanner() {
                 </p>
               </div>
               <a
-                href="/shop/freelancer-kit"
+                href="https://academy.cyberussell.com/shop/freelancer-kit"
                 className="shrink-0 bg-[#FFD23F] text-[#0F0F1A] font-[family-name:var(--font-inter)] text-[14px] font-extrabold px-6 py-3.5 rounded-[10px] hover:opacity-90 transition-all shadow-lg shadow-[#FFD23F]/20"
               >
                 Get the Kit — ₱199
