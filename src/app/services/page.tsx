@@ -105,7 +105,7 @@ export default function ServicesPage() {
         {/* ── Hero ── */}
         <section className="relative flex flex-col overflow-hidden min-h-[680px] md:min-h-0">
           {/* Background photo — desktop */}
-          <div className="hidden md:block absolute inset-0 z-0 min-h-full">
+          <div className="hidden md:block absolute inset-0 z-0 min-h-full max-w-[1920px] mx-auto">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/russell-hero.jpg"
