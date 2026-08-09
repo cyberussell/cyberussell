@@ -1,5 +1,17 @@
 # Current Work
 
+**Repo cleanup — duplicate junk + old TMS runtime code removed (2026-08-09) — committed and pushed — see checkpoint `repo-cleanup-tms-removal-v1.md`:**
+
+Current Product: Territory Management System (TMS) / repo housekeeping.
+
+Current Feature: Russell asked to delete files unrelated to cyberussell.com or no longer in use, locally and on GitHub. Scope was confirmed with Russell first (this is not a full-repo unused-file audit). Deleted: duplicate macOS "file 2" junk (`docs/checkpoints/shop-removal-v1 2.md`, `skills-lock 2.json`, 9 duplicated `.claude/skills/*` folders — all untracked, no git action needed) and the old TMS runtime code (`src/app/tms/**`, `src/lib/territory-management-system/**`, `src/components/territory-management-system/**` — 162 files) now that the standalone TMS repo is live and verified via the `TMS_ZONE_URL` proxy (see the TMS extraction entry further down).
+
+Current Status: `tsc --noEmit` clean. Committed (`3e566b6`) and pushed to `main`.
+
+**Next recommended task:** Regenerate/remove `docs/project-map.md` section 6 (still documents Shop as product #6, which was removed in the entry below). If Russell wants the broader unused-file audit, scope it one product at a time per the repo's operating rules.
+
+---
+
 **Shop — product removed entirely (2026-08-09) — code done, tsc + next build clean, NOT yet committed:**
 
 Current Product: Shop.
@@ -2714,7 +2726,7 @@ Priority: Sequential — do not start #2 until user confirms readiness (already 
 - `TMS_ZONE_URL` set on the cyberussell.com Vercel project (Production only, matching `LMS_ZONE_URL`/`APPOINTMENTS_ZONE_URL`), production redeployed.
 - **Verified end-to-end**: `https://www.cyberussell.com/tms/login` now serves the proxied standalone app correctly (confirmed via live network request + rendered page content).
 - Removed the root `territory-management-system/` folder (migrations, SETUP.md, email templates, seed script, logo) from this repo — docs/ops-only, not read by any runtime code, fully preserved in the new repo. Commit `db2f3ab`, pushed.
-- **Still NOT removed**: `src/app/tms/**`, `src/lib/territory-management-system/**`, `src/components/territory-management-system/**` — this is the actual runtime code and is a separate, deliberate later step (see "Next Recommended Task" below — unchanged).
+- **Removed 2026-08-09**: `src/app/tms/**`, `src/lib/territory-management-system/**`, `src/components/territory-management-system/**` — the old runtime code, deleted now that the proxy was confirmed live and verified. See the "Repo cleanup" entry at the top of this file and checkpoint `repo-cleanup-tms-removal-v1.md`.
 
 ## Update — 2026-08-06 (same day, later still): found and fixed a real proxy bug
 
