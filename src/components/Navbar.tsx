@@ -25,7 +25,6 @@ const navItems: NavItem[] = [
     dropdown: [
       { label: "Discover Your Best Online Skill", href: "/skill-finder" },
       { label: "8 Ways to Earn Online", href: "/guides/8-ways" },
-      { label: "Philippine Labor Market Guide", href: "/downloads/ph-labor-market-2026.pdf" },
     ],
   },
   {
