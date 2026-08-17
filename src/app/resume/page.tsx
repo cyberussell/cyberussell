@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Fragment } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
-import { Mail, Phone, MapPin, Download, Palmtree, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Download, Palmtree, Globe, GraduationCap } from "lucide-react";
 import {
   siNextdotjs, siReact, siTypescript, siNodedotjs, siSupabase,
   siPostgresql, siClaude, siTailwindcss, siVercel, siFirebase, siGithub,
@@ -103,11 +103,10 @@ const stack = [
 ];
 
 const portfolioLiveLinks: Record<string, string> = {
+  "cyberussell": "https://www.cyberussell.com/",
   "hireworkers": "https://www.hireworkers.work",
   "laundry-management-system": "https://www.cyberussell.com/lms",
   "appointment-system": "https://www.cyberussell.com/appointments",
-  "fastrack-lending": "https://fastrackrate.com",
-  "mina-pro": "https://minapro.io",
 };
 
 const freelanceTaglines: Record<string, string> = {
@@ -282,7 +281,7 @@ export default async function ResumePage() {
                 </span>
                 <div className="flex flex-col gap-3">
                   <div>
-                    <p className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white">Mapúa Institute of Technology</p>
+                    <p className="font-[family-name:var(--font-inter)] text-[13px] font-bold text-white">Mapúa University</p>
                     <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/40">BS, Civil Engineering</p>
                   </div>
                 </div>
@@ -332,6 +331,19 @@ export default async function ResumePage() {
                     );
                   })}
                   <a
+                    href="https://academy.cyberussell.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-start gap-3"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-[#0B1220] border border-white/[0.08] flex items-center justify-center shrink-0">
+                      <GraduationCap size={15} className="text-[#3ECF8E]" />
+                    </div>
+                    <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/60 group-hover:text-white leading-tight transition-colors pt-1">
+                      Cyberussell Academy
+                    </span>
+                  </a>
+                  <a
                     href="https://www.hagnayabeachresort.com/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -353,7 +365,7 @@ export default async function ResumePage() {
                   GitHub
                 </span>
                 <a
-                  href="https://github.com/cyberussellofficial-ctrl"
+                  href="https://github.com/cyberussell"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-3"
@@ -364,7 +376,7 @@ export default async function ResumePage() {
                     </svg>
                   </div>
                   <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/60 group-hover:text-white leading-tight transition-colors truncate">
-                    @cyberussellofficial-ctrl
+                    @cyberussell
                   </span>
                 </a>
               </div>
