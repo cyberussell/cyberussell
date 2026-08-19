@@ -178,7 +178,10 @@ export default function Booking() {
       const key = dateKey(s.startsAt);
       if (!seen.has(key)) seen.set(key, s.startsAt);
     }
-    return Array.from(seen.entries()).slice(0, 6);
+    // The business is configured for 7 days advance booking (today + 7 more
+    // = 8 calendar days, since getAvailableSlots' day loop is inclusive) —
+    // this should show every day that window can produce, not cut it short.
+    return Array.from(seen.entries()).slice(0, 8);
   }, [filteredSlots]);
 
   useEffect(() => {
