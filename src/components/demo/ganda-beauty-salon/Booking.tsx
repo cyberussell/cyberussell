@@ -4,7 +4,15 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import { BOOK_WITH_STYLIST_EVENT, SALON, SERVICE_CATEGORIES, STYLISTS } from "./data";
+import {
+  BOOK_WITH_STYLIST_EVENT,
+  SALON,
+  fetchAppointmentServices,
+  fetchAppointmentStaff,
+  formatPeso,
+  type AppointmentService,
+  type AppointmentStaffMember,
+} from "./data";
 import { fadeUp } from "./motion";
 
 // Kept as a display toggle (not deleted) so a future per-tenant config could
@@ -13,8 +21,6 @@ type BookingDisplay = "both" | "widget-only" | "qr-only";
 const BOOKING_DISPLAY = "both" as BookingDisplay;
 const showWidget = BOOKING_DISPLAY !== "qr-only";
 const showQr = BOOKING_DISPLAY !== "widget-only";
-
-const ALL_SERVICES = SERVICE_CATEGORIES.flatMap((cat) => cat.items);
 
 type Slot = { startsAt: string; endsAt: string; staffId: string; staffName: string; label: string };
 
@@ -29,11 +35,18 @@ function formatTime(iso: string) {
 }
 
 export default function Booking() {
-  const [serviceId, setServiceId] = useState(ALL_SERVICES[0].appointmentServiceId);
-  const [staffFilter, setStaffFilter] = useState(STYLISTS[0].appointmentStaffId);
+  const [services, setServices] = useState<AppointmentService[] | null>(null);
+  const [servicesError, setServicesError] = useState<string | null>(null);
+  const [serviceId, setServiceId] = useState("");
+
+  // Who's eligible for the currently selected service — staff-specific
+  // services, live from the Appointment System (no assignments = eligible
+  // for everything, same rule the real booking engine uses).
+  const [eligibleStaff, setEligibleStaff] = useState<AppointmentStaffMember[] | null>(null);
+  const [staffFilter, setStaffFilter] = useState("");
 
   const [slots, setSlots] = useState<Slot[] | null>(null);
-  const [loadingSlots, setLoadingSlots] = useState(true);
+  const [loadingSlots, setLoadingSlots] = useState(false);
   const [slotsError, setSlotsError] = useState<string | null>(null);
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -44,6 +57,22 @@ export default function Booking() {
   const [note, setNote] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchAppointmentServices()
+      .then((data) => {
+        if (cancelled) return;
+        setServices(data);
+        if (data.length > 0) setServiceId(data[0].id);
+      })
+      .catch(() => {
+        if (!cancelled) setServicesError("Couldn't load services right now.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // "Book with X" on a stylist's profile preselects them here.
   useEffect(() => {
@@ -56,6 +85,24 @@ export default function Booking() {
   }, []);
 
   useEffect(() => {
+    if (!serviceId) return;
+    let cancelled = false;
+    fetchAppointmentStaff(serviceId)
+      .then((data) => {
+        if (cancelled) return;
+        setEligibleStaff(data);
+        setStaffFilter((current) => (data.some((s) => s.id === current) ? current : (data[0]?.id ?? "")));
+      })
+      .catch(() => {
+        if (!cancelled) setEligibleStaff([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [serviceId]);
+
+  useEffect(() => {
+    if (!serviceId) return;
     let cancelled = false;
     setLoadingSlots(true);
     setSlotsError(null);
@@ -211,6 +258,10 @@ export default function Booking() {
                   Book another appointment
                 </button>
               </div>
+            ) : servicesError ? (
+              <p className="text-[13px] text-[#e08a6b]">{servicesError}</p>
+            ) : !services ? (
+              <p className="text-[13px] text-[#8a8378]">Loading services…</p>
             ) : (
               <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-2 gap-4 mb-4">
@@ -221,9 +272,9 @@ export default function Booking() {
                       onChange={(e) => setServiceId(e.target.value)}
                       className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] focus:outline-none focus:border-[#c9a15a]"
                     >
-                      {ALL_SERVICES.map((s) => (
-                        <option key={s.appointmentServiceId} value={s.appointmentServiceId}>
-                          {s.name} — {s.price}
+                      {services.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name} — {formatPeso(s.price)}
                         </option>
                       ))}
                     </select>
@@ -233,13 +284,20 @@ export default function Booking() {
                     <select
                       value={staffFilter}
                       onChange={(e) => setStaffFilter(e.target.value)}
-                      className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] focus:outline-none focus:border-[#c9a15a]"
+                      disabled={!eligibleStaff || eligibleStaff.length === 0}
+                      className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] focus:outline-none focus:border-[#c9a15a] disabled:opacity-50"
                     >
-                      {STYLISTS.map((s) => (
-                        <option key={s.appointmentStaffId} value={s.appointmentStaffId}>
-                          {s.name}
-                        </option>
-                      ))}
+                      {!eligibleStaff ? (
+                        <option>Loading…</option>
+                      ) : eligibleStaff.length === 0 ? (
+                        <option>No stylist offers this service</option>
+                      ) : (
+                        eligibleStaff.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name}
+                          </option>
+                        ))
+                      )}
                     </select>
                   </div>
                 </div>

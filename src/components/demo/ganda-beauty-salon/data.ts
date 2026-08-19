@@ -16,40 +16,35 @@ export const SALON = {
   appointmentBusinessSlug: "ganda-beauty-salon",
 };
 
-export const SERVICE_CATEGORIES = [
-  {
-    name: "Hair",
-    items: [
-      { name: "Signature Cut", price: "₱850", appointmentServiceId: "97b9fac3-01f1-40cd-9b65-0c859e01dacd" },
-      { name: "Blowout & Style", price: "₱650", appointmentServiceId: "cd708626-30bd-4822-b9e6-741a3f03a9a2" },
-      { name: "Keratin Treatment", price: "₱3,200", appointmentServiceId: "cb42e3b4-7339-4a08-bd9a-ff19a2b3c7c9" },
-    ],
-  },
-  {
-    name: "Color",
-    items: [
-      { name: "Balayage", price: "₱4,500", appointmentServiceId: "9c721fb1-703e-4636-b9bd-5b13703037a0" },
-      { name: "Root Touch-Up", price: "₱1,800", appointmentServiceId: "2d446778-ca09-4ff4-b97e-9c3085fc08d7" },
-      { name: "Full Color", price: "₱2,800", appointmentServiceId: "ef45ee80-b126-4347-9b4f-2ff077e4e8c7" },
-    ],
-  },
-  {
-    name: "Nails",
-    items: [
-      { name: "Gel Manicure", price: "₱600", appointmentServiceId: "55ebba17-b6e4-4ea5-b567-fc80bc8d0dcb" },
-      { name: "Classic Pedicure", price: "₱550", appointmentServiceId: "e9e5a0e1-3254-43d7-bac4-1d1cca8ba44c" },
-    ],
-  },
-  {
-    name: "Spa",
-    items: [
-      { name: "Scalp Spa Treatment", price: "₱1,200", appointmentServiceId: "e7451001-9c43-47d3-ad06-cc38b3abd392" },
-      { name: "Hand & Foot Spa", price: "₱950", appointmentServiceId: "b352ac88-5a65-4ec2-a915-6144e56825e3" },
-    ],
-  },
-];
+// Live data from the real Appointment System — no more hardcoded services
+// list. Prices/names/duration now come from cyberussell.com/appointments,
+// the same tenant provisioned for this demo.
+export type AppointmentService = { id: string; name: string; price: number; duration_min: number };
+export type AppointmentStaffMember = { id: string; name: string; title: string };
 
-export const SERVICE_OPTIONS = SERVICE_CATEGORIES.flatMap((cat) => cat.items.map((item) => item.name));
+export async function fetchAppointmentServices(): Promise<AppointmentService[]> {
+  const res = await fetch(`/appointments/api/services?business=${SALON.appointmentBusinessSlug}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? "Failed to load services");
+  return data.services ?? [];
+}
+
+// Omitting serviceId returns every active staff member; passing it scopes
+// to whoever is eligible for that specific service (mirrors the same
+// "unrestricted unless explicitly assigned" rule the booking API itself
+// uses, computed server-side so this never has to re-derive it).
+export async function fetchAppointmentStaff(serviceId?: string): Promise<AppointmentStaffMember[]> {
+  const params = new URLSearchParams({ business: SALON.appointmentBusinessSlug });
+  if (serviceId) params.set("service", serviceId);
+  const res = await fetch(`/appointments/api/staff?${params.toString()}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? "Failed to load stylists");
+  return data.staff ?? [];
+}
+
+export function formatPeso(amount: number) {
+  return `₱${amount.toLocaleString("en-US")}`;
+}
 
 export type Stylist = {
   id: string;
