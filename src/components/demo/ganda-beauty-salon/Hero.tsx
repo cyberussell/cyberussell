@@ -1,20 +1,22 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { fadeUp } from "./motion";
 
 export default function Hero() {
   return (
     <section id="top" className="relative flex min-h-[620px] h-[88vh]">
-      <Image
-        src="/demo/ganda-beauty-salon/photos/hero.png"
-        alt="Salon interior, warm ambient light"
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover object-[50%_35%]"
-      />
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster="/demo/ganda-beauty-salon/photos/hero.png"
+        className="absolute inset-0 w-full h-full object-cover object-[50%_35%]"
+      >
+        <source src="/demo/ganda-beauty-salon/photos/hero.mp4" type="video/mp4" />
+      </video>
       <div
         className="absolute inset-0"
         style={{
