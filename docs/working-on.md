@@ -2735,3 +2735,33 @@ Clicking through more of the live proxy (per "Remaining Work" above) surfaced a 
 **Fix**: added `assetPrefix: "/tms-assets"` to the standalone repo's `next.config.ts` — matches the `/tms-assets/:path+` rewrite already configured on this side (added earlier alongside the `/tms` rewrite, but nothing was actually using it until now). This is Next.js's documented mechanism for multi-zone asset collisions. Verified locally (`next start`, curl) and live (both direct on `territorymanagementsystem.vercel.app` and through the `cyberussell.com` proxy) — all asset requests now 200 under `/tms-assets/_next/static/...`, both dashboard-redirect-to-login and group-leader-dashboard-redirect-to-login render fully styled. Commit `4bf2c6b` in the standalone repo, pushed, auto-deployed by Vercel's GitHub integration.
 
 **Still not click-tested**: actual authenticated dashboard content, publisher QR/assignment flow — those need Russell's own login (not something to do on his behalf, per standing rule against entering passwords for someone).
+
+----------------------------------------
+
+# Ganda Beauty Salon Demo — new build (2026-08-19)
+
+**Date:** 2026-08-19
+**Product:** Appointment System (SaaS) — demo/showcase page
+**Goal:** Build a new vertical-specific marketing demo at `/demo/ganda-beauty-salon`, from a design handoff package the user provided (zip: `Salon Booking Website Design.zip` → `design_handoff_salon_website/`), following the existing `/demo/luma-dental` pattern (real React/Tailwind components, not the raw handoff HTML).
+
+## Done this session
+
+- Full new route + component set built: `src/app/demo/ganda-beauty-salon/{page,layout}.tsx`, `src/components/demo/ganda-beauty-salon/{Header,Hero,About,Services,Stylists,Booking,Gallery,Testimonials,Contact,Footer,data,motion}.{tsx,ts}`.
+- Fonts (Cormorant Garamond, Playfair Display, Jost) scoped to this route only via `layout.tsx`, not touching the site's global Syne/Inter fonts.
+- Booking section is a static mock (same precedent as `/demo/luma-dental`) — live Appointment System wiring explicitly deferred.
+- 12 images in `public/demo/ganda-beauty-salon/photos/`: 2 downloaded from the handoff README's exact Unsplash URLs (about, gallery-2), 1 replaced with an AI-generated salon interior after the README's specified hero Unsplash URL turned out to be a mismatched plain headshot, and 9 more AI-generated (Higgsfield/GPT Image 2) to fill the design's intentionally-blank stylist-portrait and gallery-tile placeholders.
+- `npx tsc --noEmit` clean, no console errors, all images confirmed loading via network inspection (no 404s).
+- Full checkpoint: `docs/checkpoints/ganda-beauty-salon-demo-v1.md`.
+
+## NOT done — deliberately deferred
+
+- No live wiring to the real Appointment System booking flow (separate standalone repo/Supabase project) — user said "let's think of wiring them later."
+- No `/portfolio` card added (matches `/demo/luma-dental`'s precedent of having none).
+
+## Known Issues
+
+- This session's Browser preview pane has a scroll-screenshot bug (any screenshot taken after scrolling past ~1 viewport renders solid black) that reproduces identically on the pre-existing `/demo/luma-dental` page — confirmed to be a tool/environment limitation via DOM/`getComputedStyle`/network inspection, not a defect in the new code. Sections below the fold were verified via DOM/network, not a visual screenshot — worth a real-browser eyeball pass.
+
+## Next Recommended Task
+
+Human visual check of `/demo/ganda-beauty-salon` below the fold in a real browser, then decide on a `/portfolio` card and on scheduling the real Appointment System booking-wiring work.
