@@ -41,11 +41,53 @@ export const SERVICE_CATEGORIES = [
 
 export const SERVICE_OPTIONS = SERVICE_CATEGORIES.flatMap((cat) => cat.items.map((item) => item.name));
 
-export const STYLISTS = [
-  { id: "stylist-1", name: "Isabela Cruz", role: "Creative Director · Colorist", photo: "/demo/ganda-beauty-salon/photos/stylist-1.png" },
-  { id: "stylist-2", name: "Miguel Santos", role: "Senior Stylist", photo: "/demo/ganda-beauty-salon/photos/stylist-2.png" },
-  { id: "stylist-3", name: "Katrina Bautista", role: "Balayage Specialist", photo: "/demo/ganda-beauty-salon/photos/stylist-3.png" },
-  { id: "stylist-4", name: "Rafael Villanueva", role: "Barber & Grooming", photo: "/demo/ganda-beauty-salon/photos/stylist-4.png" },
+export type Stylist = {
+  id: string;
+  slug: string;
+  name: string;
+  role: string;
+  photo: string;
+  bio: string;
+  specialties: string[];
+};
+
+export const STYLISTS: Stylist[] = [
+  {
+    id: "stylist-1",
+    slug: "isabela-cruz",
+    name: "Isabela Cruz",
+    role: "Creative Director · Colorist",
+    photo: "/demo/ganda-beauty-salon/photos/stylist-1.png",
+    bio: "Isabela founded Ganda Beauty Salon after nearly a decade coloring hair across Manila's top studios. She specializes in dimensional color work — balayage, hand-painted highlights, and corrective color — and leads every new stylist's training on the salon floor.",
+    specialties: ["Balayage & Hand-Painting", "Corrective Color", "Bridal Color"],
+  },
+  {
+    id: "stylist-2",
+    slug: "miguel-santos",
+    name: "Miguel Santos",
+    role: "Senior Stylist",
+    photo: "/demo/ganda-beauty-salon/photos/stylist-2.png",
+    bio: "Miguel trained under master stylists in Cebu before joining Ganda Beauty Salon. Known for precision cuts that grow out well between visits, he works closely with each client to find a shape that suits their face and their routine.",
+    specialties: ["Precision Cutting", "Textured Styling", "Men's Grooming"],
+  },
+  {
+    id: "stylist-3",
+    slug: "katrina-bautista",
+    name: "Katrina Bautista",
+    role: "Balayage Specialist",
+    photo: "/demo/ganda-beauty-salon/photos/stylist-3.png",
+    bio: "Katrina's balayage work has become one of the salon's signatures — soft, sun-kissed transitions built one hand-painted section at a time. She keeps a running mood board with every client to make sure the result matches exactly what they pictured.",
+    specialties: ["Balayage", "Root Melts", "Toning & Glossing"],
+  },
+  {
+    id: "stylist-4",
+    slug: "rafael-villanueva",
+    name: "Rafael Villanueva",
+    role: "Barber & Grooming",
+    photo: "/demo/ganda-beauty-salon/photos/stylist-4.png",
+    bio: "Rafael brings a classic barbering background to the salon floor, pairing sharp fades and beard work with the same unhurried, conversation-first approach the rest of the team is known for.",
+    specialties: ["Fades & Tapers", "Beard Sculpting", "Hot Towel Shaves"],
+  },
 ];
 
 export const GALLERY = [
