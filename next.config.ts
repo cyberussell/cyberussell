@@ -84,7 +84,12 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/demo/booklypro",
-        destination: "/demo/appointment-system",
+        destination: "/demo/ganda-beauty-salon",
+        permanent: true,
+      },
+      {
+        source: "/demo/appointment-system",
+        destination: "/demo/ganda-beauty-salon",
         permanent: true,
       },
       {

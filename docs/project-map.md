@@ -187,7 +187,7 @@ Last generated: 2026-07-15 (TMS: added Undo Last Visit, admin Notes + Flagged fo
 - `/appointments/[businessSlug]` (public customer booking page)
 - `/appointments/login`, `/appointments/signup`
 - `/appointments/dashboard` (+ `/appointments`, `/availability`, `/clients`, `/clients/[clientId]`, `/conversations`, `/services`, `/settings`, `/staff`, `/help`)
-- Demo pages: `/demo/appointment-system`, `/demo/luma-dental`
+- Demo pages: `/demo/luma-dental`
 
 **Main page entry files:**
 - `src/app/appointments/page.tsx`, `src/app/appointments/[businessSlug]/page.tsx`
@@ -198,7 +198,7 @@ Last generated: 2026-07-15 (TMS: added Undo Last Visit, admin Notes + Flagged fo
 **Primary components** (`src/components/appointment-system/`):
 - `BookingWidget.tsx`, `RescheduleForm.tsx`, `ManualAppointmentForm.tsx`, `RecordPaymentForm.tsx`, `ChangePasswordForm.tsx`, `NavTabs.tsx`, `UsageBanner.tsx`
 - `landing/LandingNav.tsx`, `landing/RoiCalculator.tsx`, `landing/AiDemo.tsx`, `landing/TrackedLink.tsx`, `landing/track.ts`
-- Demo/showcase only: `src/components/demo/appointment-system/*` (Hero, Features, UserTypes, Onboarding, BookingJourney, Dashboard, MobileExperience, Highlights, ProblemSolution, Roadmap, DatabaseArchitecture, Header, Footer) and `src/components/demo/luma-dental/*` (a real dental-clinic demo: Hero, Header, Services, Team, Booking, WhyUs, Testimonials, Stats, FAQ, Footer)
+- Demo/showcase only: `src/components/demo/luma-dental/*` (a real dental-clinic demo: Hero, Header, Services, Team, Booking, WhyUs, Testimonials, Stats, FAQ, Footer)
 
 **Shared components:** `Footer.tsx` (landing page only — the dashboard has its own `NavTabs.tsx` instead of the main `Navbar.tsx`)
 
