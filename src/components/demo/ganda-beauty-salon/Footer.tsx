@@ -40,9 +40,17 @@ export default function Footer() {
         <p className="text-[11.5px] text-[#6f6a60]">
           &copy; {new Date().getFullYear()} {SALON.name}, Makati City. Fictional salon for demo purposes.
         </p>
-        <a href="/portfolio" className="text-[11.5px] text-[#6f6a60] hover:text-[#c9a15a] transition-colors">
-          Concept &amp; design by Cyberussell →
-        </a>
+        <div className="flex items-center gap-5">
+          <a href="/appointments/login" className="text-[11.5px] text-[#6f6a60] hover:text-[#c9a15a] transition-colors">
+            Admin Login
+          </a>
+          <a href="/appointments/login" className="text-[11.5px] text-[#6f6a60] hover:text-[#c9a15a] transition-colors">
+            Staff Login
+          </a>
+          <a href="/portfolio" className="text-[11.5px] text-[#6f6a60] hover:text-[#c9a15a] transition-colors">
+            Concept &amp; design by Cyberussell →
+          </a>
+        </div>
       </div>
     </footer>
   );

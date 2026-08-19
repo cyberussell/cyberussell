@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from "re
 import { flushSync } from "react-dom";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { STYLISTS } from "./data";
+import { BOOK_WITH_STYLIST_EVENT, STYLISTS } from "./data";
 import { fadeUp } from "./motion";
 import StylistProfile from "./StylistProfile";
 
@@ -50,6 +50,23 @@ export default function Stylists() {
     } else {
       withViewTransition(() => setActiveSlug(null));
     }
+  }, []);
+
+  // "Book with X": closes the profile and hands the chosen stylist to
+  // Booking. Deliberately doesn't reuse closeProfile()'s history.back() —
+  // that assumes returning to the plain, hash-less grid state, but here
+  // we're navigating on to #book, and the two competed (the anchor's own
+  // hash navigation losing the race to history.back(), leaving the hash
+  // empty and never reaching #book). replaceState sidesteps that entirely.
+  const bookStylist = useCallback((appointmentStaffId: string) => {
+    window.dispatchEvent(new CustomEvent(BOOK_WITH_STYLIST_EVENT, { detail: appointmentStaffId }));
+    withViewTransition(() => {
+      window.history.replaceState(null, "", window.location.pathname);
+      setActiveSlug(null);
+    });
+    requestAnimationFrame(() => {
+      document.getElementById("book")?.scrollIntoView({ behavior: "smooth" });
+    });
   }, []);
 
   // Deep-link support + browser Back/Forward: the URL hash is the source of
@@ -159,7 +176,18 @@ export default function Stylists() {
         </h2>
       </motion.div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-7 max-w-[1280px] mx-auto">
+      {/* Hidden (not unmounted, so refs/focus-restore keep working) while a
+          profile is open — otherwise the other 3 cards stay fully painted at
+          their normal grid position for the whole transition, since only the
+          active card's view-transition-name is stripped, not its visibility.
+          The fixed overlay covers them in the final DOM, but mid-transition
+          the browser composites snapshots, and stale unhidden grid content
+          visibly bleeds through underneath/around the new profile content. */}
+      <div
+        className={`grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-7 max-w-[1280px] mx-auto ${
+          activeSlug ? "invisible" : ""
+        }`}
+      >
         {STYLISTS.map((person, i) => {
           const isOpen = activeSlug === person.slug;
           return (
@@ -181,14 +209,18 @@ export default function Stylists() {
                 aria-expanded={isOpen}
                 className="flex flex-col gap-4 w-full text-left rounded-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#c9a15a]"
               >
-                {/* While this stylist's profile is open, the profile overlay
-                    owns these view-transition-names — omitting them here
-                    avoids two elements sharing one name in the same DOM
-                    snapshot (the grid card is hidden behind the overlay
-                    anyway). */}
+                {/* Only the card grid's "closed" state carries names — the
+                    instant any profile is open, every card (not just the
+                    active one) drops its name. A named-but-invisible card
+                    (from the grid's own visibility:hidden) still spins up
+                    its own transition group, which is exactly the kind of
+                    orphaned/leftover animation that caused the bleed-through
+                    glitch. Only the active stylist's element needs a name in
+                    the open state — and that one lives in the overlay, not
+                    here. */}
                 <div
                   className="relative w-full h-[200px] md:h-[320px]"
-                  style={!isOpen ? ({ viewTransitionName: `stylist-portrait-${person.slug}` } as CSSProperties) : undefined}
+                  style={!activeSlug ? ({ viewTransitionName: `stylist-portrait-${person.slug}` } as CSSProperties) : undefined}
                 >
                   <Image
                     src={person.photo}
@@ -201,13 +233,13 @@ export default function Stylists() {
                 <div>
                   <div
                     className="font-[family-name:var(--font-cormorant)] font-semibold text-[18px] md:text-[20px] text-[#241f1a]"
-                    style={!isOpen ? ({ viewTransitionName: `stylist-name-${person.slug}` } as CSSProperties) : undefined}
+                    style={!activeSlug ? ({ viewTransitionName: `stylist-name-${person.slug}` } as CSSProperties) : undefined}
                   >
                     {person.name}
                   </div>
                   <div
                     className="text-[11px] md:text-[12.5px] tracking-[0.5px] uppercase text-[#8a8378] mt-1"
-                    style={!isOpen ? ({ viewTransitionName: `stylist-role-${person.slug}` } as CSSProperties) : undefined}
+                    style={!activeSlug ? ({ viewTransitionName: `stylist-role-${person.slug}` } as CSSProperties) : undefined}
                   >
                     {person.role}
                   </div>
@@ -218,7 +250,14 @@ export default function Stylists() {
         })}
       </div>
 
-      {activeStylist && <StylistProfile stylist={activeStylist} onClose={closeProfile} ref={closeButtonRef} />}
+      {activeStylist && (
+        <StylistProfile
+          stylist={activeStylist}
+          onClose={closeProfile}
+          onBookNow={() => bookStylist(activeStylist.appointmentStaffId)}
+          ref={closeButtonRef}
+        />
+      )}
     </section>
   );
 }

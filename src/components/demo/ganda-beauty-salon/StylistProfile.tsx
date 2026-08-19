@@ -8,10 +8,11 @@ import { SALON, type Stylist } from "./data";
 type StylistProfileProps = {
   stylist: Stylist;
   onClose: () => void;
+  onBookNow: () => void;
 };
 
 const StylistProfile = forwardRef<HTMLButtonElement, StylistProfileProps>(function StylistProfile(
-  { stylist, onClose },
+  { stylist, onClose, onBookNow },
   closeButtonRef
 ) {
   return (
@@ -85,7 +86,10 @@ const StylistProfile = forwardRef<HTMLButtonElement, StylistProfileProps>(functi
 
             <a
               href="#book"
-              onClick={onClose}
+              onClick={(e) => {
+                e.preventDefault();
+                onBookNow();
+              }}
               className="inline-flex items-center gap-2.5 px-[26px] py-[14px] bg-[#c9a15a] text-[#141110] text-[12px] tracking-[1.5px] uppercase font-medium hover:bg-[#e0be82] transition-colors w-fit"
             >
               Book with {stylist.name.split(" ")[0]} <span>↗</span>

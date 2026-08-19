@@ -1,3 +1,10 @@
+// Cross-component signal: StylistProfile's "Book with X" dispatches this on
+// window with the chosen staff id as `detail`; Booking listens for it to
+// preselect the stylist. They're rendered as siblings in page.tsx with no
+// shared state, so a window event is the lightest way to connect them
+// without introducing a context provider for one value.
+export const BOOK_WITH_STYLIST_EVENT = "ganda:book-with-stylist";
+
 export const SALON = {
   name: "Ganda Beauty Salon",
   address: "212 Jupiter St., Brgy. Bel-Air, Makati City, 1209",

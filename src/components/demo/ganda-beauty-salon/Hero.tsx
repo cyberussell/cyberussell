@@ -1,7 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { fadeUp } from "./motion";
+
+// How long the hero's gradient overlay takes to fade in ("the moment the
+// hero image dims") — the corner QR's own entrance is timed to start right
+// as this finishes, not before.
+const DIM_DURATION = 1.4;
 
 export default function Hero() {
   return (
@@ -17,13 +23,36 @@ export default function Hero() {
       >
         <source src="/demo/ganda-beauty-salon/photos/hero.mp4" type="video/mp4" />
       </video>
-      <div
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: DIM_DURATION, ease: "easeOut" }}
         className="absolute inset-0"
         style={{
           background:
             "linear-gradient(100deg, rgba(15,12,10,0.86) 0%, rgba(15,12,10,0.55) 45%, rgba(15,12,10,0.2) 75%)",
         }}
       />
+
+      <motion.a
+        href="https://www.cyberussell.com/appointments/ganda-beauty-salon"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Scan to book your appointment at Ganda Beauty Salon"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7, delay: DIM_DURATION, ease: "easeOut" }}
+        className="absolute top-6 right-6 md:top-10 md:right-10 z-[2] w-48 h-48 md:w-[280px] md:h-[280px]"
+      >
+        <Image
+          src="/demo/ganda-beauty-salon/photos/booking-qr-white.png"
+          alt=""
+          fill
+          sizes="140px"
+          className="object-contain"
+        />
+      </motion.a>
+
       <div className="relative z-[2] self-end px-[8%] pb-[6%] max-w-[640px]">
         <motion.div
           variants={fadeUp}

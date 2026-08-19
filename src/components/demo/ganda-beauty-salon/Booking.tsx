@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import { SALON, SERVICE_CATEGORIES, STYLISTS } from "./data";
+import { BOOK_WITH_STYLIST_EVENT, SALON, SERVICE_CATEGORIES, STYLISTS } from "./data";
 import { fadeUp } from "./motion";
 
 // Kept as a display toggle (not deleted) so a future per-tenant config could
@@ -30,7 +30,7 @@ function formatTime(iso: string) {
 
 export default function Booking() {
   const [serviceId, setServiceId] = useState(ALL_SERVICES[0].appointmentServiceId);
-  const [staffFilter, setStaffFilter] = useState(""); // "" = any stylist
+  const [staffFilter, setStaffFilter] = useState(STYLISTS[0].appointmentStaffId);
 
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(true);
@@ -44,6 +44,16 @@ export default function Booking() {
   const [note, setNote] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // "Book with X" on a stylist's profile preselects them here.
+  useEffect(() => {
+    function onBookWithStylist(e: Event) {
+      const staffId = (e as CustomEvent<string>).detail;
+      if (staffId) setStaffFilter(staffId);
+    }
+    window.addEventListener(BOOK_WITH_STYLIST_EVENT, onBookWithStylist);
+    return () => window.removeEventListener(BOOK_WITH_STYLIST_EVENT, onBookWithStylist);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -75,7 +85,7 @@ export default function Booking() {
   }, [serviceId]);
 
   const filteredSlots = useMemo(
-    () => (slots ?? []).filter((s) => !staffFilter || s.staffId === staffFilter),
+    () => (slots ?? []).filter((s) => s.staffId === staffFilter),
     [slots, staffFilter]
   );
 
@@ -225,7 +235,6 @@ export default function Booking() {
                       onChange={(e) => setStaffFilter(e.target.value)}
                       className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] focus:outline-none focus:border-[#c9a15a]"
                     >
-                      <option value="">Any stylist</option>
                       {STYLISTS.map((s) => (
                         <option key={s.appointmentStaffId} value={s.appointmentStaffId}>
                           {s.name}
@@ -266,23 +275,19 @@ export default function Booking() {
                       </div>
 
                       <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">Time</label>
-                      <div className="flex gap-2 flex-wrap">
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                         {timesForSelectedDate.map((slot) => (
                           <button
-                            key={`${slot.staffId}-${slot.startsAt}`}
+                            key={slot.startsAt}
                             type="button"
                             onClick={() => setSelectedSlot(slot)}
-                            className={`px-3 py-2 border text-[12.5px] transition-colors ${
-                              selectedSlot?.startsAt === slot.startsAt && selectedSlot?.staffId === slot.staffId
-                                ? "border-[#c9a15a] text-[#c9a15a]"
-                                : "border-white/[0.15] text-[#8a8378] hover:border-white/30"
+                            className={`py-2.5 border text-[13px] text-center transition-colors ${
+                              selectedSlot?.startsAt === slot.startsAt
+                                ? "border-[#c9a15a] text-[#c9a15a] bg-[#c9a15a]/[0.06]"
+                                : "border-white/[0.12] text-[#b9b2a4] hover:border-white/25"
                             }`}
-                            title={!staffFilter ? `with ${slot.staffName}` : undefined}
                           >
                             {formatTime(slot.startsAt)}
-                            {!staffFilter && (
-                              <span className="opacity-60"> · {slot.staffName.split(" ")[0]}</span>
-                            )}
                           </button>
                         ))}
                       </div>
@@ -292,6 +297,10 @@ export default function Booking() {
 
                 {selectedSlot && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-[22px]">
+                    <p className="sm:col-span-2 text-[12.5px] text-[#8a8378]">
+                      With <span className="text-[#c9a15a]">{selectedSlot.staffName}</span>,{" "}
+                      {formatDateChip(selectedSlot.startsAt)} at {formatTime(selectedSlot.startsAt)}
+                    </p>
                     <div className="sm:col-span-2">
                       <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">
                         Full name
@@ -367,9 +376,6 @@ export default function Booking() {
                 className="object-cover"
               />
             </div>
-            <p className="font-mono text-[11.5px] text-[#8a8378] leading-[1.6] max-w-[200px]">
-              Scans straight to cyberussell.com/appointments/ganda-beauty-salon — the real, live booking page
-            </p>
           </div>
         )}
       </motion.div>
