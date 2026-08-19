@@ -20,7 +20,10 @@ export const SALON = {
 // list. Prices/names/duration now come from cyberussell.com/appointments,
 // the same tenant provisioned for this demo.
 export type AppointmentService = { id: string; name: string; price: number; duration_min: number };
-export type AppointmentStaffMember = { id: string; name: string; title: string };
+// serviceIds: the specific services this person is restricted to, or null
+// if unrestricted (can perform any service) — lets a caller cross-filter
+// in either direction (by service, or by staff) from one fetch.
+export type AppointmentStaffMember = { id: string; name: string; title: string; serviceIds: string[] | null };
 
 export async function fetchAppointmentServices(): Promise<AppointmentService[]> {
   const res = await fetch(`/appointments/api/services?business=${SALON.appointmentBusinessSlug}`);
@@ -29,17 +32,15 @@ export async function fetchAppointmentServices(): Promise<AppointmentService[]> 
   return data.services ?? [];
 }
 
-// Omitting serviceId returns every active staff member; passing it scopes
-// to whoever is eligible for that specific service (mirrors the same
-// "unrestricted unless explicitly assigned" rule the booking API itself
-// uses, computed server-side so this never has to re-derive it).
-export async function fetchAppointmentStaff(serviceId?: string): Promise<AppointmentStaffMember[]> {
-  const params = new URLSearchParams({ business: SALON.appointmentBusinessSlug });
-  if (serviceId) params.set("service", serviceId);
-  const res = await fetch(`/appointments/api/staff?${params.toString()}`);
+export async function fetchAppointmentStaff(): Promise<AppointmentStaffMember[]> {
+  const res = await fetch(`/appointments/api/staff?business=${SALON.appointmentBusinessSlug}`);
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? "Failed to load stylists");
   return data.staff ?? [];
+}
+
+export function staffCanPerform(staff: AppointmentStaffMember, serviceId: string) {
+  return staff.serviceIds === null || staff.serviceIds.includes(serviceId);
 }
 
 export function formatPeso(amount: number) {

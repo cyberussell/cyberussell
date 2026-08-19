@@ -10,6 +10,7 @@ import {
   fetchAppointmentServices,
   fetchAppointmentStaff,
   formatPeso,
+  staffCanPerform,
   type AppointmentService,
   type AppointmentStaffMember,
 } from "./data";
@@ -39,10 +40,12 @@ export default function Booking() {
   const [servicesError, setServicesError] = useState<string | null>(null);
   const [serviceId, setServiceId] = useState("");
 
-  // Who's eligible for the currently selected service — staff-specific
-  // services, live from the Appointment System (no assignments = eligible
-  // for everything, same rule the real booking engine uses).
-  const [eligibleStaff, setEligibleStaff] = useState<AppointmentStaffMember[] | null>(null);
+  // Every staff member, each carrying which services they're restricted to
+  // (or unrestricted). Fetched once — cross-filtering both dropdowns off
+  // this single list (see eligibleServices/eligibleStaff below) keeps the
+  // two directions in sync without racing separate per-direction fetches.
+  const [allStaff, setAllStaff] = useState<AppointmentStaffMember[] | null>(null);
+  const [staffError, setStaffError] = useState<string | null>(null);
   const [staffFilter, setStaffFilter] = useState("");
 
   const [slots, setSlots] = useState<Slot[] | null>(null);
@@ -74,6 +77,20 @@ export default function Booking() {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    fetchAppointmentStaff()
+      .then((data) => {
+        if (!cancelled) setAllStaff(data);
+      })
+      .catch(() => {
+        if (!cancelled) setStaffError("Couldn't load stylists right now.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // "Book with X" on a stylist's profile preselects them here.
   useEffect(() => {
     function onBookWithStylist(e: Event) {
@@ -84,22 +101,41 @@ export default function Booking() {
     return () => window.removeEventListener(BOOK_WITH_STYLIST_EVENT, onBookWithStylist);
   }, []);
 
+  const eligibleStaff = useMemo(
+    () => (allStaff ?? []).filter((s) => !serviceId || staffCanPerform(s, serviceId)),
+    [allStaff, serviceId]
+  );
+  const eligibleServices = useMemo(() => {
+    const staffMember = (allStaff ?? []).find((s) => s.id === staffFilter);
+    if (!staffMember || staffMember.serviceIds === null) return services ?? [];
+    return (services ?? []).filter((svc) => staffMember.serviceIds!.includes(svc.id));
+  }, [services, allStaff, staffFilter]);
+
+  // Two-way sync: picking a service narrows the stylist list, and picking a
+  // stylist narrows the service list. Each effect only reacts to its own
+  // trigger (not to the other's corrections), and always resolves to a pair
+  // that's mutually valid — so they settle instead of fighting each other.
   useEffect(() => {
-    if (!serviceId) return;
-    let cancelled = false;
-    fetchAppointmentStaff(serviceId)
-      .then((data) => {
-        if (cancelled) return;
-        setEligibleStaff(data);
-        setStaffFilter((current) => (data.some((s) => s.id === current) ? current : (data[0]?.id ?? "")));
-      })
-      .catch(() => {
-        if (!cancelled) setEligibleStaff([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [serviceId]);
+    if (!allStaff || !serviceId) return;
+    const stillValid = allStaff.some((s) => s.id === staffFilter && staffCanPerform(s, serviceId));
+    if (!stillValid) {
+      const firstEligible = allStaff.find((s) => staffCanPerform(s, serviceId));
+      setStaffFilter(firstEligible?.id ?? "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serviceId, allStaff]);
+
+  useEffect(() => {
+    if (!services || !staffFilter) return;
+    const staffMember = (allStaff ?? []).find((s) => s.id === staffFilter);
+    if (!staffMember || staffMember.serviceIds === null) return; // unrestricted, any serviceId is fine
+    const stillValid = staffMember.serviceIds.includes(serviceId);
+    if (!stillValid) {
+      const firstEligible = services.find((svc) => staffMember.serviceIds!.includes(svc.id));
+      if (firstEligible) setServiceId(firstEligible.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [staffFilter, allStaff, services]);
 
   useEffect(() => {
     if (!serviceId) return;
@@ -258,9 +294,9 @@ export default function Booking() {
                   Book another appointment
                 </button>
               </div>
-            ) : servicesError ? (
-              <p className="text-[13px] text-[#e08a6b]">{servicesError}</p>
-            ) : !services ? (
+            ) : servicesError || staffError ? (
+              <p className="text-[13px] text-[#e08a6b]">{servicesError ?? staffError}</p>
+            ) : !services || !allStaff ? (
               <p className="text-[13px] text-[#8a8378]">Loading services…</p>
             ) : (
               <form onSubmit={handleSubmit}>
@@ -272,7 +308,7 @@ export default function Booking() {
                       onChange={(e) => setServiceId(e.target.value)}
                       className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] focus:outline-none focus:border-[#c9a15a]"
                     >
-                      {services.map((s) => (
+                      {eligibleServices.map((s) => (
                         <option key={s.id} value={s.id}>
                           {s.name} — {formatPeso(s.price)}
                         </option>
@@ -284,12 +320,10 @@ export default function Booking() {
                     <select
                       value={staffFilter}
                       onChange={(e) => setStaffFilter(e.target.value)}
-                      disabled={!eligibleStaff || eligibleStaff.length === 0}
+                      disabled={eligibleStaff.length === 0}
                       className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] focus:outline-none focus:border-[#c9a15a] disabled:opacity-50"
                     >
-                      {!eligibleStaff ? (
-                        <option>Loading…</option>
-                      ) : eligibleStaff.length === 0 ? (
+                      {eligibleStaff.length === 0 ? (
                         <option>No stylist offers this service</option>
                       ) : (
                         eligibleStaff.map((s) => (
