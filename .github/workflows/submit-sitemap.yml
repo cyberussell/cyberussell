@@ -1,0 +1,45 @@
+name: Submit sitemap to Google Search Console
+
+# PHASE 1 (current): manual trigger only (`workflow_dispatch`), for
+# verifying the Environment + secret + submission end-to-end before any
+# automatic run is possible.
+#
+# PHASE 2 (follow-up commit, after a manual run above has succeeded):
+# uncomment `deployment_status:` below and restore the full `if:`
+# condition so it also runs automatically after a successful PRODUCTION
+# deployment. Vercel's GitHub integration posts a `deployment_status`
+# event (state: "success") when a deployment finishes; gating on
+# environment == "Production" keeps preview/branch deploys from ever
+# triggering a submission. See docs/gsc-sitemap-submission.md.
+on:
+  # deployment_status:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  submit-sitemap:
+    # Phase 2: if: >
+    #   github.event_name == 'workflow_dispatch' ||
+    #   (github.event.deployment_status.state == 'success' &&
+    #    github.event.deployment_status.environment == 'Production')
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    # A GitHub Environment gates access to the encrypted secret below and
+    # can additionally require reviewer approval or restrict which
+    # branches may use it (Settings → Environments → production).
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Submit sitemap index to Google Search Console
+        env:
+          GSC_SERVICE_ACCOUNT_KEY_B64: ${{ secrets.GSC_SERVICE_ACCOUNT_KEY_B64 }}
+        run: node scripts/submit-sitemap-to-gsc.js

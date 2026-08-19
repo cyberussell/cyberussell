@@ -7,7 +7,8 @@
     "build": "next build && next-sitemap",
     "start": "next start",
     "test": "vitest run",
-    "sitemap:lastmod": "node scripts/generate-sitemap-lastmod.js"
+    "sitemap:lastmod": "node scripts/generate-sitemap-lastmod.js",
+    "gsc:submit-sitemap": "node scripts/submit-sitemap-to-gsc.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.105.0",
