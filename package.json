@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build && next-sitemap",
     "start": "next start",
-    "test": "vitest run"
+    "test": "vitest run",
+    "sitemap:lastmod": "node scripts/generate-sitemap-lastmod.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.105.0",

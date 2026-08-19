@@ -1,5 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 const { isExcludedRoute } = require('./src/lib/sitemap/exclusions');
+const { getLastmod } = require('./src/lib/sitemap/lastmod');
 
 const MANUAL_ADDITIONAL_PATHS = [
   { loc: '/', priority: 1.0, changefreq: 'weekly' },
@@ -35,6 +36,14 @@ module.exports = {
   // Drop operational/private/transitional/internal-utility routes (see
   // src/lib/sitemap/exclusions.js for the rules) from the auto-discovered
   // page set before they're written to the sitemap.
+  //
+  // lastmod is intentionally NOT `new Date()` / build time / request time.
+  // It's looked up from a committed, manually-refreshed map keyed by real
+  // per-route modification signals (blog frontmatter date, portfolio case
+  // study date, or git history of that route's own source file) — see
+  // src/lib/sitemap/lastmod.js and scripts/generate-sitemap-lastmod.js.
+  // If no genuine date is known for a route, lastmod is omitted entirely
+  // rather than fabricated.
   transform: async (config, path) => {
     if (isExcludedRoute(path)) {
       return null;
@@ -43,7 +52,7 @@ module.exports = {
       loc: path,
       changefreq: config.changefreq,
       priority: config.priority,
-      lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
+      lastmod: getLastmod(path),
       alternateRefs: config.alternateRefs ?? [],
     };
   },
