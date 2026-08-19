@@ -1,17 +1,148 @@
 "use client";
 
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
+import { CheckCircle2 } from "lucide-react";
+import { SALON, SERVICE_CATEGORIES, STYLISTS } from "./data";
 import { fadeUp } from "./motion";
 
-// Static mock for the portfolio demo — no live booking backend yet. Kept as
-// a display toggle (not deleted) so a future real build can flip panels
-// per-tenant instead of re-deriving this from scratch.
+// Kept as a display toggle (not deleted) so a future per-tenant config could
+// flip panels without re-deriving this from scratch.
 type BookingDisplay = "both" | "widget-only" | "qr-only";
 const BOOKING_DISPLAY = "both" as BookingDisplay;
 const showWidget = BOOKING_DISPLAY !== "qr-only";
 const showQr = BOOKING_DISPLAY !== "widget-only";
 
+const ALL_SERVICES = SERVICE_CATEGORIES.flatMap((cat) => cat.items);
+
+type Slot = { startsAt: string; endsAt: string; staffId: string; staffName: string; label: string };
+
+function dateKey(iso: string) {
+  return iso.slice(0, 10);
+}
+function formatDateChip(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
 export default function Booking() {
+  const [serviceId, setServiceId] = useState(ALL_SERVICES[0].appointmentServiceId);
+  const [staffFilter, setStaffFilter] = useState(""); // "" = any stylist
+
+  const [slots, setSlots] = useState<Slot[] | null>(null);
+  const [loadingSlots, setLoadingSlots] = useState(true);
+  const [slotsError, setSlotsError] = useState<string | null>(null);
+
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [note, setNote] = useState("");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoadingSlots(true);
+    setSlotsError(null);
+    setSelectedSlot(null);
+
+    fetch(`/appointments/api/book?business=${SALON.appointmentBusinessSlug}&service=${serviceId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.error) {
+          setSlotsError(data.error);
+          setSlots([]);
+        } else {
+          setSlots(data.slots ?? []);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setSlotsError("Couldn't load available times. Please try again.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingSlots(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [serviceId]);
+
+  const filteredSlots = useMemo(
+    () => (slots ?? []).filter((s) => !staffFilter || s.staffId === staffFilter),
+    [slots, staffFilter]
+  );
+
+  const dates = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const s of filteredSlots) {
+      const key = dateKey(s.startsAt);
+      if (!seen.has(key)) seen.set(key, s.startsAt);
+    }
+    return Array.from(seen.entries()).slice(0, 6);
+  }, [filteredSlots]);
+
+  useEffect(() => {
+    if (dates.length === 0) {
+      setSelectedDate(null);
+    } else if (!dates.some(([key]) => key === selectedDate)) {
+      setSelectedDate(dates[0][0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dates]);
+
+  const timesForSelectedDate = useMemo(
+    () => filteredSlots.filter((s) => dateKey(s.startsAt) === selectedDate),
+    [filteredSlots, selectedDate]
+  );
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!selectedSlot) return;
+    setStatus("submitting");
+    setSubmitError(null);
+    try {
+      const res = await fetch("/appointments/api/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessSlug: SALON.appointmentBusinessSlug,
+          serviceId,
+          staffId: selectedSlot.staffId,
+          startsAt: selectedSlot.startsAt,
+          fullName,
+          phone,
+          note: note || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSubmitError(data.error ?? "Something went wrong. Please try again.");
+        setStatus("idle");
+        return;
+      }
+      setStatus("success");
+    } catch {
+      setSubmitError("Something went wrong. Please try again.");
+      setStatus("idle");
+    }
+  }
+
+  function resetBooking() {
+    setSelectedSlot(null);
+    setFullName("");
+    setPhone("");
+    setNote("");
+    setStatus("idle");
+    setSubmitError(null);
+  }
+
   return (
     <section id="book" className="bg-[#141110] px-[8%] py-16 md:py-[110px]">
       <motion.div
@@ -46,48 +177,177 @@ export default function Booking() {
             <div className="flex items-center justify-between mb-6">
               <span className="text-[12px] tracking-[1.5px] uppercase text-[#c9a15a]">Booking Widget</span>
               <span className="hidden sm:inline font-mono text-[10.5px] tracking-[1px] text-[#8a8378]">
-                powered by your appointment system
+                live via cyberussell.com/appointments
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">Service</label>
-                <div className="px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px]">
-                  Signature Cut &amp; Style
+            {status === "success" ? (
+              <div className="flex flex-col items-center text-center py-10 gap-4">
+                <div className="w-14 h-14 rounded-full bg-[#c9a15a]/15 flex items-center justify-center">
+                  <CheckCircle2 size={26} className="text-[#c9a15a]" />
                 </div>
+                <h3 className="font-[family-name:var(--font-cormorant)] font-semibold text-[22px] text-[#f8f4ec]">
+                  You&apos;re booked!
+                </h3>
+                <p className="text-[13.5px] text-[#b9b2a4] max-w-[320px]">
+                  {selectedSlot?.staffName} will see you{" "}
+                  {selectedSlot && `${formatDateChip(selectedSlot.startsAt)} at ${formatTime(selectedSlot.startsAt)}`}. A
+                  confirmation was sent to the salon — bring this up when you arrive.
+                </p>
+                <button
+                  onClick={resetBooking}
+                  className="mt-2 text-[13px] font-semibold text-[#c9a15a] hover:underline"
+                >
+                  Book another appointment
+                </button>
               </div>
-              <div>
-                <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">Stylist</label>
-                <div className="px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px]">
-                  Isabela Cruz
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">Service</label>
+                    <select
+                      value={serviceId}
+                      onChange={(e) => setServiceId(e.target.value)}
+                      className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] focus:outline-none focus:border-[#c9a15a]"
+                    >
+                      {ALL_SERVICES.map((s) => (
+                        <option key={s.appointmentServiceId} value={s.appointmentServiceId}>
+                          {s.name} — {s.price}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">Stylist</label>
+                    <select
+                      value={staffFilter}
+                      onChange={(e) => setStaffFilter(e.target.value)}
+                      className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] focus:outline-none focus:border-[#c9a15a]"
+                    >
+                      <option value="">Any stylist</option>
+                      {STYLISTS.map((s) => (
+                        <option key={s.appointmentStaffId} value={s.appointmentStaffId}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-[22px]">
-              <div>
-                <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">Date</label>
-                <div className="px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px]">
-                  Sat, Aug 22
-                </div>
-              </div>
-              <div>
-                <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">Time</label>
-                <div className="flex gap-2 flex-wrap">
-                  <span className="px-3 py-2 border border-[#c9a15a] text-[#c9a15a] text-[12.5px]">2:00 PM</span>
-                  <span className="px-3 py-2 border border-white/[0.15] text-[#8a8378] text-[12.5px]">3:30 PM</span>
-                  <span className="px-3 py-2 border border-white/[0.15] text-[#8a8378] text-[12.5px]">5:00 PM</span>
-                </div>
-              </div>
-            </div>
+                <div className="mb-[22px]">
+                  <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">Date</label>
+                  {loadingSlots ? (
+                    <p className="text-[13px] text-[#8a8378]">Loading availability…</p>
+                  ) : slotsError ? (
+                    <p className="text-[13px] text-[#e08a6b]">{slotsError}</p>
+                  ) : dates.length === 0 ? (
+                    <p className="text-[13px] text-[#8a8378]">No upcoming availability for this selection.</p>
+                  ) : (
+                    <>
+                      <div className="flex gap-2 flex-wrap mb-4">
+                        {dates.map(([key, iso]) => (
+                          <button
+                            key={key}
+                            type="button"
+                            onClick={() => {
+                              setSelectedDate(key);
+                              setSelectedSlot(null);
+                            }}
+                            className={`px-3 py-2 border text-[12.5px] transition-colors ${
+                              selectedDate === key
+                                ? "border-[#c9a15a] text-[#c9a15a]"
+                                : "border-white/[0.15] text-[#8a8378] hover:border-white/30"
+                            }`}
+                          >
+                            {formatDateChip(iso)}
+                          </button>
+                        ))}
+                      </div>
 
-            <div className="w-full text-center py-[15px] bg-[#c9a15a] text-[#141110] text-[13px] tracking-[1.5px] uppercase font-medium">
-              Confirm Booking
-            </div>
-            <div className="mt-3.5 text-[11px] text-[#6f6a60] text-center">
-              This panel mounts your appointment system&apos;s live booking widget
-            </div>
+                      <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">Time</label>
+                      <div className="flex gap-2 flex-wrap">
+                        {timesForSelectedDate.map((slot) => (
+                          <button
+                            key={`${slot.staffId}-${slot.startsAt}`}
+                            type="button"
+                            onClick={() => setSelectedSlot(slot)}
+                            className={`px-3 py-2 border text-[12.5px] transition-colors ${
+                              selectedSlot?.startsAt === slot.startsAt && selectedSlot?.staffId === slot.staffId
+                                ? "border-[#c9a15a] text-[#c9a15a]"
+                                : "border-white/[0.15] text-[#8a8378] hover:border-white/30"
+                            }`}
+                            title={!staffFilter ? `with ${slot.staffName}` : undefined}
+                          >
+                            {formatTime(slot.startsAt)}
+                            {!staffFilter && (
+                              <span className="opacity-60"> · {slot.staffName.split(" ")[0]}</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {selectedSlot && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-[22px]">
+                    <div className="sm:col-span-2">
+                      <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">
+                        Full name
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Juan Dela Cruz"
+                        className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] placeholder:text-[#6f6a60] focus:outline-none focus:border-[#c9a15a]"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">
+                        Mobile number
+                      </label>
+                      <input
+                        required
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="09XX XXX XXXX"
+                        pattern="^09[0-9 \-]{9,11}$"
+                        className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] placeholder:text-[#6f6a60] focus:outline-none focus:border-[#c9a15a]"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-[11px] tracking-[1px] uppercase text-[#8a8378] mb-2">
+                        Note (optional)
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        placeholder="Anything the stylist should know?"
+                        className="w-full px-3.5 py-3 bg-[#141110] border border-white/[0.12] text-[#e6e1d6] text-[14px] placeholder:text-[#6f6a60] focus:outline-none focus:border-[#c9a15a] resize-none"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {submitError && <p className="text-[13px] text-[#e08a6b] mb-4">{submitError}</p>}
+
+                <button
+                  type="submit"
+                  disabled={!selectedSlot || status === "submitting"}
+                  className="w-full text-center py-[15px] bg-[#c9a15a] text-[#141110] text-[13px] tracking-[1.5px] uppercase font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#e0be82] transition-colors"
+                >
+                  {status === "submitting" ? "Booking…" : "Confirm Booking"}
+                </button>
+                <div className="mt-3.5 text-[11px] text-[#6f6a60] text-center">
+                  Real booking — this creates an actual appointment for Ganda Beauty Salon.
+                </div>
+              </form>
+            )}
           </div>
         )}
 
@@ -98,14 +358,17 @@ export default function Booking() {
             }`}
           >
             <span className="text-[12px] tracking-[1.5px] uppercase text-[#c9a15a] mb-5">Walk-In? Scan to Book</span>
-            <div
-              className="w-[168px] h-[168px] border-8 border-[#f8f4ec] mb-[18px]"
-              style={{
-                background: "repeating-linear-gradient(45deg, #f8f4ec 0 6px, #141110 6px 12px)",
-              }}
-            />
+            <div className="relative w-[168px] h-[168px] border-8 border-[#f8f4ec] mb-[18px]">
+              <Image
+                src="/demo/ganda-beauty-salon/photos/booking-qr.png"
+                alt="QR code to Ganda Beauty Salon's live booking page"
+                fill
+                sizes="168px"
+                className="object-cover"
+              />
+            </div>
             <p className="font-mono text-[11.5px] text-[#8a8378] leading-[1.6] max-w-[200px]">
-              Unique per-tenant QR generated by the appointment management system
+              Scans straight to cyberussell.com/appointments/ganda-beauty-salon — the real, live booking page
             </p>
           </div>
         )}

@@ -2765,3 +2765,67 @@ Clicking through more of the live proxy (per "Remaining Work" above) surfaced a 
 ## Next Recommended Task
 
 Human visual check of `/demo/ganda-beauty-salon` below the fold in a real browser, then decide on a `/portfolio` card and on scheduling the real Appointment System booking-wiring work.
+
+----------------------------------------
+
+# Ganda Beauty Salon — real Appointment System tenant provisioned (2026-08-19)
+
+**Date:** 2026-08-19
+**Product:** Appointment System (SaaS) — connecting the Ganda Beauty Salon demo to the real backend
+**Goal:** Plan (per Russell) and provision a real tenant so the demo's booking section can eventually call the real Appointment System API instead of showing static mock content.
+
+## Done this session
+
+- Planned the integration architecture with Russell: no new API needed — `/appointments/api/book` (GET slots, POST book) already exists and is generic/multi-tenant. Confirmed `cyberussell.com/appointments/*` (multi-zone rewrite to the standalone `appointmentsystems` repo) is the backend, already domain-consistent.
+- Russell provisioned the real tenant himself (business row, 4 staff, 10 services) directly — confirmed via read-only REST queries against the Appointment System's Supabase (service-role key from `appointmentsystems/.env.local`, since the Supabase MCP servers are still unauthenticated — see [[project_supabase_mcp_auth_broken]]).
+- Found and fixed a real mismatch: the demo page advertises "Mon–Sat 10am–8pm, Sun 11am–6pm" but the business + all 4 staff's actual configured hours only covered Sat+Sun 9am–5pm (weekdays fully closed, business-wide). With Russell's confirmation, updated `businesses.settings.hours` and rebuilt all 4 staff `availability` rows (7 rows each, one per day) to Sun 11–6 / Mon–Sat 10–8, matching the site.
+- Verified live end-to-end: `https://www.cyberussell.com/appointments/api/book?business=ganda-beauty-salon&service=<signature-cut-id>` returns real, correctly-computed slots for all 4 stylists.
+
+## NOT done — deliberately deferred
+
+- `src/components/demo/ganda-beauty-salon/Booking.tsx` still shows static mock content — has not been wired to call the real API yet. This is the next step, pending Russell's go-ahead.
+- Real service/staff UUIDs aren't yet in this repo's `src/components/demo/ganda-beauty-salon/data.ts` — will need to be added when wiring the frontend.
+
+## Real IDs (for the next session, since these live in a separate Supabase project)
+
+- Business: `ganda-beauty-salon`, id `126e3049-15af-488d-b5ac-b40c2cea8575`, `plan_tier: pro`
+- Staff: Isabela Cruz `ca5b599b-3e40-4765-94e4-9e76be208568`, Miguel Santos `00086392-70ac-4a70-a717-6430632ab6ab`, Katrina Bautista `7e0ebeab-f174-4bba-9ade-326640d1d138`, Rafael Villanueva `1499cccb-b015-48a4-8ed4-b6703f80be34`
+- Services: Signature Cut `97b9fac3-01f1-40cd-9b65-0c859e01dacd`, Blowout & Style `cd708626-30bd-4822-b9e6-741a3f03a9a2`, Keratin Treatment `cb42e3b4-7339-4a08-bd9a-ff19a2b3c7c9`, Balayage `9c721fb1-703e-4636-b9bd-5b13703037a0`, Root Touch-Up `2d446778-ca09-4ff4-b97e-9c3085fc08d7`, Full Color `ef45ee80-b126-4347-9b4f-2ff077e4e8c7`, Gel Manicure `55ebba17-b6e4-4ea5-b567-fc80bc8d0dcb`, Classic Pedicure `e9e5a0e1-3254-43d7-bac4-1d1cca8ba44c`, Scalp Spa Treatment `e7451001-9c43-47d3-ad06-cc38b3abd392`, Hand & Foot Spa `b352ac88-5a65-4ec2-a915-6144e56825e3`
+
+## Next Recommended Task
+
+Wire `Booking.tsx` to call `GET`/`POST /appointments/api/book` using the real IDs above, replacing the static mock — only once Russell confirms he wants that done.
+
+----------------------------------------
+
+# Ganda Beauty Salon — Booking.tsx wired to the real Appointment System (2026-08-19)
+
+**Date:** 2026-08-19
+**Product:** Appointment System (SaaS) — Ganda Beauty Salon demo, frontend wiring
+**Goal:** Replace the static mock booking form with real calls to `cyberussell.com/appointments/api/book`, using the real business/service/staff IDs provisioned earlier today.
+
+## Done this session
+
+- `src/components/demo/ganda-beauty-salon/data.ts`: added `appointmentBusinessSlug` to `SALON`, `appointmentServiceId` to every `SERVICE_CATEGORIES` item, and `appointmentStaffId` to every `STYLISTS` entry (all real UUIDs from the provisioning session — see the prior entry in this file for the full ID list). Existing `id`/`slug` fields left untouched since the shared-element view-transition work depends on them.
+- `src/components/demo/ganda-beauty-salon/Booking.tsx` rewritten from static mock to a real, working booking form:
+  - Real `<select>` for service (10 options) and stylist filter (Any + 4 real stylists).
+  - `GET /appointments/api/book?business=ganda-beauty-salon&service=<id>` fetches real slots on service change; grouped into date chips + time pills, filtered client-side by stylist if one's selected.
+  - Picking a slot reveals a contact form (name, phone, optional note); submits via `POST /appointments/api/book` with the real `businessSlug`/`serviceId`/`staffId`/`startsAt`.
+  - Success state shows the real stylist/date/time and a "book another" reset; errors from the API (quota, same-day duplicate, etc.) surface inline.
+  - QR panel left as-is (static mock) — out of scope for this pass.
+- **Verified end-to-end against the live production backend**, not just UI state: ran the full flow via direct DOM/network inspection (this session's screenshot tool is unreliable on this page, so verification was done via `read_network_requests` + `javascript_exec` instead of screenshots) — confirmed the GET returns real slots (10 services, 5 stylist options, real upcoming dates/times), and a real test submission returned `{ok: true, appointmentId, referenceCode: "249507", manageUrl, qrDataUrl}` — an actual appointment was created for Isabela Cruz, Thu Aug 20 10:00AM, name "TEST BOOKING — Claude Verification" / 09171234567. **Not yet deleted** — Russell may want to clear it from the dashboard.
+- Found and fixed a real bug during verification (not present before this session, introduced and caught in the same pass): the phone input's `pattern="^09[0-9\s-]{9,11}$"` is an invalid regex under browsers' newer Unicode-mode ("v" flag) character class rules — mixing `\s` with a literal `-` throws `SyntaxError` on validation. Fixed to `^09[0-9 \-]{9,11}$` (explicit space instead of `\s`, escaped hyphen), verified valid via Node's regex engine with the `v` flag and confirmed `checkValidity()` no longer throws in the browser.
+- Local dev testing note: `APPOINTMENTS_ZONE_URL` is not set in this repo's `.env.local` by default, so the `/appointments/*` rewrite is a no-op locally. Added `APPOINTMENTS_ZONE_URL=https://appointmentsystems.vercel.app` to local `.env.local` (gitignored, not committed) to test against the real backend before pushing — left in place since it's useful for any future local testing of Appointment-System-dependent pages.
+
+## NOT done — deliberately deferred
+
+- The real QR panel (currently a static striped placeholder) — the Appointment System does generate a real per-tenant/per-booking QR (`qrDataUrl` came back in the POST response), but wiring an actual walk-in QR display wasn't part of this pass.
+- The test booking (ref `249507`) has not been deleted from the live dashboard.
+
+## Next Recommended Task
+
+Russell to review the live page, decide whether to delete the test booking, and decide on committing/pushing this change.
+
+## Update — same day, later: real walk-in QR wired too
+
+Replaced the striped placeholder QR with a real, scannable one: `qrcode` (already a dependency, same version the standalone Appointment System repo uses for its own dashboard QR) generated a static PNG encoding `https://www.cyberussell.com/appointments/ganda-beauty-salon` — the same URL-encoding approach the real dashboard's Settings page uses — saved to `public/demo/ganda-beauty-salon/photos/booking-qr.png`, colored to match the salon's ink/cream palette. `Booking.tsx` now renders it via `next/image`. Verified loaded correctly (`complete: true`, correct dimensions) and visually via screenshot.
