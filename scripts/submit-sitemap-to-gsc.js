@@ -33,7 +33,11 @@ const {
   TOKEN_URL,
 } = require('../src/lib/gsc/sitemap-submission');
 
-const PROPERTY = 'sc-domain:cyberussell.com';
+// URL-prefix property (not a domain property — no sc-domain:cyberussell.com
+// property is verified in this Search Console account; only the URL-prefix
+// property below is, and that's where the service account was added as a
+// user). See docs/gsc-sitemap-submission.md for how this was determined.
+const PROPERTY = 'https://www.cyberussell.com/';
 const SITEMAP_URL = 'https://www.cyberussell.com/sitemap.xml'; // the sitemap INDEX — not sitemap-0.xml
 
 function fail(kind, message) {

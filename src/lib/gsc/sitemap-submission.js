@@ -65,7 +65,9 @@ function buildTokenRequestBody(signedJwt) {
  * Build the sitemaps.submit REST URL.
  * PUT https://www.googleapis.com/webmasters/v3/sites/{siteUrl}/sitemaps/{feedpath}
  * Both path segments must be percent-encoded per the API reference.
- * @param {string} siteUrl e.g. "sc-domain:cyberussell.com"
+ * @param {string} siteUrl e.g. "https://www.cyberussell.com/" (URL-prefix
+ *   property) or "sc-domain:cyberussell.com" (domain property) — whichever
+ *   property is actually verified in Search Console.
  * @param {string} feedpath e.g. "https://www.cyberussell.com/sitemap.xml"
  */
 function buildSubmitUrl(siteUrl, feedpath) {

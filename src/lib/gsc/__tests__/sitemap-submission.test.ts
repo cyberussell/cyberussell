@@ -79,10 +79,18 @@ describe('buildTokenRequestBody', () => {
 });
 
 describe('buildSubmitUrl', () => {
-  it('builds the exact sitemaps.submit URL for the domain property and the sitemap INDEX (not sitemap-0.xml)', () => {
+  it('builds the exact sitemaps.submit URL for a domain property and the sitemap INDEX (not sitemap-0.xml)', () => {
     const url = buildSubmitUrl('sc-domain:cyberussell.com', 'https://www.cyberussell.com/sitemap.xml');
     expect(url).toBe(
       'https://www.googleapis.com/webmasters/v3/sites/sc-domain%3Acyberussell.com/sitemaps/https%3A%2F%2Fwww.cyberussell.com%2Fsitemap.xml'
+    );
+    expect(url).not.toContain('sitemap-0.xml');
+  });
+
+  it('builds the exact sitemaps.submit URL for a URL-prefix property (the actual verified property used in production)', () => {
+    const url = buildSubmitUrl('https://www.cyberussell.com/', 'https://www.cyberussell.com/sitemap.xml');
+    expect(url).toBe(
+      'https://www.googleapis.com/webmasters/v3/sites/https%3A%2F%2Fwww.cyberussell.com%2F/sitemaps/https%3A%2F%2Fwww.cyberussell.com%2Fsitemap.xml'
     );
     expect(url).not.toContain('sitemap-0.xml');
   });

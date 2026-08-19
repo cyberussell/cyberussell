@@ -5,6 +5,16 @@ Automatically notifies Google Search Console that `https://www.cyberussell.com/s
 Search Console API's `sitemaps.submit` method — never the deprecated
 `google.com/ping?sitemap=` endpoint, and never a per-URL indexing request.
 
+**Property used:** `https://www.cyberussell.com/` (a URL-prefix property), not
+`sc-domain:cyberussell.com`. A domain property was originally assumed to exist, but
+this Search Console account only has the URL-prefix property verified (plus a
+separate `academy.cyberussell.com` domain property for the Academy subdomain,
+which is unrelated). `scripts/submit-sitemap-to-gsc.js` targets the URL-prefix
+property accordingly. If a `sc-domain:cyberussell.com` domain property is added
+later (requires DNS TXT verification), the `PROPERTY` constant in that script
+would need to change, and the service account would need to be re-added as a
+user on the new property.
+
 ## How it runs
 
 - **Automatically**, via [`.github/workflows/submit-sitemap.yml`](../.github/workflows/submit-sitemap.yml),
@@ -38,7 +48,7 @@ approval gate on top of the `deployment_status` trigger.
 
 The service account needs to be added as a **user** on the property before it's allowed to call the API — a Cloud project alone isn't enough.
 
-1. Open [Search Console](https://search.google.com/search-console) → select the `sc-domain:cyberussell.com` property.
+1. Open [Search Console](https://search.google.com/search-console) → select the `https://www.cyberussell.com/` property (URL-prefix, not the `academy.cyberussell.com` domain property).
 2. Settings → Users and permissions → **Add user**.
 3. Paste the service account's email (the `client_email` field from the JSON key, looks like `sitemap-submitter@your-project.iam.gserviceaccount.com`).
 4. Permission level: **Owner** (or **Full** — either is sufficient for `sitemaps.submit`; Owner also lets it appear/verify without an existing human owner needing to re-approve later).
@@ -70,7 +80,7 @@ npm run gsc:submit-sitemap
 
 Expected output on success:
 ```
-[2026-08-19T00:00:00.000Z] GSC sitemap submit — property=sc-domain:cyberussell.com sitemap=https://www.cyberussell.com/sitemap.xml status=200 result=success
+[2026-08-19T00:00:00.000Z] GSC sitemap submit — property=https://www.cyberussell.com/ sitemap=https://www.cyberussell.com/sitemap.xml status=200 result=success
 Sitemap submitted (idempotent success, including re-submission of an already-known sitemap).
 ```
 
