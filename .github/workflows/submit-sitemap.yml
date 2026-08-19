@@ -1,18 +1,15 @@
 name: Submit sitemap to Google Search Console
 
-# PHASE 1 (current): manual trigger only (`workflow_dispatch`), for
-# verifying the Environment + secret + submission end-to-end before any
-# automatic run is possible.
-#
-# PHASE 2 (follow-up commit, after a manual run above has succeeded):
-# uncomment `deployment_status:` below and restore the full `if:`
-# condition so it also runs automatically after a successful PRODUCTION
-# deployment. Vercel's GitHub integration posts a `deployment_status`
-# event (state: "success") when a deployment finishes; gating on
+# PHASE 2 (current): runs automatically after a successful PRODUCTION
+# deployment, and can still be triggered manually via `workflow_dispatch`.
+# Vercel's GitHub integration posts a `deployment_status` event
+# (state: "success") when a deployment finishes; gating on
 # environment == "Production" keeps preview/branch deploys from ever
-# triggering a submission. See docs/gsc-sitemap-submission.md.
+# triggering a submission. A manual run (Phase 1) already succeeded,
+# confirming the Environment + secret + submission work end-to-end.
+# See docs/gsc-sitemap-submission.md.
 on:
-  # deployment_status:
+  deployment_status:
   workflow_dispatch: {}
 
 permissions:
@@ -20,15 +17,16 @@ permissions:
 
 jobs:
   submit-sitemap:
-    # Phase 2: if: >
-    #   github.event_name == 'workflow_dispatch' ||
-    #   (github.event.deployment_status.state == 'success' &&
-    #    github.event.deployment_status.environment == 'Production')
-    if: github.event_name == 'workflow_dispatch'
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment_status.environment == 'Production')
     runs-on: ubuntu-latest
     # A GitHub Environment gates access to the encrypted secret below and
     # can additionally require reviewer approval or restrict which
-    # branches may use it (Settings → Environments → production).
+    # branches may use it (Settings → Environments → Production; GitHub
+    # environment name matching is case-insensitive, so "production" here
+    # correctly resolves to the "Production" environment).
     environment: production
     steps:
       - name: Checkout
