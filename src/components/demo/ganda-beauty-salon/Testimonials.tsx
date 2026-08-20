@@ -33,7 +33,9 @@ export default function Testimonials() {
             custom={i}
             className="p-8 border border-[rgba(201,161,90,0.2)]"
           >
-            <div className="font-[family-name:var(--font-playfair)] text-[20px] text-[#c9a15a] mb-4">&ldquo;</div>
+            <div className="font-[family-name:var(--font-cormorant)] font-semibold text-[64px] md:text-[72px] leading-[0.6] text-[#c9a15a] mb-3">
+              &ldquo;
+            </div>
             <p className="text-[14.5px] leading-[1.75] text-[#d9d3c6] font-light mb-5">{t.quote}</p>
             <div className="text-[13px] text-[#c9a15a] font-medium">{t.name}</div>
           </motion.div>

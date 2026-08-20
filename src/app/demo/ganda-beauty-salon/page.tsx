@@ -7,7 +7,6 @@ import Stylists from "@/components/demo/ganda-beauty-salon/Stylists";
 import Booking from "@/components/demo/ganda-beauty-salon/Booking";
 import Gallery from "@/components/demo/ganda-beauty-salon/Gallery";
 import Testimonials from "@/components/demo/ganda-beauty-salon/Testimonials";
-import Contact from "@/components/demo/ganda-beauty-salon/Contact";
 import Footer from "@/components/demo/ganda-beauty-salon/Footer";
 
 export const metadata: Metadata = {
@@ -28,7 +27,6 @@ export default function GandaBeautySalonDemo() {
       <Booking />
       <Gallery />
       <Testimonials />
-      <Contact />
       <Footer />
     </div>
   );

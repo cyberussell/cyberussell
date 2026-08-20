@@ -1,5 +1,24 @@
 # Current Work
 
+**Ganda Beauty Salon demo — Footer redesigned, Contact section removed, footer trimmed to 3 columns, testimonial quote marks enlarged (2026-08-20) — code done, tsc clean, NOT yet committed:**
+
+Current Product: Appointment System (SaaS) — Ganda Beauty Salon demo/showcase page.
+
+Current Feature: Four back-to-back asks from Russell in one session.
+
+1. Redesign the footer at `/demo/ganda-beauty-salon`. Confirmed direction first (rich multi-column layout vs. polish vs. minimal) — he picked the rich option. Rewrote `src/components/demo/ganda-beauty-salon/Footer.tsx`: single-row footer (wordmark, inline nav, two text-link socials, legal bar) replaced with a column layout — brand blurb + circular social icons (Instagram/Facebook, hand-drawn inline SVGs since this `lucide-react` version has no brand icons), an Explore nav column, a Visit column (address/phone/email/hours pulled live from `SALON` in `data.ts`, phone/email now real `tel:`/`mailto:` links), and a Book Now CTA (`#book`, same bordered-gold button style as `Header.tsx`) — plus the original legal bar (copyright, Admin Login, Staff Login, Cyberussell credit) unchanged underneath.
+2. Remove the whole Contact section (confirmed scope via a follow-up question — could have meant just the map panel or just the Hours line, he meant the entire section). Deleted `src/components/demo/ganda-beauty-salon/Contact.tsx`, removed its import/usage from `src/app/demo/ganda-beauty-salon/page.tsx`, and dropped the now-dead `#contact` nav link from both `Header.tsx` and `Footer.tsx`'s `NAV_LINKS` arrays. The address/phone/email/hours info isn't lost — it now only lives in the footer's Visit column (added in step 1).
+3. Remove the Explore nav column from the footer entirely and rearrange the remaining three columns (Brand, Visit, Ready?/Book Now) into a 3-column grid (`grid-cols-1 sm:grid-cols-3`, was `sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]`). Footer's `NAV_LINKS` const removed as it's now unused (Header still keeps its own separate copy for the top nav).
+4. Make the opening quotation mark on each testimonial card (`Testimonials.tsx`) bigger and more prominent — was `font-playfair text-[20px]`, now `font-cormorant font-semibold text-[64px] md:text-[72px] leading-[0.6]`, same gold `#c9a15a` color, tightened line-height/margin so the oversized glyph doesn't collide with the quote text below it.
+
+No other files touched beyond the five listed above; none of this is shared with any other product.
+
+Current Status: `npx tsc --noEmit` clean throughout. Verified via DOM inspection (`getBoundingClientRect`, `getComputedStyle`, link `href` lists) after each step, plus two full-page visual screenshots (one after the 3-column footer change, one after the quote-mark change) both confirming the changes render correctly — the Browser preview's scroll-screenshot bug documented in earlier entries for this page was intermittent this session, not consistently reproducible; a retry after a real wheel-scroll gesture (as opposed to pure-JS `scrollTo`) got a clean screenshot both times. Not yet committed.
+
+**Next recommended task:** Russell to review the final footer, then decide on committing.
+
+---
+
 **Repo cleanup — duplicate junk + old TMS runtime code removed (2026-08-09) — committed and pushed — see checkpoint `repo-cleanup-tms-removal-v1.md`:**
 
 Current Product: Territory Management System (TMS) / repo housekeeping.

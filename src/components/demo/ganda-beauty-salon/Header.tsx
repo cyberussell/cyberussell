@@ -7,7 +7,6 @@ const NAV_LINKS = [
   { href: "#services", label: "Services" },
   { href: "#stylists", label: "Stylists" },
   { href: "#gallery", label: "Gallery" },
-  { href: "#contact", label: "Contact" },
 ];
 
 export default function Header() {
