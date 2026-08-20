@@ -26,6 +26,7 @@ export const BRANCHES = ["Quezon City (Main)", "Makati", "Pasig", "Mandaluyong"]
 export const NAV_LINKS = [
   { label: "Home", href: "/demo/laundryflow#top" },
   { label: "Services", href: "/demo/laundryflow#services" },
+  { label: "Build Your Order", href: "/demo/laundryflow/order" },
   { label: "Track Order", href: "/demo/laundryflow/track-order" },
   { label: "Contact", href: "/demo/laundryflow#contact" },
 ];
@@ -116,9 +117,3 @@ export const BOOKING_TIME_SLOTS = [
   "05:00 PM - 07:00 PM",
 ];
 
-export const BOOKING_SERVICES = [
-  { key: "wash-fold", icon: Shirt, service: "Wash & Fold", desc: "Perfect for everyday wear.", price: "₱35", unit: "/ kg" },
-  { key: "dry-cleaning", icon: Sparkles, service: "Dry Cleaning", desc: "Gentle care for delicate garments.", price: "₱150", unit: "/ pc" },
-  { key: "self-service", icon: WashingMachine, service: "Self-Service Machines", desc: "Wash it yourself, on your time.", price: "₱80", unit: "/ load" },
-  { key: "commercial", icon: Package, desc: "Bulk washing for businesses.", service: "Commercial / Bulk", price: "₱30", unit: "/ kg" },
-];

@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, ShieldCheck, Truck } from "lucide-react";
-import { BOOKING_SERVICES, BOOKING_TIME_SLOTS } from "./data";
+import { BOOKING_TIME_SLOTS } from "./data";
+import { loadCart, clearCart, cartSubtotal, type CartLine } from "./cart";
+import OrderSummaryPanel from "./OrderSummaryPanel";
 
-const STEPS = ["Contact", "Service", "Details"];
+const STEPS = ["Contact", "Review Order", "Details"];
 
 const TRUST = [
   { icon: ShieldCheck, title: "Safe & Sanitized", sub: "Expert cleaning with premium detergents." },
@@ -18,7 +20,6 @@ type FormData = {
   name: string;
   phone: string;
   email: string;
-  service: string;
   address: string;
   date: string;
   time: string;
@@ -29,7 +30,6 @@ const INITIAL_FORM: FormData = {
   name: "",
   phone: "",
   email: "",
-  service: BOOKING_SERVICES[0].key,
   address: "",
   date: "",
   time: "",
@@ -39,12 +39,21 @@ const INITIAL_FORM: FormData = {
 export default function BookingFlow() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
+  const [cartLines, setCartLines] = useState<CartLine[] | null>(null);
   const confirmed = step === 4;
+
+  useEffect(() => {
+    setCartLines(loadCart());
+  }, []);
+
+  const subtotal = cartLines ? cartSubtotal(cartLines) : 0;
 
   const update = (field: keyof FormData, value: string) => setForm((f) => ({ ...f, [field]: value }));
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (step === 2 && (!cartLines || cartLines.length === 0)) return;
+    if (step === 3) clearCart();
     setStep((s) => Math.min(s + 1, 4));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -97,10 +106,15 @@ export default function BookingFlow() {
                   <CheckCircle2 size={40} />
                 </div>
                 <h2 className="font-sans font-black text-[28px] text-[#14181F] mb-3">Booking Confirmed!</h2>
-                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#64748B] max-w-sm mb-10 leading-relaxed">
+                <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#64748B] max-w-sm mb-8 leading-relaxed">
                   Thank you for choosing Aling Maria, {form.name.split(" ")[0] || "friend"}! We&apos;ve received your request. One of our couriers
                   will contact you shortly for pickup.
                 </p>
+                {cartLines && cartLines.length > 0 && (
+                  <div className="w-full max-w-sm mb-10 text-left">
+                    <OrderSummaryPanel lines={cartLines} subtotal={subtotal} title="Order Summary" />
+                  </div>
+                )}
                 <Link
                   href="/demo/laundryflow"
                   className="bg-[#FFC629] text-[#14181F] font-[family-name:var(--font-inter)] font-bold text-[14px] px-8 py-3.5 rounded-full hover:opacity-90 transition-all"
@@ -156,56 +170,48 @@ export default function BookingFlow() {
                       </Field>
                     </div>
                     <div className="mt-10 flex justify-end">
-                      <NextButton label="Next: Service" />
+                      <NextButton label="Next: Review Order" />
                     </div>
                   </>
                 )}
 
                 {step === 2 && (
                   <>
-                    <h2 className="font-sans font-black text-[24px] text-[#0F172A] mb-2">Select Your Service</h2>
-                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#64748B] mb-8">Choose the care your clothes deserve.</p>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {BOOKING_SERVICES.map((s) => {
-                        const selected = form.service === s.key;
-                        return (
-                          <label key={s.key} className="relative cursor-pointer">
-                            <input
-                              type="radio"
-                              name="service"
-                              value={s.key}
-                              checked={selected}
-                              onChange={() => update("service", s.key)}
-                              className="sr-only"
-                            />
-                            <div
-                              className={`p-5 rounded-xl border-2 flex flex-col gap-3 transition-all ${
-                                selected ? "border-[#FFC629] bg-[#FFF8E1]" : "border-[#E2E8F0] hover:border-[#FFC629]/50"
-                              }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="w-10 h-10 rounded-full bg-[#FFF3CC] text-[#14181F] flex items-center justify-center">
-                                  <s.icon size={18} />
-                                </span>
-                                {selected && <CheckCircle2 size={18} className="text-[#B98900]" />}
-                              </div>
-                              <div>
-                                <p className="font-sans font-black text-[15px] text-[#0F172A]">{s.service}</p>
-                                <p className="font-[family-name:var(--font-inter)] text-[12.5px] text-[#64748B] mt-0.5">{s.desc}</p>
-                                <p className="font-sans font-black text-[18px] text-[#B98900] mt-3">
-                                  {s.price}
-                                  <span className="text-[12px] font-normal text-[#64748B]"> {s.unit}</span>
-                                </p>
-                              </div>
-                            </div>
-                          </label>
-                        );
-                      })}
-                    </div>
-                    <div className="mt-10 flex justify-between">
-                      <BackButton onClick={() => setStep(1)} />
-                      <NextButton label="Next: Details" />
-                    </div>
+                    <h2 className="font-sans font-black text-[24px] text-[#0F172A] mb-2">Review Your Order</h2>
+                    <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#64748B] mb-8">
+                      Here&apos;s what you built on the price list.
+                    </p>
+
+                    {cartLines && cartLines.length > 0 ? (
+                      <>
+                        <OrderSummaryPanel lines={cartLines} subtotal={subtotal} />
+                        <Link
+                          href="/demo/laundryflow/order"
+                          className="inline-block mt-4 font-[family-name:var(--font-inter)] text-[13px] font-bold text-[#14181F]/60 hover:text-[#14181F] underline underline-offset-2"
+                        >
+                          Edit Order
+                        </Link>
+                        <div className="mt-10 flex justify-between">
+                          <BackButton onClick={() => setStep(1)} />
+                          <NextButton label="Next: Details" />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-10">
+                        <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#64748B] mb-6">
+                          You haven&apos;t built an order yet — pick your services and quantities first.
+                        </p>
+                        <Link
+                          href="/demo/laundryflow/order"
+                          className="inline-flex items-center gap-2 bg-[#FFC629] text-[#14181F] font-[family-name:var(--font-inter)] font-bold text-[14px] px-7 py-3.5 rounded-full hover:opacity-90 transition-all"
+                        >
+                          Build Your Order <ArrowRight size={16} />
+                        </Link>
+                        <div className="mt-8">
+                          <BackButton onClick={() => setStep(1)} />
+                        </div>
+                      </div>
+                    )}
                   </>
                 )}
 

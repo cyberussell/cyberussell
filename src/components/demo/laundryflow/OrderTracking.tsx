@@ -150,7 +150,7 @@ export default function OrderTracking() {
                   value={orderNumber}
                   onChange={(e) => setOrderNumber(e.target.value)}
                   placeholder="e.g. ORD-000041"
-                  className="w-full px-4 py-3 rounded-lg border border-[#E2E8F0] text-[14px] focus:outline-none focus:border-[#FFC629] focus:ring-4 focus:ring-[#FFC629]/20 transition-all"
+                  className="w-full px-4 py-3 rounded-lg border border-[#E2E8F0] bg-white text-[14px] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#FFC629] focus:ring-4 focus:ring-[#FFC629]/20 transition-all"
                 />
               </div>
               <div className="flex-1">
@@ -166,7 +166,7 @@ export default function OrderTracking() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="09XX XXX XXXX"
-                  className="w-full px-4 py-3 rounded-lg border border-[#E2E8F0] text-[14px] focus:outline-none focus:border-[#FFC629] focus:ring-4 focus:ring-[#FFC629]/20 transition-all"
+                  className="w-full px-4 py-3 rounded-lg border border-[#E2E8F0] bg-white text-[14px] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#FFC629] focus:ring-4 focus:ring-[#FFC629]/20 transition-all"
                 />
               </div>
               <button
