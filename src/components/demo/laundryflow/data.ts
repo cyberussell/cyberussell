@@ -1,17 +1,13 @@
 import {
-  Truck,
   ShieldCheck,
-  Sparkles,
-  Shirt,
-  BedDouble,
-  Blinds,
-  WashingMachine,
-  Layers,
   Clock,
-  CreditCard,
-  CircleCheckBig,
-  Globe,
-  Cpu,
+  Leaf,
+  Radar,
+  Shirt,
+  Sparkles,
+  WashingMachine,
+  Package,
+  Flame,
 } from "lucide-react";
 
 export const SHOP = {
@@ -19,135 +15,93 @@ export const SHOP = {
   fullName: "Aling Maria Laundry Shop",
   phone: "0917 610 0090",
   phone2: "0928 265 738",
-  coverage: "Metro Manila",
   address: "24 Kalayaan St., Brgy. San Isidro, Quezon City",
+  shortLocation: "Brgy. San Isidro, Quezon City",
+  hours: "Open Daily · 7AM–8PM",
+  email: "hello@alingmarialaundry.ph",
 };
 
 export const BRANCHES = ["Quezon City (Main)", "Makati", "Pasig", "Mandaluyong"];
 
-const PHOTO = (name: string) => `/demo/laundryflow/photos/${name}`;
-
-export const PHOTOS = {
-  hero: PHOTO("hero-pile.png"),
-  finalCta: PHOTO("cta-scene.jpg"),
-};
-
-export const GALLERY = [
-  { src: PHOTO("gallery-shop.jpg"), alt: "Aling Maria's Laundry Shop counter, shelves stacked with folded laundry", wide: true, ratio: 370 / 268 },
-  { src: PHOTO("gallery-towels.jpg"), alt: "A neatly folded stack of fresh white and navy towels", ratio: 179 / 268 },
-  { src: PHOTO("gallery-handoff.jpg"), alt: "A staff member handing a finished laundry order to a customer", ratio: 180 / 268 },
-];
-
 export const NAV_LINKS = [
-  { label: "Pricing", href: "/demo/laundryflow#pricing" },
+  { label: "Home", href: "/demo/laundryflow#top" },
+  { label: "Services", href: "/demo/laundryflow#services" },
+  { label: "Track Order", href: "/demo/laundryflow#dashboard" },
   { label: "Contact", href: "/demo/laundryflow#contact" },
 ];
 
+const PHOTO = (name: string) => `/demo/laundryflow/photos/${name}`;
+
+export const PHOTOS = {
+  hero: PHOTO("hero-laundry.jpg"),
+  attendantSorting: PHOTO("attendant-sorting.jpg"),
+  attendantFolding: PHOTO("attendant-folding.png"),
+  logo: PHOTO("logo.png"),
+};
+
+export const HERO_BADGES = [
+  { label: "Trusted & Insured", icon: ShieldCheck },
+  { label: "Same-Day Service", icon: Clock },
+];
+
 export const HERO = {
-  headline: [
-    { text: "TOO MUCH", weight: "font-normal" },
-    { text: "LAUNDRY?", weight: "font-black" },
-  ],
-  highlight: "WE'VE GOT YOU!",
-  tagline: "Doorstep laundry that cares.",
-  features: [
-    { icon: Truck, title: "Pickup", sub: "at your doorstep" },
-    { icon: ShieldCheck, title: "Expert Care", sub: "& premium cleaning" },
-    { icon: Sparkles, title: "Fresh, Clean", sub: "& perfectly pressed" },
+  eyebrow: "LAUNDRY SOLUTIONS",
+  headline: "Fast, Friendly, and Affordable Laundry Care",
+  body: "We provide reliable laundry solutions for your home or business. From everyday loads to bulk hotel linens, our team is ready to help.",
+  cta: "Book a Pickup",
+};
+
+export const TRUST_ITEMS = [
+  { label: "Premium Care", icon: ShieldCheck },
+  { label: "Same-Day Service", icon: Clock },
+  { label: "Eco-Friendly", icon: Leaf },
+  { label: "Live Order Tracking", icon: Radar },
+];
+
+export const SERVICES_INTRO = {
+  eyebrow: "OUR SERVICES",
+  heading: "Complete Laundry Solutions You Can Trust",
+  body: "From delicate garments to bulk hotel linens, our team handles every wash with care — on time, every time, guaranteed.",
+};
+
+export const SERVICES = [
+  { label: "Wash & Fold", icon: Shirt },
+  { label: "Dry Cleaning", icon: Sparkles },
+  { label: "Self-Service Machines", icon: WashingMachine },
+  { label: "Commercial / Bulk", icon: Package },
+  { label: "Ironing / Pressing", icon: Flame },
+];
+
+export const SATISFACTION = {
+  eyebrow: "OUR PROMISE",
+  heading: "Your Satisfaction Is Our Priority",
+  body: "Honest pricing, careful handling, and a 100% satisfaction guarantee — if something isn't right, we re-clean it free of charge.",
+  ctaPrimary: "Learn More About Us",
+  ctaSecondary: "View All Services",
+};
+
+export const ORDER_TRACKING = {
+  eyebrow: "ALWAYS IN THE LOOP",
+  heading: "Track Your Order, Anytime",
+  body: "Every drop-off gets an order number. Check its status online — no calls, no guessing when it's ready.",
+  demoUrl: "alingmarialaundry.ph/track/ORD-000482",
+  orderNumber: "ORD-000482",
+  orderService: "Wash & Fold — 2 loads",
+  currentStep: "Folding",
+  steps: [
+    { label: "Received", time: "Today, 9:12 AM" },
+    { label: "Washing", time: "Today, 9:40 AM" },
+    { label: "Drying", time: "Today, 10:20 AM" },
+    { label: "Folding", time: "In progress" },
+    { label: "Ready for Pickup", time: "Pending" },
   ],
 };
 
-export const PRICING = [
-  { icon: Shirt, service: "Wash & Fold", price: "₱35", unit: "/ kg", badge: "Most Popular", color: "blue" },
-  { icon: WashingMachine, service: "Wash & Iron", price: "₱70", unit: "/ kg", color: "orange" },
-  { icon: BedDouble, service: "Comforters", prefix: "from", price: "₱250", unit: "each", color: "purple" },
-  { icon: Blinds, service: "Curtains", prefix: "from", price: "₱180", unit: "per panel", color: "green" },
-  { icon: Layers, service: "Blankets", prefix: "from", price: "₱200", unit: "each", color: "amber" },
-  { icon: Truck, service: "Pickup & Delivery", price: "FREE", unit: "within 3 km", color: "teal" },
-];
-
-export const PRICING_TRUST = [
-  { icon: CircleCheckBig, title: "Minimum order", sub: "3 kg", color: "green" },
-  { icon: Clock, title: "Same-day service", sub: "available", color: "blue" },
-  { icon: CreditCard, title: "Multiple payment", sub: "options", color: "rose" },
-  { icon: ShieldCheck, title: "100% Satisfaction", sub: "Guaranteed", color: "purple" },
-];
-
-export const PRICING_BANNER = {
-  heading: "We treat your clothes like",
-  highlight: "our own.",
-  body: "Every load is carefully washed, dried, and folded with love and attention to detail.",
-  ratingNote: "Rated 4.9/5 by our happy customers",
-};
-
-export const PLANS = [
-  {
-    key: "essential",
-    name: "Essential",
-    icon: Globe,
-    tagline: "With a professional website",
-    price: "₱399/month",
-    setup: "₱2,999 one-time setup",
-    highlight: false,
-    features: [
-      "Professional Website",
-      "Hosting & SSL",
-      "Custom Domain Connection",
-      "Customer Order Portal",
-      "QR Check-in & Tracking",
-      "Laundry Order Tracking",
-      "Customer Database",
-      "Monthly Sales Dashboard",
-      "Simple Inventory Tracking",
-      "Owner Dashboard",
-      "Up to 3 Staff Accounts",
-      "Standard Support",
-      "Up to 2 Website/System Change Requests per Month",
-    ],
-  },
-  {
-    key: "professional",
-    name: "Professional",
-    icon: Globe,
-    tagline: "With a professional website",
-    price: "₱699/month",
-    setup: "₱4,999 one-time setup",
-    highlight: true,
-    features: [
-      "Everything in Essential, plus:",
-      "Unlimited Staff Accounts",
-      "Pickup & Delivery Management",
-      "Google Business Profile Setup",
-      "Priority Support",
-      "Up to 6 Website/System Change Requests per Month",
-    ],
-  },
-  {
-    key: "system-only",
-    name: "System Only",
-    icon: Cpu,
-    tagline: "No website — just the management system",
-    price: "₱399/month",
-    setup: "No one-time setup fee",
-    highlight: false,
-    features: [
-      "Customer Order Portal",
-      "QR Check-in & Tracking",
-      "Laundry Order Tracking",
-      "Customer Database",
-      "Monthly Sales Dashboard",
-      "Simple Inventory Tracking",
-      "Owner Dashboard",
-      "Up to 3 Staff Accounts",
-      "Standard Support",
-      "Up to 2 System Change Requests per Month",
-    ],
-  },
-];
-
-export const LOCATION = {
-  heading: "Find Us Here",
-  body: "Conveniently located to serve the metro. Visit any of our branches for premium care.",
+export const TESTIMONIAL = {
+  quote:
+    "Aling Maria's team treats every load like it's their own. I get a text the moment my order status changes — no more guessing when to pick up.",
+  name: "Jamie R.",
+  role: "Regular Customer",
 };
 
 export const BOOKING_TIME_SLOTS = [
@@ -160,13 +114,7 @@ export const BOOKING_TIME_SLOTS = [
 
 export const BOOKING_SERVICES = [
   { key: "wash-fold", icon: Shirt, service: "Wash & Fold", desc: "Perfect for everyday wear.", price: "₱35", unit: "/ kg" },
-  { key: "wash-iron", icon: WashingMachine, service: "Wash & Iron", desc: "Crisp, clean, and ready to wear.", price: "₱70", unit: "/ kg" },
-  { key: "comforters", icon: BedDouble, service: "Comforters", desc: "Deep cleaning for large items.", price: "₱250", unit: "/ pc" },
-  { key: "curtains", icon: Blinds, service: "Curtains", desc: "Dust-free and vibrant.", price: "₱180", unit: "/ panel" },
-];
-
-export const TESTIMONIALS = [
-  { quote: "Always on time. Their pickup service has made our lives so much easier.", name: "Carla Mendoza", role: "Working Mom", color: "orange" },
-  { quote: "My comforters have never smelled this fresh. Worth every peso.", name: "Ramon Dizon", role: "Regular Customer", color: "purple" },
-  { quote: "We switched our restaurant's linens to Aling Maria and never looked back.", name: "Jun Torres", role: "Restaurant Owner", color: "amber" },
+  { key: "dry-cleaning", icon: Sparkles, service: "Dry Cleaning", desc: "Gentle care for delicate garments.", price: "₱150", unit: "/ pc" },
+  { key: "self-service", icon: WashingMachine, service: "Self-Service Machines", desc: "Wash it yourself, on your time.", price: "₱80", unit: "/ load" },
+  { key: "commercial", icon: Package, desc: "Bulk washing for businesses.", service: "Commercial / Bulk", price: "₱30", unit: "/ kg" },
 ];

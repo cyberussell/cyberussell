@@ -1,5 +1,19 @@
 # Current Work
 
+**LaundryFlow demo — full visual redesign from imported Claude Design (2026-08-20) — code done, tsc clean, live-verified, NOT yet committed — see checkpoint `laundryflow-demo-redesign-v1.md`:**
+
+Current Product: Services (Portfolio) — `/demo/laundryflow` fictional case study.
+
+Current Feature: Russell asked for a full redesign of `/demo/laundryflow`, using the `claude_design` MCP (DesignSync tool) to import a Claude Design project (`Suds & Fold Laundromat Site`, `claude.ai/design/p/52fece9f-ca21-434d-99d2-bdc3dc57367b`) and implement `Laundry Website.dc.html`. Read the imported design plus its two dependencies (`browser-window.jsx` — a dependency-free Chrome-window mockup component, ported to React/Tailwind as `BrowserWindow.tsx`; `support.js` — just the Claude Design preview runtime, nothing to implement from it). Confirmed two scope questions with Russell first: (1) also restyle `book-a-pickup/page.tsx` + `BookingFlow.tsx` for consistency (yes), (2) use styled placeholder photo panels matching the design exactly rather than reusing the existing `hero-pile.png`/`gallery-*.jpg` files (placeholders — those existing photo files are now unreferenced but left in `public/`).
+
+Replaced the whole blue (`#2563EB`) theme with the design's black/yellow/cream palette. Rewrote `Header.tsx` (added a utility bar, changed from an absolute hero-overlay header to normal in-flow — this also required removing `BookingFlow.tsx`'s now-obsolete `pt-32` top-padding compensation), `Hero.tsx`, `Footer.tsx` (simplified to copyright+email per the design); added `TrustStrip.tsx`, `Services.tsx`, `Satisfaction.tsx`, `OrderTracking.tsx` (+ new `BrowserWindow.tsx`), `ContactBooking.tsx`; deleted the now-superseded `Pricing.tsx`, `Gallery.tsx`, `Location.tsx`; recolored `PlansComparison.tsx` and `BookingFlow.tsx` without touching their structure/logic (`PlansComparison` is Cyberussell's own pricing-tier pitch section, not part of the imported design, so it was restyled only, per rule #7). `data.ts` restructured with new content matching the design's copy.
+
+Current Status: `npx tsc --noEmit` clean. Live-verified both pages in the browser preview (screenshots + a full click-through of the booking flow's Contact → Service steps) — utility bar, header, hero, trust strip, services, satisfaction, order-tracking mock browser stepper, testimonial/booking form, footer, and the recolored `PlansComparison`/`BookingFlow` all render correctly with no console errors. Not yet committed.
+
+**Next recommended task:** Russell reviews `/demo/laundryflow` and `/demo/laundryflow/book-a-pickup` live, then decides on committing.
+
+---
+
 **Luma Dental — real Appointment System tenant provisioned + Booking.tsx wired (2026-08-20) — code done, tsc clean, NOT yet committed — see checkpoint `luma-dental-appointment-system-wiring-v1.md`:**
 
 Current Product: Appointment System (SaaS) — Luma Dental demo/showcase page.

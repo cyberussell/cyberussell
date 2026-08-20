@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function BookAPickupPage() {
   return (
-    <div className="bg-[#FDF9F3] min-h-screen">
+    <div className="bg-[#FFF8E1] min-h-screen">
       <Header />
       <BookingFlow />
       <Footer />

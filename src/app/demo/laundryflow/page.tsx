@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Header from "@/components/demo/laundryflow/Header";
 import Hero from "@/components/demo/laundryflow/Hero";
-import Pricing from "@/components/demo/laundryflow/Pricing";
-import Gallery from "@/components/demo/laundryflow/Gallery";
-import Location from "@/components/demo/laundryflow/Location";
-import PlansComparison from "@/components/demo/laundryflow/PlansComparison";
+import TrustStrip from "@/components/demo/laundryflow/TrustStrip";
+import Services from "@/components/demo/laundryflow/Services";
+import Satisfaction from "@/components/demo/laundryflow/Satisfaction";
+import OrderTracking from "@/components/demo/laundryflow/OrderTracking";
+import ContactBooking from "@/components/demo/laundryflow/ContactBooking";
 import Footer from "@/components/demo/laundryflow/Footer";
 
 export const metadata: Metadata = {
@@ -15,14 +16,15 @@ export const metadata: Metadata = {
 
 export default function LaundryFlowDemo() {
   return (
-    <div className="bg-[#2563EB] min-h-screen">
+    <div className="bg-white min-h-screen">
       <Header />
       <Hero />
-      <Pricing />
-      <Gallery />
-      <Location />
+      <TrustStrip />
+      <Services />
+      <Satisfaction />
+      <OrderTracking />
+      <ContactBooking />
       <Footer />
-      <PlansComparison />
     </div>
   );
 }

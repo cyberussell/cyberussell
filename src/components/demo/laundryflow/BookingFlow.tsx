@@ -50,14 +50,14 @@ export default function BookingFlow() {
   };
 
   return (
-    <section className="px-6 pt-32 pb-16 md:pb-20">
+    <section className="px-6 pt-12 md:pt-16 pb-16 md:pb-20">
       <div className="max-w-md md:max-w-2xl mx-auto">
         {!confirmed && (
           <div className="mb-10">
             <div className="flex items-center justify-between relative">
               <div className="absolute top-1/2 left-0 w-full h-0.5 bg-[#E2E8F0] -z-10 -translate-y-1/2" />
               <motion.div
-                className="absolute top-1/2 left-0 h-0.5 bg-[#2563EB] -z-10 -translate-y-1/2"
+                className="absolute top-1/2 left-0 h-0.5 bg-[#FFC629] -z-10 -translate-y-1/2"
                 initial={false}
                 animate={{ width: `${((step - 1) / (STEPS.length - 1)) * 100}%` }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -66,15 +66,15 @@ export default function BookingFlow() {
                 const n = i + 1;
                 const active = n <= step;
                 return (
-                  <div key={label} className="flex flex-col items-center gap-2 bg-[#FDF9F3] px-1">
+                  <div key={label} className="flex flex-col items-center gap-2 bg-[#FFF8E1] px-1">
                     <div
                       className={`w-9 h-9 rounded-full flex items-center justify-center font-sans font-black text-[13px] transition-colors ${
-                        active ? "bg-[#2563EB] text-white" : "bg-[#E2E8F0] text-[#64748B]"
+                        active ? "bg-[#FFC629] text-[#14181F]" : "bg-[#E2E8F0] text-[#64748B]"
                       }`}
                     >
                       {n}
                     </div>
-                    <span className={`font-[family-name:var(--font-inter)] text-[11px] font-bold ${active ? "text-[#2563EB]" : "text-[#64748B]"}`}>
+                    <span className={`font-[family-name:var(--font-inter)] text-[11px] font-bold ${active ? "text-[#B98900]" : "text-[#64748B]"}`}>
                       {label}
                     </span>
                   </div>
@@ -93,17 +93,17 @@ export default function BookingFlow() {
                 animate={{ opacity: 1 }}
                 className="p-8 md:p-10 text-center flex flex-col items-center py-16"
               >
-                <div className="w-20 h-20 rounded-full bg-blue-50 text-[#2563EB] flex items-center justify-center mb-6">
+                <div className="w-20 h-20 rounded-full bg-[#FFF3CC] text-[#14181F] flex items-center justify-center mb-6">
                   <CheckCircle2 size={40} />
                 </div>
-                <h2 className="font-sans font-black text-[28px] text-[#2563EB] mb-3">Booking Confirmed!</h2>
+                <h2 className="font-sans font-black text-[28px] text-[#14181F] mb-3">Booking Confirmed!</h2>
                 <p className="font-[family-name:var(--font-inter)] text-[14px] text-[#64748B] max-w-sm mb-10 leading-relaxed">
                   Thank you for choosing Aling Maria, {form.name.split(" ")[0] || "friend"}! We&apos;ve received your request. One of our couriers
                   will contact you shortly for pickup.
                 </p>
                 <Link
                   href="/demo/laundryflow"
-                  className="bg-[#2563EB] text-white font-[family-name:var(--font-inter)] font-bold text-[14px] px-8 py-3.5 rounded-full hover:opacity-90 transition-all"
+                  className="bg-[#FFC629] text-[#14181F] font-[family-name:var(--font-inter)] font-bold text-[14px] px-8 py-3.5 rounded-full hover:opacity-90 transition-all"
                 >
                   Back to Home
                 </Link>
@@ -180,19 +180,19 @@ export default function BookingFlow() {
                             />
                             <div
                               className={`p-5 rounded-xl border-2 flex flex-col gap-3 transition-all ${
-                                selected ? "border-[#2563EB] bg-blue-50/60" : "border-[#E2E8F0] hover:border-[#2563EB]/40"
+                                selected ? "border-[#FFC629] bg-[#FFF8E1]" : "border-[#E2E8F0] hover:border-[#FFC629]/50"
                               }`}
                             >
                               <div className="flex items-center justify-between">
-                                <span className="w-10 h-10 rounded-full bg-[#2563EB]/10 text-[#2563EB] flex items-center justify-center">
+                                <span className="w-10 h-10 rounded-full bg-[#FFF3CC] text-[#14181F] flex items-center justify-center">
                                   <s.icon size={18} />
                                 </span>
-                                {selected && <CheckCircle2 size={18} className="text-[#2563EB]" />}
+                                {selected && <CheckCircle2 size={18} className="text-[#B98900]" />}
                               </div>
                               <div>
                                 <p className="font-sans font-black text-[15px] text-[#0F172A]">{s.service}</p>
                                 <p className="font-[family-name:var(--font-inter)] text-[12.5px] text-[#64748B] mt-0.5">{s.desc}</p>
-                                <p className="font-sans font-black text-[18px] text-[#2563EB] mt-3">
+                                <p className="font-sans font-black text-[18px] text-[#B98900] mt-3">
                                   {s.price}
                                   <span className="text-[12px] font-normal text-[#64748B]"> {s.unit}</span>
                                 </p>
@@ -261,7 +261,7 @@ export default function BookingFlow() {
                       <BackButton onClick={() => setStep(2)} />
                       <button
                         type="submit"
-                        className="inline-flex items-center gap-2 bg-[#FBBF24] text-[#0F172A] font-[family-name:var(--font-inter)] font-bold text-[14px] px-7 py-3.5 rounded-full hover:opacity-90 transition-all"
+                        className="inline-flex items-center gap-2 bg-[#14181F] text-white font-[family-name:var(--font-inter)] font-bold text-[14px] px-7 py-3.5 rounded-full hover:opacity-90 transition-all"
                       >
                         Confirm Pickup
                         <CheckCircle2 size={17} />
@@ -278,7 +278,7 @@ export default function BookingFlow() {
           <div className="mt-10 grid sm:grid-cols-3 gap-6 text-center">
             {TRUST.map((t) => (
               <div key={t.title} className="flex flex-col items-center gap-2">
-                <t.icon size={24} className="text-[#2563EB]" />
+                <t.icon size={24} className="text-[#B98900]" />
                 <p className="font-sans font-black text-[13px] text-[#0F172A]">{t.title}</p>
                 <p className="font-[family-name:var(--font-inter)] text-[11.5px] text-[#64748B]">{t.sub}</p>
               </div>
@@ -291,7 +291,7 @@ export default function BookingFlow() {
 }
 
 const inputClass =
-  "w-full px-4 py-3 rounded-lg border border-[#E2E8F0] bg-[#FDF9F3] font-[family-name:var(--font-inter)] text-[14px] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/10 transition-all";
+  "w-full px-4 py-3 rounded-lg border border-[#E2E8F0] bg-[#FFF8E1] font-[family-name:var(--font-inter)] text-[14px] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#FFC629] focus:ring-4 focus:ring-[#FFC629]/20 transition-all";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -306,7 +306,7 @@ function NextButton({ label }: { label: string }) {
   return (
     <button
       type="submit"
-      className="inline-flex items-center gap-2 bg-[#2563EB] text-white font-[family-name:var(--font-inter)] font-bold text-[14px] px-7 py-3.5 rounded-full hover:opacity-90 transition-all"
+      className="inline-flex items-center gap-2 bg-[#FFC629] text-[#14181F] font-[family-name:var(--font-inter)] font-bold text-[14px] px-7 py-3.5 rounded-full hover:opacity-90 transition-all"
     >
       {label}
       <ArrowRight size={16} />
