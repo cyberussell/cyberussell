@@ -2,7 +2,7 @@
   "slug": "laundry-management-system",
   "title": "Laundry Management System",
   "client": "Concept Project",
-  "tagline": "A bold, ad-style laundry business website with real photography — that quietly reveals the Cyberussell concept behind it at the end.",
+  "tagline": "A photo-real laundry shop website with live order tracking and pickup booking — that quietly reveals the Cyberussell system behind it at the end.",
   "category": "Web Design",
   "date": "2026-07-11",
   "timeline": "Concept sprint",
@@ -16,10 +16,10 @@
     "url": "/lms"
   },
   "techStack": ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
-  "overview": "A self-initiated concept build with a twist: it's designed first as the official website of a fictional local business, \"Aling Maria Laundry Shop\" — booking, services, pricing, reviews — and only reveals near the bottom of the page that it's a Cyberussell portfolio piece, showcasing \"LaundryFlow,\" the management system quietly running the business behind the scenes.",
+  "overview": "A self-initiated concept build with a twist: it's designed first as the official website of a fictional local business, \"Aling Maria Laundry Shop\" — real photography, live order tracking, pickup booking — and only reveals near the bottom of the page that it's a Cyberussell portfolio piece, showcasing \"LaundryFlow,\" the management system quietly running the business behind the scenes.",
   "problem": "Most laundry and dry-cleaning businesses run on paper logs or generic point-of-sale software that wasn't built for their workflow. And most \"we build software\" portfolio pieces look like software demos, not like something a real customer would actually want to visit and book from — which makes it harder for a prospective client to picture their own business looking this good.",
-  "solution": "Built as a short, punchy sequence of bold flat-color poster panels — real duotone-treated photography, condensed grotesk headline type, icon-row value props, honest pricing, and a compact testimonial strip — closer to a mobile ad creative than a typical scrolling business site. The final panel is a deliberate reveal: a dark CTA that tells the visitor this was a Cyberussell concept all along, then invites laundry-business owners to request their own site.",
-  "results": "A live concept demo that sells two things at once — a beautiful local-business website and the SaaS-grade system behind it — with a reveal moment designed to make the portfolio piece memorable rather than another generic case study.",
+  "solution": "Built around a bold black-and-yellow brand system with real photography of attendants at work, a trust strip, and a services grid — then a live-look order-tracking demo: a mock browser window that walks a customer's wash from Received through Washing, Drying, and Folding to Ready for Pickup. A dedicated 3-step pickup-booking flow (Contact → Service → Details → Confirmed) lets a visitor actually schedule a pickup. Further down the page, a pricing-tiers section reveals the real LaundryFlow SaaS system running behind the scenes and invites laundry-business owners to request their own site.",
+  "results": "A live concept demo that sells two things at once — a laundry shop website that actually looks worth switching to, and the SaaS-grade order-tracking system behind it — with real photography and a live tracking mockup that make the pitch tangible rather than another generic case study.",
   "testimonial": null,
   "featured": true
 }

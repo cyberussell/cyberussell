@@ -1,5 +1,19 @@
 # Current Work
 
+**Portfolio — laundry case study copy/art refresh to match the LaundryFlow redesign (2026-08-20) — code done, tsc clean, live-verified, NOT yet committed — see checkpoint `portfolio-laundry-copy-refresh-v1.md`:**
+
+Current Product: Services (Portfolio) — `/portfolio` and `/portfolio/laundry-management-system`.
+
+Current Feature: Russell asked to update `/portfolio`, especially the laundry entry, after noticing it hadn't been touched following the LaundryFlow demo's full redesign earlier today (commit `8a66955`, blue theme → black/yellow/gold). Found and fixed three stale spots: the "Sample & Demo Websites" card's image (`page.tsx`, was the pre-redesign `hero-pile.png`, now `hero-laundry.jpg`), the case-study copy in `laundry-management-system.json` (described the old "ad-style poster panels" design, rewritten to describe the actual current build — brand system, real photography, trust strip, services grid, live order-tracking mock, pickup-booking flow, pricing reveal), and `cover.svg`/`icon.svg` (were generic blue mockups, redrawn in the redesign's real palette).
+
+Current Status: `npx tsc --noEmit` clean. Live-verified in the browser preview (`get_page_text` + screenshot + network-request checks) — new tagline/copy render correctly on both `/portfolio` and the detail page, new cover/icon SVGs return 200 and show the black/yellow/gold palette, demo card shows the correct current photo. No console errors. Not yet committed.
+
+**Note — `working-on.md` was stale:** this entry's predecessor below (the LaundryFlow redesign itself) said "NOT yet committed," but `git log` shows it already landed as commit `8a66955` and is pushed to `origin/main`. Left that entry's text as historical record rather than editing it after the fact; flagging here so the next session trusts `git log` over this file where they conflict.
+
+**Next recommended task:** Russell reviews `/portfolio` and `/portfolio/laundry-management-system` live, then decides on committing this alongside whatever else is still staged from today's session (Luma Dental wiring, portfolio demo-sites section).
+
+---
+
 **LaundryFlow demo — full visual redesign from imported Claude Design (2026-08-20) — code done, tsc clean, live-verified, NOT yet committed — see checkpoint `laundryflow-demo-redesign-v1.md`:**
 
 Current Product: Services (Portfolio) — `/demo/laundryflow` fictional case study.

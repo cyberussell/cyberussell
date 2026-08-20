@@ -31,7 +31,7 @@ const DEMO_SITES = [
     title: "Aling Maria Laundry Shop",
     tagline: "Premium laundry pickup & delivery service concept.",
     url: "/demo/laundryflow",
-    image: "/demo/laundryflow/photos/hero-pile.png",
+    image: "/demo/laundryflow/photos/hero-laundry.jpg",
   },
 ];
 
