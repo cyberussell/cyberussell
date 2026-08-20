@@ -65,7 +65,7 @@ export default function PortfolioIndex() {
               >
                 <div className="relative aspect-video bg-gradient-to-br from-[#E8373A]/20 via-[#18181F] to-[#FFD23F]/10 flex items-center justify-center">
                   {project.icon ? (
-                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/10 bg-white transition-transform duration-300 group-hover:scale-105">
                       <Image
                         src={project.icon}
                         alt={`${project.title} icon`}
