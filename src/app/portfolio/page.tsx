@@ -11,6 +11,30 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.cyberussell.com/portfolio" },
 };
 
+const DEMO_SITES = [
+  {
+    slug: "ganda-beauty-salon",
+    title: "Ganda Beauty Salon",
+    tagline: "Editorial-luxury hair & beauty salon concept with appointment booking.",
+    url: "/demo/ganda-beauty-salon",
+    image: "/demo/ganda-beauty-salon/photos/hero.png",
+  },
+  {
+    slug: "luma-dental",
+    title: "Bright Smiles Dental Studio",
+    tagline: "Modern dental clinic concept with scroll-driven animation.",
+    url: "/demo/luma-dental",
+    image: "/portfolio/luma-dental/hero-clinic.jpg",
+  },
+  {
+    slug: "laundryflow",
+    title: "Aling Maria Laundry Shop",
+    tagline: "Premium laundry pickup & delivery service concept.",
+    url: "/demo/laundryflow",
+    image: "/demo/laundryflow/photos/hero-pile.png",
+  },
+];
+
 export default function PortfolioIndex() {
   const projects = getAllProjects();
 
@@ -88,6 +112,51 @@ export default function PortfolioIndex() {
                 </div>
               </a>
             ))}
+          </div>
+
+          <div className="mt-20">
+            <span className="block text-[#E8373A] font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[2.5px] mb-4">
+              Sample &amp; Demo Websites
+            </span>
+            <h2 className="font-sans text-[24px] md:text-[32px] font-extrabold text-white leading-[1.1] tracking-tight mb-4">
+              Concept builds you can click through.
+            </h2>
+            <p className="font-[family-name:var(--font-inter)] text-[15px] text-white/55 max-w-[560px] leading-[1.7] mb-10">
+              Fully built, fictional business websites — a preview of the design quality and polish your own site could have.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {DEMO_SITES.map((demo) => (
+                <a
+                  key={demo.slug}
+                  href={demo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-[#18181F] border border-white/[0.08] rounded-xl overflow-hidden flex flex-col hover:border-[#FFD23F]/30 hover:-translate-y-[2px] transition-all duration-200"
+                >
+                  <div className="relative aspect-video bg-gradient-to-br from-[#E8373A]/20 via-[#18181F] to-[#FFD23F]/10">
+                    <Image
+                      src={demo.image}
+                      alt={demo.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="p-6 flex flex-col gap-3 flex-grow">
+                    <h3 className="font-sans text-[17px] font-bold text-white group-hover:text-[#FFD23F] transition-colors">
+                      {demo.title}
+                    </h3>
+                    <p className="font-[family-name:var(--font-inter)] text-[13px] text-white/45 leading-[1.6] flex-grow">
+                      {demo.tagline}
+                    </p>
+                    <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-[#FFD23F]/80 group-hover:text-[#FFD23F] transition-colors">
+                      View demo →
+                    </span>
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </main>

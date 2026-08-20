@@ -1,5 +1,17 @@
 # Current Work
 
+**Portfolio — added Sample & Demo Websites section (2026-08-20) — code done, tsc clean, NOT yet committed — see checkpoint `portfolio-demo-sites-section-v1.md`:**
+
+Current Product: Services (Portfolio).
+
+Current Feature: Russell asked to add a section on `/portfolio` for sample/demo websites, including the Ganda Beauty Salon demo. Confirmed scope (Ganda only vs. all three existing demo sites) — he picked all three. Added a `DEMO_SITES` array and a new "Sample & Demo Websites" card-grid section to `src/app/portfolio/page.tsx`, below the existing case-study grid, linking directly to `/demo/ganda-beauty-salon`, `/demo/luma-dental`, and `/demo/laundryflow`. No other files touched — existing case-study grid, `/portfolio/[slug]` pages, and `src/lib/portfolio/data.ts` are unchanged.
+
+Current Status: `npx tsc --noEmit` clean. Verified live in the browser preview — all three demo cards render with correct thumbnails and link to their respective demo pages. Not yet committed.
+
+**Next recommended task:** Russell to review the new section, then decide on committing.
+
+---
+
 **Ganda Beauty Salon demo — Footer redesigned, Contact section removed, footer trimmed to 3 columns, testimonial quote marks enlarged (2026-08-20) — code done, tsc clean, NOT yet committed:**
 
 Current Product: Appointment System (SaaS) — Ganda Beauty Salon demo/showcase page.
