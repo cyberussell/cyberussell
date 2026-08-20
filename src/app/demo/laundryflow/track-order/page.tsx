@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import Header from "@/components/demo/laundryflow/Header";
 import Footer from "@/components/demo/laundryflow/Footer";
 import OrderTracking from "@/components/demo/laundryflow/OrderTracking";
-import { ORDER_TRACKING } from "@/components/demo/laundryflow/data";
 
 export const metadata: Metadata = {
   title: "Track Your Order — Aling Maria Laundry Shop",
@@ -17,24 +16,13 @@ export default function TrackOrderPage() {
       <Header />
       <OrderTracking />
 
-      <section className="bg-white px-6 py-14 md:py-16 text-center">
-        <div className="max-w-lg mx-auto">
-          <h2 className="font-sans font-black text-[22px] md:text-[24px] text-[#14181F] mb-3">Ready to Track a Real Order?</h2>
-          <p className="font-[family-name:var(--font-inter)] text-[14px] leading-[1.7] text-[#14181F]/60 mb-7">
-            This page is powered by the real Laundry Management System that runs behind sites like this one — enter your order number and
-            phone number to look up an actual order.
-          </p>
-          <a
-            href="/lms/track"
-            className="inline-flex items-center gap-2 bg-[#14181F] text-white font-[family-name:var(--font-inter)] font-bold text-[14px] py-3.5 px-7 rounded-full hover:opacity-90 transition-all"
-          >
-            Open Order Lookup <ArrowRight size={16} />
-          </a>
-          <p className="font-[family-name:var(--font-inter)] text-[12.5px] text-[#14181F]/45 mt-4">
-            Try it yourself — order number <span className="font-bold text-[#14181F]/70">{ORDER_TRACKING.demoOrderNumber}</span>, phone{" "}
-            <span className="font-bold text-[#14181F]/70">{ORDER_TRACKING.demoPhone}</span>
-          </p>
-        </div>
+      <section className="bg-white px-6 py-10 text-center">
+        <a
+          href="/lms/track"
+          className="inline-flex items-center gap-2 font-[family-name:var(--font-inter)] font-bold text-[13.5px] text-[#14181F]/60 hover:text-[#14181F] transition-colors"
+        >
+          Prefer the full order-lookup page? Open it here <ArrowRight size={14} />
+        </a>
       </section>
 
       <Footer />
