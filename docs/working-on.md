@@ -1,5 +1,19 @@
 # Current Work
 
+**LaundryFlow demo — order tracker turned into a real inline lookup (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `laundryflow-demo-redesign-v3.md`:**
+
+Current Product: Services (Portfolio) — `/demo/laundryflow/track-order`. Also shipped new code to the real Laundry Management System (separate isolated product) — explicitly confirmed with Russell first.
+
+Current Feature: Russell asked for the order tracker to have a real input clients could use to check their order, not just an illustration + external link. Confirmed the UX first (inline result on the demo page vs. redirect) — he picked inline. Since Next.js Server Actions can't be invoked cross-app, built a new small public JSON API on the real LMS product (`GET /lms/api/track?orderNumber=&phone=`, reusing the existing `findOrderForTracking`/`getOrderByPublicToken` query functions and rate-limit helper — same pattern as the Appointment System's own public API routes for its demos). `OrderTracking.tsx` rewritten as a client component: real form, fetches the new endpoint, renders the actual result inline (handles the LMS's full 9-status range, not just the 5 illustrative steps), falls back to the illustration with an inline error message on failure. Simplified `track-order/page.tsx`'s now-redundant CTA section. Follow-up: Russell flagged the inputs weren't properly labeled (screen-reader-only labels weren't visible) — added real visible "Order Number"/"Phone Number" labels above each field.
+
+Deployment note: `vercel redeploy` on the LMS app reused the previous build snapshot instead of the new commit (confirmed via `x-matched-path` still showing `/404`) — switched to `vercel --prod` for a genuine fresh build. Both repos committed and pushed as part of this work (deployment requires it; this repo's local dev has no `LMS_ZONE_URL`, so the fetch flow could only be fully verified against production).
+
+Current Status: `npx tsc --noEmit` clean in both repos. Live-verified directly against `https://www.cyberussell.com/demo/laundryflow/track-order` — real order number + phone returns the real order inline (6-step flow, real timestamp); wrong number + phone shows the inline error and falls back to the illustration cleanly.
+
+**Next recommended task:** Russell tries the live tracker himself, decides whether the "Jamie Reyes" test order should stay as a permanent demo fixture or be cleaned up.
+
+---
+
 **LaundryFlow demo — real photos/logo, richer footer, order-tracking moved to its own page and wired to the real LMS (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `laundryflow-demo-redesign-v2.md`:**
 
 Current Product: Services (Portfolio) — `/demo/laundryflow`. Also touched the real Laundry Management System (separate isolated product) — explicitly confirmed with Russell first, see below.

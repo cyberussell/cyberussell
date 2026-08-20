@@ -137,22 +137,38 @@ export default function OrderTracking() {
       <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1} className="max-w-3xl mx-auto">
         <BrowserWindow url={ORDER_TRACKING.demoUrl}>
           <div className="p-6 md:p-9">
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 mb-7">
-              <input
-                required
-                value={orderNumber}
-                onChange={(e) => setOrderNumber(e.target.value)}
-                placeholder="Order number (e.g. ORD-000041)"
-                className="flex-1 px-4 py-3 rounded-lg border border-[#E2E8F0] text-[14px] focus:outline-none focus:border-[#FFC629] focus:ring-4 focus:ring-[#FFC629]/20 transition-all"
-              />
-              <input
-                required
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Phone number"
-                className="flex-1 px-4 py-3 rounded-lg border border-[#E2E8F0] text-[14px] focus:outline-none focus:border-[#FFC629] focus:ring-4 focus:ring-[#FFC629]/20 transition-all"
-              />
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row sm:items-end gap-3 mb-7">
+              <div className="flex-1">
+                <label htmlFor="track-order-number" className="block text-[12px] font-bold text-[#14181F]/70 mb-1.5">
+                  Order Number
+                </label>
+                <input
+                  id="track-order-number"
+                  name="orderNumber"
+                  autoComplete="off"
+                  required
+                  value={orderNumber}
+                  onChange={(e) => setOrderNumber(e.target.value)}
+                  placeholder="e.g. ORD-000041"
+                  className="w-full px-4 py-3 rounded-lg border border-[#E2E8F0] text-[14px] focus:outline-none focus:border-[#FFC629] focus:ring-4 focus:ring-[#FFC629]/20 transition-all"
+                />
+              </div>
+              <div className="flex-1">
+                <label htmlFor="track-order-phone" className="block text-[12px] font-bold text-[#14181F]/70 mb-1.5">
+                  Phone Number
+                </label>
+                <input
+                  id="track-order-phone"
+                  name="phone"
+                  autoComplete="tel"
+                  required
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="09XX XXX XXXX"
+                  className="w-full px-4 py-3 rounded-lg border border-[#E2E8F0] text-[14px] focus:outline-none focus:border-[#FFC629] focus:ring-4 focus:ring-[#FFC629]/20 transition-all"
+                />
+              </div>
               <button
                 type="submit"
                 disabled={loading}
