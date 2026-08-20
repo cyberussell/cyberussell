@@ -22,14 +22,14 @@ export const metadata: Metadata = {
     description: "Resume of Russell Parayno, Senior AI Software Engineer and Full-Stack Developer (React, Next.js, TypeScript, Supabase) building AI-powered SaaS applications.",
     url: "https://www.cyberussell.com/resume",
     siteName: "Cyberussell",
-    images: [{ url: "/og-image.jpg?v=2", width: 1200, height: 630 }],
+    images: [{ url: "/resume/og-image.png", width: 1200, height: 630, alt: "Russell A Parayno — Full-Stack Engineer, Tech Lead, Problem Solver" }],
     type: "profile",
   },
   twitter: {
     card: "summary_large_image",
     title: "Russell Parayno — Resume | Senior AI Software Engineer",
     description: "Resume of Russell Parayno, Senior AI Software Engineer and Full-Stack Developer (React, Next.js, TypeScript, Supabase) building AI-powered SaaS applications.",
-    images: ["/og-image.jpg?v=2"],
+    images: ["/resume/og-image.png"],
   },
 };
 

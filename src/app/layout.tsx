@@ -43,10 +43,10 @@ export const metadata: Metadata = {
     siteName: "Cyberussell",
     images: [
       {
-        url: "/api/og",
+        url: "/home-og-image.png",
         width: 1200,
         height: 630,
-        alt: "Cyberussell — Your Skills. Your Income.",
+        alt: "Cyberussell — Building Scalable Web Solutions",
       },
     ],
     type: "website",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     title: "Cyberussell — Your Skills. Your Income.",
     description:
       "Data-backed guides for Filipinos who want to earn online. Free. No email. No payment.",
-    images: ["/api/og"],
+    images: ["/home-og-image.png"],
   },
 };
 

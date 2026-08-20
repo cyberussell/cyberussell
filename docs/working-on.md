@@ -12,6 +12,41 @@ Current Status: Live-verified in-browser at 375px (hamburger, unchanged), 700px 
 
 ---
 
+**Homepage — set custom Open Graph image for www.cyberussell.com (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `homepage-og-image-v1.md`:**
+
+Current Product: Site-wide (root layout, homepage).
+
+Current Feature: Russell supplied a third branded graphic ("Building Scalable Web Solutions") to replace the homepage's OG/Twitter card image. The homepage inherits `src/app/layout.tsx`'s metadata, which previously pointed at the dynamic `/api/og` route (a `next/og`-rendered image with different homepage copy). Cropped to 1200×630 with `sharp`, saved to `public/home-og-image.png`, repointed `openGraph.images`/`twitter.images` in `layout.tsx` at the static file. Deliberately left `/api/og` itself alone (still used by 3 `ai-tools/*` pages) and left the much more widely-used `public/og-image.jpg` (referenced by ~137 other page files) untouched — both out of scope for "replace the OG for www.cyberussell.com."
+
+Current Status: `npx tsc --noEmit` clean. Live-verified via local dev server + curl: homepage `og:image` resolves to `https://www.cyberussell.com/home-og-image.png` at 1200×630, image returns 200. Committed and pushed.
+
+**Next recommended task:** Russell reviews/merges the PR, then spot-checks the live share preview.
+
+---
+
+**Resume — set custom Open Graph image for `/resume` (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `resume-og-image-v1.md`:**
+
+Current Product: Resume page (`/resume`) — not one of the 7 main products, a standalone page.
+
+Current Feature: Russell supplied a second branded graphic (same black/gold "RP" monogram style as the `/portfolio` OG image, with `www.cyberussell.com/resume` as the URL line) for the resume page's social-share image, which previously fell back to the site-wide default `/og-image.jpg?v=2`. Cropped to 1200×630 with `sharp` (same approach as the portfolio image), saved to `public/resume/og-image.png`, wired into `src/app/resume/page.tsx`'s `openGraph`/`twitter` metadata. Also audited the page for any place Russell's name was rendered as "Cyberussell" instead of "Russell Parayno" (his stated concern) — found none; every "Cyberussell" occurrence on the page is a legitimate brand/URL/product-name/handle reference, not a stand-in for his name.
+
+Current Status: `npx tsc --noEmit` clean. Live-verified via local dev server + curl: `og:image` resolves to `https://www.cyberussell.com/resume/og-image.png` at 1200×630, image returns 200. Committed and pushed to `claude/cyberussell-resume-og-graph-h3k9x2`.
+
+**Next recommended task:** Russell reviews/merges the PR, then spot-checks the live share preview.
+
+---
+
+**Portfolio — set custom Open Graph image for `/portfolio` (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `portfolio-og-image-v1.md`:**
+
+Current Product: Services (Portfolio) — `/portfolio`.
+
+Current Feature: Russell supplied a branded graphic (black/gold "RP" monogram, name, title lines, tech-stack row) to use as the `/portfolio` page's social-share (Open Graph/Twitter card) image. The index page (`src/app/portfolio/page.tsx`) previously had no `openGraph`/`twitter` metadata at all — only `title`/`description`/canonical — so link previews were falling back to whatever default the platform picks up. Saved the image as `public/portfolio/og-image.png` and added an `openGraph`/`twitter` block to the page's `metadata` export, following the same shape already used in the root layout and `/portfolio/[slug]/page.tsx`. Initially saved at 1536×1024 (as supplied); Russell then asked for it to be cropped to the platform-standard 1200×630 — `npm install` (not present in this session) pulled in `sharp` as a side effect, used it to center-crop and resize the image, visually verified the crop kept everything intact, and updated the OG width/height tags to match.
+
+Current Status: `npx tsc --noEmit` clean. Live-verified via local dev server + curl: `og:image`/`twitter:image` resolve to `https://www.cyberussell.com/portfolio/og-image.png` at 1200×630, image request returns 200, all other og/twitter tags render correctly. Committed and pushed to `claude/cyberussell-portfolio-og-graph-e9u4w3`.
+
+**Next recommended task:** Russell spot-checks the share preview on Facebook/Twitter/Slack (their cache may need a manual re-scrape via each platform's debugger).
+
+---
 
 **Portfolio — added Cyberussell Academy as a full case-study entry (2026-08-20) — code done, live-verified, NOT committed:**
 

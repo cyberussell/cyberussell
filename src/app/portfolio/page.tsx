@@ -7,8 +7,29 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Portfolio — Cyberussell",
-  description: "A look at websites and web apps built by Cyberussell — real projects, real results.",
+  description: "A look at websites and web apps built by Russell — real projects, real results.",
   alternates: { canonical: "https://www.cyberussell.com/portfolio" },
+  openGraph: {
+    title: "Russell A Parayno — Portfolio",
+    description: "A look at websites and web apps built by Russell — real projects, real results.",
+    url: "https://www.cyberussell.com/portfolio",
+    siteName: "Cyberussell",
+    images: [
+      {
+        url: "/portfolio/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Russell A Parayno — Full-Stack Engineer, Tech Lead, Problem Solver",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Russell A Parayno — Portfolio",
+    description: "A look at websites and web apps built by Russell — real projects, real results.",
+    images: ["/portfolio/og-image.png"],
+  },
 };
 
 const DEMO_SITES = [
