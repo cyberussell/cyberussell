@@ -6,6 +6,8 @@
   "category": "Web App",
   "date": "2026-07-13",
   "timeline": "Live",
+  "coverImage": "/portfolio/territory-management-system/cover.png",
+  "icon": "/portfolio/territory-management-system/icon.png",
   "liveUrl": "/tms",
   "techStack": ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL"],
   "overview": "TMS is a standalone multi-congregation SaaS for organizing, assigning, and tracking territory work during field ministry — built with its own Supabase project, its own auth, and a fully isolated codebase from Cyberussell.com's other products.",
