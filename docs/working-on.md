@@ -1,5 +1,17 @@
 # Current Work
 
+**Resume — set custom Open Graph image for `/resume` (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `resume-og-image-v1.md`:**
+
+Current Product: Resume page (`/resume`) — not one of the 7 main products, a standalone page.
+
+Current Feature: Russell supplied a second branded graphic (same black/gold "RP" monogram style as the `/portfolio` OG image, with `www.cyberussell.com/resume` as the URL line) for the resume page's social-share image, which previously fell back to the site-wide default `/og-image.jpg?v=2`. Cropped to 1200×630 with `sharp` (same approach as the portfolio image), saved to `public/resume/og-image.png`, wired into `src/app/resume/page.tsx`'s `openGraph`/`twitter` metadata. Also audited the page for any place Russell's name was rendered as "Cyberussell" instead of "Russell Parayno" (his stated concern) — found none; every "Cyberussell" occurrence on the page is a legitimate brand/URL/product-name/handle reference, not a stand-in for his name.
+
+Current Status: `npx tsc --noEmit` clean. Live-verified via local dev server + curl: `og:image` resolves to `https://www.cyberussell.com/resume/og-image.png` at 1200×630, image returns 200. Committed and pushed to `claude/cyberussell-resume-og-graph-h3k9x2`.
+
+**Next recommended task:** Russell reviews/merges the PR, then spot-checks the live share preview.
+
+---
+
 **Portfolio — set custom Open Graph image for `/portfolio` (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `portfolio-og-image-v1.md`:**
 
 Current Product: Services (Portfolio) — `/portfolio`.
