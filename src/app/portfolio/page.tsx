@@ -17,8 +17,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/portfolio/og-image.png",
-        width: 1536,
-        height: 1024,
+        width: 1200,
+        height: 630,
         alt: "Russell A Parayno — Full-Stack Engineer, Tech Lead, Problem Solver",
       },
     ],

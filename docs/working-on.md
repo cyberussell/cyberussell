@@ -4,11 +4,11 @@
 
 Current Product: Services (Portfolio) — `/portfolio`.
 
-Current Feature: Russell supplied a branded graphic (black/gold "RP" monogram, name, title lines, tech-stack row) to use as the `/portfolio` page's social-share (Open Graph/Twitter card) image. The index page (`src/app/portfolio/page.tsx`) previously had no `openGraph`/`twitter` metadata at all — only `title`/`description`/canonical — so link previews were falling back to whatever default the platform picks up. Saved the image as `public/portfolio/og-image.png` (1536×1024, as supplied — no image-processing tooling available in this environment to crop to the standard 1200×630 OG ratio) and added an `openGraph`/`twitter` block to the page's `metadata` export, following the same shape already used in the root layout and `/portfolio/[slug]/page.tsx`.
+Current Feature: Russell supplied a branded graphic (black/gold "RP" monogram, name, title lines, tech-stack row) to use as the `/portfolio` page's social-share (Open Graph/Twitter card) image. The index page (`src/app/portfolio/page.tsx`) previously had no `openGraph`/`twitter` metadata at all — only `title`/`description`/canonical — so link previews were falling back to whatever default the platform picks up. Saved the image as `public/portfolio/og-image.png` and added an `openGraph`/`twitter` block to the page's `metadata` export, following the same shape already used in the root layout and `/portfolio/[slug]/page.tsx`. Initially saved at 1536×1024 (as supplied); Russell then asked for it to be cropped to the platform-standard 1200×630 — `npm install` (not present in this session) pulled in `sharp` as a side effect, used it to center-crop and resize the image, visually verified the crop kept everything intact, and updated the OG width/height tags to match.
 
-Current Status: `npx tsc --noEmit` clean (had to run `npm install` first — `node_modules` wasn't present in this session). Live-verified via local dev server + curl: `og:image`/`twitter:image` resolve to `https://www.cyberussell.com/portfolio/og-image.png`, image request returns 200, all other og/twitter tags render correctly. Committed and pushed to `claude/cyberussell-portfolio-og-graph-e9u4w3`.
+Current Status: `npx tsc --noEmit` clean. Live-verified via local dev server + curl: `og:image`/`twitter:image` resolve to `https://www.cyberussell.com/portfolio/og-image.png` at 1200×630, image request returns 200, all other og/twitter tags render correctly. Committed and pushed to `claude/cyberussell-portfolio-og-graph-e9u4w3`.
 
-**Next recommended task:** Russell spot-checks the share preview on Facebook/Twitter/Slack (their cache may need a manual re-scrape via each platform's debugger) and decides whether the 1536×1024 ratio looks acceptable as-is or should be cropped to 1200×630.
+**Next recommended task:** Russell spot-checks the share preview on Facebook/Twitter/Slack (their cache may need a manual re-scrape via each platform's debugger).
 
 ---
 
