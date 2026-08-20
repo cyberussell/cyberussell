@@ -18,8 +18,6 @@ export default function OrderSummaryPanel({
   emptyMessage?: string;
   onContinue?: () => void;
 }) {
-  const itemCount = lines.reduce((sum, line) => sum + line.qty, 0);
-
   return (
     <div className="bg-white rounded-2xl border border-[#F1F5F9] shadow-[0_8px_24px_rgba(15,23,42,0.06)] p-5 md:p-6">
       <h3 className="font-sans font-black text-[16px] text-[#14181F] mb-4">{title}</h3>
@@ -27,16 +25,18 @@ export default function OrderSummaryPanel({
       {lines.length === 0 ? (
         <p className="font-[family-name:var(--font-inter)] text-[13.5px] text-[#64748B] mb-4">{emptyMessage}</p>
       ) : (
-        <div className="flex flex-col gap-2.5 mb-4">
-          <div className="flex items-center justify-between">
-            <span className="font-[family-name:var(--font-inter)] text-[13.5px] text-[#64748B]">Items</span>
-            <span className="font-[family-name:var(--font-inter)] font-semibold text-[13.5px] text-[#14181F]">{itemCount}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-[family-name:var(--font-inter)] text-[13.5px] text-[#64748B]">Sub Total</span>
-            <span className="font-[family-name:var(--font-inter)] font-semibold text-[13.5px] text-[#14181F]">{peso(subtotal)}</span>
-          </div>
-        </div>
+        <ul className="flex flex-col gap-3 mb-4 max-h-[280px] overflow-y-auto">
+          {lines.map((line) => (
+            <li key={line.item.id} className="flex items-start justify-between gap-3">
+              <p className="font-[family-name:var(--font-inter)] font-semibold text-[13.5px] text-[#14181F]">
+                {line.item.name} <span className="text-[#64748B] font-normal">× {line.qty}</span>
+              </p>
+              <p className="font-[family-name:var(--font-inter)] font-bold text-[13.5px] text-[#14181F] whitespace-nowrap">
+                {peso(line.item.effective_price * line.qty)}
+              </p>
+            </li>
+          ))}
+        </ul>
       )}
 
       <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-between mb-5">
