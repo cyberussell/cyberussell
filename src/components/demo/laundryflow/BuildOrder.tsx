@@ -169,7 +169,7 @@ export default function BuildOrder() {
                                     aria-label={`Remove one ${item.name}`}
                                     className="w-7 h-7 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center disabled:opacity-40 hover:border-[#FFC629] transition-colors"
                                   >
-                                    <Minus size={12} />
+                                    <Minus size={12} className="text-[#14181F]" />
                                   </button>
                                   <span className="w-5 text-center font-sans font-black text-[14px] text-[#14181F]">{qty}</span>
                                   <button
