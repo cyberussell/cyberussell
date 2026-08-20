@@ -47,12 +47,12 @@ export default function Header() {
             <Image src={PHOTOS.logo} alt={SHOP.fullName} width={200} height={80} priority className="h-14 md:h-16 w-auto" />
           </a>
 
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-3 lg:gap-8">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="font-[family-name:var(--font-inter)] text-[13.5px] font-semibold text-[#14181F]/70 hover:text-[#14181F] transition-colors"
+                className="font-[family-name:var(--font-inter)] text-[11.5px] lg:text-[13.5px] font-semibold text-[#14181F]/70 hover:text-[#14181F] transition-colors whitespace-nowrap"
               >
                 {link.label}
               </a>
@@ -61,7 +61,7 @@ export default function Header() {
 
           <a
             href="/demo/laundryflow/book-a-pickup"
-            className="hidden md:inline-flex items-center gap-2 bg-[#FFC629] text-[#14181F] font-[family-name:var(--font-inter)] font-bold text-[13.5px] py-2.5 px-5 rounded-lg hover:opacity-90 transition-all"
+            className="hidden md:inline-flex items-center gap-2 bg-[#FFC629] text-[#14181F] font-[family-name:var(--font-inter)] font-bold text-[11.5px] lg:text-[13.5px] py-2 px-3.5 lg:py-2.5 lg:px-5 rounded-lg hover:opacity-90 transition-all whitespace-nowrap"
           >
             Book Now
           </a>

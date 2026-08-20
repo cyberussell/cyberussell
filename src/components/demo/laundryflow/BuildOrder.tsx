@@ -105,7 +105,81 @@ export default function BuildOrder() {
       {!loading && !error && data && (
         <div className="max-w-6xl mx-auto grid lg:grid-cols-[1.6fr_360px] gap-10 items-start">
           <div className="flex flex-col gap-6">
-            <div className="overflow-x-auto rounded-2xl border border-[#F1F5F9] shadow-[0_8px_24px_rgba(15,23,42,0.06)]">
+            <div className="md:hidden rounded-2xl border border-[#F1F5F9] shadow-[0_8px_24px_rgba(15,23,42,0.06)] overflow-hidden">
+              {grouped.map((group) => {
+                const meta = CATEGORY_META[group.category];
+                return (
+                  <Fragment key={group.category}>
+                    <div className="bg-[#FAFAF8] px-5 py-2.5 border-t border-[#F1F5F9] first:border-t-0 flex items-center gap-2">
+                      <meta.icon size={14} className="text-[#B98900]" />
+                      <span className="font-sans font-black text-[12.5px] text-[#14181F]">{meta.label}</span>
+                    </div>
+                    {group.items.map((item) => {
+                      const qty = qtyById[item.id] ?? 0;
+                      return (
+                        <div key={item.id} className="px-5 py-4 border-t border-[#F1F5F9] flex flex-col gap-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start gap-2.5 min-w-0">
+                              {qty > 0 ? (
+                                <button
+                                  type="button"
+                                  onClick={() => setQty(item, 0)}
+                                  aria-label={`Remove ${item.name} from order`}
+                                  className="mt-0.5 w-5 h-5 shrink-0 rounded-full flex items-center justify-center text-[#94A3B8] hover:text-[#14181F] hover:bg-[#F1F5F9] transition-colors"
+                                >
+                                  <X size={13} />
+                                </button>
+                              ) : (
+                                <span className="w-5 shrink-0" />
+                              )}
+                              <div className="min-w-0">
+                                <p className="font-sans font-black text-[14px] text-[#0F172A]">{item.name}</p>
+                                {item.on_promo && (
+                                  <span className="inline-block mt-1 text-[10.5px] font-bold text-white bg-[#B98900] rounded-full px-2 py-0.5">
+                                    On Promo
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="font-sans font-black text-[14px] text-[#B98900]">{peso(item.effective_price)}</p>
+                              <p className="text-[11px] font-normal text-[#64748B]">{unitLabel(item.unit)}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between pl-[30px]">
+                            <div className="flex items-center gap-2.5">
+                              <button
+                                type="button"
+                                onClick={() => setQty(item, qty - 1)}
+                                disabled={qty === 0}
+                                aria-label={`Remove one ${item.name}`}
+                                className="w-7 h-7 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center disabled:opacity-40 hover:border-[#FFC629] transition-colors"
+                              >
+                                <Minus size={12} className="text-[#14181F]" />
+                              </button>
+                              <span className="w-5 text-center font-sans font-black text-[14px] text-[#14181F]">{qty}</span>
+                              <button
+                                type="button"
+                                onClick={() => setQty(item, qty + 1)}
+                                aria-label={`Add one ${item.name}`}
+                                className="w-7 h-7 rounded-full bg-[#FFC629] flex items-center justify-center hover:opacity-90 transition-opacity"
+                              >
+                                <Plus size={12} className="text-[#14181F]" />
+                              </button>
+                            </div>
+                            <span className="font-sans font-black text-[14px] text-[#14181F]">
+                              {qty > 0 ? peso(item.effective_price * qty) : "—"}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </Fragment>
+                );
+              })}
+            </div>
+
+            <div className="hidden md:block overflow-x-auto rounded-2xl border border-[#F1F5F9] shadow-[0_8px_24px_rgba(15,23,42,0.06)]">
               <table className="w-full min-w-[640px] border-collapse">
                 <thead>
                   <tr className="bg-[#FFC629]">

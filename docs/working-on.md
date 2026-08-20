@@ -1,5 +1,18 @@
 # Current Work
 
+**LaundryFlow demo — shared Header nav fixed for tablet/narrow-desktop widths (2026-08-20) — code done, live-verified, NOT committed — see checkpoint `laundryflow-header-nav-breakpoint-v1.md`:**
+
+Current Product: Services (Portfolio) — `src/components/demo/laundryflow/Header.tsx`, shared across all `/demo/laundryflow/*` pages.
+
+Current Feature: Russell shared a screenshot of the main nav overlapping/wrapping ("Build Your Order" and "Track Order" breaking onto two lines, "Book Now" button pushed off-edge). Reproduced exactly at 768px — the desktop nav's `md:flex` breakpoint (768px) doesn't leave enough room for the logo + 5 links + CTA button at the original 13.5px font. First pass raised the breakpoint to `lg` (1024px) to hide the nav behind the hamburger in that range; Russell then asked to keep the nav visible and just shrink the font instead. Reverted to the `md` (768px) breakpoint, scaled nav links/Book Now down to `text-[11.5px]`/`gap-3` at `md`, stepping back up to the original `text-[13.5px]`/`gap-8` at `lg` (1024px)+.
+
+Current Status: Live-verified in-browser at 375px (hamburger, unchanged), 700px (still hamburger, below `md`), 768px ("Build Your Order" now one line, full nav fits with room to spare), and 1024px (steps up to original larger font/spacing, still fits). Not committed — this repo's convention is to let Russell review before committing.
+
+**Next recommended task:** Russell reviews the diff and the live page, then decides on committing — likely bundled with the other pending, uncommitted LaundryFlow mobile fix from this same session (Build Your Order table/card layout, `laundryflow-build-order-table-layout-v2.md`).
+
+---
+
+
 **Portfolio — added Cyberussell Academy as a full case-study entry (2026-08-20) — code done, live-verified, NOT committed:**
 
 Current Product: Services (Portfolio) — `/portfolio` and new `/portfolio/academy`.
@@ -14,15 +27,15 @@ Current Status: JSON validated, dev server routes checked via curl against the o
 
 ---
 
-**LaundryFlow demo — Build Your Order restructured into a shopping-cart-style table layout (2026-08-20) — code done, tsc clean, NOT live-data-verified locally, NOT committed — see checkpoint `laundryflow-build-order-table-layout-v1.md`:**
+**LaundryFlow demo — Build Your Order mobile responsiveness fixed (2026-08-20) — code done, tsc clean, live-data-verified, NOT committed — see checkpoints `laundryflow-build-order-table-layout-v1.md` + `-v2.md`:**
 
 Current Product: Services (Portfolio) — `/demo/laundryflow/order`.
 
-Current Feature: Russell shared a reference screenshot of a generic shopping-cart page (table with Product/Price/Quantity/Subtotal columns, right-side Order Summary card with totals + checkout button) and asked to copy the *layout*, not the brand/colors, onto the existing Build Your Order page. Confirmed one scope question first (skip the reference's coupon-code field — no real discount system here). Restructured `BuildOrder.tsx`'s catalog picker from a per-category card grid into a table (category groups as section rows, per-row `− qty +` stepper plus a remove `×` once qty > 0). Restyled `OrderSummaryPanel.tsx` to an "Order Summary" card with an Items-count row, Sub Total, Total, and moved the "Continue to Schedule Pickup" button inside the card via a new optional `onContinue` prop (existing `BookingFlow.tsx` usages without that prop are unaffected).
+Current Feature: v1 (earlier this session) restructured Build Your Order from a card grid into a table but couldn't be visually verified locally (no `LMS_ZONE_URL`). Russell then shared production screenshots showing the table clipped on mobile (375–390px): `min-w-[640px]` inside `overflow-x-auto` pushed Quantity/Subtotal off-screen with no visible scroll cue. Fixed in v2: added a `md:hidden` stacked-card layout for mobile (same category groups, same `qtyById`/`setQty` state and handlers, just rendered as vertical cards instead of table columns); the original table is now `hidden md:block` and otherwise unchanged.
 
-Current Status: `npx tsc --noEmit` clean, no new console errors. Could **not** visually verify the populated table against real catalog data locally — this repo's local dev has no `LMS_ZONE_URL`, a pre-existing gap this page has always had (see prior checkpoints). Tried to work around it by monkey-patching `window.fetch` in the browser tool, but that tool runs in an isolated JS world so the patch never reached the page's real fetch call. Verified via tsc + careful code review instead (markup-only restructure, same state/handlers reused). Not committed — this repo's convention is to let Russell review before committing.
+Current Status: `npx tsc --noEmit` clean. This time **fully live-data-verified locally** — added `LMS_ZONE_URL=https://laundrymanagementsystem.vercel.app` to local `.env.local` (gitignored, precedent from the Appointments zone work) so the real catalog fetch works in dev. Screenshotted and confirmed correct at 375px (mobile cards, no clipping), 768px (`md` table cutover), and 1280px (desktop table + sidebar) against real Aling Maria catalog data. Not committed — this repo's convention is to let Russell review before committing.
 
-**Next recommended task:** Russell reviews the diff and either sets `LMS_ZONE_URL` locally or deploys to a preview to confirm the live table renders correctly with real catalog data, then decides on committing.
+**Next recommended task:** Russell reviews the diff and the live mobile page, then decides on committing.
 
 ---
 
