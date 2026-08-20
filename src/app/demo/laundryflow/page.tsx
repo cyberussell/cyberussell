@@ -4,7 +4,6 @@ import Hero from "@/components/demo/laundryflow/Hero";
 import TrustStrip from "@/components/demo/laundryflow/TrustStrip";
 import Services from "@/components/demo/laundryflow/Services";
 import Satisfaction from "@/components/demo/laundryflow/Satisfaction";
-import OrderTracking from "@/components/demo/laundryflow/OrderTracking";
 import ContactBooking from "@/components/demo/laundryflow/ContactBooking";
 import Footer from "@/components/demo/laundryflow/Footer";
 
@@ -22,7 +21,6 @@ export default function LaundryFlowDemo() {
       <TrustStrip />
       <Services />
       <Satisfaction />
-      <OrderTracking />
       <ContactBooking />
       <Footer />
     </div>

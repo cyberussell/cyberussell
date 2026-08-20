@@ -26,7 +26,7 @@ export const BRANCHES = ["Quezon City (Main)", "Makati", "Pasig", "Mandaluyong"]
 export const NAV_LINKS = [
   { label: "Home", href: "/demo/laundryflow#top" },
   { label: "Services", href: "/demo/laundryflow#services" },
-  { label: "Track Order", href: "/demo/laundryflow#dashboard" },
+  { label: "Track Order", href: "/demo/laundryflow/track-order" },
   { label: "Contact", href: "/demo/laundryflow#contact" },
 ];
 
