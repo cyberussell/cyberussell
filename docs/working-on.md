@@ -1,5 +1,17 @@
 # Current Work
 
+**Homepage — set custom Open Graph image for www.cyberussell.com (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `homepage-og-image-v1.md`:**
+
+Current Product: Site-wide (root layout, homepage).
+
+Current Feature: Russell supplied a third branded graphic ("Building Scalable Web Solutions") to replace the homepage's OG/Twitter card image. The homepage inherits `src/app/layout.tsx`'s metadata, which previously pointed at the dynamic `/api/og` route (a `next/og`-rendered image with different homepage copy). Cropped to 1200×630 with `sharp`, saved to `public/home-og-image.png`, repointed `openGraph.images`/`twitter.images` in `layout.tsx` at the static file. Deliberately left `/api/og` itself alone (still used by 3 `ai-tools/*` pages) and left the much more widely-used `public/og-image.jpg` (referenced by ~137 other page files) untouched — both out of scope for "replace the OG for www.cyberussell.com."
+
+Current Status: `npx tsc --noEmit` clean. Live-verified via local dev server + curl: homepage `og:image` resolves to `https://www.cyberussell.com/home-og-image.png` at 1200×630, image returns 200. Committed and pushed.
+
+**Next recommended task:** Russell reviews/merges the PR, then spot-checks the live share preview.
+
+---
+
 **Resume — set custom Open Graph image for `/resume` (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `resume-og-image-v1.md`:**
 
 Current Product: Resume page (`/resume`) — not one of the 7 main products, a standalone page.
