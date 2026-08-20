@@ -7,7 +7,40 @@ export const CLINIC = {
   phone: "(02) 8123 4567",
   email: "hello@brightsmilesdental.ph",
   hours: "Mon–Sat: 9:00 AM – 6:30 PM",
+  // Real tenant in the Appointment System (cyberussell.com/appointments) —
+  // provisioned 2026-08-20, see docs/working-on.md for the full ID mapping.
+  appointmentBusinessSlug: "brightsmile-dental-clinic",
 };
+
+// Live data from the real Appointment System — prices/names/duration come
+// from cyberussell.com/appointments, the same tenant provisioned for this demo.
+export type AppointmentService = { id: string; name: string; price: number; duration_min: number };
+// serviceIds: the specific services this person is restricted to, or null if
+// unrestricted (can perform any service) — lets a caller cross-filter in
+// either direction (by service, or by staff) from one fetch.
+export type AppointmentStaffMember = { id: string; name: string; title: string; serviceIds: string[] | null };
+
+export async function fetchAppointmentServices(): Promise<AppointmentService[]> {
+  const res = await fetch(`/appointments/api/services?business=${CLINIC.appointmentBusinessSlug}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? "Failed to load services");
+  return data.services ?? [];
+}
+
+export async function fetchAppointmentStaff(): Promise<AppointmentStaffMember[]> {
+  const res = await fetch(`/appointments/api/staff?business=${CLINIC.appointmentBusinessSlug}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? "Failed to load dentists");
+  return data.staff ?? [];
+}
+
+export function staffCanPerform(staff: AppointmentStaffMember, serviceId: string) {
+  return staff.serviceIds === null || staff.serviceIds.includes(serviceId);
+}
+
+export function formatPeso(amount: number) {
+  return `₱${amount.toLocaleString("en-US")}`;
+}
 
 export const STATS = [
   { value: 12, suffix: "+", label: "Years of Practice" },
@@ -136,5 +169,3 @@ export const FAQS = [
     answer: "We offer sedation options and a calm, judgment-free environment designed specifically for anxious patients.",
   },
 ];
-
-export const SERVICE_OPTIONS = SERVICES.map((s) => s.title);

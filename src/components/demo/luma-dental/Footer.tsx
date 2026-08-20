@@ -1,6 +1,26 @@
 import { MapPin, Phone, Mail, Clock, Smile } from "lucide-react";
 import { CLINIC } from "./data";
 
+// lucide-react (this version) has no brand icons — small hand-drawn inline
+// SVGs instead of pulling in a new icon dependency for two mockup links.
+function InstagramIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function FacebookIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
+      <path d="M15.5 8.5h-2a1.5 1.5 0 0 0-1.5 1.5v2h3.5l-.5 3H12v7.5h-3V15H7v-3h2v-2.3C9 7.4 10.4 6 13 6h2.5v2.5Z" />
+    </svg>
+  );
+}
+
 export default function Footer() {
   return (
     <footer className="bg-[#0B1220] px-6 md:px-10 pt-16 pb-8">
@@ -16,6 +36,22 @@ export default function Footer() {
             <p className="font-[family-name:var(--font-inter)] text-[13.5px] text-white/45 leading-[1.7] max-w-[300px]">
               Modern, gentle dental care in the heart of BGC. New patients always welcome.
             </p>
+            <div className="flex gap-3 mt-4">
+              <a
+                href="#"
+                aria-label="Instagram"
+                className="flex items-center justify-center w-9 h-9 rounded-full border border-white/[0.12] text-white/50 hover:border-[#5EEAD4] hover:text-[#5EEAD4] transition-colors"
+              >
+                <InstagramIcon />
+              </a>
+              <a
+                href="#"
+                aria-label="Facebook"
+                className="flex items-center justify-center w-9 h-9 rounded-full border border-white/[0.12] text-white/50 hover:border-[#5EEAD4] hover:text-[#5EEAD4] transition-colors"
+              >
+                <FacebookIcon />
+              </a>
+            </div>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -47,9 +83,17 @@ export default function Footer() {
           <p className="font-[family-name:var(--font-inter)] text-[12px] text-white/30">
             &copy; {new Date().getFullYear()} {CLINIC.name}. Fictional clinic for demo purposes.
           </p>
-          <a href="/portfolio" className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 hover:text-[#5EEAD4] transition-colors">
-            Concept &amp; design by Cyberussell →
-          </a>
+          <div className="flex items-center gap-5">
+            <a href="/appointments/login" className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 hover:text-[#5EEAD4] transition-colors">
+              Admin Login
+            </a>
+            <a href="/appointments/login" className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 hover:text-[#5EEAD4] transition-colors">
+              Staff Login
+            </a>
+            <a href="/portfolio" className="font-[family-name:var(--font-inter)] text-[12px] text-white/40 hover:text-[#5EEAD4] transition-colors">
+              Concept &amp; design by Cyberussell →
+            </a>
+          </div>
         </div>
       </div>
     </footer>
