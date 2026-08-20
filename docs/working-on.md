@@ -1,5 +1,19 @@
 # Current Work
 
+**LaundryFlow demo — real photos/logo, richer footer, order-tracking moved to its own page and wired to the real LMS (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `laundryflow-demo-redesign-v2.md`:**
+
+Current Product: Services (Portfolio) — `/demo/laundryflow`. Also touched the real Laundry Management System (separate isolated product) — explicitly confirmed with Russell first, see below.
+
+Current Feature: Follow-up polish on the v1 redesign (commit `8a66955`): real photos (hero, two attendant shots, logo) supplied by Russell replaced the placeholder panels/icon; hero made full-bleed with copy overlaid; footer restored to a richer layout (branch address, contact numbers, service areas, LMS Admin/Staff Login links); `PlansComparison` section removed from the homepage per Russell's direction.
+
+Russell then asked to move "Track Your Order, Anytime" to its own page, using the real LMS API if one exists — it does (`/lms/track`, `/lms/track/[token]`, in the standalone `laundrymanagementsystem` repo). New page: `/demo/laundryflow/track-order`. Along the way, found and fixed a real production bug unrelated to the demo: the LMS's Vercel Production `LMS_SUPABASE_SERVICE_ROLE_KEY` was stale after a Supabase API-key-system migration, silently breaking the live public tracking feature for real customers. Russell generated a fresh key from the Supabase dashboard; it was written to both the local env and Vercel Production (`vercel env rm`/`add` + `vercel redeploy`), verified fixed against the actual production deployment. Provisioned one real demo order (`ORD-000041`, walk-in "Jamie Reyes") under Russell's existing **active** "Aling Maria Laundry Shop" business in the live LMS database (he confirmed which of two existing same-named businesses to use) — live-verified both the direct token link and the manual order-number+phone lookup form against production.
+
+Current Status: `npx tsc --noEmit` clean throughout. Live-verified extensively — demo pages via local dev server, the real LMS fix via the actual `laundrymanagementsystem.vercel.app` deployment. Committed and pushed (two commits: `8a66955` for v1, plus a v2 batch for this follow-up work — see checkpoint for exact file list).
+
+**Next recommended task:** Russell spot-checks `/demo/laundryflow/track-order` live and the real LMS production fix, decides whether the "Jamie Reyes" test order should be cleaned up or left as-is.
+
+---
+
 **Portfolio — laundry case study copy/art refresh to match the LaundryFlow redesign (2026-08-20) — code done, tsc clean, live-verified, NOT yet committed — see checkpoint `portfolio-laundry-copy-refresh-v1.md`:**
 
 Current Product: Services (Portfolio) — `/portfolio` and `/portfolio/laundry-management-system`.

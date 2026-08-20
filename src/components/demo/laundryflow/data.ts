@@ -84,8 +84,8 @@ export const ORDER_TRACKING = {
   eyebrow: "ALWAYS IN THE LOOP",
   heading: "Track Your Order, Anytime",
   body: "Every drop-off gets an order number. Check its status online — no calls, no guessing when it's ready.",
-  demoUrl: "alingmarialaundry.ph/track/ORD-000482",
-  orderNumber: "ORD-000482",
+  demoUrl: "alingmarialaundry.ph/track/ORD-000041",
+  orderNumber: "ORD-000041",
   orderService: "Wash & Fold — 2 loads",
   currentStep: "Folding",
   steps: [
@@ -95,6 +95,10 @@ export const ORDER_TRACKING = {
     { label: "Folding", time: "In progress" },
     { label: "Ready for Pickup", time: "Pending" },
   ],
+  // Real order, live in the actual LMS product — lets a visitor test the
+  // real /lms/track lookup end-to-end, not just look at the illustration.
+  demoOrderNumber: "ORD-000041",
+  demoPhone: "0917 555 0101",
 };
 
 export const TESTIMONIAL = {

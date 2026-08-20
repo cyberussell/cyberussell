@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import Header from "@/components/demo/laundryflow/Header";
 import Footer from "@/components/demo/laundryflow/Footer";
 import OrderTracking from "@/components/demo/laundryflow/OrderTracking";
+import { ORDER_TRACKING } from "@/components/demo/laundryflow/data";
 
 export const metadata: Metadata = {
   title: "Track Your Order — Aling Maria Laundry Shop",
@@ -29,6 +30,10 @@ export default function TrackOrderPage() {
           >
             Open Order Lookup <ArrowRight size={16} />
           </a>
+          <p className="font-[family-name:var(--font-inter)] text-[12.5px] text-[#14181F]/45 mt-4">
+            Try it yourself — order number <span className="font-bold text-[#14181F]/70">{ORDER_TRACKING.demoOrderNumber}</span>, phone{" "}
+            <span className="font-bold text-[#14181F]/70">{ORDER_TRACKING.demoPhone}</span>
+          </p>
         </div>
       </section>
 
