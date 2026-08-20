@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Minus, Plus, ArrowRight, AlertCircle, Truck, Clock, Radar } from "lucide-react";
+import { Minus, Plus, X, ArrowRight, AlertCircle, Truck, Clock, Radar } from "lucide-react";
 import { LMS_BUSINESS_SLUG, CATEGORY_META, CATEGORY_ORDER, unitLabel, type CatalogItem, type CatalogResponse } from "./orderCatalog";
 import { cartSubtotal, saveCart, type CartLine } from "./cart";
 import OrderSummaryPanel from "./OrderSummaryPanel";
@@ -104,71 +104,100 @@ export default function BuildOrder() {
 
       {!loading && !error && data && (
         <div className="max-w-6xl mx-auto grid lg:grid-cols-[1.6fr_360px] gap-10 items-start">
-          <div className="flex flex-col gap-10">
-            {grouped.map((group) => {
-              const meta = CATEGORY_META[group.category];
-              return (
-                <div key={group.category}>
-                  <div className="flex items-center gap-2.5 mb-4">
-                    <meta.icon size={18} className="text-[#B98900]" />
-                    <h2 className="font-sans font-black text-[18px] text-[#14181F]">{meta.label}</h2>
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {group.items.map((item) => {
-                      const qty = qtyById[item.id] ?? 0;
-                      return (
-                        <div
-                          key={item.id}
-                          className={`p-5 rounded-xl border-2 transition-all ${
-                            qty > 0 ? "border-[#FFC629] bg-[#FFF8E1]" : "border-[#E2E8F0]"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-3 mb-4">
-                            <div>
-                              <p className="font-sans font-black text-[15px] text-[#0F172A]">{item.name}</p>
-                              {item.on_promo && (
-                                <span className="inline-block mt-1 text-[10.5px] font-bold text-white bg-[#B98900] rounded-full px-2 py-0.5">
-                                  On Promo
+          <div className="flex flex-col gap-6">
+            <div className="overflow-x-auto rounded-2xl border border-[#F1F5F9] shadow-[0_8px_24px_rgba(15,23,42,0.06)]">
+              <table className="w-full min-w-[640px] border-collapse">
+                <thead>
+                  <tr className="bg-[#FFC629]">
+                    <th className="text-left font-sans font-black text-[11px] tracking-[1px] text-[#14181F] px-5 py-3.5">Service</th>
+                    <th className="text-left font-sans font-black text-[11px] tracking-[1px] text-[#14181F] px-5 py-3.5">Price</th>
+                    <th className="text-left font-sans font-black text-[11px] tracking-[1px] text-[#14181F] px-5 py-3.5">Quantity</th>
+                    <th className="text-right font-sans font-black text-[11px] tracking-[1px] text-[#14181F] px-5 py-3.5">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {grouped.map((group) => {
+                    const meta = CATEGORY_META[group.category];
+                    return (
+                      <Fragment key={group.category}>
+                        <tr className="bg-[#FAFAF8]">
+                          <td colSpan={4} className="px-5 py-2.5 border-t border-[#F1F5F9]">
+                            <div className="flex items-center gap-2">
+                              <meta.icon size={14} className="text-[#B98900]" />
+                              <span className="font-sans font-black text-[12.5px] text-[#14181F]">{meta.label}</span>
+                            </div>
+                          </td>
+                        </tr>
+                        {group.items.map((item) => {
+                          const qty = qtyById[item.id] ?? 0;
+                          return (
+                            <tr key={item.id} className="border-t border-[#F1F5F9]">
+                              <td className="px-5 py-4 align-top">
+                                <div className="flex items-start gap-2.5">
+                                  {qty > 0 ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => setQty(item, 0)}
+                                      aria-label={`Remove ${item.name} from order`}
+                                      className="mt-0.5 w-5 h-5 shrink-0 rounded-full flex items-center justify-center text-[#94A3B8] hover:text-[#14181F] hover:bg-[#F1F5F9] transition-colors"
+                                    >
+                                      <X size={13} />
+                                    </button>
+                                  ) : (
+                                    <span className="w-5 shrink-0" />
+                                  )}
+                                  <div>
+                                    <p className="font-sans font-black text-[14px] text-[#0F172A]">{item.name}</p>
+                                    {item.on_promo && (
+                                      <span className="inline-block mt-1 text-[10.5px] font-bold text-white bg-[#B98900] rounded-full px-2 py-0.5">
+                                        On Promo
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-5 py-4 align-top whitespace-nowrap">
+                                <p className="font-sans font-black text-[14px] text-[#B98900]">{peso(item.effective_price)}</p>
+                                <p className="text-[11px] font-normal text-[#64748B]">{unitLabel(item.unit)}</p>
+                              </td>
+                              <td className="px-5 py-4 align-top">
+                                <div className="flex items-center gap-2.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => setQty(item, qty - 1)}
+                                    disabled={qty === 0}
+                                    aria-label={`Remove one ${item.name}`}
+                                    className="w-7 h-7 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center disabled:opacity-40 hover:border-[#FFC629] transition-colors"
+                                  >
+                                    <Minus size={12} />
+                                  </button>
+                                  <span className="w-5 text-center font-sans font-black text-[14px] text-[#14181F]">{qty}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setQty(item, qty + 1)}
+                                    aria-label={`Add one ${item.name}`}
+                                    className="w-7 h-7 rounded-full bg-[#FFC629] flex items-center justify-center hover:opacity-90 transition-opacity"
+                                  >
+                                    <Plus size={12} className="text-[#14181F]" />
+                                  </button>
+                                </div>
+                              </td>
+                              <td className="px-5 py-4 align-top text-right whitespace-nowrap">
+                                <span className="font-sans font-black text-[14px] text-[#14181F]">
+                                  {qty > 0 ? peso(item.effective_price * qty) : "—"}
                                 </span>
-                              )}
-                            </div>
-                            <p className="font-sans font-black text-[16px] text-[#B98900] whitespace-nowrap">
-                              {peso(item.effective_price)}
-                              <span className="block text-[11px] font-normal text-[#64748B] text-right">{unitLabel(item.unit)}</span>
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="font-[family-name:var(--font-inter)] text-[12px] text-[#64748B]">Quantity</span>
-                            <div className="flex items-center gap-3">
-                              <button
-                                type="button"
-                                onClick={() => setQty(item, qty - 1)}
-                                disabled={qty === 0}
-                                aria-label={`Remove one ${item.name}`}
-                                className="w-8 h-8 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center disabled:opacity-40 hover:border-[#FFC629] transition-colors"
-                              >
-                                <Minus size={14} />
-                              </button>
-                              <span className="w-6 text-center font-sans font-black text-[15px] text-[#14181F]">{qty}</span>
-                              <button
-                                type="button"
-                                onClick={() => setQty(item, qty + 1)}
-                                aria-label={`Add one ${item.name}`}
-                                className="w-8 h-8 rounded-full bg-[#FFC629] flex items-center justify-center hover:opacity-90 transition-opacity"
-                              >
-                                <Plus size={14} className="text-[#14181F]" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
-            <div className="flex flex-wrap gap-x-8 gap-y-3 pt-2">
+            <div className="flex flex-wrap gap-x-8 gap-y-3">
               {PERKS.map((perk) => (
                 <div key={perk.label} className="flex items-center gap-2">
                   <perk.icon size={16} className="text-[#B98900]" />
@@ -178,16 +207,8 @@ export default function BuildOrder() {
             </div>
           </div>
 
-          <div className="hidden lg:flex flex-col gap-4 sticky top-28">
-            <OrderSummaryPanel lines={lines} subtotal={subtotal} />
-            <button
-              type="button"
-              onClick={handleContinue}
-              disabled={lines.length === 0}
-              className="inline-flex items-center justify-center gap-2 bg-[#14181F] text-white font-[family-name:var(--font-inter)] font-bold text-[14px] px-7 py-3.5 rounded-full hover:opacity-90 disabled:opacity-40 transition-all"
-            >
-              Continue to Schedule Pickup <ArrowRight size={16} />
-            </button>
+          <div className="hidden lg:block sticky top-28">
+            <OrderSummaryPanel lines={lines} subtotal={subtotal} onContinue={handleContinue} />
           </div>
         </div>
       )}

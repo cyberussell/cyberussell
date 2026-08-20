@@ -77,8 +77,7 @@ export const SATISFACTION = {
   eyebrow: "OUR PROMISE",
   heading: "Your Satisfaction Is Our Priority",
   body: "Honest pricing, careful handling, and a 100% satisfaction guarantee — if something isn't right, we re-clean it free of charge.",
-  ctaPrimary: "Learn More About Us",
-  ctaSecondary: "View All Services",
+  ctaPrimary: "Build Your Order",
 };
 
 export const ORDER_TRACKING = {

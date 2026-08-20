@@ -1,5 +1,17 @@
 # Current Work
 
+**LaundryFlow demo — Build Your Order restructured into a shopping-cart-style table layout (2026-08-20) — code done, tsc clean, NOT live-data-verified locally, NOT committed — see checkpoint `laundryflow-build-order-table-layout-v1.md`:**
+
+Current Product: Services (Portfolio) — `/demo/laundryflow/order`.
+
+Current Feature: Russell shared a reference screenshot of a generic shopping-cart page (table with Product/Price/Quantity/Subtotal columns, right-side Order Summary card with totals + checkout button) and asked to copy the *layout*, not the brand/colors, onto the existing Build Your Order page. Confirmed one scope question first (skip the reference's coupon-code field — no real discount system here). Restructured `BuildOrder.tsx`'s catalog picker from a per-category card grid into a table (category groups as section rows, per-row `− qty +` stepper plus a remove `×` once qty > 0). Restyled `OrderSummaryPanel.tsx` to an "Order Summary" card with an Items-count row, Sub Total, Total, and moved the "Continue to Schedule Pickup" button inside the card via a new optional `onContinue` prop (existing `BookingFlow.tsx` usages without that prop are unaffected).
+
+Current Status: `npx tsc --noEmit` clean, no new console errors. Could **not** visually verify the populated table against real catalog data locally — this repo's local dev has no `LMS_ZONE_URL`, a pre-existing gap this page has always had (see prior checkpoints). Tried to work around it by monkey-patching `window.fetch` in the browser tool, but that tool runs in an isolated JS world so the patch never reached the page's real fetch call. Verified via tsc + careful code review instead (markup-only restructure, same state/handlers reused). Not committed — this repo's convention is to let Russell review before committing.
+
+**Next recommended task:** Russell reviews the diff and either sets `LMS_ZONE_URL` locally or deploys to a preview to confirm the live table renders correctly with real catalog data, then decides on committing.
+
+---
+
 **LaundryFlow demo — order tracker turned into a real inline lookup (2026-08-20) — code done, tsc clean, live-verified, committed and pushed — see checkpoint `laundryflow-demo-redesign-v3.md`:**
 
 Current Product: Services (Portfolio) — `/demo/laundryflow/track-order`. Also shipped new code to the real Laundry Management System (separate isolated product) — explicitly confirmed with Russell first.

@@ -10,7 +10,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header id="top">
+    <header id="top" className="sticky top-0 z-50">
       <div className="hidden md:flex items-center justify-between bg-[#14181F] text-white/75 px-6 lg:px-10 py-2 text-[12.5px]">
         <div className="flex items-center gap-6">
           <span className="flex items-center gap-1.5">

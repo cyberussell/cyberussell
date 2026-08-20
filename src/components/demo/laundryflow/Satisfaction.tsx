@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
 import { SATISFACTION, PHOTOS } from "./data";
 import { fadeUp } from "./motion";
 
@@ -16,16 +15,10 @@ export default function Satisfaction() {
           <p className="font-[family-name:var(--font-inter)] text-[15px] leading-[1.8] text-[#14181F]/60 max-w-[440px] mb-6">{SATISFACTION.body}</p>
           <div className="flex flex-wrap gap-3.5">
             <a
-              href="/demo/laundryflow/book-a-pickup"
+              href="/demo/laundryflow/order"
               className="bg-[#FFC629] text-[#14181F] font-[family-name:var(--font-inter)] font-bold text-[14px] py-3 px-6 rounded-lg hover:opacity-90 transition-all"
             >
               {SATISFACTION.ctaPrimary}
-            </a>
-            <a
-              href="#services"
-              className="inline-flex items-center gap-1.5 text-[#14181F] font-[family-name:var(--font-inter)] font-bold text-[14px] py-3 border-b-2 border-[#14181F]"
-            >
-              {SATISFACTION.ctaSecondary} <ArrowRight size={15} />
             </a>
           </div>
         </motion.div>
