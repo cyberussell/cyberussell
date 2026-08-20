@@ -1,5 +1,19 @@
 # Current Work
 
+**Portfolio — added Cyberussell Academy as a full case-study entry (2026-08-20) — code done, live-verified, NOT committed:**
+
+Current Product: Services (Portfolio) — `/portfolio` and new `/portfolio/academy`.
+
+Current Feature: Russell asked to include `academy.cyberussell.com` (his live AI-skills course platform — separate live product, own subdomain, not part of this repo) on the `/portfolio` page. Asked whether he wanted a lightweight external-link card (the pattern already used on the resume page) or a full case-study entry matching the other real products (Appointment System, TMS, LMS, Cyberussell) — he chose the full case-study. Browsed the live site to draft accurate copy (course catalog, pricing, dashboard/shop/certificates), proposed the draft tagline/overview/problem/solution/results plus a placeholder date, and got explicit sign-off on both before writing anything (date: 2026-08-01, chosen by Russell over today's-date default).
+
+Added `src/data/portfolio/academy.json` (slug `academy`), registered it in `src/lib/portfolio/data.ts`'s `ALL_PROJECTS` array, and created a new branded `public/portfolio/academy/cover.svg` (purple/yellow palette, matching the existing per-product cover-SVG style, e.g. `appointment-system/cover.svg`). For the icon, first pulled the logo directly from the live site (`academy.cyberussell.com/logo.png`) as a placeholder; Russell then supplied the real logo file via `~/Downloads/cyberussell-academy-logo.png`, which now overwrites `public/academy-logo.png`.
+
+Current Status: JSON validated, dev server routes checked via curl against the other session's already-running `next dev` on port 3001 (this session's own Browser preview couldn't reach it — cross-session port policy — and starting a second server on 3001 fails since it's already bound): `/portfolio` → 200, `/portfolio/academy` → 200, `/academy-logo.png` → 200, `/portfolio/academy/cover.svg` → 200. Not committed — this repo's convention is to let Russell review before committing.
+
+**Next recommended task:** Russell reviews `/portfolio/academy` live (especially the real-logo icon and the drafted copy) and decides on committing, ideally alongside whatever else is already staged from today's session.
+
+---
+
 **LaundryFlow demo — Build Your Order restructured into a shopping-cart-style table layout (2026-08-20) — code done, tsc clean, NOT live-data-verified locally, NOT committed — see checkpoint `laundryflow-build-order-table-layout-v1.md`:**
 
 Current Product: Services (Portfolio) — `/demo/laundryflow/order`.

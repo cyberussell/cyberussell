@@ -1,0 +1,20 @@
+{
+  "slug": "academy",
+  "title": "Cyberussell Academy",
+  "client": "Personal Project",
+  "tagline": "Practical AI skills training platform — courses, real projects, and AI feedback that help Filipinos land online work.",
+  "category": "Web App",
+  "date": "2026-08-01",
+  "timeline": "Ongoing",
+  "coverImage": "/portfolio/academy/cover.svg",
+  "icon": "/academy-logo.png",
+  "gallery": [],
+  "liveUrl": "https://academy.cyberussell.com",
+  "techStack": ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "PayMongo"],
+  "overview": "Cyberussell Academy is an AI-skills learning platform with career-path courses — No-Code Automation, AI Virtual Assistant, AI Automation Developer, AI Agent Engineer, and more — each with lifetime access, a certificate, and an optional AI feedback add-on.",
+  "problem": "Most online courses are generic and disconnected from what actually gets a Filipino hired — no local context, no real projects, and no proof of skill at the end.",
+  "solution": "Built career-path courses tied to real, sellable outcomes — a client-ready automation, a working AI agent — each with lifetime access, a certificate, and AI-graded feedback on real submitted work.",
+  "results": "Live and growing course catalog spanning beginner to advanced tracks, with its own dashboard, shop, and certificate system.",
+  "testimonial": null,
+  "featured": true
+}
