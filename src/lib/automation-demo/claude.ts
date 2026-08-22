@@ -11,6 +11,7 @@ export interface DraftResult {
   proposedSlotLabel: string;
   proposedStartISO: string;
   proposedEndISO: string;
+  proposedTimezone: string;
   logSummary: string;
 }
 
@@ -39,8 +40,9 @@ Return ONLY valid JSON, no markdown fencing, matching exactly this shape:
   "subject": "short email subject line",
   "emailBody": "the full follow-up email body, warm and specific to their message, 80-140 words, signed 'Russell'",
   "proposedSlotLabel": "human readable, e.g. 'Thursday, 2:00 PM'",
-  "proposedStartISO": "ISO 8601 datetime for the proposed meeting start",
-  "proposedEndISO": "ISO 8601 datetime exactly 30 minutes after start",
+  "proposedStartISO": "ISO 8601 datetime for the proposed meeting start, MUST include a UTC offset (e.g. '2026-08-27T14:00:00+08:00'), never a bare/naive datetime",
+  "proposedEndISO": "ISO 8601 datetime exactly 30 minutes after start, same offset rule as above",
+  "proposedTimezone": "IANA timezone identifier matching the offset used above, e.g. 'Asia/Manila'",
   "logSummary": "2-3 sentence internal note for a CRM record: who they are, what they want, urgency, and the next step"
 }`,
       },

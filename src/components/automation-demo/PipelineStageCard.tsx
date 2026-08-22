@@ -25,6 +25,7 @@ export function PipelineStageCard({
   icon: Icon,
   link,
   linkLabel,
+  errorMessage,
   showStatusIcon = true,
 }: {
   n: string;
@@ -36,6 +37,8 @@ export function PipelineStageCard({
   icon?: LucideIcon;
   link?: string;
   linkLabel?: string;
+  /** Shown instead of the link when `status === "error"` — the real failure reason, not just a red icon. */
+  errorMessage?: string;
   /** When false, always shows the step number instead of a ✓/…/! status glyph — used for purely descriptive (non-live) cards. Ignored once `icon` is set. */
   showStatusIcon?: boolean;
 }) {
@@ -50,17 +53,35 @@ export function PipelineStageCard({
         <span
           className={`relative inline-flex items-center justify-center shrink-0 rounded-full border transition-colors duration-300 ${
             Icon ? "w-9 h-9" : "font-mono text-[12px] rounded px-[7px] py-[2px]"
-          } ${status === "active" ? "motion-safe:animate-[neon-pulse_1.3s_ease-in-out_infinite]" : ""}`}
+          }`}
           style={{ color, borderColor: color, boxShadow: STATUS_GLOW[status] }}
           aria-hidden="true"
         >
-          {Icon ? (
-            <Icon size={16} strokeWidth={2.25} />
-          ) : showStatusIcon ? (
-            status === "done" ? "✓" : status === "active" ? "…" : status === "error" ? "!" : n
-          ) : (
-            n
+          {status === "active" && (
+            <>
+              <span
+                className="absolute inset-0 rounded-full motion-safe:animate-ping"
+                style={{ backgroundColor: color, opacity: 0.45 }}
+              />
+              <span
+                className="absolute inset-0 rounded-full motion-safe:animate-ping [animation-delay:0.35s]"
+                style={{ backgroundColor: color, opacity: 0.3 }}
+              />
+            </>
           )}
+          <span
+            className={`relative inline-flex items-center justify-center ${
+              status === "active" ? "motion-safe:animate-[neon-action_0.9s_ease-in-out_infinite]" : ""
+            }`}
+          >
+            {Icon ? (
+              <Icon size={16} strokeWidth={2.25} />
+            ) : showStatusIcon ? (
+              status === "done" ? "✓" : status === "active" ? "…" : status === "error" ? "!" : n
+            ) : (
+              n
+            )}
+          </span>
         </span>
         <span
           data-step-bar
@@ -82,6 +103,9 @@ export function PipelineStageCard({
         >
           {linkLabel ?? "View"} ↗
         </a>
+      )}
+      {status === "error" && errorMessage && (
+        <div className="mt-3 font-mono text-[12px] text-[#F87171]">{errorMessage}</div>
       )}
     </div>
   );

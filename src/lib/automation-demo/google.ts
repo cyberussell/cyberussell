@@ -79,16 +79,19 @@ export async function sendGmail(
 
 export async function createCalendarEvent(
   accessToken: string,
-  opts: { summary: string; description: string; startISO: string; endISO: string }
+  opts: { summary: string; description: string; startISO: string; endISO: string; timeZone?: string }
 ): Promise<string | undefined> {
   const calendar = google.calendar({ version: "v3", auth: clientFor(accessToken) });
+  // Google rejects a dateTime with no UTC offset unless timeZone is also set — always send one,
+  // even if the caller's ISO string is well-formed, so a naive/offset-less datetime never breaks this.
+  const timeZone = opts.timeZone || "Asia/Manila";
   const res = await calendar.events.insert({
     calendarId: "primary",
     requestBody: {
       summary: opts.summary,
       description: opts.description,
-      start: { dateTime: opts.startISO },
-      end: { dateTime: opts.endISO },
+      start: { dateTime: opts.startISO, timeZone },
+      end: { dateTime: opts.endISO, timeZone },
     },
   });
   return res.data.htmlLink ?? undefined;
