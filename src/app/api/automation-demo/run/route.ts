@@ -7,6 +7,9 @@ interface RunStageResult {
   error?: string;
   messageId?: string;
   eventLink?: string;
+  eventTitle?: string;
+  eventStartISO?: string;
+  eventEndISO?: string;
   fileLink?: string;
 }
 
@@ -52,14 +55,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const eventLink = await createCalendarEvent(session.accessToken, {
+    const event = await createCalendarEvent(session.accessToken, {
       summary: `Follow-up: ${contactName || "Lead"}`,
       description: `${logSummary}\n\nProposed slot: ${proposedSlotLabel ?? ""}`,
       startISO: proposedStartISO,
       endISO: proposedEndISO,
       timeZone: proposedTimezone,
     });
-    result.schedule = { ok: true, eventLink };
+    result.schedule = {
+      ok: true,
+      eventLink: event.eventLink,
+      eventTitle: event.title,
+      eventStartISO: event.startISO,
+      eventEndISO: event.endISO,
+    };
   } catch (e) {
     console.error("automation-demo: schedule failed", e);
     result.schedule = { ok: false, error: e instanceof Error ? e.message : "Schedule failed" };

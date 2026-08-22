@@ -9,6 +9,21 @@ import { PipelineStageCard, type StageStatus } from "./PipelineStageCard";
 const STAGE_REVEAL_DELAY_MS = 900;
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+function formatEventCard(startISO?: string, endISO?: string) {
+  if (!startISO) return null;
+  const start = new Date(startISO);
+  if (Number.isNaN(start.getTime())) return null;
+  const end = endISO ? new Date(endISO) : null;
+  const startTime = start.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  const endTime = end && !Number.isNaN(end.getTime()) ? end.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : null;
+  return {
+    month: start.toLocaleDateString("en-US", { month: "short" }).toUpperCase(),
+    day: start.getDate(),
+    weekday: start.toLocaleDateString("en-US", { weekday: "long" }),
+    timeRange: endTime ? `${startTime} – ${endTime}` : startTime,
+  };
+}
+
 const SAMPLE_LEAD =
   "Hi, saw your automation work online — I run a small clinic and our front desk keeps missing follow-ups with new patients. Need something that actually handles this for us. When can we talk? - Jamie";
 
@@ -30,6 +45,9 @@ interface RunStageResult {
   error?: string;
   messageId?: string;
   eventLink?: string;
+  eventTitle?: string;
+  eventStartISO?: string;
+  eventEndISO?: string;
   fileLink?: string;
 }
 
@@ -253,6 +271,11 @@ export default function LiveDemo() {
           : "error"
         : "active";
 
+  const scheduledEvent =
+    scheduleStatus === "done" && runResult?.schedule.eventStartISO
+      ? formatEventCard(runResult.schedule.eventStartISO, runResult.schedule.eventEndISO)
+      : null;
+
   return (
     <section id="demo" ref={scopeRef} className="px-6 md:px-[clamp(24px,6vw,88px)] pt-[100px] pb-[120px]">
       <div data-reveal className="font-mono text-[11px] tracking-[0.12em] uppercase text-[#4B5265] mb-5">
@@ -274,12 +297,12 @@ export default function LiveDemo() {
         data-demo-wrap
         className="relative max-w-[1180px] rounded-2xl overflow-hidden"
         style={{
-          background: "linear-gradient(180deg, #180F2E 0%, #120A22 100%)",
+          background: "#230B45",
           boxShadow:
-            "0 0 0 1px rgba(168,85,247,0.28), 0 20px 50px rgba(0,0,0,0.55), 0 0 70px rgba(168,85,247,0.1)",
+            "0 0 0 1px rgba(216,142,255,0.4), 0 20px 50px rgba(0,0,0,0.55), 0 0 90px rgba(168,85,247,0.28)",
         }}
       >
-        <div className="flex items-center gap-2 px-4 py-[11px] border-b border-[#A855F7]/[0.15] bg-[#0F0820]/70">
+        <div className="flex items-center gap-2 px-4 py-[11px] border-b border-[#D88EFF]/[0.2] bg-[#1B0938]/80">
           <span className="w-[9px] h-[9px] rounded-full bg-[#3F424D]" />
           <span className="w-[9px] h-[9px] rounded-full bg-[#3F424D]" />
           <span className="w-[9px] h-[9px] rounded-full bg-[#A855F7]/70" />
@@ -334,7 +357,7 @@ export default function LiveDemo() {
                 onChange={(e) => setLeadText(e.target.value)}
                 rows={4}
                 disabled={phase !== "connected" || draftLoading || Boolean(draft)}
-                className="w-full rounded-md bg-[#0F0820] border border-[#A855F7]/[0.18] px-4 py-3 text-[14px] text-[#CBD5E8] font-mono focus-visible:outline-2 focus-visible:outline-[#22D3EE] focus-visible:outline-offset-0 disabled:opacity-60"
+                className="w-full rounded-md bg-[#1B0938] border border-[#D88EFF]/[0.25] px-4 py-3 text-[14px] text-[#CBD5E8] font-mono focus-visible:outline-2 focus-visible:outline-[#22D3EE] focus-visible:outline-offset-0 disabled:opacity-60"
               />
 
               <div className="flex flex-wrap gap-3 mt-4 mb-8">
@@ -360,7 +383,7 @@ export default function LiveDemo() {
               {runError && <p className="text-[13px] text-[#F87171] mb-6 font-mono">{runError}</p>}
 
               {draft && (
-                <div className="mb-8 rounded-lg border border-[#A855F7]/[0.15] bg-[#0F0820] p-5">
+                <div className="mb-8 rounded-lg border border-[#D88EFF]/[0.22] bg-[#1B0938] p-5">
                   <div className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#4B5265] mb-3">
                     Draft preview
                   </div>
@@ -431,8 +454,6 @@ export default function LiveDemo() {
                   tool="Google Calendar API"
                   icon={CalendarClock}
                   status={scheduleStatus}
-                  link={stageReveal >= 2 ? runResult?.schedule.eventLink : undefined}
-                  linkLabel="View event"
                   errorMessage={stageReveal >= 2 ? runResult?.schedule.error : undefined}
                 />
                 <PipelineStageCard
@@ -447,6 +468,35 @@ export default function LiveDemo() {
                   errorMessage={stageReveal >= 3 ? runResult?.log.error : undefined}
                 />
               </div>
+
+              {scheduledEvent && (
+                <div className="mt-5 flex items-center gap-4 rounded-lg border border-[#D88EFF]/[0.3] bg-[#1B0938] p-4">
+                  <div className="shrink-0 w-14 overflow-hidden rounded-md border border-[#22D3EE]/40 text-center">
+                    <div className="bg-[#22D3EE] py-[3px] font-mono text-[10px] font-bold uppercase tracking-wide text-[#0A0E17]">
+                      {scheduledEvent.month}
+                    </div>
+                    <div className="bg-[#0A0E17] py-[6px] font-[family-name:var(--font-syne)] text-[20px] font-bold text-[#E7EAF2]">
+                      {scheduledEvent.day}
+                    </div>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-[14px] font-medium text-[#E7EAF2]">{runResult?.schedule.eventTitle}</div>
+                    <div className="mt-[2px] font-mono text-[12px] text-[#C9A8F0]">
+                      {scheduledEvent.weekday} · {scheduledEvent.timeRange}
+                    </div>
+                  </div>
+                  {runResult?.schedule.eventLink && (
+                    <a
+                      href={runResult.schedule.eventLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="shrink-0 font-mono text-[12px] text-[#22D3EE] underline underline-offset-2"
+                    >
+                      Open ↗
+                    </a>
+                  )}
+                </div>
+              )}
             </>
           )}
         </div>

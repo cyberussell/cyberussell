@@ -77,10 +77,17 @@ export async function sendGmail(
   return res.data.id ?? undefined;
 }
 
+export interface CalendarEventResult {
+  eventLink?: string;
+  title: string;
+  startISO?: string;
+  endISO?: string;
+}
+
 export async function createCalendarEvent(
   accessToken: string,
   opts: { summary: string; description: string; startISO: string; endISO: string; timeZone?: string }
-): Promise<string | undefined> {
+): Promise<CalendarEventResult> {
   const calendar = google.calendar({ version: "v3", auth: clientFor(accessToken) });
   // Google rejects a dateTime with no UTC offset unless timeZone is also set — always send one,
   // even if the caller's ISO string is well-formed, so a naive/offset-less datetime never breaks this.
@@ -94,7 +101,14 @@ export async function createCalendarEvent(
       end: { dateTime: opts.endISO, timeZone },
     },
   });
-  return res.data.htmlLink ?? undefined;
+  // The insert response already echoes back the created event in full — reuse it directly
+  // instead of a separate events.get() round trip, so the page can render a real event card.
+  return {
+    eventLink: res.data.htmlLink ?? undefined,
+    title: res.data.summary ?? opts.summary,
+    startISO: res.data.start?.dateTime ?? undefined,
+    endISO: res.data.end?.dateTime ?? undefined,
+  };
 }
 
 const DEMO_LOGS_FOLDER_NAME = "demo-logs";

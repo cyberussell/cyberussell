@@ -84,6 +84,17 @@ Committed, pushed, PR'd (#12).
 
 Russell asked, before merging #12, for the Drive log files to land in a single `demo-logs` folder instead of loose in the root of "My Drive". `createDriveLog` in `src/lib/automation-demo/google.ts` now finds-or-creates a folder named `demo-logs` (searched/created via the same `drive.file`-scoped client, so this can't leak visibility into the rest of the user's Drive — it only ever sees files this app itself created) and sets it as the new file's `parents`. Added to the same open PR #12 branch. `tsc --noEmit` clean; not yet re-verified against a real Drive account since that needs Russell's real OAuth session.
 
+Committed, pushed, on PR #12.
+
+## Update — 2026-08-22, later still: real Calendar event card + solid violet panel
+
+Two more requests before merging #12:
+
+1. Russell asked to show "the actual Google Calendar" on the page. Clarified via AskUserQuestion which of three real options he meant (a rich event-detail card built from the real API response; embedding Google's own calendar iframe, which isn't actually possible for a private calendar without the visitor changing their sharing settings; or an unrelated "book a call with Russell" widget) — he chose the event-detail card. `createCalendarEvent` (`google.ts`) now returns the full created-event data (`title`, `startISO`, `endISO`, `eventLink`) instead of just a link — reusing the `events.insert` response directly rather than a separate `events.get()` call, since Google already echoes the created event back. Threaded through `RunStageResult` in `run/route.ts` and `LiveDemo.tsx`. The Schedule pipeline card no longer shows a plain "View event" link; instead, once it resolves, a real event card renders below the pipeline grid — date badge, event title, weekday + formatted time range (in the *visitor's own browser locale/timezone*, same as Google Calendar's own UI would show it), and an "Open ↗" link to the real event.
+2. Russell asked to change the live-demo panel to a "solid violet neon background" — the previous subtle navy-to-violet gradient wasn't read as violet. Changed `[data-demo-wrap]` to a flat, more saturated `#230B45` with a brighter `#D88EFF` neon border/glow, and the inner textarea/draft-preview boxes to a matching `#1B0938`.
+
+Verified with `tsc --noEmit` (clean) and the same Playwright mock-interception harness — confirmed the solid violet look and the event card rendering with real-looking data (date/title/time/link). Added to the same open PR #12 branch.
+
 **Not yet done:** pushed, on PR #12, awaiting merge.
 
 **Portfolio — added Hagnaya Beach Resort as a full case-study entry (2026-08-22) — code done, tsc clean, live-verified, NOT committed — see checkpoint `portfolio-hagnaya-beach-resort-v1.md`:**
