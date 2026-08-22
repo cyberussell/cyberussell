@@ -49,7 +49,26 @@ Verified with `npx tsc --noEmit` (clean) and Playwright against a local dev serv
 
 **Next recommended task:** Unchanged — still blocked on Russell for the Google Cloud OAuth client before the new animations can be seen end-to-end against a real Google account rather than mocked responses.
 
----
+## Update — 2026-08-22, later still: PR #10 merged, production tested, real bug found and fixed
+
+Russell had already configured the Google Cloud OAuth client and the three Vercel env vars (`AUTOMATION_DEMO_GOOGLE_CLIENT_ID`/`SECRET`/`AUTOMATION_DEMO_SESSION_SECRET`) — merged PR #10 to `main` at his request (merge commit `e087622`, Vercel auto-deployed to production). Verified the OAuth handoff was wired correctly without needing real credentials: fetched `/api/automation-demo/oauth/start` directly and confirmed it 307-redirects to `accounts.google.com` with the correct `client_id`/`redirect_uri`/scopes and a properly-set CSRF `state` cookie; separately fetched that exact Google URL and confirmed it rendered a normal sign-in page (no `redirect_uri_mismatch`/`invalid_client`), which Google only does after validating the client/redirect pair — confirming the Cloud Console config matches without touching it.
+
+Russell then ran it for real and reported it worked through Send but failed at Schedule. Root cause: `createCalendarEvent` in `src/lib/automation-demo/google.ts` sent `start: { dateTime: opts.startISO }` / `end: { dateTime: opts.endISO }` with **no `timeZone` field**, and the Claude drafting prompt only asked for "ISO 8601 datetime" without requiring a UTC offset — so a naive/offset-less datetime from Claude gets rejected by the Calendar API. Also had no server-side logging on any of the three per-stage catch blocks, so the actual error was invisible in Vercel logs.
+
+Fixed:
+- `claude.ts`: prompt now explicitly requires `proposedStartISO`/`proposedEndISO` to include a UTC offset, and added a new `proposedTimezone` field (IANA identifier) to the JSON schema.
+- `google.ts`: `createCalendarEvent` now always sends an explicit `timeZone` (from the caller, defaulting to `"Asia/Manila"` if absent) alongside `dateTime` — so a naive datetime can no longer break it, regardless of what Claude returns.
+- `run/route.ts`: threads `proposedTimezone` through to `createCalendarEvent`; added `console.error` in all three per-stage catch blocks (send/schedule/log) so a real failure is visible in Vercel runtime logs next time instead of silently swallowed.
+- `PipelineStageCard.tsx` / `LiveDemo.tsx`: the actual error message now renders under a failed stage card (was previously just a red icon with no explanation) — new `errorMessage` prop, gated to the same reveal stage as the result link.
+
+Also applied 3 more design changes Russell asked for after seeing it live:
+- The live demo panel (`[data-demo-wrap]` and its textarea/draft-preview box) now uses a distinct deep-violet palette (`#180F2E`→`#120A22` gradient, violet border/glow) instead of the same navy as the rest of the page, so it reads as a separate "zone."
+- "Send for real" (+ "Start over") moved from above the draft preview panel to a bottom-right action row inside the panel itself, appearing only while a draft exists and hasn't been sent yet.
+- The pipeline stage icons' "active" animation changed from a plain glow pulse to a more energetic one: a double radar-ping ring (Tailwind's built-in `animate-ping`, staggered) plus a wiggle/scale keyframe (`neon-action`) on the icon itself — still fully `motion-safe:`-gated.
+
+Verified with `tsc --noEmit` (clean) and the same Playwright mock-interception harness as before, screenshotting the new violet panel, the relocated button, and the ping/wiggle animation mid-flight.
+
+**Not yet done:** these fixes are committed locally but not yet pushed/PR'd/merged — see next step.
 
 **Portfolio — added Hagnaya Beach Resort as a full case-study entry (2026-08-22) — code done, tsc clean, live-verified, NOT committed — see checkpoint `portfolio-hagnaya-beach-resort-v1.md`:**
 

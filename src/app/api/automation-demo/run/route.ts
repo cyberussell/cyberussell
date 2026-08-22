@@ -15,8 +15,16 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Not connected to Google" }, { status: 401 });
 
   const body = await req.json().catch(() => null);
-  const { contactName, subject, emailBody, proposedSlotLabel, proposedStartISO, proposedEndISO, logSummary } =
-    body ?? {};
+  const {
+    contactName,
+    subject,
+    emailBody,
+    proposedSlotLabel,
+    proposedStartISO,
+    proposedEndISO,
+    proposedTimezone,
+    logSummary,
+  } = body ?? {};
   if (!subject || !emailBody || !proposedStartISO || !proposedEndISO || !logSummary) {
     return NextResponse.json({ error: "Missing draft fields" }, { status: 400 });
   }
@@ -39,6 +47,7 @@ export async function POST(req: NextRequest) {
     });
     result.send = { ok: true, messageId };
   } catch (e) {
+    console.error("automation-demo: send failed", e);
     result.send = { ok: false, error: e instanceof Error ? e.message : "Send failed" };
   }
 
@@ -48,9 +57,11 @@ export async function POST(req: NextRequest) {
       description: `${logSummary}\n\nProposed slot: ${proposedSlotLabel ?? ""}`,
       startISO: proposedStartISO,
       endISO: proposedEndISO,
+      timeZone: proposedTimezone,
     });
     result.schedule = { ok: true, eventLink };
   } catch (e) {
+    console.error("automation-demo: schedule failed", e);
     result.schedule = { ok: false, error: e instanceof Error ? e.message : "Schedule failed" };
   }
 
@@ -61,6 +72,7 @@ export async function POST(req: NextRequest) {
     });
     result.log = { ok: true, fileLink };
   } catch (e) {
+    console.error("automation-demo: log failed", e);
     result.log = { ok: false, error: e instanceof Error ? e.message : "Log failed" };
   }
 

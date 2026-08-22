@@ -21,6 +21,7 @@ interface DraftResult {
   proposedSlotLabel: string;
   proposedStartISO: string;
   proposedEndISO: string;
+  proposedTimezone: string;
   logSummary: string;
 }
 
@@ -271,14 +272,18 @@ export default function LiveDemo() {
 
       <div
         data-demo-wrap
-        className="relative max-w-[1180px] rounded-2xl overflow-hidden bg-[#10141F]"
-        style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px rgba(0,0,0,0.5)" }}
+        className="relative max-w-[1180px] rounded-2xl overflow-hidden"
+        style={{
+          background: "linear-gradient(180deg, #180F2E 0%, #120A22 100%)",
+          boxShadow:
+            "0 0 0 1px rgba(168,85,247,0.28), 0 20px 50px rgba(0,0,0,0.55), 0 0 70px rgba(168,85,247,0.1)",
+        }}
       >
-        <div className="flex items-center gap-2 px-4 py-[11px] border-b border-white/[0.06] bg-[#0A0E17]/70">
+        <div className="flex items-center gap-2 px-4 py-[11px] border-b border-[#A855F7]/[0.15] bg-[#0F0820]/70">
           <span className="w-[9px] h-[9px] rounded-full bg-[#3F424D]" />
           <span className="w-[9px] h-[9px] rounded-full bg-[#3F424D]" />
-          <span className="w-[9px] h-[9px] rounded-full bg-[#22D3EE]/70" />
-          <span className="ml-[10px] font-mono text-[12px] text-[#6B7385]">lead-follow-up-agent</span>
+          <span className="w-[9px] h-[9px] rounded-full bg-[#A855F7]/70" />
+          <span className="ml-[10px] font-mono text-[12px] text-[#8A7FA6]">lead-follow-up-agent</span>
         </div>
 
         <div className="p-6 md:p-8">
@@ -329,7 +334,7 @@ export default function LiveDemo() {
                 onChange={(e) => setLeadText(e.target.value)}
                 rows={4}
                 disabled={phase !== "connected" || draftLoading || Boolean(draft)}
-                className="w-full rounded-md bg-[#0A0E17] border border-white/[0.08] px-4 py-3 text-[14px] text-[#CBD5E8] font-mono focus-visible:outline-2 focus-visible:outline-[#22D3EE] focus-visible:outline-offset-0 disabled:opacity-60"
+                className="w-full rounded-md bg-[#0F0820] border border-[#A855F7]/[0.18] px-4 py-3 text-[14px] text-[#CBD5E8] font-mono focus-visible:outline-2 focus-visible:outline-[#22D3EE] focus-visible:outline-offset-0 disabled:opacity-60"
               />
 
               <div className="flex flex-wrap gap-3 mt-4 mb-8">
@@ -341,38 +346,21 @@ export default function LiveDemo() {
                   >
                     {draftLoading ? "Drafting…" : "Draft with Claude"}
                   </button>
-                ) : !runResult ? (
-                  <>
-                    <button
-                      onClick={runPipeline}
-                      disabled={runLoading || draftTyping}
-                      className="inline-flex items-center rounded-md bg-[#22D3EE] px-5 py-[11px] text-[14px] font-[family-name:var(--font-syne)] font-semibold text-[#0A0E17] transition-opacity hover:opacity-90 disabled:opacity-40"
-                    >
-                      {runLoading ? "Sending for real…" : `Send for real — to ${email}`}
-                    </button>
-                    <button
-                      onClick={startOver}
-                      disabled={runLoading}
-                      className="font-mono text-[13px] text-[#6B7385] underline underline-offset-2 hover:text-[#8A93A6]"
-                    >
-                      Start over
-                    </button>
-                  </>
-                ) : (
+                ) : runResult ? (
                   <button
                     onClick={startOver}
                     className="font-mono text-[13px] text-[#22D3EE] underline underline-offset-2"
                   >
                     Run it again
                   </button>
-                )}
+                ) : null}
               </div>
 
               {draftError && <p className="text-[13px] text-[#F87171] mb-6 font-mono">{draftError}</p>}
               {runError && <p className="text-[13px] text-[#F87171] mb-6 font-mono">{runError}</p>}
 
               {draft && (
-                <div className="mb-8 rounded-lg border border-white/[0.06] bg-[#0A0E17] p-5">
+                <div className="mb-8 rounded-lg border border-[#A855F7]/[0.15] bg-[#0F0820] p-5">
                   <div className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#4B5265] mb-3">
                     Draft preview
                   </div>
@@ -397,6 +385,24 @@ export default function LiveDemo() {
                       <div className="text-[13px] text-[#6B7385] font-mono">{draft.logSummary}</div>
                     </>
                   )}
+                  {!runResult && (
+                    <div className="flex flex-wrap items-center justify-end gap-4 mt-5 pt-4 border-t border-[#A855F7]/[0.12]">
+                      <button
+                        onClick={startOver}
+                        disabled={runLoading}
+                        className="font-mono text-[13px] text-[#6B7385] underline underline-offset-2 hover:text-[#8A93A6]"
+                      >
+                        Start over
+                      </button>
+                      <button
+                        onClick={runPipeline}
+                        disabled={runLoading || draftTyping}
+                        className="inline-flex items-center rounded-md bg-[#22D3EE] px-5 py-[11px] text-[14px] font-[family-name:var(--font-syne)] font-semibold text-[#0A0E17] transition-opacity hover:opacity-90 disabled:opacity-40"
+                      >
+                        {runLoading ? "Sending for real…" : `Send for real — to ${email}`}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -416,6 +422,7 @@ export default function LiveDemo() {
                   tool="Gmail API"
                   icon={Mail}
                   status={sendStatus}
+                  errorMessage={stageReveal >= 1 ? runResult?.send.error : undefined}
                 />
                 <PipelineStageCard
                   n="03"
@@ -426,6 +433,7 @@ export default function LiveDemo() {
                   status={scheduleStatus}
                   link={stageReveal >= 2 ? runResult?.schedule.eventLink : undefined}
                   linkLabel="View event"
+                  errorMessage={stageReveal >= 2 ? runResult?.schedule.error : undefined}
                 />
                 <PipelineStageCard
                   n="04"
@@ -436,6 +444,7 @@ export default function LiveDemo() {
                   status={logStatus}
                   link={stageReveal >= 3 ? runResult?.log.fileLink : undefined}
                   linkLabel="View file"
+                  errorMessage={stageReveal >= 3 ? runResult?.log.error : undefined}
                 />
               </div>
             </>
