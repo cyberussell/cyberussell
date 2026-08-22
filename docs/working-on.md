@@ -68,7 +68,34 @@ Also applied 3 more design changes Russell asked for after seeing it live:
 
 Verified with `tsc --noEmit` (clean) and the same Playwright mock-interception harness as before, screenshotting the new violet panel, the relocated button, and the ping/wiggle animation mid-flight.
 
-**Not yet done:** these fixes are committed locally but not yet pushed/PR'd/merged — see next step.
+Committed, pushed, PR'd (#11), and merged to `main` (merge commit `19c5c31`) — Russell confirmed via "merge it" both times, Vercel auto-deployed each time.
+
+## Update — 2026-08-22, later still: added to /portfolio
+
+Russell asked to add `/automation-demo` to `/portfolio` under "Websites & apps I've built." Followed the existing data-driven pattern exactly (`src/lib/portfolio/data.ts` + one JSON per project in `src/data/portfolio/`, same shape as `academy.json`/`hagnaya-beach-resort.json`): added `src/data/portfolio/automation-demo.json` (slug `automation-demo`, category `"AI Automation"` — the first non-"Web App" category, since this one isn't a client site — `liveUrl` pointing at `/automation-demo`, full overview/problem/solution/results copy), wired it into `ALL_PROJECTS` in `data.ts` (placed first, matching how academy/hagnaya were added), and built a matching cover SVG (`public/portfolio/automation-demo/cover.svg`) following the same convention as the other project covers (1200×675, dark bg, radial glows, monospace label, tag row) — this one reuses the live page's own violet/cyan brand and its actual hero headline ("Leads don't go cold. Follow-up does.") rather than a generic placeholder, so the card matches the page it links to.
+
+No changes to Navbar or `/resume` — only `/portfolio` was requested.
+
+Verified with `tsc --noEmit` (clean) and Playwright screenshots of both `/portfolio` (card renders correctly, full-bleed cover image since no `icon` field is set — distinct from the other boxed-logo cards, which reads fine) and `/portfolio/automation-demo` (all sections populate, "Visit live site" correctly links to `/automation-demo`, related-projects list shows).
+
+Committed, pushed, PR'd (#12).
+
+## Update — 2026-08-22, later still: Drive logs now go into one folder
+
+Russell asked, before merging #12, for the Drive log files to land in a single `demo-logs` folder instead of loose in the root of "My Drive". `createDriveLog` in `src/lib/automation-demo/google.ts` now finds-or-creates a folder named `demo-logs` (searched/created via the same `drive.file`-scoped client, so this can't leak visibility into the rest of the user's Drive — it only ever sees files this app itself created) and sets it as the new file's `parents`. Added to the same open PR #12 branch. `tsc --noEmit` clean; not yet re-verified against a real Drive account since that needs Russell's real OAuth session.
+
+Committed, pushed, on PR #12.
+
+## Update — 2026-08-22, later still: real Calendar event card + solid violet panel
+
+Two more requests before merging #12:
+
+1. Russell asked to show "the actual Google Calendar" on the page. Clarified via AskUserQuestion which of three real options he meant (a rich event-detail card built from the real API response; embedding Google's own calendar iframe, which isn't actually possible for a private calendar without the visitor changing their sharing settings; or an unrelated "book a call with Russell" widget) — he chose the event-detail card. `createCalendarEvent` (`google.ts`) now returns the full created-event data (`title`, `startISO`, `endISO`, `eventLink`) instead of just a link — reusing the `events.insert` response directly rather than a separate `events.get()` call, since Google already echoes the created event back. Threaded through `RunStageResult` in `run/route.ts` and `LiveDemo.tsx`. The Schedule pipeline card no longer shows a plain "View event" link; instead, once it resolves, a real event card renders below the pipeline grid — date badge, event title, weekday + formatted time range (in the *visitor's own browser locale/timezone*, same as Google Calendar's own UI would show it), and an "Open ↗" link to the real event.
+2. Russell asked to change the live-demo panel to a "solid violet neon background" — the previous subtle navy-to-violet gradient wasn't read as violet. Changed `[data-demo-wrap]` to a flat, more saturated `#230B45` with a brighter `#D88EFF` neon border/glow, and the inner textarea/draft-preview boxes to a matching `#1B0938`.
+
+Verified with `tsc --noEmit` (clean) and the same Playwright mock-interception harness — confirmed the solid violet look and the event card rendering with real-looking data (date/title/time/link). Added to the same open PR #12 branch.
+
+**Not yet done:** pushed, on PR #12, awaiting merge.
 
 **Portfolio — added Hagnaya Beach Resort as a full case-study entry (2026-08-22) — code done, tsc clean, live-verified, NOT committed — see checkpoint `portfolio-hagnaya-beach-resort-v1.md`:**
 

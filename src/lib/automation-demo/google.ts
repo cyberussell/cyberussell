@@ -77,10 +77,17 @@ export async function sendGmail(
   return res.data.id ?? undefined;
 }
 
+export interface CalendarEventResult {
+  eventLink?: string;
+  title: string;
+  startISO?: string;
+  endISO?: string;
+}
+
 export async function createCalendarEvent(
   accessToken: string,
   opts: { summary: string; description: string; startISO: string; endISO: string; timeZone?: string }
-): Promise<string | undefined> {
+): Promise<CalendarEventResult> {
   const calendar = google.calendar({ version: "v3", auth: clientFor(accessToken) });
   // Google rejects a dateTime with no UTC offset unless timeZone is also set — always send one,
   // even if the caller's ISO string is well-formed, so a naive/offset-less datetime never breaks this.
@@ -94,7 +101,36 @@ export async function createCalendarEvent(
       end: { dateTime: opts.endISO, timeZone },
     },
   });
-  return res.data.htmlLink ?? undefined;
+  // The insert response already echoes back the created event in full — reuse it directly
+  // instead of a separate events.get() round trip, so the page can render a real event card.
+  return {
+    eventLink: res.data.htmlLink ?? undefined,
+    title: res.data.summary ?? opts.summary,
+    startISO: res.data.start?.dateTime ?? undefined,
+    endISO: res.data.end?.dateTime ?? undefined,
+  };
+}
+
+const DEMO_LOGS_FOLDER_NAME = "demo-logs";
+
+async function getOrCreateDemoLogsFolder(drive: ReturnType<typeof google.drive>): Promise<string> {
+  // drive.file scope only ever sees files this app itself created, so this search can't leak
+  // visibility into the rest of the user's Drive — it only ever finds a folder we made before.
+  const existing = await drive.files.list({
+    q: `mimeType='application/vnd.google-apps.folder' and name='${DEMO_LOGS_FOLDER_NAME}' and trashed=false`,
+    fields: "files(id)",
+    spaces: "drive",
+    pageSize: 1,
+  });
+  const foundId = existing.data.files?.[0]?.id;
+  if (foundId) return foundId;
+
+  const created = await drive.files.create({
+    requestBody: { name: DEMO_LOGS_FOLDER_NAME, mimeType: "application/vnd.google-apps.folder" },
+    fields: "id",
+  });
+  if (!created.data.id) throw new Error("Failed to create demo-logs folder");
+  return created.data.id;
 }
 
 export async function createDriveLog(
@@ -102,8 +138,13 @@ export async function createDriveLog(
   opts: { title: string; content: string }
 ): Promise<string | undefined> {
   const drive = google.drive({ version: "v3", auth: clientFor(accessToken) });
+  const folderId = await getOrCreateDemoLogsFolder(drive);
   const res = await drive.files.create({
-    requestBody: { name: opts.title, mimeType: "application/vnd.google-apps.document" },
+    requestBody: {
+      name: opts.title,
+      mimeType: "application/vnd.google-apps.document",
+      parents: [folderId],
+    },
     media: { mimeType: "text/plain", body: opts.content },
     fields: "id, webViewLink",
   });
