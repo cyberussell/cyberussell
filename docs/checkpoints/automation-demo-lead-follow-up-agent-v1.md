@@ -58,3 +58,15 @@ Two deliberate deviations from the design/README, both confirmed with Russell fi
 ## Update — 2026-08-22, later: committed/pushed + fresh-session re-verification
 
 Committed and pushed as `9d3847a` on `claude/recent-automation-work-1m9v13`. Re-verified independently in a later session from a clean container (fresh clone, `npm install`, no `.env.local`): `tsc --noEmit` clean, `GET /automation-demo` returns 200, `GET /api/automation-demo/status` correctly returns `{"configured":false,"connected":false}`, and Playwright screenshots at 1280px/375px (scrolled in steps to fire ScrollTrigger reveals) confirm all 6 sections render with no app-code console errors. Asked Russell where to link the page from; he chose **nowhere yet**, so it stays unlinked from Navbar/resume/portfolio. Still blocked on Russell for the Google Cloud OAuth client — no other agent-side work is actionable until that's supplied or the linking decision changes.
+
+## Update — 2026-08-22, later still: sequenced neon animations for the live demo
+
+Russell asked for the draft to type itself in rather than appear instantly, and for the send step to visibly animate through email → calendar with simple delays and "neon light automation icons," "remotion-like." Clarified via AskUserQuestion: built with GSAP (already this page's animation library), not the actual `remotion` npm package — and one glowing Lucide icon per stage, not a single traveling icon.
+
+- `PipelineStageCard.tsx` gained an optional `icon?: LucideIcon` prop rendered as a circular neon badge (dim idle → pulsing bright active → steady glow done → dim red error), CSS-only pulse via `motion-safe:animate-[neon-pulse_...]` so it already respects `prefers-reduced-motion` the same way the rest of the page does.
+- `LiveDemo.tsx` draft preview now types in via a GSAP tween over `typedSubject`/`typedBody` state with a blinking caret, instant under reduced motion; "Send for real" is disabled until typing finishes.
+- `LiveDemo.tsx` send flow: the real `/api/automation-demo/run` call is still one request — a new `stageReveal` (0→3) state sequences the *reveal* of the already-returned result client-side, ~900ms apart per stage (Send → Schedule → Log), each stage's result link gated to only appear once that stage is revealed (fixed a bug caught during verification where links leaked in early). `runIdRef` guards against a stale sequence resolving after Start-over/Disconnect.
+- `HowItWorks.tsx` passed the same 4 icons into its own `PipelineStageCard` usage for consistency.
+- `globals.css`: added `neon-pulse` / `demo-caret-blink` keyframes.
+
+Verified with `tsc --noEmit` (clean) and Playwright against local dev, using route interception to mock `/api/automation-demo/{status,draft,run}` (since no real OAuth client exists in this environment) to drive the actual UI through connect → draft → send with real timers, confirming the typewriter caret, the cascading stage lights, and the link-gating fix. No mocks shipped — only the local test harness simulated a connected session.

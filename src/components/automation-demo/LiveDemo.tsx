@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { applyScrollReveal, gsap, useGsapScope } from "./useGsap";
+import { useEffect, useRef, useState } from "react";
+import { CalendarClock, FolderOpen, Mail, Sparkles } from "lucide-react";
+import { applyScrollReveal, gsap, prefersReducedMotion, useGsapScope } from "./useGsap";
 import { PipelineStageCard, type StageStatus } from "./PipelineStageCard";
+
+/** Delay between each stage of the post-send reveal — long enough to read as a real handoff, short enough to stay snappy. */
+const STAGE_REVEAL_DELAY_MS = 900;
+const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 const SAMPLE_LEAD =
   "Hi, saw your automation work online — I run a small clinic and our front desk keeps missing follow-ups with new patients. Need something that actually handles this for us. When can we talk? - Jamie";
@@ -66,6 +71,55 @@ export default function LiveDemo() {
   const [runError, setRunError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
+  // Cascading post-send reveal: 0 = nothing resolved yet, 1 = send resolved (schedule now running),
+  // 2 = schedule resolved (log now running), 3 = log resolved — sequence complete.
+  const [stageReveal, setStageReveal] = useState<0 | 1 | 2 | 3>(0);
+  const runIdRef = useRef(0);
+
+  // Typewriter reveal of the draft preview instead of an instant paste-in.
+  const [typedSubject, setTypedSubject] = useState("");
+  const [typedBody, setTypedBody] = useState("");
+  const [draftTyping, setDraftTyping] = useState(false);
+
+  useEffect(() => {
+    if (!draft) {
+      setTypedSubject("");
+      setTypedBody("");
+      setDraftTyping(false);
+      return;
+    }
+    if (prefersReducedMotion()) {
+      setTypedSubject(draft.subject);
+      setTypedBody(draft.emailBody);
+      setDraftTyping(false);
+      return;
+    }
+    setDraftTyping(true);
+    setTypedSubject("");
+    setTypedBody("");
+    const counters = { subject: 0, body: 0 };
+    const tl = gsap.timeline({ onComplete: () => setDraftTyping(false) });
+    tl.to(counters, {
+      subject: draft.subject.length,
+      duration: Math.min(1, Math.max(0.3, draft.subject.length / 45)),
+      ease: "none",
+      onUpdate: () => setTypedSubject(draft.subject.slice(0, Math.round(counters.subject))),
+    }).to(
+      counters,
+      {
+        body: draft.emailBody.length,
+        duration: Math.min(2.4, Math.max(0.6, draft.emailBody.length / 55)),
+        ease: "none",
+        onUpdate: () => setTypedBody(draft.emailBody.slice(0, Math.round(counters.body))),
+      },
+      "+=0.15"
+    );
+    return () => {
+      tl.kill();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft]);
+
   const refreshStatus = async () => {
     try {
       const res = await fetch("/api/automation-demo/status");
@@ -115,7 +169,10 @@ export default function LiveDemo() {
 
   const runPipeline = async () => {
     if (!draft) return;
+    const runId = ++runIdRef.current;
     setRunError(null);
+    setRunResult(null);
+    setStageReveal(0);
     setRunLoading(true);
     try {
       const res = await fetch("/api/automation-demo/run", {
@@ -124,50 +181,76 @@ export default function LiveDemo() {
         body: JSON.stringify(draft),
       });
       if (!res.ok) throw new Error((await res.json().catch(() => null))?.error ?? "Run failed");
-      setRunResult(await res.json());
-    } catch (e) {
-      setRunError(e instanceof Error ? e.message : "Run failed");
-    } finally {
+      const result: RunResult = await res.json();
+      if (runId !== runIdRef.current) return;
       setRunLoading(false);
+      setRunResult(result);
+
+      // Cascade the reveal — send resolves, then schedule lights up and resolves, then log —
+      // rather than flipping all three stage cards at once.
+      if (prefersReducedMotion()) {
+        setStageReveal(3);
+        return;
+      }
+      for (const stage of [1, 2, 3] as const) {
+        await wait(STAGE_REVEAL_DELAY_MS);
+        if (runId !== runIdRef.current) return;
+        setStageReveal(stage);
+      }
+    } catch (e) {
+      if (runId !== runIdRef.current) return;
+      setRunLoading(false);
+      setRunError(e instanceof Error ? e.message : "Run failed");
     }
   };
 
   const disconnect = async () => {
+    runIdRef.current++;
     await fetch("/api/automation-demo/disconnect", { method: "POST" });
     setDraft(null);
     setRunResult(null);
+    setStageReveal(0);
     await refreshStatus();
   };
 
   const startOver = () => {
+    runIdRef.current++;
     setDraft(null);
     setRunResult(null);
     setRunError(null);
     setDraftError(null);
+    setStageReveal(0);
   };
 
   const draftStatus: StageStatus = draftLoading ? "active" : draft ? "done" : draftError ? "error" : "idle";
-  const sendStatus: StageStatus = runLoading
-    ? "active"
-    : runResult
+
+  // Send lights up as soon as the pipeline starts running (whether that's the real network
+  // wait or the cascading reveal after it). Schedule and log stay idle until it's their turn.
+  const sendStatus: StageStatus = !runResult
+    ? runLoading
+      ? "active"
+      : "idle"
+    : stageReveal >= 1
       ? runResult.send.ok
         ? "done"
         : "error"
-      : "idle";
-  const scheduleStatus: StageStatus = runLoading
-    ? "active"
-    : runResult
-      ? runResult.schedule.ok
-        ? "done"
-        : "error"
-      : "idle";
-  const logStatus: StageStatus = runLoading
-    ? "active"
-    : runResult
-      ? runResult.log.ok
-        ? "done"
-        : "error"
-      : "idle";
+      : "active";
+  const scheduleStatus: StageStatus =
+    !runResult || stageReveal < 1
+      ? "idle"
+      : stageReveal >= 2
+        ? runResult.schedule.ok
+          ? "done"
+          : "error"
+        : "active";
+  const logStatus: StageStatus =
+    !runResult || stageReveal < 2
+      ? "idle"
+      : stageReveal >= 3
+        ? runResult.log.ok
+          ? "done"
+          : "error"
+        : "active";
 
   return (
     <section id="demo" ref={scopeRef} className="px-6 md:px-[clamp(24px,6vw,88px)] pt-[100px] pb-[120px]">
@@ -262,7 +345,7 @@ export default function LiveDemo() {
                   <>
                     <button
                       onClick={runPipeline}
-                      disabled={runLoading}
+                      disabled={runLoading || draftTyping}
                       className="inline-flex items-center rounded-md bg-[#22D3EE] px-5 py-[11px] text-[14px] font-[family-name:var(--font-syne)] font-semibold text-[#0A0E17] transition-opacity hover:opacity-90 disabled:opacity-40"
                     >
                       {runLoading ? "Sending for real…" : `Send for real — to ${email}`}
@@ -295,23 +378,43 @@ export default function LiveDemo() {
                   </div>
                   <div className="text-[14px] text-[#E7EAF2] mb-1">
                     <span className="text-[#6B7385]">Subject: </span>
-                    {draft.subject}
+                    {typedSubject}
+                    {draftTyping && typedSubject.length < draft.subject.length && (
+                      <span className="inline-block w-[7px] h-[14px] bg-[#22D3EE] ml-[2px] align-middle motion-safe:animate-[demo-caret-blink_0.85s_step-end_infinite]" />
+                    )}
                   </div>
-                  <p className="text-[14px] text-[#B7BECC] whitespace-pre-wrap mb-4">{draft.emailBody}</p>
-                  <div className="text-[13px] text-[#67E8F9] font-mono mb-1">
-                    Proposed slot: {draft.proposedSlotLabel}
-                  </div>
-                  <div className="text-[13px] text-[#6B7385] font-mono">{draft.logSummary}</div>
+                  <p className="text-[14px] text-[#B7BECC] whitespace-pre-wrap mb-4">
+                    {typedBody}
+                    {draftTyping && typedSubject.length >= draft.subject.length && (
+                      <span className="inline-block w-[7px] h-[14px] bg-[#22D3EE] ml-[2px] align-middle motion-safe:animate-[demo-caret-blink_0.85s_step-end_infinite]" />
+                    )}
+                  </p>
+                  {!draftTyping && (
+                    <>
+                      <div className="text-[13px] text-[#67E8F9] font-mono mb-1">
+                        Proposed slot: {draft.proposedSlotLabel}
+                      </div>
+                      <div className="text-[13px] text-[#6B7385] font-mono">{draft.logSummary}</div>
+                    </>
+                  )}
                 </div>
               )}
 
               <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
-                <PipelineStageCard n="01" title="Draft" body="Claude reads the lead and writes the reply." tool="Claude API" status={draftStatus} />
+                <PipelineStageCard
+                  n="01"
+                  title="Draft"
+                  body="Claude reads the lead and writes the reply."
+                  tool="Claude API"
+                  icon={Sparkles}
+                  status={draftStatus}
+                />
                 <PipelineStageCard
                   n="02"
                   title="Send"
                   body="The reply is sent to your own inbox."
                   tool="Gmail API"
+                  icon={Mail}
                   status={sendStatus}
                 />
                 <PipelineStageCard
@@ -319,8 +422,9 @@ export default function LiveDemo() {
                   title="Schedule"
                   body="A follow-up slot is booked on your calendar."
                   tool="Google Calendar API"
+                  icon={CalendarClock}
                   status={scheduleStatus}
-                  link={runResult?.schedule.eventLink}
+                  link={stageReveal >= 2 ? runResult?.schedule.eventLink : undefined}
                   linkLabel="View event"
                 />
                 <PipelineStageCard
@@ -328,8 +432,9 @@ export default function LiveDemo() {
                   title="Log"
                   body="A record is filed to your Drive."
                   tool="Google Drive API"
+                  icon={FolderOpen}
                   status={logStatus}
-                  link={runResult?.log.fileLink}
+                  link={stageReveal >= 3 ? runResult?.log.fileLink : undefined}
                   linkLabel="View file"
                 />
               </div>
