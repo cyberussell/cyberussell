@@ -1,7 +1,6 @@
 import Link from "next/link";
 import GlowBackground from "@/components/marketing/GlowBackground";
 import FloatingServiceCards from "@/components/marketing/FloatingServiceCards";
-import PortraitFrame from "@/components/marketing/Hero/PortraitFrame";
 import { ParallaxProvider } from "@/components/marketing/Hero/ParallaxProvider";
 import { heroServices } from "@/components/marketing/heroServices.data";
 
@@ -47,11 +46,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div
-        className="relative z-10 mx-auto mt-12 flex w-full max-w-[420px] flex-col items-center md:mt-0 md:max-w-[640px] md:flex-1 lg:max-w-[760px] xl:max-w-[1240px] xl:grid xl:grid-cols-[auto_auto_auto] xl:items-center xl:justify-center xl:gap-x-3"
-        style={{ perspective: "2000px" }}
-      >
-        <PortraitFrame />
+      <div className="relative z-10 mx-auto mt-14 w-full max-w-[420px] sm:max-w-[680px] lg:max-w-5xl">
         <FloatingServiceCards services={heroServices} />
       </div>
       </ParallaxProvider>

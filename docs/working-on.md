@@ -1,5 +1,19 @@
 # Current Work
 
+**Build With Us — Hero section redesigned, portrait removed (2026-08-22) — code done, tsc clean, live-verified, NOT committed — see checkpoint `build-with-us-hero-redesign-v1.md`:**
+
+Current Product: Services (Build With Us) — `/build-with-us`.
+
+Current Feature: Russell asked to "remodel" the build-with-us hero and remove the portrait picture, and asked whether Claude Design could do it. Clarified via AskUserQuestion that Claude Design (the `design` skill) publishes standalone mockup canvases, not live code edits, so this was done as direct code iteration instead. Also confirmed scope: Hero section only (not the whole page), and that "remodel" meant an actual redesign, not just deleting the image and leaving a gap.
+
+Deleted `PortraitFrame.tsx` and `public/hero-portrait.png` (unused elsewhere). The 6 service cards previously flanked the portrait in two 3D-tilted columns; redesigned `FloatingServiceCards` into one unified centered grid (1/2/3 columns responsive) and stripped the now-meaningless tilt logic out of `FloatingServiceCard` (`rotateY`/`rotateZ`/`floatXDrift` removed — cards sit flat with a gentle float). Simplified `Hero/index.tsx`'s card container accordingly. `GlowBackground` and `ParallaxProvider` left untouched (still used elsewhere / still reads fine without the portrait).
+
+Current Status: `npx tsc --noEmit` clean. Live-verified via local dev server at mobile/tablet/desktop widths — no console errors, no broken images, grid is balanced. Not committed — this repo's convention is to let Russell review before committing.
+
+**Next recommended task:** Russell reviews the live page and decides on committing. `FeaturedProjects` (project logo images), `OurProcess`, `Pricing`, `PricingPromoBanner`, `FAQ`, `FinalCTA` were explicitly out of scope this session — if he wants those redesigned too, that's a separate follow-up.
+
+---
+
 **Automation Demo — new `/automation-demo` page built from an imported Claude Design project (2026-08-22) — code done, tsc clean, live-verified, NOT committed — see checkpoint `automation-demo-lead-follow-up-agent-v1.md`:**
 
 Current Product: New top-level page `/automation-demo` — not one of the 7 existing products, a standalone signature portfolio piece.
