@@ -54,3 +54,7 @@ Two deliberate deviations from the design/README, both confirmed with Russell fi
 ## Known Issues
 
 - None identified. `npx tsc --noEmit` clean. Live-verified in the browser preview at desktop and mobile (375px) widths: all 6 sections render correct copy/layout, no console errors, the "Google integration coming soon" fallback renders correctly (expected, since no OAuth client is configured yet), nav links and focus states present. The real OAuth → Gmail/Calendar/Drive path is implemented but **not yet exercised against a live Google account** — see Remaining Work above.
+
+## Update — 2026-08-22, later: committed/pushed + fresh-session re-verification
+
+Committed and pushed as `9d3847a` on `claude/recent-automation-work-1m9v13`. Re-verified independently in a later session from a clean container (fresh clone, `npm install`, no `.env.local`): `tsc --noEmit` clean, `GET /automation-demo` returns 200, `GET /api/automation-demo/status` correctly returns `{"configured":false,"connected":false}`, and Playwright screenshots at 1280px/375px (scrolled in steps to fire ScrollTrigger reveals) confirm all 6 sections render with no app-code console errors. Asked Russell where to link the page from; he chose **nowhere yet**, so it stays unlinked from Navbar/resume/portfolio. Still blocked on Russell for the Google Cloud OAuth client — no other agent-side work is actionable until that's supplied or the linking decision changes.
