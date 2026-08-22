@@ -1,5 +1,6 @@
 "use client";
 
+import { CalendarClock, FolderOpen, Mail, Sparkles } from "lucide-react";
 import { applyScrollReveal, gsap, useGsapScope } from "./useGsap";
 import { PipelineStageCard } from "./PipelineStageCard";
 
@@ -9,24 +10,28 @@ const STEPS = [
     title: "Lead lands",
     body: "A form fill, a reply, a note pasted in. The agent reads the raw text and pulls out who, what and how urgent.",
     tool: "Claude API",
+    icon: Sparkles,
   },
   {
     n: "02",
     title: "Reply goes out",
     body: "It drafts in your voice, checks the ask against what you actually offer, and sends the email itself.",
     tool: "Gmail API",
+    icon: Mail,
   },
   {
     n: "03",
     title: "Meeting booked",
     body: "It reads your real availability, proposes a slot inside it, and writes the event with the lead invited.",
     tool: "Google Calendar API",
+    icon: CalendarClock,
   },
   {
     n: "04",
     title: "Record filed",
     body: "A document lands in the right folder with the transcript, the decision and the next touch date.",
     tool: "Google Drive API",
+    icon: FolderOpen,
   },
 ];
 
@@ -86,6 +91,7 @@ export default function HowItWorks() {
             title={step.title}
             body={step.body}
             tool={step.tool}
+            icon={step.icon}
             status="done"
             showStatusIcon={false}
           />

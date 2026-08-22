@@ -1,3 +1,5 @@
+import type { LucideIcon } from "lucide-react";
+
 export type StageStatus = "idle" | "active" | "done" | "error";
 
 const STATUS_COLOR: Record<StageStatus, string> = {
@@ -7,12 +9,20 @@ const STATUS_COLOR: Record<StageStatus, string> = {
   error: "#F87171",
 };
 
+const STATUS_GLOW: Record<StageStatus, string> = {
+  idle: "none",
+  active: "0 0 16px currentColor, 0 0 5px currentColor",
+  done: "0 0 10px currentColor, 0 0 2px currentColor",
+  error: "0 0 10px currentColor",
+};
+
 export function PipelineStageCard({
   n,
   title,
   body,
   tool,
   status = "idle",
+  icon: Icon,
   link,
   linkLabel,
   showStatusIcon = true,
@@ -22,9 +32,11 @@ export function PipelineStageCard({
   body: string;
   tool: string;
   status?: StageStatus;
+  /** Lucide icon rendered as a neon badge — glows and pulses as `status` moves through active/done. */
+  icon?: LucideIcon;
   link?: string;
   linkLabel?: string;
-  /** When false, always shows the step number instead of a ✓/…/! status glyph — used for purely descriptive (non-live) cards. */
+  /** When false, always shows the step number instead of a ✓/…/! status glyph — used for purely descriptive (non-live) cards. Ignored once `icon` is set. */
   showStatusIcon?: boolean;
 }) {
   const color = STATUS_COLOR[status];
@@ -36,19 +48,19 @@ export function PipelineStageCard({
     >
       <div className="flex items-center gap-[10px] mb-4">
         <span
-          className="font-mono text-[12px] rounded px-[7px] py-[2px] border shrink-0"
-          style={{ color, borderColor: color }}
+          className={`relative inline-flex items-center justify-center shrink-0 rounded-full border transition-colors duration-300 ${
+            Icon ? "w-9 h-9" : "font-mono text-[12px] rounded px-[7px] py-[2px]"
+          } ${status === "active" ? "motion-safe:animate-[neon-pulse_1.3s_ease-in-out_infinite]" : ""}`}
+          style={{ color, borderColor: color, boxShadow: STATUS_GLOW[status] }}
           aria-hidden="true"
         >
-          {showStatusIcon
-            ? status === "done"
-              ? "✓"
-              : status === "active"
-                ? "…"
-                : status === "error"
-                  ? "!"
-                  : n
-            : n}
+          {Icon ? (
+            <Icon size={16} strokeWidth={2.25} />
+          ) : showStatusIcon ? (
+            status === "done" ? "✓" : status === "active" ? "…" : status === "error" ? "!" : n
+          ) : (
+            n
+          )}
         </span>
         <span
           data-step-bar
