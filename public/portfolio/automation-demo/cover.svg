@@ -1,0 +1,42 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glowCyan" cx="88%" cy="8%" r="55%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowViolet" cx="6%" cy="96%" r="55%">
+      <stop offset="0%" stop-color="#A855F7" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#A855F7" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="iconGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22D3EE" />
+      <stop offset="1" stop-color="#A855F7" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="675" fill="#0A0E17" />
+  <rect width="1200" height="675" fill="url(#glowCyan)" />
+  <rect width="1200" height="675" fill="url(#glowViolet)" />
+
+  <line x1="80" y1="130" x2="1120" y2="130" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="1" />
+  <text x="80" y="95" font-family="ui-monospace, Menlo, monospace" font-size="13" letter-spacing="3" fill="#22D3EE" fill-opacity="0.9">LEAD FOLLOW-UP AGENT &#8212; LIVE AI AUTOMATION</text>
+
+  <rect x="1032" y="70" width="36" height="36" rx="9" fill="url(#iconGrad)" />
+  <circle cx="1044" cy="88" r="3" fill="#0A0E17" />
+  <circle cx="1056" cy="88" r="3" fill="#0A0E17" />
+  <line x1="1047" y1="88" x2="1053" y2="88" stroke="#0A0E17" stroke-width="1.6" stroke-linecap="round" />
+
+  <text x="76" y="290" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="66" letter-spacing="-2" fill="#F5F4F0">LEADS DON&#8217;T GO COLD.</text>
+  <text x="76" y="374" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="66" letter-spacing="-2" fill="#22D3EE">FOLLOW-UP DOES.</text>
+
+  <text x="80" y="450" font-family="Arial, Helvetica, sans-serif" font-size="21" fill="#FFFFFF" fill-opacity="0.5">Claude drafts, Gmail sends, Calendar books, Drive logs — through your own account, live.</text>
+
+  <g font-family="ui-monospace, Menlo, monospace" font-size="13" letter-spacing="1.5" fill="#FFFFFF" fill-opacity="0.4">
+    <text x="80" y="590">CLAUDE API</text>
+    <text x="235" y="590">GMAIL API</text>
+    <text x="390" y="590">GOOGLE CALENDAR API</text>
+    <text x="660" y="590">GOOGLE DRIVE API</text>
+  </g>
+
+  <line x1="80" y1="555" x2="1120" y2="555" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="1" />
+</svg>

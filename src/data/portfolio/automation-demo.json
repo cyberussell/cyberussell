@@ -1,0 +1,19 @@
+{
+  "slug": "automation-demo",
+  "title": "Lead Follow-Up Agent",
+  "client": "Personal Project",
+  "tagline": "A real, live AI automation you can run yourself — Claude drafts a reply, Gmail sends it, Calendar books the follow-up, Drive logs the record.",
+  "category": "AI Automation",
+  "date": "2026-08-22",
+  "timeline": "Live",
+  "coverImage": "/portfolio/automation-demo/cover.svg",
+  "gallery": [],
+  "liveUrl": "https://www.cyberussell.com/automation-demo",
+  "techStack": ["Next.js", "TypeScript", "Claude API", "Gmail API", "Google Calendar API", "Google Drive API", "GSAP"],
+  "overview": "A cinematic single-page portfolio piece built around a real, working automation instead of a mockup: paste in a raw inbound lead message and watch Claude read it, draft a same-day follow-up in your voice, send it through Gmail, book a follow-up slot on Google Calendar, and file a CRM-style record to Google Drive — live, through your own connected Google account, not simulated.",
+  "problem": "Most 'AI automation' demos are screenshots or scripted videos — there's no way for a visitor to tell if the thing actually works, or if it's just a slide deck with good copy.",
+  "solution": "Built a server-side Google OAuth 2.0 flow (a dedicated client, tokens held only in a short-lived encrypted cookie, never persisted) so any visitor can connect their own Google account and run the real pipeline: Claude drafts via the Anthropic API, then Gmail, Calendar, and Drive each execute for real. Every action lands only on the visitor's own account — the email always sends to themselves, the event and file are created on their own Calendar/Drive — so the public demo can never be used to reach a third party. The whole run is staged with a typewriter draft reveal and a sequenced, neon-lit pipeline animation so you can watch each handoff happen.",
+  "results": "Live and connectable by any visitor with a Google account, running the full draft-send-schedule-log chain against real Gmail, Calendar, and Drive APIs.",
+  "testimonial": null,
+  "featured": true
+}
