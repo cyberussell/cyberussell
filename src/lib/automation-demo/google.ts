@@ -97,13 +97,40 @@ export async function createCalendarEvent(
   return res.data.htmlLink ?? undefined;
 }
 
+const DEMO_LOGS_FOLDER_NAME = "demo-logs";
+
+async function getOrCreateDemoLogsFolder(drive: ReturnType<typeof google.drive>): Promise<string> {
+  // drive.file scope only ever sees files this app itself created, so this search can't leak
+  // visibility into the rest of the user's Drive — it only ever finds a folder we made before.
+  const existing = await drive.files.list({
+    q: `mimeType='application/vnd.google-apps.folder' and name='${DEMO_LOGS_FOLDER_NAME}' and trashed=false`,
+    fields: "files(id)",
+    spaces: "drive",
+    pageSize: 1,
+  });
+  const foundId = existing.data.files?.[0]?.id;
+  if (foundId) return foundId;
+
+  const created = await drive.files.create({
+    requestBody: { name: DEMO_LOGS_FOLDER_NAME, mimeType: "application/vnd.google-apps.folder" },
+    fields: "id",
+  });
+  if (!created.data.id) throw new Error("Failed to create demo-logs folder");
+  return created.data.id;
+}
+
 export async function createDriveLog(
   accessToken: string,
   opts: { title: string; content: string }
 ): Promise<string | undefined> {
   const drive = google.drive({ version: "v3", auth: clientFor(accessToken) });
+  const folderId = await getOrCreateDemoLogsFolder(drive);
   const res = await drive.files.create({
-    requestBody: { name: opts.title, mimeType: "application/vnd.google-apps.document" },
+    requestBody: {
+      name: opts.title,
+      mimeType: "application/vnd.google-apps.document",
+      parents: [folderId],
+    },
     media: { mimeType: "text/plain", body: opts.content },
     fields: "id, webViewLink",
   });

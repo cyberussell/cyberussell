@@ -78,7 +78,13 @@ No changes to Navbar or `/resume` — only `/portfolio` was requested.
 
 Verified with `tsc --noEmit` (clean) and Playwright screenshots of both `/portfolio` (card renders correctly, full-bleed cover image since no `icon` field is set — distinct from the other boxed-logo cards, which reads fine) and `/portfolio/automation-demo` (all sections populate, "Visit live site" correctly links to `/automation-demo`, related-projects list shows).
 
-**Not yet done:** committed locally, not yet pushed/PR'd/merged — see next step.
+Committed, pushed, PR'd (#12).
+
+## Update — 2026-08-22, later still: Drive logs now go into one folder
+
+Russell asked, before merging #12, for the Drive log files to land in a single `demo-logs` folder instead of loose in the root of "My Drive". `createDriveLog` in `src/lib/automation-demo/google.ts` now finds-or-creates a folder named `demo-logs` (searched/created via the same `drive.file`-scoped client, so this can't leak visibility into the rest of the user's Drive — it only ever sees files this app itself created) and sets it as the new file's `parents`. Added to the same open PR #12 branch. `tsc --noEmit` clean; not yet re-verified against a real Drive account since that needs Russell's real OAuth session.
+
+**Not yet done:** pushed, on PR #12, awaiting merge.
 
 **Portfolio — added Hagnaya Beach Resort as a full case-study entry (2026-08-22) — code done, tsc clean, live-verified, NOT committed — see checkpoint `portfolio-hagnaya-beach-resort-v1.md`:**
 
