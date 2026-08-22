@@ -1,5 +1,19 @@
 # Current Work
 
+**Portfolio — added Hagnaya Beach Resort as a full case-study entry (2026-08-22) — code done, tsc clean, live-verified, NOT committed — see checkpoint `portfolio-hagnaya-beach-resort-v1.md`:**
+
+Current Product: Services (Portfolio) — `/portfolio` and new `/portfolio/hagnaya-beach-resort`.
+
+Current Feature: Russell asked for a portfolio card for Hagnaya Beach Resort's hospitality management platform ("ResortOS") — a real, live client project built in a separate standalone repo on this machine (`/Users/russellparayno/Documents/Business/Hagnaya Resort`, not part of this codebase): a guest booking site plus 14 staff-facing operational modules (reservations, front desk, housekeeping, maintenance, inventory, laundry, restaurant, concierge, day tours, events, reporting) on an isolated single-tenant Supabase project, 80+ reviewed migrations. Added `src/data/portfolio/hagnaya-beach-resort.json` (real client name, `liveUrl` pointing at `https://www.hagnayabeachresort.com`, copy drawn from the other repo's own architecture ADRs/README, not invented), registered it in `src/lib/portfolio/data.ts`, and added `public/portfolio/hagnaya-beach-resort/{cover.jpg,icon.png}` sourced from that repo's real product photography and logo. Fully data-driven — no component changes needed. Also built, same session, a separate deep technical case-study Artifact (private, not part of this repo) covering the same project — Russell explicitly chose **not** to link it from this portfolio entry, only the live site.
+
+Current Status: `npx tsc --noEmit` clean. Live-verified via local dev server: `/portfolio` grid shows the new card correctly (second position, after Academy); `/portfolio/hagnaya-beach-resort` detail page renders correctly end to end. Not committed — this repo's convention is to let Russell review before committing.
+
+**Update — same session, later: wired the case-study Artifact into `/resume` too.** Russell then asked to link the private case-study Artifact from `/resume` (`src/app/resume/page.tsx`) — that page already had a manual "extra links" pattern for Hagnaya (a hardcoded link straight to `hagnayabeachresort.com`, alongside the auto-generated portfolio list which now also picks up the new `hagnaya-beach-resort` project). Added a third manual link in that same block, `Hagnaya ResortOS — Technical Case Study` (new `FileText` icon import from `lucide-react`), pointing at `https://claude.ai/code/artifact/99f2dbd2-7cd5-4807-86db-406990cf85cd`. Flagged to Russell before editing that the Artifact is currently **private** — visitors won't be able to open it until he shares it from the Artifact's own share menu — he confirmed to wire it now and share it himself. `npx tsc --noEmit` clean; verified via `read_page` accessibility tree (correct href/label/icon) since this session's Browser preview has a known scroll-screenshot bug (documented earlier in this same file, TMS section) that also reproduced here. Not committed.
+
+**Next recommended task:** Russell shares the Artifact from its share menu (otherwise the resume link 404s/access-denies for visitors), reviews both changes, and decides on committing — likely as one combined commit.
+
+---
+
 **LaundryFlow demo — shared Header nav fixed for tablet/narrow-desktop widths (2026-08-20) — code done, live-verified, NOT committed — see checkpoint `laundryflow-header-nav-breakpoint-v1.md`:**
 
 Current Product: Services (Portfolio) — `src/components/demo/laundryflow/Header.tsx`, shared across all `/demo/laundryflow/*` pages.

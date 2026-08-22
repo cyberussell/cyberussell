@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Fragment } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
-import { Mail, Phone, MapPin, Download, Palmtree, Globe, GraduationCap } from "lucide-react";
+import { Mail, Phone, MapPin, Download, Palmtree, Globe, GraduationCap, FileText } from "lucide-react";
 import {
   siNextdotjs, siReact, siTypescript, siNodedotjs, siSupabase,
   siPostgresql, siClaude, siTailwindcss, siVercel, siFirebase, siGithub,
@@ -354,6 +354,19 @@ export default async function ResumePage() {
                     </div>
                     <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/60 group-hover:text-white leading-tight transition-colors pt-1">
                       Hagnaya Beach Resort — Hotel &amp; Resort Management System
+                    </span>
+                  </a>
+                  <a
+                    href="https://claude.ai/code/artifact/99f2dbd2-7cd5-4807-86db-406990cf85cd"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-start gap-3"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-[#0B1220] border border-white/[0.08] flex items-center justify-center shrink-0">
+                      <FileText size={15} className="text-[#3ECF8E]" />
+                    </div>
+                    <span className="font-[family-name:var(--font-inter)] text-[12px] font-bold text-white/60 group-hover:text-white leading-tight transition-colors pt-1">
+                      Hagnaya ResortOS — Technical Case Study
                     </span>
                   </a>
                 </div>

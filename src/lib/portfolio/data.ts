@@ -6,8 +6,9 @@ import appointmentSystem from "@/data/portfolio/appointment-system.json";
 import laundryManagementSystem from "@/data/portfolio/laundry-management-system.json";
 import territoryManagementSystem from "@/data/portfolio/territory-management-system.json";
 import academy from "@/data/portfolio/academy.json";
+import hagnayaBeachResort from "@/data/portfolio/hagnaya-beach-resort.json";
 
-const ALL_PROJECTS = [academy, appointmentSystem, hireworkers, cyberussell, territoryManagementSystem, laundryManagementSystem] as unknown as PortfolioProject[];
+const ALL_PROJECTS = [academy, hagnayaBeachResort, appointmentSystem, hireworkers, cyberussell, territoryManagementSystem, laundryManagementSystem] as unknown as PortfolioProject[];
 
 const BY_SLUG = new Map(ALL_PROJECTS.map((p) => [p.slug, p]));
 

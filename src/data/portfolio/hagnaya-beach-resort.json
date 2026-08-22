@@ -1,0 +1,29 @@
+{
+  "slug": "hagnaya-beach-resort",
+  "title": "Hagnaya ResortOS",
+  "client": "Hagnaya Beach Resort & Restaurant",
+  "tagline": "A full hospitality management platform for a real, live beach resort — guest booking site plus the property-management system staff run it on.",
+  "category": "Web App",
+  "date": "2026-07-20",
+  "timeline": "Live",
+  "coverImage": "/portfolio/hagnaya-beach-resort/cover.jpg",
+  "icon": "/portfolio/hagnaya-beach-resort/icon.png",
+  "gallery": [],
+  "liveUrl": "https://www.hagnayabeachresort.com",
+  "techStack": [
+    "Next.js 16",
+    "React 19",
+    "TypeScript",
+    "Supabase",
+    "PostgreSQL",
+    "Tailwind CSS",
+    "Zod",
+    "React Hook Form"
+  ],
+  "overview": "ResortOS is a full hospitality management platform built for Hagnaya Beach Resort & Restaurant in San Remigio, Cebu — a fast, photograph-led public site where guests book rooms, day tours, and events directly, and, behind a staff login, a complete property-management system covering front desk, housekeeping, maintenance, inventory, laundry, restaurant, concierge, and reporting.",
+  "problem": "A resort taking bookings by phone and Messenger has no live view of room availability, no shared system across departments, and no record beyond memory and paper — housekeeping, maintenance, and front desk all working from different, disconnected pictures of the same rooms.",
+  "solution": "Built a two-sided Next.js and Supabase platform: a guest site with live room and day-tour pricing and direct booking with no OTA commission, and fourteen staff-facing operational modules — reservations, front desk, housekeeping, maintenance, inventory, laundry, restaurant, concierge, day tours, events, and reporting — on an isolated, single-tenant database with role-gated access and append-only audit trails, backed by 80+ reviewed schema migrations.",
+  "results": "Live in production and taking real guest bookings for rooms, day tours, and events, with resort staff running daily operations — check-ins, housekeeping tasks, inventory — through the same system.",
+  "testimonial": null,
+  "featured": true
+}
