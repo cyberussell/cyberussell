@@ -1,5 +1,21 @@
 # Current Work
 
+**Automation Demo — new `/automation-demo` page built from an imported Claude Design project (2026-08-22) — code done, tsc clean, live-verified, NOT committed — see checkpoint `automation-demo-lead-follow-up-agent-v1.md`:**
+
+Current Product: New top-level page `/automation-demo` — not one of the 7 existing products, a standalone signature portfolio piece.
+
+Current Feature: Russell asked to import a Claude Design project (`claude.ai/design/p/57bb2929-18ab-4bea-a28b-143fbd51367c`, `Portfolio.dc.html`) and implement a cinematic single-page portfolio site showcasing a real "Lead Follow-Up Agent" automation (Claude drafts an email → sends via Gmail → books a Calendar follow-up → logs the lead to Drive, live, not mocked). Confirmed 3 decisions with Russell first via AskUserQuestion: route placement (new top-level route, chosen `/automation-demo`), color/type direction (his brief's navy+cyan+monospace, overriding the imported design's purple/Inter tokens), and demo scope (build the real live Google-connected automation now, not a shell-only placeholder).
+
+Built all 6 sections (Hero boot-sequence + self-drawing SVG pipeline as the signature moment, Problem with a before/after manual-vs-agent comparison, Live demo as a real interactive widget, How it works sharing the live demo's own `PipelineStageCard` visual language per the brief, Tech stack badge stagger, calmer About/contact close) with GSAP + ScrollTrigger (already a listed but previously-unused dependency), fully gated behind `prefers-reduced-motion`.
+
+For the live automation, deliberately deviated from the design's own README (which described a bare client-side call to `api.anthropic.com` with a hardcoded key and undefined "your own connected session" Google access — a real security vulnerability and not actually workable for Gmail/Calendar/Drive): built a proper server-side Google OAuth 2.0 authorization-code flow instead (`src/lib/automation-demo/{session,google,claude}.ts` + 6 new API routes under `src/app/api/automation-demo/`), tokens held only in a short-lived AES-256-GCM-encrypted httpOnly cookie, Claude drafting via the existing `@anthropic-ai/sdk`/`ANTHROPIC_API_KEY`. Safety design (not in the original brief, added deliberately): every real action — the sent email, the Calendar event, the Drive file — lands only on the *visitor's own* connected account, never a third party, so the public demo can't be used to spam or calendar-invite strangers.
+
+Current Status: `npx tsc --noEmit` clean. Live-verified in the browser preview at desktop and 375px mobile widths — all sections render correctly, no console errors, the "Google integration coming soon" graceful-fallback state renders correctly (expected: no `AUTOMATION_DEMO_GOOGLE_CLIENT_ID`/`SECRET` configured yet). The OAuth → Gmail/Calendar/Drive path is fully implemented but **not yet exercised against a live Google account** — blocked on Russell creating a Google Cloud project (enable Gmail/Calendar/Drive APIs, create an OAuth Web client, register redirect URIs) and supplying the two credentials; `gmail.send`/`calendar.events` are Google sensitive scopes so the connect flow will only work for test users he allow-lists until that OAuth client passes Google verification. Added `googleapis` as a new dependency. Not committed — this repo's convention is to let Russell review before committing.
+
+**Next recommended task:** Russell reviews the page live (`/automation-demo`), decides where it should be linked from (Navbar/resume/portfolio, or nowhere yet), and — when ready to test the real automation — creates the Google Cloud OAuth client and hands over `AUTOMATION_DEMO_GOOGLE_CLIENT_ID`/`AUTOMATION_DEMO_GOOGLE_CLIENT_SECRET` for a live end-to-end click-through.
+
+---
+
 **Portfolio — added Hagnaya Beach Resort as a full case-study entry (2026-08-22) — code done, tsc clean, live-verified, NOT committed — see checkpoint `portfolio-hagnaya-beach-resort-v1.md`:**
 
 Current Product: Services (Portfolio) — `/portfolio` and new `/portfolio/hagnaya-beach-resort`.

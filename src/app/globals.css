@@ -60,6 +60,10 @@ body {
 .prose-cyberussell blockquote { border-left: 3px solid #E8373A; padding-left: 1rem; color: rgba(255,255,255,0.55); font-style: italic; margin: 1.5rem 0; }
 .prose-cyberussell hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2rem 0; }
 
+/* /automation-demo page decorative keyframes */
+@keyframes noct-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+@keyframes circuit-drift { from { transform: translate(0, 0); } to { transform: translate(-40px, -40px); } }
+
 @media print {
   body { background: #fff !important; color: #111 !important; }
   header, footer, nav, button, .sticky { display: none !important; }
